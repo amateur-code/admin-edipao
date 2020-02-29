@@ -1,0 +1,67 @@
+.reset-pwd-bg{
+  width: 100%;
+  height: 100%;
+  background: #f2f2f2;
+  overflow: hidden;
+  .reset-pwd-head{
+    width: 100%;
+    height: 80px;
+    line-height: 80px;
+    color: #fff;
+    background-color: rgba(7, 110, 202, 1);
+    .layui-logo{
+      margin-left: 10px;
+    }
+    .layui-logo-title{
+      margin-left: 5px;
+      font-family: '微软雅黑', sans-serif;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 24px;
+      color: #FFFFFF;
+    }
+  }
+  .layui-fluid{
+    padding: 20px 0 0;
+  }
+  .layui-card{
+    height:calc(100vh - 100px);
+  }
+  .btn-color{
+    width: 220px;
+    border-radius: 6px;
+  }
+  .btn-color1{
+    border-radius: 6px;
+  }
+  .btn-color-bule{
+    background-color: rgba(52, 144, 233, 1);
+  }
+  .layui-input-block{
+    margin: auto;
+    width: 292px;
+    text-align: center;
+  }
+  .counting-btn{
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    padding: 0px 8px;
+    line-height: 36px;
+    cursor: pointer;
+    text-decoration: underline;
+    border: 0;
+    height: 36px;
+    &:focus{
+      border: 0;
+    }
+    &.layui-btn-disabled, &.layui-btn-disabled:active, &.layui-btn-disabled:hover {
+      border: none;
+      background: none;
+      color: #C9C9C9;
+      cursor: not-allowed;
+      opacity: 1;
+    }
+  }
+}
+
