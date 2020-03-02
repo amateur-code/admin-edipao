@@ -8,6 +8,10 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         nameVerify: function(value) {
             if(value==''){
                 return '请输入司机姓名';
+            }else {
+                if (value.length > 15) {
+                    return '司机姓名不能能超过15个字符';
+                }
             }
         },
         phoneVerify: function(value) {
@@ -216,6 +220,7 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             ,accept: 'images' //只允许上传图片
             ,acceptMime: 'image/*' //只筛选图片
             ,done: function(res){
+                debugger
                 if(res.code=='0'){
                     layer.msg('上传成功', {icon: 6,anim: 6});
                     $('#'+id+'Div').children('i').hide();
@@ -246,6 +251,7 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         dataType: "JSON",
         url: ipUrl+'/admin/driver/info/driverStatus?staffId=17718571615',
         success: function (data){
+            debugger
             var code = data.code;
             if(code=='0'){
             }else{
@@ -262,6 +268,7 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         dataType: "JSON",
         url: ipUrl+'/admin/driver/info/driverTypes?staffId=17718571615',
         success: function (data){
+            debugger
             var code = data.code;
             if(code=='0'){
             }else{
@@ -278,6 +285,7 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         dataType: "JSON",
         url: ipUrl+'/admin/driver/info/licenceType?staffId=17718571615',
         success: function (data){
+            debugger
             var code = data.code;
             if(code=='0'){
             }else{
