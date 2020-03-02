@@ -31,29 +31,14 @@
         <span class="layui-breadcrumb">
             <a>系统设置</a>
             <a>
-                <cite>员工管理</cite>
+                <cite>权限管理</cite>
             </a>
         </span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
             <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
         </a>
     </div>
-    <table id="staffList" lay-filter="staffList"></table>
-
-    <script type="text/html" id="headerBtns">
-      <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
-        <button class="layui-btn layui-btn-sm" lay-event="delete">导出</button>
-        <button class="layui-btn layui-btn-sm" lay-event="update">表格设置</button>
-      </div>
-    </script>
-    <script type="text/html" id="rowBtns">
-        <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">授权</a>
-        <a class="layui-btn layui-btn-xs layui-bg-red" lay-event="edit">修改</a>
-        <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="info">查看</a>
-        <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="info">删除</a>
-        <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="info">日志</a>
-    </script>
+    <table id="list" lay-filter="test"></table>
 </body>
 
 </html>
