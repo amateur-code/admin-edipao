@@ -1,0 +1,124 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 16,
+  "data": [
+    {
+      "id": "001",
+      "name": "张三",
+      "phone": "138 xxxx xxxx",
+      "idNum": "427220 xxxxxxxx xxxx",
+      "drivingAge": "12年",
+      "driverType": 1,
+      "driveLicenceType": 1,
+      "idLicenceValidity": "2020-03-01",
+      "driveLicenceValidity": "2020-03-01",
+      "qualificationsValidity": "2020-03-01",
+      "status": 1,
+      "address": "北京海淀区",
+      "avatarImg": "1.png",
+      "idLicenceFrontImg": "1.png",
+      "idLicenceBackImg": "1.png",
+      "driveLicenceFrontImg": "1.png",
+      "driveLicenceBackImg": "1.png",
+      "qualificationsFrontImg": "1.png",
+      "qualificationsBackImg": "1.png",
+      "transportProtocolImg1": "1.png",
+      "transportProtocolImg2": "1.png",
+      "wishJourney": [
+        {
+          "start": "北京",
+          "end": "上海"
+        },
+        {
+          "start": "广州",
+          "end": "深圳"
+        }
+      ],
+      "deposit": 200,
+      "depositStatus": 1,
+      "accountBank": "华夏银行",
+      "accountBankAddress": "北京分行",
+      "accountNumber": "6222 xxxx xxxx xxxx",
+      "accountName": "张三"
+    },
+    {
+      "id": "002",
+      "name": "李四",
+      "phone": "137 xxxx xxxx",
+      "idNum": "429220 xxxxxxxx xxxx",
+      "drivingAge": "12年",
+      "driverType": 1,
+      "driveLicenceType": 1,
+      "idLicenceValidity": "2020-03-01",
+      "driveLicenceValidity": "2020-03-01",
+      "qualificationsValidity": "2020-03-01",
+      "status": 1,
+      "address": "北京海淀区",
+      "avatarImg": "1.png",
+      "idLicenceFrontImg": "1.png",
+      "idLicenceBackImg": "1.png",
+      "driveLicenceFrontImg": "1.png",
+      "driveLicenceBackImg": "1.png",
+      "qualificationsFrontImg": "1.png",
+      "qualificationsBackImg": "1.png",
+      "transportProtocolImg1": "1.png",
+      "transportProtocolImg2": "1.png",
+      "wishJourney": [
+        {
+          "start": "北京",
+          "end": "上海"
+        },
+        {
+          "start": "广州",
+          "end": "深圳"
+        }
+      ],
+      "deposit": 200,
+      "depositStatus": 1,
+      "accountBank": "华夏银行",
+      "accountBankAddress": "北京分行",
+      "accountNumber": "6222 xxxx xxxx xxxx",
+      "accountName": "李四"
+    },
+    {
+      "id": "003",
+      "name": "王五",
+      "phone": "139 xxxx xxxx",
+      "idNum": "428220 xxxxxxxx xxxx",
+      "drivingAge": "12年",
+      "driverType": 1,
+      "driveLicenceType": 1,
+      "idLicenceValidity": "2020-03-01",
+      "driveLicenceValidity": "2020-03-01",
+      "qualificationsValidity": "2020-03-01",
+      "status": 1,
+      "address": "北京海淀区",
+      "avatarImg": "1.png",
+      "idLicenceFrontImg": "1.png",
+      "idLicenceBackImg": "1.png",
+      "driveLicenceFrontImg": "1.png",
+      "driveLicenceBackImg": "1.png",
+      "qualificationsFrontImg": "1.png",
+      "qualificationsBackImg": "1.png",
+      "transportProtocolImg1": "1.png",
+      "transportProtocolImg2": "1.png",
+      "wishJourney": [
+        {
+          "start": "北京",
+          "end": "上海"
+        },
+        {
+          "start": "广州",
+          "end": "深圳"
+        }
+      ],
+      "deposit": 200,
+      "depositStatus": 1,
+      "accountBank": "华夏银行",
+      "accountBankAddress": "北京分行",
+      "accountNumber": "6222 xxxx xxxx xxxx",
+      "accountName": "王五"
+    }
+  ]
+}
