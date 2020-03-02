@@ -67,9 +67,24 @@ layui.config({
     //API演示
     var driverList = table.render({
         elem: '#driverList',
-        page: true,
         height : '313',
-        url:'json/list.json',
+        url:ipUrl+'/admin/driver/info/list?staffId=17718571615',
+        page: true,
+        request: {
+            pageName: 'pageNumber', //页码的参数名称
+            limitName: 'pageSize' //每页数据量的参数名
+        },
+        parseData: function (res) {
+            if(res.code == 0){
+                return {
+                    "code": res.code,
+                    "msg": res.message,
+                    "count": res.data.totalSize,
+                    "data": res.data.driverInfoListDtoList
+                };
+            }
+
+        },
         cols: [[
             {checkbox: true},
             {field: 'name',  title: '司机姓名'},
