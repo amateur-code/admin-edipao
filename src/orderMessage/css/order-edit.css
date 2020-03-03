@@ -1,0 +1,46 @@
+.page_content {
+  padding: 20px;
+}
+.page_block {
+  margin-bottom: 20px;
+  background-color: #fff;
+}
+.pointer {
+  cursor: pointer;
+}
+.page_title {
+  border-bottom: 1px solid;
+}
+.text_left {
+  text-align: left !important;
+}
+.form_label {
+  padding-left: 0 !important;
+}
+.form_item_container {
+  padding-left: 30px;
+}
+.form_item_container .layui-input-inline {
+  width: 100%;
+}
+.form_item_container .form_item_inner {
+  overflow: hidden;
+}
+.form_item_container .form_item_inner .add_fee {
+  margin-left: 20px;
+}
+.fee_container {
+  padding: 10px;
+  overflow: hidden;
+}
+.fee_container .fee_list {
+  overflow: hidden;
+  padding-bottom: 10px;
+}
+.fee_container .fee_footer {
+  padding-top: 10px;
+  border-top: 1px solid #EFEEF0;
+}
+.blue {
+  color: #3490E9;
+}
