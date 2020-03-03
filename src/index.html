@@ -21,8 +21,8 @@
           <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
     <script>
-    // 是否开启刷新记忆tab功能
-    // var is_remember = false;
+        // 是否开启刷新记忆tab功能
+        // var is_remember = false;
     </script>
 </head>
 
@@ -41,19 +41,24 @@
                     <!-- 二级菜单 -->
                     <dd>
                         <a onclick="xadmin.open('最大化','http://www.baidu.com','','',true)">
-                            <i class="iconfont">&#xe6a2;</i>弹出最大化</a></dd>
+                            <i class="iconfont">&#xe6a2;</i>弹出最大化</a>
+                    </dd>
                     <dd>
                         <a onclick="xadmin.open('弹出自动宽高','http://www.baidu.com')">
-                            <i class="iconfont">&#xe6a8;</i>弹出自动宽高</a></dd>
+                            <i class="iconfont">&#xe6a8;</i>弹出自动宽高</a>
+                    </dd>
                     <dd>
                         <a onclick="xadmin.open('弹出指定宽高','http://www.baidu.com',500,300)">
-                            <i class="iconfont">&#xe6a8;</i>弹出指定宽高</a></dd>
+                            <i class="iconfont">&#xe6a8;</i>弹出指定宽高</a>
+                    </dd>
                     <dd>
                         <a onclick="xadmin.add_tab('在tab打开','member-list.html')">
-                            <i class="iconfont">&#xe6b8;</i>在tab打开</a></dd>
+                            <i class="iconfont">&#xe6b8;</i>在tab打开</a>
+                    </dd>
                     <dd>
                         <a onclick="xadmin.add_tab('在tab打开刷新','member-del.html',true)">
-                            <i class="iconfont">&#xe6b8;</i>在tab打开刷新</a></dd>
+                            <i class="iconfont">&#xe6b8;</i>在tab打开刷新</a>
+                    </dd>
                 </dl>
             </li>
         </ul>
@@ -100,12 +105,17 @@
                         <i class="iconfont nav_right">&#xe697;</i></a>
                     <ul class="sub-menu">
                         <li>
-                            <a onclick="xadmin.add_tab('订单管理','order-list.html')">
+                            <a onclick="xadmin.add_tab('订单管理','orderMessage/order-list.html')">
                                 <i class="iconfont">&#xe6a7;</i>
                                 <cite>订单管理</cite></a>
                         </li>
                         <li>
-                            <a onclick="xadmin.add_tab('线路指引','order-list1.html')">
+                            <a onclick="xadmin.add_tab('订单管理','orderMessage/order-import.html')">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>订单录入</cite></a>
+                        </li>
+                        <li>
+                            <a onclick="xadmin.add_tab('线路指引','orderMessage/route-guidance.html')">
                                 <i class="iconfont">&#xe6a7;</i>
                                 <cite>线路指引</cite></a>
                         </li>
