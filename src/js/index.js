@@ -1,7 +1,10 @@
 layui.use(['layer','element'],function(layer,element) {
     xadmin = layui.xadmin;
-    common = layui.common;
+    edipao = layui.edipao;
 
+    if(!edipao.getLoginStaffId()){
+        edipao.tokenExpired()
+    }
     // 打开页面初始
     xadmin.init();
 

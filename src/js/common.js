@@ -14,16 +14,45 @@ layui.define([], function(exports) {
     }
 
     Common.prototype.request = function(options) {
+        var that = this;
         options = $.extend({}, this.requestDefaultOption, options)
         options.url = this.API_HOST + options.url;
         if(!options.data) options.data = {};
-        if(options.data && !options.data.staffId){
-            options.data.staffId = '17701035267';
+        if(this.getLoginStaffId){
+            options.data.loginStaffId = this.getLoginStaffId;
         }
         return $.ajax(options)
-            .done(function(data) {}).fail(function() {});
+            .done(function(res) {
+                if(['4004','4010'].indexOf(res.code) !== -1){
+                    that.tokenExpired()
+                }
+            }).fail(function() {});
     }
 
+    Common.prototype.tokenExpired = function() {
+      layui.sessionData('user',null);
+      location.href = '../Login/login.html';
+    }
+
+    Common.prototype.getLoginStaffId = function() {
+      var user = layui.sessionData('user');
+      return user.staffId
+    }
+
+    Common.prototype.urlGet = function() {
+      var args = {};
+      var query = location.search.substring(1);
+      var pairs = query.split("&");
+      for (var i = 0; i < pairs.length; i++) {
+        var pos = pairs[i].indexOf('=');
+        if (pos == -1) continue;
+        var argname = pairs[i].substring(0, pos);
+        var value = pairs[i].substring(pos + 1);
+        value = decodeURIComponent(value);
+        args[argname] = value;
+      }
+      return args;
+    }
 
 
     exports('edipao', new Common());
