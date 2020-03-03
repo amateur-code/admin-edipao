@@ -28,7 +28,7 @@
 <body>
     <div class="layui-fluid">
         <div class="layui-row">
-            <form class="layui-form">
+            <form class="layui-form" lay-filter="addStaff">
                 <div class="layui-form-item">
                     <label for="name" class="layui-form-label">
                         <span class="x-red">*</span>员工姓名
@@ -44,7 +44,6 @@
                     <div class="layui-input-inline">
                         <input type="text" id="phone" name="phone" required="" lay-verify="phone" autocomplete="off" class="layui-input">
                     </div>
-                    
                 </div>
                 <div class="layui-form-item">
                     <label for="pass" class="layui-form-label">
@@ -86,12 +85,11 @@
                         <input type="text" id="dept" name="dept" required="" autocomplete="off" class="layui-input">
                     </div>
                 </div>
-
                 <div class="layui-form-item">
                     <label class="layui-form-label"><span class="x-red">*</span>状态</label>
                     <div class="layui-input-inline">
-                    	<input type="radio" name="status" value="1" title="有效" checked>
-                    	<input type="radio" name="status" value="0" title="无效">
+                        <input type="radio" name="status" value="1" title="有效" checked>
+                        <input type="radio" name="status" value="0" title="无效">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -105,41 +103,42 @@
         </div>
     </div>
     <script type="text/javascript">
-    	layui.use(['form', 'layer'],function(form,layer){
-    		xadmin = layui.xadmin;
-    		edipao = layui.edipao;
-    		//自定义验证规则
-            form.verify({
-                name: function(value) {
-                    if (value.length < 2) {
-                        return '员工姓名至少得2个字符';
-                    }
-                },
-                phone: function(value){
-                	if(!/^1\d{10}$/.test(value)){ 
-                		return '手机号格式不正确';
-                	}
+    layui.use(['form', 'layer', 'element'], function(form, layer) {
+        var xadmin = layui.xadmin,
+            edipao = layui.edipao;
+        console.log(xadmin)
+        //自定义验证规则
+        form.verify({
+            name: function(value) {
+                if (value.length < 2) {
+                    return '员工姓名至少得2个字符';
                 }
-            });
+            },
+            phone: function(value) {
+                if (!/^1\d{10}$/.test(value)) {
+                    return '手机号格式不正确';
+                }
+            }
+        });
 
-             form.on('submit(add)',function(data) {
-                    console.log(data);
-                    edipao.request({
-                    	url: '/admin/staff/add',
-                    	data: data.field,
-                    }).done(res=>{
-                    	if(res.code == 0){
-                    		layer.alert("添加员工成功", {icon: 6}, function(){
-                    			xadmin.close();
-                    			xadmin.father_reload();
-                    		});
-                    	}else{
-                    		layer.msg(res.message)
-                    	}
-                    })
-                });
+        form.on('submit(add)', function(data) {
+            edipao.request({
+                url: '/admin/staff/add',
+                data: data.field,
+            }).done(function(res) {
+                if (res.code == 0) {
+                    layer.alert("添加员工成功", { icon: 6 }, function() {
+                        xadmin.close();
+                        xadmin.father_reload();
+                    });
+                } else {
+                    layer.msg(res.message)
+                }
+            })
+            return false;
+        });
 
-    	})
+    })
     </script>
 </body>
 

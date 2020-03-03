@@ -28,7 +28,7 @@
 <body>
     <div class="layui-fluid">
         <div class="layui-row">
-            <form class="layui-form layui-form-pane">
+            <form class="layui-form layui-form-pane" lay-filter="editRole">
                 <div class="layui-card">
                     <div class="layui-card-header">基础信息</div>
                     <div class="layui-card-body">
@@ -45,7 +45,7 @@
                 <div class="layui-card">
                     <div class="layui-card-header">功能权限</div>
                     <div class="layui-card-body">
-                        <div class="layui-collapse" lay-accordion id="view">
+                        <div class="layui-collapse" id="view">
                         </div>
                     </div>
                 </div>
@@ -59,9 +59,6 @@
                             <input name="canViewOrderCost" lay-skin="primary" type="checkbox" title="订单成本" value="Y">
                         </div>
                     </div>
-                </div>
-                <div class="layui-form-item">
-                    <button class="layui-btn" lay-filter="add" lay-submit>增加</button>
                 </div>
             </form>
         </div>
@@ -79,7 +76,7 @@
     		{{#  layui.each(list1, function(index, item){ }}
     			<div class="layui-colla-item">
 	                <h2 class="layui-colla-title">
-	                    <input name="resourceIdList[]" lay-skin="primary" type="checkbox" lay-filter="father" title="{{item.name}}" value="{{item.resourceId}}">
+	                    <input name="resourceIdList[{{item.resourceId}}]" lay-skin="primary" type="checkbox" lay-filter="father" title="{{item.name}}" value="{{item.resourceId}}">
 	                </h2>
 	                <div class="layui-colla-content layui-show">
 	                    <table class="layui-table">
@@ -95,7 +92,7 @@
 					    		{{# layui.each(list2, function(index, item2){ }}
 					    		<tr>
 	                                <td>
-	                                    <input type="checkbox" name="resourceIdList[]" lay-skin="primary" lay-filter="second" title="{{item2.name}}" value="{{item2.resourceId}}">
+	                                    <input type="checkbox" name="resourceIdList[{{item2.resourceId}}]" lay-skin="primary" lay-filter="second" title="{{item2.name}}" value="{{item2.resourceId}}">
 	                                </td>
 	                                <td>
 	                                    <div class="layui-input-block">
@@ -108,7 +105,7 @@
 												})	
 								    		}}
 								    		{{# layui.each(list3, function(index, item3){ }}
-								    		<input name="resourceIdList[]" lay-skin="primary" type="checkbox" title="{{item3.name}}" value="{{item3.resourceId}}">
+								    		<input name="resourceIdList[{{item3.resourceId}}]" lay-skin="primary" type="checkbox" title="{{item3.name}}" value="{{item3.resourceId}}">
 								    		{{#  }); }}
 	                                    </div>
 	                                </td>
@@ -127,86 +124,39 @@
     layui.use(['form', 'layer', 'laytpl', 'element'], function(form, layer,laytpl,element ) {
         xadmin = layui.xadmin;
         edipao = layui.edipao;
+        var params = edipao.urlGet();
 
         edipao.request({
-            url: '/admin/permission/func/list'
+            url: '/admin/permission/role/get',
+            data: {
+            	roleId: params.id
+            }
         }).done(res => {
             if (res.code == 0) {
-                var getTpl = demo.innerHTML,
+
+            	var getTpl = demo.innerHTML,
                 view = document.getElementById('view');
-				laytpl(getTpl).render({name:'test',list:res.data}, function(html){
+				laytpl(getTpl).render({list:res.data.funcPermissionDTOList}, function(html){
 				  view.innerHTML = html;
 				});
-				form.render();
-				element.init('collapse')
+				
+
+            	let saveRoleReq = {
+            		roleName: res.data.roleName,
+            		canViewSubDept: res.data.dataPermissionDTO.canViewSubDept == 'Y' ? 'Y' : '',
+            		canViewAll: res.data.dataPermissionDTO.canViewAll == 'Y' ? 'Y' : '',
+            		canViewOrderIncome: res.data.dataPermissionDTO.canViewOrderIncome == 'Y' ? 'Y' : '',
+            		canViewOrderCost: res.data.dataPermissionDTO.canViewOrderCost == 'Y' ? 'Y' : ''
+            	}
+            	layui.each(res.data.resourceIdList,function(index,item){
+            		saveRoleReq['resourceIdList[' + item + ']'] = item
+            	})
+            	
+                form.val("editRole", saveRoleReq);
+                form.render();
+                $('input').prop('disabled',true)
             }
         })
-
-        //自定义验证规则
-        form.verify({
-            name: function(value) {
-                if (value.length < 2) {
-                    return '员工姓名至少得2个字符';
-                }
-            }
-        });
-
-        form.on('checkbox(father)', function(data,e){
-        	layui.stope(e)
-            if(data.elem.checked){
-                $(data.elem).closest('.layui-colla-item').find('input').prop("checked", true);
-                form.render(); 
-            }else{
-               $(data.elem).closest('.layui-colla-item').find('input').prop("checked", false);
-                form.render();  
-            }
-            return false
-        });
-
-        form.on('checkbox(second)', function(data,e){
-            if(data.elem.checked){
-                $(data.elem).closest('tr').find('input').prop("checked", true);
-                form.render(); 
-            }else{
-               $(data.elem).closest('tr').find('input').prop("checked", false);
-                form.render();  
-            }
-        });
-
-
-        form.on('submit(add)', function(data) {
-			var saveRoleReq = {
-				roleName: data.field.roleName,
-				resourceIdList: [],
-				dataPermissionDTO:{},
-				loginStaffId: edipao.getLoginStaffId()
-			};
-			for(key in data.field){
-				if(key.indexOf('resourceIdList') !== -1) saveRoleReq.resourceIdList.push(data.field[key])
-			}
-			saveRoleReq.dataPermissionDTO.canViewAll = data.field.canViewAll ? 'Y' : 'N'
-			saveRoleReq.dataPermissionDTO.canViewOrderCost = data.field.canViewOrderCost ? 'Y' : 'N'
-			saveRoleReq.dataPermissionDTO.canViewOrderIncome = data.field.canViewOrderIncome ? 'Y' : 'N'
-			saveRoleReq.dataPermissionDTO.canViewSubDept = data.field.canViewSubDept ? 'Y' : 'N'
-
-        	edipao.request({
-        		contentType: "application/json",
-        		url: '/admin/permission/role/save',
-        		data: JSON.stringify(saveRoleReq)
-        	}).then(function(res){
-        		if(res.code == 0){
-        			layer.alert("添加角色成功", { icon: 6 }, function() {
-                        xadmin.close();
-                        xadmin.father_reload();
-                    });
-        		}else {
-                    layer.msg(res.message)
-                }
-        	})
-
-           	return false
-        });
-
     })
     </script>
 </body>

@@ -28,135 +28,57 @@
 <body>
     <div class="layui-fluid">
         <div class="layui-row">
-            <form class="layui-form" lay-filter="editStaff">
-                <div class="layui-form-item">
-                    <label for="name" class="layui-form-label">
-                        <span class="x-red">*</span>员工姓名
-                    </label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="name" name="name" required="" lay-verify="name" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label for="phone" class="layui-form-label">
-                        <span class="x-red">*</span>员工手机
-                    </label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="phone" name="phone" required="" lay-verify="phone" autocomplete="off" class="layui-input">
-                    </div>
-                    
-                </div>
-                <div class="layui-form-item">
-                    <label for="pass" class="layui-form-label">
-                        <span class="x-red">*</span>登录密码
-                    </label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="pass" name="pass" required="" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label for="idCard" class="layui-form-label">
-                        <span class="x-red">*</span>身份证号
-                    </label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="idCard" name="idCard" required="" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label for="cardNo" class="layui-form-label">
-                        <span class="x-red">*</span>员工工号
-                    </label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="cardNo" name="cardNo" required="" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label for="positions" class="layui-form-label">
-                        <span class="x-red">*</span>员工职位
-                    </label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="positions" name="positions" required="" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label for="dept" class="layui-form-label">
-                        <span class="x-red">*</span>所属部门
-                    </label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="dept" name="dept" required="" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label"><span class="x-red">*</span>状态</label>
-                    <div class="layui-input-inline">
-                    	<input type="radio" name="status" value="1" title="有效" checked>
-                    	<input type="radio" name="status" value="0" title="无效">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label for="L_repass" class="layui-form-label">
-                    </label>
-                    <button class="layui-btn" lay-filter="update" lay-submit>
-                        增加
-                    </button>
-                </div>
-            </form>
+            <table class="layui-table" lay-skin="nob" lay-size="lg">
+              <tbody id="view">
+                
+              </tbody>
+            </table>
         </div>
     </div>
+    <script id="staffinfo" type="text/html">
+        <tr>
+          <td>员工姓名: {{d.name}}</td>
+          <td>员工手机: {{d.phone}}</td>
+          <td>登录密码: ****</td>
+        </tr>
+        <tr>
+          <td>身份证号: {{d.idCard}}</td>
+          <td>员工工号: {{d.cardNo}}</td>
+          <td>员工职位: {{d.positions}}</td>
+        </tr>
+        <tr>
+          <td>所属部门: {{d.dept}}</td>
+          <td>状态: {{d.status}}</td>
+        </tr>
+    </script>
     <script type="text/javascript">
-    	layui.use(['form', 'layer'],function(form,layer){
-    		xadmin = layui.xadmin;
-    		edipao = layui.edipao;
+    layui.use(['layer', 'element','laytpl'], function(layer,element,laytpl) {
+        var xadmin = layui.xadmin;
+        edipao = layui.edipao;
 
-    		var params = edipao.urlGet();
 
-    		edipao.request({
-    			type: 'GET',
-	        	url: '/admin/staff/detail',
-	        	data: {
-	        		id: params.id
-	        	}
-	        }).done(res=>{
-	        	if(res.code == 0){
-	        		form.val("editStaff", res.data);
-	        	}else{
-	        		layer.msg(res.message)
-	        	}
-	        })
+        var params = edipao.urlGet();
 
-    		//自定义验证规则
-            form.verify({
-                name: function(value) {
-                    if (value.length < 2) {
-                        return '员工姓名至少得2个字符';
-                    }
-                },
-                phone: function(value){
-                	if(!/^1\d{10}$/.test(value)){ 
-                		return '手机号格式不正确';
-                	}
-                }
-            });
+        edipao.request({
+            type: 'GET',
+            url: '/admin/staff/detail',
+            data: {
+                staffId: params.id
+            }
+        }).done(function(res) {
+            if (res.code == 0) {
+                var getTpl = staffinfo.innerHTML,
+                view = document.getElementById('view');
+                laytpl(getTpl).render(res.data, function(html){
+                  view.innerHTML = html;
+                });
+            } else {
+                layer.msg(res.message)
+            }
+        })
 
-         	form.on('submit(update)',function(data) {
-                data.field.id = params.id;
-                edipao.request({
-                	url: '/admin/staff/update',
-                	data: data.field,
-                }).done(res=>{
-                	if(res.code == 0){
-                		layer.alert("跟新员工成功", {icon: 6}, function(){
-                			xadmin.close();
-                			xadmin.father_reload();
-                		});
-                	}else{
-                		layer.msg(res.message)
-                	}
-                })
-            });
 
-    	})
+    })
     </script>
 </body>
 
