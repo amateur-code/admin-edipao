@@ -1,0 +1,48 @@
+.marker {
+  background: rgba(255, 217, 149, 0.37647059);
+  font-size: 12px;
+  padding: 10px 10px;
+  color: red;
+}
+.upload-handler {
+  text-align: center;
+  font-size: 0;
+}
+.upload-box {
+  padding: 30px 0 50px;
+}
+.upload-box .upload-title {
+  padding: 10px 0 15px;
+  font-size: 16px;
+  text-align: center;
+}
+.upload-box .upload-handler .upload-name {
+  display: inline-block;
+  width: 300px;
+  height: 36px;
+  line-height: 36px;
+  border: 1px solid #aaaaaa;
+  border-right: 0;
+  font-size: 12px;
+  text-align: left;
+  padding-left: 10px;
+}
+.upload-box .upload-handler .upload-btn {
+  position: relative;
+  top: -4px;
+}
+.upload-box .upload-handler .download-temp {
+  font-size: 14px;
+  color: #118DFF;
+  text-decoration: underline;
+  margin-left: 30px;
+}
+.table-title {
+  padding: 10px 0;
+  font-size: 16px;
+}
+.handlerDown {
+  font-size: 14px;
+  color: #118DFF;
+  text-decoration: underline;
+}

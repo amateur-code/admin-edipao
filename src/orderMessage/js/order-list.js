@@ -396,7 +396,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             {field: 'createTime', title: '创建时间', sort: false,minWidth:100, hide: true},
             {field: 'updateTime', title: '更新时间', sort: false,minWidth:100, hide: true},
   
-            {title: '操作', toolbar: '#barDemo', align: 'center', fixed: 'right', width: 300}
+            {title: '操作', toolbar: '#barDemo', align: 'center', fixed: 'right', width: 350}
         ]]
     });
   
