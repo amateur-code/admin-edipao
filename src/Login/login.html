@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="./login.css">
     <link rel="stylesheet" href="../lib/idcode/jquery.idcode.css">
     <script type="text/javascript" src="../js/jquery.min.js"></script>
-    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js"></script>
     <script type="text/javascript" src="../lib/idcode/jquery.idcode.js"></script>
     <script type="text/javascript" src="../js/common.js"></script>
     <script type="text/javascript" src="login.js"></script>
@@ -25,7 +25,7 @@
 <div class="login layui-anim layui-anim-up">
     <div class="message">E地跑运营平台</div>
     <hr class="hr48">
-    <form method="post" class="layui-form" >
+    <form class="layui-form" >
         <input name="phone" type="text" placeholder="手机号"  lay-verify="phoneVerify" autocomplete="off" class="layui-input-inline">
         <hr class="hr15">
         <input name="pass" lay-verify="passVerify" placeholder="密码"  type="password" class="layui-input-inline">
@@ -33,7 +33,7 @@
         <input name="code"  type="text" id="Txtidcode" placeholder="验证码" style="width:56%;margin-right: 10px;"  lay-verify="idcodeVerify" autocomplete="off" class="layui-input-inline" >
         <span id="idcode"></span>
         <hr class="hr30">
-        <input value="登录" lay-submit lay-filter="login" style="width:100%;background-color: rgba(52, 144, 233, 1);border-radius: 43px;" type="submit">
+        <input class="layui-btn layui-btn-radius layui-btn-normal layui-btn-lg" style="width:100%; height: 50px;"  value="登录" lay-submit lay-filter="login" >
         <hr class="hr20" >
         <div class="forget-pwd">
             <a href="../ResetPwd/reset-pwd.html"><span>忘记密码</span></a>

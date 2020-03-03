@@ -1,6 +1,8 @@
 $(function  () {
-    layui.use(['form','jquery'], function(){
-        var form = layui.form,$ = layui.$;
+    layui.use(['form'], function(){
+        var form = layui.form,
+        $ = layui.$,
+        edipao = layui.edipao;
         $.idcode.setCode();
         //自定义验证规则
         form.verify({
@@ -33,31 +35,21 @@ $(function  () {
         });
         //监听提交
         form.on('submit(login)', function(data){
+            // console.log(data)
             //登陆
-            var param = {
-                phone:data.field.phone,
-                pass:data.field.pass
-            }
-            $.ajax({
-                type: "POST",
-                dataType: "JSON",
-                url: ipUrl+'/admin/staff/login',
-                data: param,
-                success: function (data){
-                    var code = data.code;
-                    if(code=='0'){
-                        var staffId = data.data.staffId
-                        sessionStorage.setItem("staffId", staffId);
-                        location.href='../index.html'
-                    }else{
-                        layer.msg(data.message, {icon: 5,anim: 6});
-                    }
-                },
-                error: function (data) {
-
+            edipao.request({
+                url: '/admin/staff/login',
+                data: data.field,
+            }).done(function(res){
+                if(res.code == 0){
+                    layui.each(res.data,function(item){
+                        layui.sessionData('user', {key:item, value: res.data[item]})
+                    })
+                    location.href='../index.html'
+                }else{
+                    layer.msg(data.message, {icon: 5,anim: 6});
                 }
-            });
-            return false;
+            })
         });
     });
 })

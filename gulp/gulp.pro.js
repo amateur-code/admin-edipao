@@ -7,7 +7,9 @@ let gulpsync = require('gulp-sync')(gulp);
 var config = require('../package.json');
 
 gulp.task('clean', function(cb) {
-  return del(['build/**/*'], cb);
+  return del(['../build/**/*'],{
+    force: true
+  }, cb);
 });
 
 gulp.task('copy', function() {
@@ -34,4 +36,4 @@ gulp.task('zip', function() {
 });
 
 
-gulp.task('build',gulp.series(gulpsync.async(['clean','copy','minifycss','uglify','zip'])));
+gulp.task('build',gulp.series(gulpsync.async(['clean','copy','minifycss','zip'])));
