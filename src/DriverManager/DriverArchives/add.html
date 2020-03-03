@@ -12,8 +12,9 @@
     <script src="../../lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../../js/xadmin.js"></script>
     <script src="../../js/common.js"></script>
-    <script src="xcity.js"></script>
-    <script src="add.js"></script>
+    <script src="js/xcity.js"></script>
+    <script src="js/driverCommon.js"></script>
+    <script src="js/add.js"></script>
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
@@ -120,7 +121,7 @@
                                                     <i class="upload-bg"></i>
                                                     <p>点击上传</p>
                                                     <div class="layui-hide" id="idLicenceFrontImgView">
-                                                        <img src="" alt="上传成功后渲染" style="max-width: 130px">
+                                                        <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                                     </div>
                                                     <input type="text" name="idLicenceFrontImg" id="idLicenceFrontImg" lay-verify="idLicenceFrontImgVerify" placeholder="" autocomplete="off" class="layui-hide">
                                                 </div>
@@ -132,7 +133,7 @@
                                                 <i class="upload-bg"></i>
                                                 <p>点击上传</p>
                                                 <div class="layui-hide" id="idLicenceBackImgView">
-                                                    <img src="" alt="上传成功后渲染" style="max-width: 130px">
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                                 </div>
                                                 <input type="text" name="idLicenceBackImg" id="idLicenceBackImg" lay-verify="idLicenceBackImgVerify" placeholder="" autocomplete="off" class="layui-hide">
 
@@ -149,7 +150,7 @@
                                                 <i class="upload-bg"></i>
                                                 <p>点击上传</p>
                                                 <div class="layui-hide" id="driveLicenceFrontImgView">
-                                                    <img src="" alt="上传成功后渲染" style="max-width: 130px">
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                                 </div>
                                                 <input type="text" name="driveLicenceFrontImg" id="driveLicenceFrontImg" lay-verify="driveLicenceFrontImgVerify" placeholder="" autocomplete="off" class="layui-hide">
                                             </div>
@@ -160,7 +161,7 @@
                                                 <i class="upload-bg"></i>
                                                 <p>点击上传</p>
                                                 <div class="layui-hide" id="driveLicenceBackImgView">
-                                                    <img src="" alt="上传成功后渲染" style="max-width: 130px">
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                                 </div>
                                                 <input type="text" name="driveLicenceBackImg" id="driveLicenceBackImg" lay-verify="driveLicenceBackImgVerify" placeholder="" autocomplete="off" class="layui-hide">
                                             </div>
@@ -176,7 +177,7 @@
                                                 <i class="upload-bg"></i>
                                                 <p>点击上传</p>
                                                 <div class="layui-hide" id="avatarImgView">
-                                                    <img src="" alt="上传成功后渲染" style="max-width: 130px">
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                                 </div>
                                                 <input type="text" name="avatarImg" id="avatarImg"  placeholder="" autocomplete="off" class="layui-hide">
                                             </div>
@@ -195,7 +196,7 @@
                                             <i class="upload-bg"></i>
                                             <p>点击上传</p>
                                             <div class="layui-hide" id="qualificationsFrontImgView">
-                                                <img src="" alt="上传成功后渲染" style="max-width: 130px">
+                                                <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                             </div>
                                             <input type="text" name="qualificationsFrontImg" id="qualificationsFrontImg" lay-verify="qualificationsFrontImgVerify"  placeholder="" autocomplete="off" class="layui-hide">
                                         </div>
@@ -207,7 +208,7 @@
                                         <i class="upload-bg"></i>
                                         <p>点击上传</p>
                                         <div class="layui-hide" id="qualificationsBackImgView">
-                                            <img src="" alt="上传成功后渲染" style="max-width: 130px">
+                                            <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                         </div>
                                         <input type="text" name="qualificationsBackImg" id="qualificationsBackImg" lay-verify="qualificationsBackImgVerify"  placeholder="" autocomplete="off" class="layui-hide">
                                     </div>
@@ -223,7 +224,7 @@
                                         <i class="upload-bg"></i>
                                         <p>点击上传</p>
                                         <div class="layui-hide" id="transportProtocolImg1View">
-                                            <img src="" alt="上传成功后渲染" style="max-width: 130px">
+                                            <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                         </div>
                                         <input type="text" name="transportProtocolImg1" id="transportProtocolImg1"  placeholder="" autocomplete="off" class="layui-hide">
                                     </div>
@@ -234,7 +235,7 @@
                                         <i class="upload-bg"></i>
                                         <p>点击上传</p>
                                         <div class="layui-hide" id="transportProtocolImg2View">
-                                            <img src="" alt="上传成功后渲染" style="max-width: 130px">
+                                            <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                         </div>
                                         <input type="text" name="transportProtocolImg2" id="transportProtocolImg2"  placeholder="" autocomplete="off" class="layui-hide">
                                     </div>
@@ -278,11 +279,7 @@
                                 <div class="layui-input-block">
                                     <select name="driverType" id="driverType">
                                         <option value=""></option>
-                                        <option value="0" selected="">外调</option>
-                                        <option value="1" >自营</option>
-                                        <option value="2">合同</option>
                                     </select>
-<!--                                    <input type="text" name="driverType" id="driverType" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">-->
                                 </div>
                             </div>
                         </div>
@@ -292,9 +289,6 @@
                                 <div class="layui-input-block">
                                     <select name="driveLicenceType" id="driveLicenceType">
                                         <option value=""></option>
-                                        <option value="0" selected="">驾照类型1</option>
-                                        <option value="1" >驾照类型2</option>
-                                        <option value="2">驾照类型3</option>
                                     </select>
                                 </div>
                             </div>
@@ -344,8 +338,8 @@
                                 <div><span class="x-red">*</span>状态</div>
                                 <div class="layui-input-block">
                                     <select name="status" id="status">
-                                        <option value="0" selected="">已解约</option>
-                                        <option value="1" >已屏蔽</option>
+                                        <!--<option value="0" selected="">已解约</option>
+                                        <option value="1" >已屏蔽</option>-->
                                     </select>
                                 </div>
                             </div>
@@ -367,11 +361,19 @@
                             <div class="layui-form-item">
                                 <div><span class="x-red">*</span>押金状态</div>
                                 <div class="layui-input-block">
-                                    <select name="depositStatus" id="depositStatus" lay-verify="depositStatusVerify">
+                                    <select name="depositStatus" id="depositStatus" lay-verify="depositStatusVerify" lay-filter="depositStatusFilter">
                                         <option value="" selected="">请选择状态</option>
                                         <option value="0" >未支付</option>
                                         <option value="1" >已支付</option>
                                     </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4 layui-hide" style="display: none">
+                            <div class="layui-form-item">
+                                <div><span class="x-red">*</span>押金支付流水号</div>
+                                <div class="layui-input-block">
+                                    <input type="text" name="depositTradeNumber" id="depositTradeNumber"  placeholder="请输入押金支付流水号" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                         </div>
@@ -422,7 +424,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="layui-card layui-form" >
+                <div class="layui-card layui-form">
                     <div class="layui-card-header">心愿线路<span class="wishJourney-btn-add" id="addWishJourney">+添加</span></div>
                     <div class="layui-card-body layui-row layui-col-space10">
                         <div class="layui-col-md12" id="wishJourney">
