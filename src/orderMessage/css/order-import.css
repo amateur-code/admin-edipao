@@ -46,3 +46,33 @@
   color: #118DFF;
   text-decoration: underline;
 }
+.form-productOrder {
+  padding: 20px;
+}
+.blue {
+  color: #3490E9;
+}
+.pointer {
+  text-decoration: underline;
+}
+.title_pd {
+  padding: 5px 0 15px;
+}
+.orderType {
+  padding-bottom: 10px;
+}
+.layui-form-label {
+  text-align: left !important;
+  padding: 4px 0px !important;
+}
+.special-item .layui-form-label {
+  text-align: right !important;
+}
+.layui-form-label {
+  width: auto !important;
+  min-width: 60px;
+}
+.layui-form-item .layui-input-block {
+  float: none !important;
+  margin-left: 0 !important;
+}

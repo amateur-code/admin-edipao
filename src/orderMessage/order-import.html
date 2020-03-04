@@ -62,15 +62,200 @@
                             </div>
                         </div>
                     </div>
-                    <div class="layui-tab-item">2</div>
+                    <div class="layui-tab-item">
+                        <div class="page-header">
+                            <div class="layui-row">
+                                <div class="layui-col-md6">
+                                    <div class="title">接受数据</div>
+                                </div>
+                                <div class="layui-col-md6 tr">
+                                    <button class="layui-btn layui-bg-blue produceOrders">生成订单</button>
+                                    <button class="layui-btn layui-bg-black" onclick="xadmin.open('表格设置','./list-add.html',600,400)">导出</button>
+                                </div>
+                            </div>
+                        </div>
+                        <table id="importThirdOrderList" lay-filter="importThirdOrderList" lay-size="lg"></table> 
+                    </div>
                 </div>
                 </div>       
             </div>
         </div>
     </div>
 </body>
-<script type="text/html" id="barDemo">
+<div id="productOrderModal" style="display: none;">
+    <form class="layui-form form-productOrder" action="">
+        <div class="orderType">*订单类型</div>
+        <div class="layui-form-item layui-col-md3">
+            <div class="layui-input-inline">
+            <select name="interest" lay-filter="aihao">
+                <option value="0">单车单</option>
+                <option value="1" selected="">背车单</option>
+            </select>
+            </div>
+        </div>
+        <table class="layui-table" lay-even lay-skin="nob" lay-size="lg">
+            <colgroup>
+                <col width="150">
+                <col width="200">
+                <col>
+            </colgroup>
+            <thead>
+                <tr>
+                <th>昵称</th>
+                <th>加入时间</th>
+                <th>签名</th>
+                </tr> 
+            </thead>
+            <tbody>
+                <tr>
+                <td>贤心</td>
+                <td>2016-11-29</td>
+                <td>人生就像是一场修行</td>
+                </tr>
+                <tr>
+                <td>许闲心</td>
+                <td>2016-11-28</td>
+                <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="layui-row layui-col-space15 page_block">
+            <form lay-filter="form_dispatch" class="layui-col-md12 page-container layui-form">
+                <!-- 头部 -->
+                <div class="page-header border-bottom">
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="title">调度信息</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form_item_container">
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <label class="layui-form-label text_left form_label">司机姓名</label><br>
+                            <div class="layui-input-block">
+                                <input type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <label class="layui-form-label text_left form_label">司机手机</label><br>
+                            <div class="layui-input-block">
+                                <input type="text" name="driverPhone" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <label class="layui-form-label text_left form_label">司机身份证</label><br>
+                            <div class="layui-input-block">
+                                <input disabled type="text" name="driverIdCard" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <label class="layui-form-label text_left form_label">司机驾照</label><br>
+                            <div class="layui-input-block">
+                                <input disabled type="tel" name="driverCertificate" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <label class="layui-form-label text_left form_label">承运公里数</label><br>
+                            <div class="layui-input-block">
+                                <input disabled type="tel" name="driverMileage" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row special-item">
+                        <div class="form_item_inner">
+                            <div class="title_pd">
+                                预付款
+                                <span data-type="preFee" class="add_fee blue pointer">+增加费用</span>
+                            </div>
+                            <div style="padding-left: 10px;">
+                                <div class="layui-inline layui-col-md3">
+                                    <label class="layui-form-label text_left form_label">住宿费：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                    <label class="layui-form-label text_left form_label">洗车费：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                    <label class="layui-form-label text_left form_label">油耗：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row special-item">
+                        <div class="form_item_inner">
+                            <div class="title_pd">
+                                到付款
+                                <span data-type="arriveFee" class="add_fee blue pointer">+增加费用</span>
+                            </div>
+                            <div style="padding-left: 10px;">
+                                <div class="layui-inline layui-col-md3">
+                                    <label class="layui-form-label text_left form_label">回程费：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row special-item">
+                        <div class="form_item_inner">
+                            <div class="title_pd">
+                                尾款
+                                <span data-type="lastFee" class="add_fee blue pointer">+增加费用</span>
+                            </div>
+                            <div style="padding-left: 10px;">
+                                <div class="layui-inline layui-col-md3">
+                                    <label class="layui-form-label text_left form_label">运费：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                    <label class="layui-form-label text_left form_label">油费补贴：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                    <label class="layui-form-label text_left form_label">尾款账期：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="btn_container" class="btn_container">
+                    <div class="layui-row">
+                        <div class="layui-col-md1 text_center layui-col-md-offset5">
+                            <div id="btn_cancel" class="layui-btn layui-btn-primary">取消</div>
+                        </div>
+                        <div class="layui-col-md1 text_center">
+                            <div id="btn_confirm" class="layui-btn layui-btn-normal">确认</div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </form>
+</div>
+<script type="text/html" id="download">
     <a class="handlerDown" lay-event="downLoad">下载</a>
+</script>
+<script type="text/html" id="produceOrder">
+    <a class="handlerDown" lay-event="product">生成订单</a>
 </script>
 <script src="./js/order-import.js"></script>
 

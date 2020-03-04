@@ -9,9 +9,9 @@
     <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
     <link rel="stylesheet" href="../../css/font.css">
     <link rel="stylesheet" href="../../css/xadmin.css">
-    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/route-guidance.css">
+    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
     <script src="../../lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../../js/xadmin.js"></script>
     <script src="../../lib/TableFilter/tableFilter.js"></script>
@@ -25,10 +25,10 @@
 <body>
     <div class="x-nav">
         <span class="layui-breadcrumb">
-            <a>业务管理</a>
-            <a>
-                <cite>线路指引</cite>
-            </a>
+       <a>业务管理</a>
+       <a>
+         <cite>线路指引</cite>
+       </a>
         </span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
             <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
@@ -37,31 +37,25 @@
     <div class="layui-fluid">
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12 page-container">
-                <!-- 头部 -->
-                <div class="page-header border-bottom">
+                <div class="page-header">
                     <div class="layui-row">
                         <div class="layui-col-md6">
-                            <div class="title">线路指引</div>
+                            <div class="title">线路指引列表</div>
                         </div>
                         <div class="layui-col-md6 tr">
-                            <button class="layui-btn layui-bg-blue" onclick="xadmin.open('导出','./list-add.html',600,400)">导出</button>
-                            <button class="layui-btn layui-bg-black" onclick="xadmin.open('表格设置','./list-add.html',600,400)">表格设置</button>
+                            <button class="layui-btn layui-bg-blue produceOrders">导出</button>
+                            <button class="layui-btn layui-bg-black" onclick="xadmin.open('表格设置','./list-add.html',600,400)">导出</button>
                         </div>
                     </div>
                 </div>
-                <table id="demo" lay-filter="test"></table>
+                <table id="routeList" lay-filter="routeList" lay-size="lg"></table> 
             </div>
         </div>
     </div>
 </body>
-<script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit" onclick="xadmin.open('修改司机','./edit.html',1200,600)">修改</a>
-    <a class="layui-btn layui-btn-xs layui-bg-red" lay-event="edit" onclick="xadmin.open('审核司机','./audit.html',1200,600)">审核</a>
-    <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="info" onclick="xadmin.open('查看司机','./info.html',1200,600)">查看</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-    <a class="layui-btn layui-bg-cyan layui-btn-xs" lay-event="del">日志</a>
+<script type="text/html" id="edit">
+    <a class="edit" lay-event="edit">修改</a>
 </script>
-
 <script src="./js/route-guidance.js"></script>
 
 </html>
