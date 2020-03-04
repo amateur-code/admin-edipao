@@ -1,3 +1,13 @@
+// 获取所有司机状态 --同步
+var driverStatusData = {};
+// 	获取所有司机类型 -- 同步
+var driverTypesData = {};
+// 押金状态
+var depositStatusData = {
+    '0':'未支付',
+    '1':'已支付'
+};
+var driveLicenceTypeData = {};
 layui.config({
     base: '../../lib/TableFilter/'
 }).use(['jquery', 'table', 'tableFilter','layer'], function () {
@@ -6,9 +16,8 @@ layui.config({
         layer = layui.layer,
         tableFilter = layui.tableFilter,
         edipao = layui.edipao;
-    // 获取所有司机状态 --同步
-    var driverStatusData = {};
 
+    // 获取所有司机状态
     edipao.request({
         type: 'GET',
         dataType: "JSON",
@@ -16,15 +25,12 @@ layui.config({
         url: '/admin/driver/info/driverStatus',
     }).done(res=>{
         if(res.code == 0){
-            driverStatusData = res.data;;
+            driverStatusData = res.data;
         }else{
             layer.msg(res.message)
         }
     })
-
-    // 	获取所有司机类型 -- 同步
-    var driverTypesData = {};
-
+    // 获取所有司机类型
     edipao.request({
         type: 'GET',
         dataType: "JSON",
@@ -37,11 +43,22 @@ layui.config({
             layer.msg(res.message)
         }
     })
+    // 获取所有驾照类型
+    edipao.request({
+        type: 'GET',
+        dataType: "JSON",
+        url: '/admin/driver/info/licenceType',
+    }).done(res=>{
+        if(res.code == 0){
+            driveLicenceTypeData = res.data;
+        }else{
+            layer.msg(res.message, {icon: 5,anim: 6});
+        }
+    });
 
     var driverList = table.render({
         elem: '#driverList',
-        height: 'full-60',
-        url: ipUrl + '/admin/driver/info/list',
+        url: edipao.API_HOST + '/admin/driver/info/list',
         page: true,
         where: {
             loginStaffId: edipao.getLoginStaffId()
@@ -66,77 +83,85 @@ layui.config({
             {
                 field: 'name', title: '司机姓名',
                 templet: function (data) {
-                    var val = data.name
+                    var val = data.name;
                     return DataNull(val)
                 }
             },
             { field: 'phone', title: '司机手机',
                 templet: function (data) {
-                    var val = data.phone
+                    var val = data.phone;
                     return DataNull(val)
                 }
             },
             { field: 'idNum', title: '司机身份证号',
                 templet: function (data) {
-                    var val = data.idNum
+                    var val = data.idNum;
                     return DataNull(val)
                 }
             },
             { field: 'drivingAge', title: '驾龄',
                 templet: function (data) {
-                    var val = data.drivingAge
-                    return DataNull(val)
+                    var val = data.drivingAge;
+                    if(val!=''&&val!=null){
+                        return val+'年'
+                    }else{
+                        return '--'
+                    }
                 }
             },
             {
                 field: 'driverType', title: '司机类型',
                 templet: function (data) {
-                    var val = data.driverType
+                    var val = data.driverType;
                     return driverTypesData[val] || '--'
                 }
             },
             { field: 'driveLicenceType', title: '驾照类型',
                 templet: function (data) {
-                    var val = data.driveLicenceType
+                    var val = data.driveLicenceType;
                     return DataNull(val)
                 }
             },
-            { field: 'idLicenceValidity', title: '身份证有效期',
+           /* { field: 'idLicenceValidity', title: '身份证有效期',
                 templet: function (data) {
-                    var val = data.idLicenceValidity
+                    var val = data.idLicenceValidity;
                     return DataNull(val)
                 }
             },
             { field: 'driveLicenceValidity', title: '驾照有效期',
                 templet: function (data) {
-                    var val = data.driveLicenceValidity
+                    var val = data.driveLicenceValidity;
                     return DataNull(val)
                 }
             },
             { field: 'qualificationsValidity', title: '从业资格证有效期',
                 templet: function (data) {
-                    var val = data.qualificationsValidity
+                    var val = data.qualificationsValidity;
                     return DataNull(val)
                 }
-            },
+            },*/
             {
                 field: 'status', title: '司机状态',
                 templet: function (data) {
-                    var val = data.status
+                    var val = data.status;
                     return  driverStatusData[val] || '--'
                 }
             },
-            { field: 'address', title: '司机当前住址',
-                templet: function (data) {
-                    var val = data.address
-                    return DataNull(val)
-                }
-            },
+            // { field: 'address', title: '司机当前住址',
+            //     templet: function (data) {
+            //         var val = data.address;
+            //         return DataNull(val)
+            //     }
+            // },
             {
                 field: 'wishJourney', title: '意向线路',
                 templet: function (data) {
-                    var val = JSON.parse(data.wishJourney).length;
-                    return val
+                    var val = data.wishJourney;
+                    if(val!=null&&val!=''){
+                        return JSON.parse(val).length
+                    }else{
+                        return '--'
+                    }
                 }
             },
             { field: 'wishJourney1', title: '常跑线路',
@@ -153,9 +178,9 @@ layui.config({
                     }else{
                         var depositStatusVal = data.depositStatus;
                         if(depositStatusVal=='0'){
-                            return val+'<span style="margin-left: 10px;color: #EE5B22;">未支付</span>'
+                            return val+'元<span style="margin-left: 10px;color: #EE5B22;">未支付</span>'
                         }else  if(depositStatusVal=='1'){
-                            return val+'<span style="margin-left: 10px;color: #3490E9;">已支付</span>'
+                            return val+'元<span style="margin-left: 10px;color: #3490E9;">已支付</span>'
                         }else{
                             return  val
                         }
@@ -192,7 +217,21 @@ layui.config({
             //         return DataNull(val)
             //     }
             // },
-            { title: '操作', toolbar: '#barDemo' }
+            {
+                field: 'audit',title: '操作', width: 350,
+                templet: function (data) {
+                    var val = data.audit;
+                    var html = '';
+                    html += '<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>';
+                    if (val == '0') {
+                        html += '<a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="audit">审核</a>';
+                    }
+                    html += '<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="info">查看</a>';
+                    html += '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+                    html += '<a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="log">日志</a>';
+                    return html
+                }
+            }
         ]],
         done: function (res, curr, count) {
             console.log("监听where:", this.where);
@@ -250,49 +289,60 @@ layui.config({
 
         }
     })*/
+
+
+    table.on('tool(driverList)', function(obj) {
+        let data = obj.data
+        switch (obj.event) {
+            case 'edit':
+                xadmin.open('修改司机', './edit.html?id=' + data.id,1200,600)
+                break;
+            case 'audit':
+                xadmin.open('审核司机', './audit.html?id=' + data.id,1200,600)
+                break;
+            case 'info':
+                xadmin.open('查看司机', './info.html?id=' + data.id,1200,600)
+                break;
+            case 'del':
+                layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
+                    edipao.request({
+                        url: '/admin/driver/info/del',
+                        type: 'GET',
+                        dataType: "JSON",
+                        data: {
+                            driverId:data.id
+                        }
+                    }).then(function(res){
+                        if(res.code == 0){
+                            layer.msg('删除成功')
+                            location.reload();
+                        }else{
+                            layer.msg(res.message)
+                        }
+                    })
+                });
+                break;
+            case 'log':
+                xadmin.open('查看日志', './log.html?id=' + data.id,1200,600)
+                break;
+        };
+    });
+
+    table.on('toolbar(driverList)', function(obj) {
+        switch (obj.event) {
+            case 'add':
+                xadmin.open('新增司机', './add.html', 1200,600)
+                break;
+            case 'warn':
+                xadmin.open('预警设置', './warn.html', 345,370)
+                break;
+            case 'export':
+                layer.msg('导出');
+                break;
+            case 'tableSet':
+                layer.msg('设置');
+                break;
+        };
+    });
+
 });
-
-/*用户-停用*/
-function member_stop (obj, id) {
-    layer.confirm('确认要停用吗？', function (index) {
-
-        if ($(obj).attr('title') == '启用') {
-
-            //发异步把用户状态进行更改
-            $(obj).attr('title', '停用')
-            $(obj).find('i').html('&#xe62f;');
-
-            $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
-            layer.msg('已停用!', { icon: 5, time: 1000 });
-
-        } else {
-            $(obj).attr('title', '启用')
-            $(obj).find('i').html('&#xe601;');
-
-            $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
-            layer.msg('已启用!', { icon: 5, time: 1000 });
-        }
-
-    });
-}
-
-/*用户-删除*/
-function member_del (obj, id) {
-    layer.confirm('确认要删除吗？', function (index) {
-        //发异步删除数据
-        $(obj).parents("tr").remove();
-        layer.msg('已删除!', { icon: 1, time: 1000 });
-    });
-}
-
-
-function delAll (argument) {
-
-    var data = tableCheck.getData();
-
-    layer.confirm('确认要删除吗？' + data, function (index) {
-        //捉到所有被选中的，发异步进行删除
-        layer.msg('删除成功', { icon: 1 });
-        $(".layui-form-checked").not('.header').parents('tr').remove();
-    });
-}

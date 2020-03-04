@@ -99,10 +99,18 @@
         .driver-add .layui-card-header{
             font-weight: bold;
         }
+        #accountCity{
+            width: 100%;
+        }
+
+        .driver-add #accountCity .layui-input-inline{
+            width: 50%;
+            margin-right: 0px;
+        }
     </style>
 </head>
 <body>
-<div class="layui-fluid driver-add" style="padding: 0">
+<div class="layui-fluid driver-add">
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <form class="layui-form">
@@ -277,7 +285,7 @@
                             <div class="layui-form-item">
                                 <div><span class="x-red">*</span>司机类型</div>
                                 <div class="layui-input-block">
-                                    <select name="driverType" id="driverType">
+                                    <select name="driverType" id="driverType"  lay-verify="driverTypeVerify">
                                         <option value=""></option>
                                     </select>
                                 </div>
@@ -287,7 +295,7 @@
                             <div class="layui-form-item">
                                 <div><span class="x-red">*</span>驾照类型</div>
                                 <div class="layui-input-block">
-                                    <select name="driveLicenceType" id="driveLicenceType">
+                                    <select name="driveLicenceType" id="driveLicenceType" lay-verify="driveLicenceTypeVerify">
                                         <option value=""></option>
                                     </select>
                                 </div>
@@ -337,7 +345,7 @@
                             <div class="layui-form-item">
                                 <div><span class="x-red">*</span>状态</div>
                                 <div class="layui-input-block">
-                                    <select name="status" id="status">
+                                    <select name="status" id="status" lay-verify="statusVerify">
                                         <!--<option value="0" selected="">已解约</option>
                                         <option value="1" >已屏蔽</option>-->
                                     </select>
@@ -369,7 +377,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="layui-col-md4 layui-hide" style="display: none">
+                        <div class="layui-col-md4 layui-hide" id="depositTradeNumberDiv">
                             <div class="layui-form-item">
                                 <div><span class="x-red">*</span>押金支付流水号</div>
                                 <div class="layui-input-block">
@@ -406,14 +414,25 @@
                                 </div>
                             </div>
                         </div>
-                        <!--<div class="layui-col-md4">
+                        <div class="layui-col-md4">
                             <div class="layui-form-item">
                                 <div>开户省市</div>
                                 <div class="layui-input-block">
-                                    <input type="text" name="fullname" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                                    <div class="x-city" id="accountCity">
+                                        <div class="layui-input-inline">
+                                            <select name="province" lay-filter="province">
+                                                <option value="">请选择省</option>
+                                            </select>
+                                        </div>
+                                        <div class="layui-input-inline">
+                                            <select name="city" lay-filter="city">
+                                                <option value="">请选择市</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>-->
+                        </div>
                         <div class="layui-col-md4">
                             <div class="layui-form-item">
                                 <div>开户行地址</div>
