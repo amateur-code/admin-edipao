@@ -134,7 +134,7 @@
             if (res.code == 0) {
                 var getTpl = demo.innerHTML,
                 view = document.getElementById('view');
-				laytpl(getTpl).render({name:'test',list:res.data}, function(html){
+				laytpl(getTpl).render({list:res.data}, function(html){
 				  view.innerHTML = html;
 				});
 				form.render();

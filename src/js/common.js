@@ -31,7 +31,7 @@ layui.define([], function(exports) {
 
     Common.prototype.tokenExpired = function() {
       layui.sessionData('user',null);
-      location.href = '../Login/login.html';
+      window.top.goToLogin();
     }
 
     Common.prototype.getLoginStaffId = function() {
