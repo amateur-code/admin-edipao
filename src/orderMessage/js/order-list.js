@@ -425,12 +425,11 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
         var tr = obj.tr; //获得当前行 tr 的DOM对象
         if (layEvent === 'edit') { //编辑
-            console.log(0)
-            xadmin.add_tab('修改订单', '../order-edit.html?id=' + data.id);
+            top.xadmin.add_tab('修改订单', 'orderMessage/order-edit.html?action=edit&orderId=' + data.orderNo);
         } else if (layEvent === 'audit') {//审核
             xadmin.open('审核', './demo-view.html?id=' + data.id, 1024, 600);
         } else if (layEvent === 'view') {//查看
-            xadmin.open('查看', './demo-view.html?id=' + data.id, 1024, 600);
+            top.xadmin.add_tab('查看订单', 'orderMessage/order-edit.html?action=see&orderId=' + data.orderNo);
         } else if (layEvent === 'cancel') {//取消
             xadmin.open('取消', './demo-view.html?id=' + data.id, 1024, 600);
         } else if (layEvent === 'log') {//日志
