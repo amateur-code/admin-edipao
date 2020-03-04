@@ -14,6 +14,9 @@
 .text_left {
   text-align: left !important;
 }
+.text_center {
+  text-align: center !important;
+}
 .form_label {
   padding-left: 0 !important;
 }
@@ -40,6 +43,9 @@
 .fee_container .fee_footer {
   padding-top: 10px;
   border-top: 1px solid #EFEEF0;
+}
+.btn_container {
+  margin-bottom: 20px;
 }
 .blue {
   color: #3490E9;

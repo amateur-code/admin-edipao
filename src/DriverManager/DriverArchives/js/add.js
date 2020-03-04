@@ -1,7 +1,8 @@
 layui.use(['jquery', 'upload','form','laydate'], function(){
     var $ = layui.jquery,
         laydate = layui.laydate,
-        upload = layui.upload;
+        upload = layui.upload,
+        edipao = layui.edipao;
     form = layui.form;
     // 自定义验证规则
     form.verify({
@@ -172,7 +173,6 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
                 url: ipUrl+'/admin/driver/info/save',
                 data:param,
                 success: function (data){
-                    debugger
                     var code = data.code;
                     if(code=='0'){
                         layer.alert("增加成功", {icon: 6},
@@ -193,42 +193,78 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             return false;
         });
     // 身份证-正
-    uploadImg('idLicenceFrontImg');
+    uploadImg('idLicenceFrontImg',{'imgType':1,'side':'face'},function (data) {
+        var val = data.data.ocrData;
+        $('#name').val(val.name); // 司机姓名
+        $('#accountName').val(val.name); //银行账户名
+        $('#idNum').val(val.idNum); // 身份证号码
+        $('#address').val(val.address);  // 住址
+    });
     // 身份证-反
-    uploadImg('idLicenceBackImg');
+    uploadImg('idLicenceBackImg',{'imgType':1,'side':'back'},function (data) {
+        var endDate = data.data.ocrData.endDate;
+         if(endDate!=null&&endDate!=''){
+             var dateFormat = getFormatDate(endDate);
+             $('#idLicenceValidity').val(dateFormat); // 身份证有效期
+         }
+    });
     // 驾驶证-正
-    uploadImg('driveLicenceFrontImg');
+    uploadImg('driveLicenceFrontImg',{'imgType':2,'side':'face'},function (data) {
+        var val = data.data.ocrData;
+        var vehicleType = val.vehicleType; //驾照类型
+        $('#driveLicenceType').val(vehicleType);
+        form.render('select');
+        var issueDate = val.issueDate; // 驾龄计算
+        if(issueDate!=null&&issueDate!=''){
+            var startDateStr = getFormatDate(issueDate);
+            var endDateStr = getNowFormatDate();//当前时间
+            var year = getDateYearSub(startDateStr, endDateStr);// 驾龄计算差值
+            $('#drivingAge').val(year);
+        }
+        var endDate = val.endDate; // 驾照有效期
+        if(endDate!=null&&endDate!=''){
+            var dateFormat = getFormatDate(endDate);
+            $('#driveLicenceValidity').val(dateFormat); // 驾照有效期
+        }
+    });
     // 驾驶证-反
-    uploadImg('driveLicenceBackImg');
+    uploadImg('driveLicenceBackImg',{'imgType':2,'side':'back'},function (data) {
+        debugger
+    });
     // 从业资格证-正
-    uploadImg('qualificationsFrontImg');
+    uploadImg('qualificationsFrontImg',{'imgType':3,'side':'face'});
     // 从业资格证-反
-    uploadImg('qualificationsBackImg');
+    uploadImg('qualificationsBackImg',{'imgType':3,'side':'back'});
     // 运输协议1
-    uploadImg('transportProtocolImg1');
+    uploadImg('transportProtocolImg1',{'imgType':4});
     // 运输协议2
-    uploadImg('transportProtocolImg2');
+    uploadImg('transportProtocolImg2',{'imgType':4});
     // 头像
-    uploadImg('avatarImg');
+    uploadImg('avatarImg',{'imgType':5});
 
     // 图片上传
-    function uploadImg(id){
+    function uploadImg(id,options,callback){
+        options.loginStaffId = edipao.getLoginStaffId();
         upload.render({
             elem: '#'+id+'Div'
-            ,url: ipUrl+'/admin/driver/info/uploadImg?staffId=17718571615'
+            ,url: ipUrl+'/admin/driver/info/uploadImg'
             ,size: 1024*5
+            ,data:options
             ,accept: 'images' //只允许上传图片
             ,acceptMime: 'image/*' //只筛选图片
             ,done: function(res){
-                debugger
                 if(res.code=='0'){
                     layer.msg('上传成功', {icon: 6,anim: 6});
                     $('#'+id+'Div').children('i').hide();
                     $('#'+id+'Div').children('p').hide();
-                    $('#'+id+'View').removeClass('layui-hide').find('img').attr('src', res.data);
-                    $('#'+id).val(res.data)
+                    $('#'+id+'View').removeClass('layui-hide').find('img').attr('src', res.data.imgUrl);
+                    $('#'+id).val(res.data.imgUrl);
+
+                    if (callback && typeof(callback) === "function") {
+                        callback(res);
+                    }
                 }else{
-                    layer.msg(data.message, {icon: 5,anim: 6});
+                    layer.msg(res.message, {icon: 5,anim: 6});
                 }
             }
         });
@@ -246,56 +282,71 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         });
     };
     // 获取所有司机状态
-    $.ajax({
-        type: "GET",
+    edipao.request({
+        type: 'GET',
         dataType: "JSON",
-        url: ipUrl+'/admin/driver/info/driverStatus?staffId=17718571615',
-        success: function (data){
-            debugger
-            var code = data.code;
-            if(code=='0'){
-            }else{
-                layer.msg(data.message, {icon: 5,anim: 6});
+        url: '/admin/driver/info/driverStatus',
+    }).done(res=>{
+        if(res.code == 0){
+            var option = "<option value=''>请选择状态</option>";
+            var datas = res.data;
+            for(var i in datas){
+                if(datas[i] =='待命中'){
+                    option+="<option value='"+i+"' selected='''>"+datas[i]+"</option>";
+                }else{
+                    option+="<option value='"+i+"'>"+datas[i]+"</option>";
+                }
             }
-        },
-        error: function (data) {
-
+            $("#status").html(option);
+            form.render('select');
+        }else{
+            layer.msg(res.message)
         }
     });
+
     // 	获取所有司机类型
-    $.ajax({
-        type: "GET",
+    edipao.request({
+        type: 'GET',
         dataType: "JSON",
-        url: ipUrl+'/admin/driver/info/driverTypes?staffId=17718571615',
-        success: function (data){
-            debugger
-            var code = data.code;
-            if(code=='0'){
-            }else{
-                layer.msg(data.message, {icon: 5,anim: 6});
-            }
-        },
-        error: function (data) {
+        url: '/admin/driver/info/driverTypes',
+    }).done(res=>{
+        if(res.code == 0){
+            var option = "<option value=''>请选择司机类型</option>";
+            var datas = res.data;
+            for(var i in datas){
+                if(datas[i] =='外调'){
+                    option+="<option value='"+i+"' selected='''>"+datas[i]+"</option>";
+                }else{
+                    option+="<option value='"+i+"'>"+datas[i]+"</option>";
+                }
 
+            }
+            $("#driverType").html(option);
+            form.render('select');
+        }else{
+            layer.msg(res.message)
         }
     });
+
     // 	获取所有驾照类型
-    $.ajax({
-        type: "GET",
+    edipao.request({
+        type: 'GET',
         dataType: "JSON",
-        url: ipUrl+'/admin/driver/info/licenceType?staffId=17718571615',
-        success: function (data){
-            debugger
-            var code = data.code;
-            if(code=='0'){
-            }else{
-                layer.msg(data.message, {icon: 5,anim: 6});
+        url: '/admin/driver/info/licenceType',
+    }).done(res=>{
+        if(res.code == 0){
+            var option = "<option value=''>请选择驾照类型</option>";
+            var datas = res.data;
+            for(var i in datas){
+                option+="<option value='"+datas[i]+"'>"+datas[i]+"</option>";
             }
-        },
-        error: function (data) {
-
+            $("#driveLicenceType").html(option);
+            form.render('select');
+        }else{
+            layer.msg(res.message)
         }
     });
+
     // 添加心愿路线
     $('#addWishJourney').click(function () {
         $('.no-data').hide()
@@ -340,7 +391,7 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         xadmin.close();
         return false;
     });
-
+    // 查看图例
     showImg =function(t) {
         var src = $(t).attr('data-src');
         //页面层
@@ -352,7 +403,16 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             shadeClose: true,
             content: '<div style="overflow: hidden;background: url(' + src +' ) no-repeat center;width:216px;height: 156px;background-size: 216px 200px;"></div>'
         });
-    }
+    };
+
+    // 押金状态
+    form.on('select(depositStatusFilter)', function(data){
+        if(data.value =='0'||data.value ==''){
+            $("#depositTradeNumberDiv").hide();
+        }else{
+            $("#depositTradeNumberDiv").show();
+        }
+    });
 });
 // 移除
 function removeWishJourney (_this) {
