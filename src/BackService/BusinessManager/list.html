@@ -28,9 +28,9 @@
 <body>
     <div class="x-nav">
         <span class="layui-breadcrumb">
-            <a>系统设置</a>
+            <a>后服管理</a>
             <a>
-                <cite>员工管理</cite>
+                <cite>供应商档案</cite>
             </a>
         </span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
@@ -41,8 +41,8 @@
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12">
                 <div class="layui-card">
-                    <div class="layui-card-body" id="doc-content">
-                        <table id="staffList" lay-filter="staffList"></table>
+                    <div class="layui-card-body">
+                        <table id="list" lay-filter="list"></table>
                     </div>
                 </div>
             </div>
@@ -56,73 +56,90 @@
       </div>
     </script>
     <script type="text/html" id="rowBtns">
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="permission">授权</a>
+
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">修改</a>
+        {{# if(d.needApproval){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="check">审核</a>
+        {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="preview">查看</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="trade-record">交易记录</a>
     </script>
     <script type="text/javascript">
     layui.use(['table', 'layer'], function(table, layer) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao;
+            SupplierTypeConfig = {};
+        edipao.request({
+            type: 'get',
+            url: '/admin/supplier/getSupplierType'
+        }).then(function(res) {
+            if (res.code == 0) {
+               layui.each(res.data,function(index, el) {
+                   SupplierTypeConfig[el.code] = el.name
+               });
+               renderTable();
+            }
+        })
 
-        table.render({
-            elem: '#staffList',
-            url: edipao.API_HOST + '/admin/staff/list',
-            request: {
-                pageName: 'pageNo',
-                limitName: 'pageSize'
-            },
-            where: {
-                loginStaffId: edipao.getLoginStaffId()
-            },
-            parseData: function(res) { //res 即为原始返回的数据
-                return {
-                    code: res.code, //解析接口状态
-                    msg: res.message, //解析提示文本
-                    count: res.data.totalSize, //解析数据长度
-                    data: res.data.staffDtoList //解析数据列表
-                };
-            },
-            page: true,
-            cols: [
-                [ //表头
-                    { checkbox: true },
-                    { field: 'name', title: '员工姓名' },
-                    { field: 'phone', title: '员工手机' },
-                    { field: 'idCard', title: '身份证号码' },
-                    { field: 'dept', title: '所属部门' },
-                    { field: 'cardNo', title: '员工工号' },
-                    { field: 'positions', title: '员工职位' },
-                    { field: 'roleNames', title: '拥有权限' },
-                    { field: 'status', title: '状态' },
-                    { title: '操作', toolbar: '#rowBtns', width: 350 }
-                ]
-            ],
-            toolbar: '#headerBtns',
-            defaultToolbar: []
-        });
+        function renderTable(){
+            table.render({
+                elem: '#list',
+                url: edipao.API_HOST + '/admin/supplier/list',
+                request: {
+                    pageName: 'pageNo',
+                    limitName: 'pageSize'
+                },
+                where: {
+                    loginStaffId: edipao.getLoginStaffId()
+                },
+                parseData: function(res) { //res 即为原始返回的数据
+                    return {
+                        code: res.code, //解析接口状态
+                        msg: res.message, //解析提示文本
+                        count: res.data.totalSize, //解析数据长度
+                        data: res.data.supplierRespList //解析数据列表
+                    };
+                },
+                page: true,
+                cols: [
+                    [ //表头
+                        { checkbox: true },
+                        { field: 'supplierName', title: '供应商名称',width: 200 },
+                        { field: 'loginPhone', title: '登录手机号',width: 200 },
+                        { field: 'contractName', title: '联系人',width: 200 },
+                        { field: 'supplierType', title: '类型',width: 200,templet:function(d){
+                            return SupplierTypeConfig[d.supplierType]
+                        }},
+                        { field: 'productCount', title: '合作产品/网点',width: 200 },
+                        { field: 'statusDesc', title: '状态',width: 100 },
+                        { title: '操作', toolbar: '#rowBtns', width: 400 }
+                    ]
+                ],
+                toolbar: '#headerBtns',
+                defaultToolbar: []
+            });
+        }
 
-        table.on('tool(staffList)', function(obj) {
+        table.on('tool(list)', function(obj) {
             let data = obj.data
             switch (obj.event) {
-                case 'permission':
-                    xadmin.open('授权', './add-role.html?id=' + data.staffId, 600, 600)
-                    break;
                 case 'edit':
-                    xadmin.open('修改员工', './edit.html?id=' + data.staffId, 600, 600)
+                    xadmin.open('修改供应商', './edit.html?id=' + data.supplierNo)
+                    break;
+                case  'check':
+                    xadmin.open('审核供应商', './check.html?id=' + data.supplierNo)
                     break;
                 case 'preview':
-                    xadmin.open('员工信息', './preview.html?id=' + data.staffId, 600, 600)
+                    xadmin.open('员工信息', './preview.html?id=' + data.supplierNo)
                     break;
                 case 'delete':
                     layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
-
                         edipao.request({
-                            url: '/admin/staff/delete',
+                            url: '/admin/supplier/del',
                             data: {
-                                staffId: data.staffId
+                                supplierNo: data.supplierNo
                             }
                         }).then(function(res){
                             if(res.code == 0){
@@ -136,21 +153,22 @@
                     });
                     break;
                 case 'log':
-                    xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.staffId + '&type=5');    
+                    xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.supplierNo + '&type=1');
+                    break;
+                case 'trade-record':
+                    xadmin.open('交易记录', './trade-record.html?id=' + data.supplierNo)
                     break;
             };
         });
 
-        table.on('toolbar(staffList)', function(obj) {
+        table.on('toolbar(list)', function(obj) {
             switch (obj.event) {
                 case 'add':
-                    xadmin.open('添加员工', './add.html', 600, 600)
+                    xadmin.open('新增供应商', './add.html')
                     break;
                 case 'export':
-                    layer.msg('删除');
                     break;
                 case 'tableSet':
-                    layer.msg('编辑');
                     break;
             };
         });

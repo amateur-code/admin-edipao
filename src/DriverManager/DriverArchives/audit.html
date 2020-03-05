@@ -12,7 +12,8 @@
     <script src="../../lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../../js/xadmin.js"></script>
     <script src="../../js/common.js"></script>
-    <script src="js/xcity.js"></script>
+    <script src="js/info.js"></script>
+    <script src="js/audit.js"></script>
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
@@ -107,7 +108,7 @@
     </style>
 </head>
 <body>
-<div class="layui-fluid driver-add" style="padding: 0">
+<div class="layui-fluid driver-add">
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <form class="layui-form">
@@ -123,24 +124,24 @@
                                             <div>
                                                 <div class="layui-upload-drag-title">正面<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/front.png">查看示例图</span></div>
                                                 <div class="layui-upload-drag" id="idLicenceFrontImgDiv">
-                                                    <!--<i class="upload-bg"></i>
-                                                    <p>点击上传</p>-->
-                                                    <div id="idLicenceFrontImgView">
-                                                        <img src="http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/driver/image/5e5b19b8a9f9b71c1f9cad8e.jpg" alt="上传成功后渲染" style="max-width: 130px">
+                                                    <i class="upload-bg"></i>
+                                                    <!--<p>点击上传</p>-->
+                                                    <div id="idLicenceFrontImgView" class="layui-hide">
+                                                        <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                                     </div>
-                                                    <input type="text" name="idLicenceFrontImg" id="idLicenceFrontImg" lay-verify="idLicenceFrontImgVerify" placeholder="" autocomplete="off" class="layui-hide">
+                                                    <input type="text"  id="idLicenceFrontImg" lay-verify="idLicenceFrontImgVerify" placeholder="" autocomplete="off" class="layui-hide">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="layui-col-md6 layui-text-align">
                                             <div class="layui-upload-drag-title">背面<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/back.png">查看示例图</span></div>
                                             <div class="layui-upload-drag" id="idLicenceBackImgDiv">
-                                                <!--<i class="upload-bg"></i>
-                                                <p>点击上传</p>-->
-                                                <div  id="idLicenceBackImgView">
-                                                    <img src="http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/driver/image/5e5b19b8a9f9b71c1f9cad8e.jpg" alt="上传成功后渲染" style="max-width: 130px">
+                                                <i class="upload-bg"></i>
+                                                <!--<p>点击上传</p>-->
+                                                <div  id="idLicenceBackImgView" class="layui-hide">
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                                 </div>
-                                                <input type="text" name="idLicenceBackImg" id="idLicenceBackImg" lay-verify="idLicenceBackImgVerify" placeholder="" autocomplete="off" class="layui-hide">
+                                                <input type="text"  id="idLicenceBackImg" lay-verify="idLicenceBackImgVerify" placeholder="" autocomplete="off" class="layui-hide">
 
                                             </div>
                                         </div>
@@ -152,23 +153,23 @@
                                         <div class="layui-col-md6 layui-text-align">
                                             <div class="layui-upload-drag-title">正本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/front.png">查看示例图</span></div>
                                             <div class="layui-upload-drag" id="driveLicenceFrontImgDiv">
-                                                <!-- <i class="upload-bg"></i>
-                                                 <p>点击上传</p>-->
-                                                <div  id="driveLicenceFrontImgView">
-                                                    <img src="http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/driver/image/5e5b19b8a9f9b71c1f9cad8e.jpg" alt="上传成功后渲染" style="max-width: 130px">
+                                                <i class="upload-bg"></i>
+                                                <!--<p>点击上传</p>-->
+                                                <div  id="driveLicenceFrontImgView" class="layui-hide">
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                                 </div>
-                                                <input type="text" name="driveLicenceFrontImg" id="driveLicenceFrontImg" lay-verify="driveLicenceFrontImgVerify" placeholder="" autocomplete="off" class="layui-hide">
+                                                <input type="text"  id="driveLicenceFrontImg" lay-verify="driveLicenceFrontImgVerify" placeholder="" autocomplete="off" class="layui-hide">
                                             </div>
                                         </div>
                                         <div class="layui-col-md6 layui-text-align">
                                             <div class="layui-upload-drag-title">副本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/back.png">查看示例图</span></div>
                                             <div class="layui-upload-drag" id="driveLicenceBackImgDiv">
-                                                <!--<i class="upload-bg"></i>
-                                                <p>点击上传</p>-->
-                                                <div id="driveLicenceBackImgView">
-                                                    <img src="http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/driver/image/5e5b19b8a9f9b71c1f9cad8e.jpg" alt="上传成功后渲染" style="max-width: 130px">
+                                                <i class="upload-bg"></i>
+                                                <!--<p>点击上传</p>-->
+                                                <div id="driveLicenceBackImgView" class="layui-hide">
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                                 </div>
-                                                <input type="text" name="driveLicenceBackImg" id="driveLicenceBackImg" lay-verify="driveLicenceBackImgVerify" placeholder="" autocomplete="off" class="layui-hide">
+                                                <input type="text"  id="driveLicenceBackImg" lay-verify="driveLicenceBackImgVerify" placeholder="" autocomplete="off" class="layui-hide">
                                             </div>
                                         </div>
                                     </div>
@@ -179,12 +180,12 @@
                                         <div class="layui-col-md12 layui-text-align">
                                             <div class="layui-upload-drag-title">&nbsp;</div>
                                             <div class="layui-upload-drag" id="avatarImgDiv">
-                                                <!--<i class="upload-bg"></i>
-                                                <p>点击上传</p>-->
-                                                <div id="avatarImgView">
-                                                    <img src="http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/driver/image/5e5b19b8a9f9b71c1f9cad8e.jpg" alt="上传成功后渲染" style="max-width: 130px">
+                                                <i class="upload-bg"></i>
+                                                <!--<p>点击上传</p>-->
+                                                <div id="avatarImgView" class="layui-hide">
+                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                                 </div>
-                                                <input type="text" name="avatarImg" id="avatarImg"  placeholder="" autocomplete="off" class="layui-hide">
+                                                <input type="text"  id="avatarImg"  placeholder="" autocomplete="off" class="layui-hide">
                                             </div>
                                         </div>
                                     </div>
@@ -198,24 +199,24 @@
                                     <div>
                                         <div class="layui-upload-drag-title">正本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/front.png">查看示例图</span></div>
                                         <div class="layui-upload-drag" id="qualificationsFrontImgDiv">
-                                            <!--  <i class="upload-bg"></i>
-                                              <p>点击上传</p>-->
-                                            <div id="qualificationsFrontImgView">
-                                                <img src="http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/driver/image/5e5b19b8a9f9b71c1f9cad8e.jpg" alt="上传成功后渲染" style="max-width: 130px">
+                                            <i class="upload-bg"></i>
+                                            <!--<p>点击上传</p>-->
+                                            <div id="qualificationsFrontImgView" class="layui-hide">
+                                                <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                             </div>
-                                            <input type="text" name="qualificationsFrontImg" id="qualificationsFrontImg" lay-verify="qualificationsFrontImgVerify"  placeholder="" autocomplete="off" class="layui-hide">
+                                            <input type="text"  id="qualificationsFrontImg" lay-verify="qualificationsFrontImgVerify"  placeholder="" autocomplete="off" class="layui-hide">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="layui-col-md6 layui-text-align">
                                     <div class="layui-upload-drag-title">副本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/back.png">查看示例图</span></div>
                                     <div class="layui-upload-drag" id="qualificationsBackImgDiv">
-                                        <!--<i class="upload-bg"></i>
-                                        <p>点击上传</p>-->
-                                        <div  id="qualificationsBackImgView">
-                                            <img src="http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/driver/image/5e5b19b8a9f9b71c1f9cad8e.jpg" alt="上传成功后渲染" style="max-width: 130px">
+                                        <i class="upload-bg"></i>
+                                        <!--<p>点击上传</p>-->
+                                        <div  id="qualificationsBackImgView" class="layui-hide">
+                                            <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                         </div>
-                                        <input type="text" name="qualificationsBackImg" id="qualificationsBackImg" lay-verify="qualificationsBackImgVerify"  placeholder="" autocomplete="off" class="layui-hide">
+                                        <input type="text"  id="qualificationsBackImg" lay-verify="qualificationsBackImgVerify"  placeholder="" autocomplete="off" class="layui-hide">
                                     </div>
                                 </div>
                             </div>
@@ -226,23 +227,23 @@
                                 <div class="layui-col-md6 layui-text-align">
                                     <div class="layui-upload-drag-title">协议1</div>
                                     <div class="layui-upload-drag" id="transportProtocolImg1Div">
-                                        <!--<i class="upload-bg"></i>
-                                        <p>点击上传</p>-->
-                                        <div id="transportProtocolImg1View">
-                                            <img src="http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/driver/image/5e5b19b8a9f9b71c1f9cad8e.jpg" alt="上传成功后渲染" style="max-width: 130px">
+                                        <i class="upload-bg"></i>
+                                        <!--<p>点击上传</p>-->
+                                        <div id="transportProtocolImg1View" class="layui-hide">
+                                            <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                         </div>
-                                        <input type="text" name="transportProtocolImg1" id="transportProtocolImg1"  placeholder="" autocomplete="off" class="layui-hide">
+                                        <input type="text"  id="transportProtocolImg1"  placeholder="" autocomplete="off" class="layui-hide">
                                     </div>
                                 </div>
                                 <div class="layui-col-md6 layui-text-align">
                                     <div class="layui-upload-drag-title">协议2</div>
                                     <div class="layui-upload-drag" id="transportProtocolImg2Div">
-                                        <!--<i class="upload-bg"></i>
-                                        <p>点击上传</p>-->
-                                        <div  id="transportProtocolImg2View">
-                                            <img src="http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/driver/image/5e5b19b8a9f9b71c1f9cad8e.jpg" alt="上传成功后渲染" style="max-width: 130px">
+                                        <i class="upload-bg"></i>
+                                        <!--<p>点击上传</p>-->
+                                        <div  id="transportProtocolImg2View" class="layui-hide">
+                                            <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
                                         </div>
-                                        <input type="text" name="transportProtocolImg2" id="transportProtocolImg2"  placeholder="" autocomplete="off" class="layui-hide">
+                                        <input type="text"  id="transportProtocolImg2"  placeholder="" autocomplete="off" class="layui-hide">
                                     </div>
                                 </div>
                             </div>
@@ -256,7 +257,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">司机姓名：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" id="name">张三</span>
+                                    <span class="name-color" id="name"></span>
                                 </div>
                             </div>
                         </div>
@@ -264,7 +265,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">司机手机：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="phone" id="phone">138 xxxx xxxx</span>
+                                    <span class="name-color" name="phone" id="phone"></span>
                                 </div>
                             </div>
                         </div>
@@ -272,7 +273,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">身份证号：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="idNum" id="idNum">427342 xxxxxxxx xxxx</span>
+                                    <span class="name-color" name="idNum" id="idNum"></span>
                                 </div>
                             </div>
                         </div>
@@ -280,7 +281,7 @@
                             <div class="layui-form-item">
                                 <label  class="layui-form-label">司机类型：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="driverType" id="driverType">外调</span>
+                                    <span class="name-color" name="driverType" id="driverType"></span>
                                 </div>
                             </div>
                         </div>
@@ -288,7 +289,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">驾照类型：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="driveLicenceType" id="driveLicenceType">A1</span>
+                                    <span class="name-color" name="driveLicenceType" id="driveLicenceType"></span>
                                 </div>
                             </div>
                         </div>
@@ -296,7 +297,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">驾龄：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="drivingAge" id="drivingAge">10年</span>
+                                    <span class="name-color" name="drivingAge" id="drivingAge"></span><span style="margin-left: 5px">年</span>
                                 </div>
                             </div>
                         </div>
@@ -304,7 +305,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">身份证有效期：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="idLicenceValidity" id="idLicenceValidity">2020-03-30</span>
+                                    <span class="name-color" name="idLicenceValidity" id="idLicenceValidity"></span>
                                 </div>
                             </div>
                         </div>
@@ -312,7 +313,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">驾驶证有效期：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="driveLicenceValidity" id="driveLicenceValidity">2020-03-30</span>
+                                    <span class="name-color" name="driveLicenceValidity" id="driveLicenceValidity"></span>
                                 </div>
                             </div>
                         </div>
@@ -320,7 +321,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">从业资格证有效期：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="qualificationsValidity" id="qualificationsValidity">2020-03-30</span>
+                                    <span class="name-color" name="qualificationsValidity" id="qualificationsValidity"></span>
                                 </div>
                             </div>
                         </div>
@@ -328,7 +329,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">当前住址：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="address" id="address">长春市绿园区解放路1000号</span>
+                                    <span class="name-color" name="address" id="address"></span>
                                 </div>
                             </div>
                         </div>
@@ -336,7 +337,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">状态：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="status" id="status">工作中</span>
+                                    <span class="name-color" name="status" id="status"></span>
                                 </div>
                             </div>
                         </div>
@@ -349,7 +350,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">押金金额：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="deposit" id="deposit">200元</span>
+                                    <span class="name-color" name="deposit" id="deposit"></span><span style="margin-left: 5px">元</span>
                                 </div>
                             </div>
                         </div>
@@ -357,15 +358,15 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">押金状态：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="depositStatus" id="depositStatus">已支付</span>
+                                    <span class="name-color" name="depositStatus" id="depositStatus"></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="layui-col-md4">
+                        <div class="layui-col-md4 layui-hide" id="depositTradeNumberDiv">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">支付流水：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="depositStatus1" id="depositStatus1">427342 xxxxxxxx xxxx</span>
+                                    <span class="name-color" name="depositTradeNumber" id="depositTradeNumber"></span>
                                 </div>
                             </div>
                         </div>
@@ -378,7 +379,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">银行卡账户：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="accountName" id="accountName">张三</span>
+                                    <span class="name-color" name="accountName" id="accountName"></span>
                                 </div>
                             </div>
                         </div>
@@ -386,7 +387,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">银行卡账号：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="accountNumber" id="accountNumber">4242 8838 3988 2323</span>
+                                    <span class="name-color" name="accountNumber" id="accountNumber"></span>
                                 </div>
                             </div>
                         </div>
@@ -394,23 +395,23 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">开户银行：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="accountBank" id="accountBank">招商银行广州白云支行</span>
+                                    <span class="name-color" name="accountBank" id="accountBank"></span>
                                 </div>
                             </div>
                         </div>
-                        <!--<div class="layui-col-md4">
+                        <div class="layui-col-md4">
                             <div class="layui-form-item">
-                                <div>开户省市</div>
+                                <label class="layui-form-label">开户省市：</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="fullname" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                                    <span class="name-color" name="accountCity" id="accountCity"></span>
                                 </div>
                             </div>
-                        </div>-->
+                        </div>
                         <div class="layui-col-md4">
                             <div class="layui-form-item">
                                 <label class="layui-form-label">开户行地址：</label>
                                 <div class="layui-input-block">
-                                    <span class="name-color" name="accountBankAddress" id="accountBankAddress">广州市白云区白云大道100000号</span>
+                                    <span class="name-color" name="accountBankAddress" id="accountBankAddress"></span>
                                 </div>
                             </div>
                         </div>
@@ -420,42 +421,7 @@
                     <div class="layui-card-header">心愿线路</div>
                     <div class="layui-card-body layui-row layui-col-space10">
                         <div class="layui-col-md12" id="wishJourney">
-                            <div class="layui-row">
-                                <div class="layui-col-md3">
-                                    <div class="layui-form-item">
-                                        <label class="layui-form-label">始发地：</label>
-                                        <div class="layui-input-block">
-                                            <span class="name-color">吉林省长春市</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-col-md3">
-                                    <div class="layui-form-item">
-                                        <label class="layui-form-label">目的地：</label>
-                                        <div class="layui-input-block">
-                                            <span class="name-color">广东省全省</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="layui-row">
-                                <div class="layui-col-md3">
-                                    <div class="layui-form-item">
-                                        <label class="layui-form-label">始发地：</label>
-                                        <div class="layui-input-block">
-                                            <span class="name-color">吉林省长春市</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-col-md3">
-                                    <div class="layui-form-item">
-                                        <label class="layui-form-label">目的地：</label>
-                                        <div class="layui-input-block">
-                                            <span class="name-color">北京市北京市</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="no-data">暂无数据</div>
                         </div>
                     </div>
                 </div>
@@ -466,8 +432,8 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label"  style="width: 80px"><span class="x-red">*</span>审核结果：</label>
                                 <div class="layui-input-block">
-                                    <input type="radio" name="sex" value="nan" title="通过" checked>
-                                    <input type="radio" name="sex" value="nv" title="驳回">
+                                    <input type="radio" name="approvalResult" value="0" title="通过" checked>
+                                    <input type="radio" name="approvalResult" value="1" title="驳回">
                                 </div>
                             </div>
                         </div>
@@ -475,7 +441,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label" style="width: 80px">审核备注：</label>
                                 <div class="layui-input-block">
-                                    <textarea placeholder="请输入审核备注" class="layui-textarea"></textarea>
+                                    <textarea placeholder="请输入审核备注" class="layui-textarea" name="approvalRemark"></textarea>
                                 </div>
                             </div>
                         </div>

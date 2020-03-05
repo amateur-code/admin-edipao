@@ -136,7 +136,4 @@ layui.use(['layer','element'],function(layer,element) {
 
     // 页面加载完要做的
     xadmin.end();
-
-
-
 })

@@ -2,7 +2,8 @@ layui.use(['form', 'layer'],
     function() {
         $ = layui.jquery;
         var form = layui.form,
-            layer = layui.layer;
+            layer = layui.layer,
+            edipao = layui.edipao;
         //自定义验证规则
         form.verify({
             day: function (value) {
@@ -43,18 +44,23 @@ layui.use(['form', 'layer'],
         //监听提交
         form.on('submit(add)',
             function (data) {
-                console.log(data);
-                //发异步，把数据提交给php
-                layer.alert("增加成功", {
-                        icon: 6
-                    },
-                    function () {
-                        //关闭当前frame
-                        xadmin.close();
-
-                        // 可以对父窗口进行刷新
-                        xadmin.father_reload();
-                    });
+                edipao.request({
+                    type: 'POST',
+                    url: '/admin/driver/info/save',
+                    data:data.field,
+                }).done(res=>{
+                    if(res.code == 0){
+                        layer.alert("增加成功", {icon: 6},
+                            function() {
+                                //关闭当前frame
+                                xadmin.close();
+                                // 可以对父窗口进行刷新
+                                xadmin.father_reload();
+                            });
+                    }else{
+                        layer.msg(res.message, {icon: 5,anim: 6});
+                    }
+                });
                 return false;
             });
         //监听取消

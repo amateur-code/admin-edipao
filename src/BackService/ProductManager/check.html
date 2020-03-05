@@ -1,0 +1,225 @@
+<!doctype html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>E地跑运营平台</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css">
+    <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../lib/layui/layui.js"></script>
+    <script type="text/javascript" src="../../js/common.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+          <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+          <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    <script>
+        // 是否开启刷新记忆tab功能
+    // var is_remember = false;
+    </script>
+    <style type="text/css">
+    .layui-col-xs4 {
+        padding: 20px;
+    }
+
+    .layui-col-xs4>span {
+        color: #1E9FFF;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row" id="info">
+            
+        </div>
+    </div>
+    <script id="preview" type="text/html">
+        <div class="layui-card">
+            <div class="layui-card-header">产品信息</div>
+            <div class="layui-card-body">
+                <div class="layui-fluid">
+                    <div class="layui-row">
+                        <div class="layui-col-xs4">
+                            网点名称:  <span>{{d.detail.productName}}</span>
+                            {{# if(d.check.productName){ }}
+                            <div><span class="x-red">待审：</span>{{d.check.productName}}</div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-col-xs4">
+                            详细地址： <span>{{d.detail.detailAddress}}</span>
+                            {{# if(d.check.detailAddress){ }}
+                            <div><span class="x-red">待审：</span>{{d.check.detailAddress}}</div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-col-xs4">
+                            归属供应商： <span>{{d.detail.supplierName}}</span>
+                            {{# if(d.check.supplierName){ }}
+                            <div><span class="x-red">待审：</span>{{d.check.supplierName}}</div>
+                            {{# } }}
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-xs4">
+                            供应商类型： <span>{{d.detail.supplierTypeDesc}}</span>
+                            {{# if(d.check.supplierTypeDesc){ }}
+                            <div><span class="x-red">待审：</span>{{d.check.supplierTypeDesc}}</div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-col-xs4">
+                            联系人： <span>{{d.detail.contractName}}({{d.detail.contractPhone}})</span>
+                            {{# if(d.check.contractName || d.check.contractPhone){ }}
+                            <div><span class="x-red">待审：</span>{{d.check.contractName| d.detail.contractName}}({{d.check.contractPhone|d.detail.contractPhone}}) </div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-col-xs4">
+                            状态： <span>{{d.detail.statusDesc}}</span>
+                            {{# if(d.check.statusDesc){ }}
+                            <div><span class="x-red">待审：</span>{{d.check.statusDesc}} </div>
+                            {{# } }}
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-xs4">
+                            备注： <span>{{d.detail.remark}}</span>
+                            {{# if(d.check.remark){ }}
+                            <div><span class="x-red">待审：</span>{{d.check.remark}} </div>
+                            {{# } }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card">
+            <div class="layui-card-header">价格信息</div>
+            <div class="layui-card-body">
+                <div class="layui-fluid">
+                    <div class="layui-row">
+                        <div class="layui-col-xs4">
+                            单价:  <span>{{d.detail.unitPrice}}</span>
+                            {{# if(d.check.unitPrice){ }}
+                            <div><span class="x-red">待审：</span>{{d.check.unitPrice}}</div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-col-xs4">
+                            生效时间： <span>{{d.detail.effectiveTime}}</span>
+                            {{# if(d.check.effectiveTime){ }}
+                            <div><span class="x-red">待审：</span>{{d.check.effectiveTime}}</div>
+                            {{# } }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card">
+            <div class="layui-card-header">审核</div>
+            <div class="layui-card-body">
+                <form class="layui-form" lay-filter="check">
+                    <div class="layui-form-item">
+                        <label for="checkResult" class="layui-form-label">
+                            <span class="x-red">*</span>审核结果
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="checkResult" value="pass" title="通过" checked>
+                            <input type="radio" name="checkResult" value="reject" title="驳回">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">审核备注</label>
+                        <div class="layui-input-block">
+                            <textarea name="checkRemark" placeholder="请输入审核备注" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block" style="text-align:center;">
+                            <button class="layui-btn layui-btn-lg" lay-filter="check" lay-submit>确认</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </script>
+    <script type="text/javascript">
+    layui.use(['form', 'layer', 'element', 'laytpl'], function(form, layer, element, laytpl) {
+        var xadmin = layui.xadmin,
+            edipao = layui.edipao,
+            SupplierTypeConfig = {},
+            detail = {},
+            check = {};
+
+        var params = edipao.urlGet();
+
+        edipao.request({
+            type: 'get',
+            url: '/admin/product/detail',
+            data: {
+                productNo: params.id
+            }
+        }).then(function(res) {
+            if (res.code == 0) {
+                detail = res.data;
+                if (detail.status == 0) {
+                    waitCheck();
+                } else {
+                    render()
+                }
+            }
+        })
+
+        function waitCheck(detail) {
+            edipao.request({
+                type: 'GET',
+                url: "/admin/log/last-modify/get",
+                data: {
+                    operationModule: 2,
+                    dataPk: params.id
+                }
+            }).then(function(res) {
+                if (res.code == 0) {
+                    if (res.data) {
+                        var editData = JSON.parse(res.data.modifyAfterJson)
+                        check = editData.newMap
+                    }
+                    render()
+                }
+            })
+        }
+
+        function render() {
+            laytpl(preview.innerHTML).render({ detail: detail, check: check }, function(html) {
+                document.getElementById('info').innerHTML = html;
+                form.render()
+            })
+        }
+
+        form.on('submit(check)', function(data) {
+            data.field.productNo = params.id;
+            edipao.request({
+                url: '/admin/product/approval/result/save',
+                data: data.field,
+            }).done(function(res) {
+                if (res.code == 0) {
+                    layer.alert("服务商审核通过", { icon: 6 }, function() {
+                        xadmin.close();
+                        xadmin.father_reload();
+                    });
+                } else {
+                    layer.msg(res.message)
+                }
+            })
+            return false;
+        });
+
+
+
+    })
+    </script>
+</body>
+
+</html>

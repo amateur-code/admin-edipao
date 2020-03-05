@@ -30,48 +30,83 @@
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12">
                 <div class="layui-card">
-                    <div class="layui-card-body" id="doc-content">
-                        <table id="staffList" lay-filter="staffList"></table>
+                    <div class="layui-card-body">
+                        <table id="list" lay-filter="list"></table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script type="text/html" id="headerBtns">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
+            <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
+        </div>
+    </script>
     
     <script type="text/javascript">
     layui.use(['table', 'layer'], function(table, layer) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao;
         var params = edipao.urlGet();
+
         table.render({
-            elem: '#staffList',
-            url: edipao.API_HOST + '/admin/staff/list',
+            elem: '#list',
+            url: edipao.API_HOST + '/admin/trade-record/list',
             request: {
                 pageName: 'pageNo',
-                limitName: 'pageSize',
+                limitName: 'pageSize'
             },
             where: {
-                roleId: params.id,
+                productNo: params.id,
                 loginStaffId: edipao.getLoginStaffId()
             },
             parseData: function(res) { //res 即为原始返回的数据
+                layui.each(res.data.supplierRespList,function(index, el) {
+                    el.supplierTypeName = SupplierTypeConfig[el.supplierType]
+                });
                 return {
                     code: res.code, //解析接口状态
                     msg: res.message, //解析提示文本
                     count: res.data.totalSize, //解析数据长度
-                    data: res.data.staffDtoList //解析数据列表
+                    data: res.data.tradeRecordRespList //解析数据列表
                 };
             },
             page: true,
             cols: [
                 [ //表头
-                    { field: 'name', title: '员工姓名' },
-                    { field: 'phone', title: '员工手机' },
-                    { field: 'idCard', title: '身份证号码' },
-                    { field: 'cardNo', title: '员工工号' },
-                    { field: 'positions', title: '员工职位' },
+                    { checkbox: true },
+                    { field: 'tradeNo', title: '交易流水号' },
+                    { field: 'tradeTime', title: '交易时间' },
+                    { field: 'productName', title: '定点服务' },
+                    { field: 'tradeNumber', title: '消费数量' },
+                    { field: 'unitPrice', title: '单价' },
+                    { field: 'tradeTotalPrice', title: '消费金额' },
+                    { field: 'tradeDriverName', title: '消费人' },
+                    { field: 'tradeConfirmTime', title: '消费确认时间' },
+                    { field: 'detailAddress', title: '消费地址' },
+                    { field: 'tradeStatusDesc', title: '状态' },
                 ]
             ],
+            toolbar: '#headerBtns',
+            defaultToolbar: []
+        });
+
+
+        table.on('toolbar(list)', function(obj) {
+            switch (obj.event) {
+                case 'add':
+                    xadmin.open('新增供应商', './add.html')
+                    break;
+                case 'export':
+                    break;
+                case 'tableSet':
+                    break;
+            };
+        });
+
+        table.on('checkbox(staffList)', function(obj) {
+            console.log(obj)
         });
 
     })

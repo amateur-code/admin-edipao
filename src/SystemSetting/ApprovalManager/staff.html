@@ -23,6 +23,14 @@
         // 是否开启刷新记忆tab功能
     // var is_remember = false;
     </script>
+    <style type="text/css">
+        .btn-ok{
+            display: block;
+            width: 100px;
+            height: 40px;
+            margin: 30px auto 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -32,6 +40,7 @@
                 <div class="layui-card">
                     <div class="layui-card-body" id="doc-content">
                         <table id="staffList" lay-filter="staffList"></table>
+                        <button type="button" class="layui-btn layui-btn-lg btn-ok" id="commit">确认</button>
                     </div>
                 </div>
             </div>
@@ -42,16 +51,16 @@
     layui.use(['table', 'layer'], function(table, layer) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao;
+
         var params = edipao.urlGet();
         table.render({
             elem: '#staffList',
             url: edipao.API_HOST + '/admin/staff/list',
             request: {
                 pageName: 'pageNo',
-                limitName: 'pageSize',
+                limitName: 'pageSize'
             },
             where: {
-                roleId: params.id,
                 loginStaffId: edipao.getLoginStaffId()
             },
             parseData: function(res) { //res 即为原始返回的数据
@@ -65,14 +74,28 @@
             page: true,
             cols: [
                 [ //表头
+                    { checkbox: true },
                     { field: 'name', title: '员工姓名' },
                     { field: 'phone', title: '员工手机' },
                     { field: 'idCard', title: '身份证号码' },
                     { field: 'cardNo', title: '员工工号' },
                     { field: 'positions', title: '员工职位' },
+                    { field: 'status', title: '状态' }
                 ]
-            ],
+            ]
         });
+
+        table.on('checkbox(staffList)', function(obj) {
+            
+
+ 
+        });
+        $('#commit').on('click',function(){
+            var list = table.checkStatus('staffList');
+            window.parent.approvalManager.selectStaff(params.code,params.index,list)
+            xadmin.close();
+        })
+
 
     })
     </script>

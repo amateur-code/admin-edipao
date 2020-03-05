@@ -1,10 +1,10 @@
 layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
-  var table = layui.table;
-  var $ = layui.jquery;
-  var form = layui.form;
-  var layer = layui.layer;
-  var upload = layui.upload;
-  var laytpl = layui.laytpl;
+    var table = layui.table;
+    var $ = layui.jquery;
+    var form = layui.form;
+    var layer = layui.layer;
+    var upload = layui.upload;
+    var laytpl = layui.laytpl;
 
   function renderTable(){
     table.render({

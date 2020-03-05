@@ -28,9 +28,9 @@
 <body>
     <div class="x-nav">
         <span class="layui-breadcrumb">
-            <a>系统设置</a>
+            <a>后服管理</a>
             <a>
-                <cite>员工管理</cite>
+                <cite>后服产品</cite>
             </a>
         </span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
@@ -41,8 +41,8 @@
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12">
                 <div class="layui-card">
-                    <div class="layui-card-body" id="doc-content">
-                        <table id="roleList" lay-filter="roleList"></table>
+                    <div class="layui-card-body">
+                        <table id="list" lay-filter="list"></table>
                     </div>
                 </div>
             </div>
@@ -56,23 +56,23 @@
       </div>
     </script>
     <script type="text/html" id="rowBtns">
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update">修改</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">修改</a>
+        {{# if(d.needApproval){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="check">审核</a>
+        {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="preview">查看</a>
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="delete">删除</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="trade-record">交易记录</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
-    </script>
-    <script type="text/html" id="stffList">
-        <a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.staffNumber}}</a>
     </script>
     <script type="text/javascript">
     layui.use(['table', 'layer'], function(table, layer) {
-        xadmin = layui.xadmin;
-        edipao = layui.edipao;
+        var xadmin = layui.xadmin,
+            edipao = layui.edipao;
 
         table.render({
-            elem: '#roleList',
-            url: edipao.API_HOST + '/admin/permission/role/list ',
-            method: 'POST',
+            elem: '#list',
+            url: edipao.API_HOST + '/admin/product/list',
             request: {
                 pageName: 'pageNo',
                 limitName: 'pageSize'
@@ -85,42 +85,46 @@
                     code: res.code, //解析接口状态
                     msg: res.message, //解析提示文本
                     count: res.data.totalSize, //解析数据长度
-                    data: res.data.roleDTOList  //解析数据列表
+                    data: res.data.productRespList //解析数据列表
                 };
             },
             page: true,
             cols: [
                 [ //表头
                     { checkbox: true },
-                    { field: 'roleName', title: '角色名称' },
-                    { field: 'staffNumber', title: '关联员工数' , templet: '#stffList'},
-                    { field: 'createUser', title: '创建人' },
-                    { field: 'createTime', title: '创建时间' },
-                    { title: '操作', toolbar: '#rowBtns', width: 350 }
+                    { field: 'productName', title: '网点名称' },
+                    { field: 'contractPeople', title: '联系人' },
+                    { field: 'detailAddress', title: '详细地址' },
+                    { field: 'supplierName', title: '归属供应商' },
+                    { field: 'supplierTypeDesc', title: '供应商类型' },
+                    { field: 'unitPrice', title: '单价' },
+                    { field: 'statusDesc', title: '状态' },
+                    { title: '操作', toolbar: '#rowBtns', width: 400 }
                 ]
             ],
             toolbar: '#headerBtns',
             defaultToolbar: []
         });
 
-        table.on('tool(roleList)', function(obj) {
+        table.on('tool(list)', function(obj) {
             let data = obj.data
+            console.log(data)
             switch (obj.event) {
-                case 'update':
-                    xadmin.open('修改角色', './edit.html?id=' + data.roleId)
+                case 'edit':
+                    xadmin.open('修改网点', './edit.html?id=' + data.productNo)
+                    break;
+                case  'check':
+                    xadmin.open('审核网点', './check.html?id=' + data.productNo)
                     break;
                 case 'preview':
-                    xadmin.open('角色信息', './preview.html?id=' + data.roleId)
-                    break;
-                case 'staffList':
-                    xadmin.open('角色信息', './staff-list.html?id=' + data.roleId)
+                    xadmin.open('产看网点', './preview.html?id=' + data.productNo)
                     break;
                 case 'delete':
                     layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
                         edipao.request({
-                            url: '/admin/permission/role/del',
+                            url: '/admin/product/del',
                             data: {
-                                roleId:  data.roleId
+                                productNo: data.productNo
                             }
                         }).then(function(res){
                             if(res.code == 0){
@@ -130,18 +134,22 @@
                                 layer.msg(res.message)
                             }
                         })
+
                     });
                     break;
                 case 'log':
-                    xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.roleId + '&type=7');
+                    xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.productNo + '&type=2');
+                    break;
+                case 'trade-record':
+                    xadmin.open('交易记录', './trade-record.html?id=' + data.productNo)
                     break;
             };
         });
 
-        table.on('toolbar(roleList)', function(obj) {
+        table.on('toolbar(list)', function(obj) {
             switch (obj.event) {
                 case 'add':
-                    xadmin.open('添加角色', './add.html')
+                    xadmin.open('新增网点', './add.html')
                     break;
                 case 'export':
                     break;
@@ -149,8 +157,7 @@
                     break;
             };
         });
-
-        table.on('checkbox(roleList)', function(obj) {
+        table.on('checkbox(staffList)', function(obj) {
             console.log(obj)
         });
 

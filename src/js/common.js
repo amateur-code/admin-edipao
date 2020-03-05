@@ -26,12 +26,15 @@ layui.define([], function(exports) {
                 if(['4004','4010'].indexOf(res.code) !== -1){
                     that.tokenExpired()
                 }
+                if(res.code != 0){
+                   layui.layer.msg(res.message)
+                }
             }).fail(function() {});
     }
 
     Common.prototype.tokenExpired = function() {
       layui.sessionData('user',null);
-      location.href = '../Login/login.html';
+      window.top.goToLogin();
     }
 
     Common.prototype.getLoginStaffId = function() {
