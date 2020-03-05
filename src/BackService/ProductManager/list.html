@@ -57,7 +57,9 @@
     </script>
     <script type="text/html" id="rowBtns">
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">修改</a>
+        {{# if(d.needApproval){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="check">审核</a>
+        {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="preview">查看</a>
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="trade-record">交易记录</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>

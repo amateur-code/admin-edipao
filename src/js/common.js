@@ -26,6 +26,9 @@ layui.define([], function(exports) {
                 if(['4004','4010'].indexOf(res.code) !== -1){
                     that.tokenExpired()
                 }
+                if(res.code != 0){
+                   layui.layer.msg(res.message)
+                }
             }).fail(function() {});
     }
 

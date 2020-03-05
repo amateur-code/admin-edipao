@@ -23,6 +23,14 @@
         // 是否开启刷新记忆tab功能
     // var is_remember = false;
     </script>
+    <style type="text/css">
+        .btn-ok{
+            display: block;
+            width: 100px;
+            height: 40px;
+            margin: 30px auto 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -30,82 +38,64 @@
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12">
                 <div class="layui-card">
-                    <div class="layui-card-body">
-                        <table id="list" lay-filter="list"></table>
+                    <div class="layui-card-body" id="doc-content">
+                        <table id="staffList" lay-filter="staffList"></table>
+                        <button type="button" class="layui-btn layui-btn-lg btn-ok" id="commit">确认</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script type="text/html" id="headerBtns">
-        <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
-            <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
-        </div>
-    </script>
     
     <script type="text/javascript">
-    layui.use(['table', 'layer', 'util'], function(table, layer,util) {
+    layui.use(['table', 'layer'], function(table, layer) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao;
-        var params = edipao.urlGet();
 
+        var params = edipao.urlGet();
         table.render({
-            elem: '#list',
-            url: edipao.API_HOST + '/admin/log/list',
+            elem: '#staffList',
+            url: edipao.API_HOST + '/admin/staff/list',
             request: {
                 pageName: 'pageNo',
                 limitName: 'pageSize'
             },
             where: {
-                // 操作模块:1供应商 2后服产品 3司机 4订单 5员工模块 6审核 7权限
-                operationModule: params.type,
-                dataPk: params.id,
                 loginStaffId: edipao.getLoginStaffId()
             },
             parseData: function(res) { //res 即为原始返回的数据
-                layui.each(res.data.supplierRespList,function(index, el) {
-                    el.supplierTypeName = SupplierTypeConfig[el.supplierType]
-                });
                 return {
                     code: res.code, //解析接口状态
                     msg: res.message, //解析提示文本
                     count: res.data.totalSize, //解析数据长度
-                    data: res.data.operationLogDTOList //解析数据列表
+                    data: res.data.staffDtoList //解析数据列表
                 };
             },
             page: true,
             cols: [
                 [ //表头
-                    { field: 'operationTime', title: '时间', width: 200,templet: function(d){
-                        return  util.toDateString(d.operationTime, 'yyyy-MM-dd HH:mm:ss')
-                    } },
-                    { field: 'operationStaffName', title: '操作人', width: 100 },
-                    { field: 'operationType', title: '操作类型' , width: 200},
-                    { field: 'modifyBeforeJson', title: '修改前' , width: 200},
-                    { field: 'modifyAfterJson', title: '修改后' , width: 200},
-                    { field: 'operationRemark', title: '说明' , width: 200}
+                    { checkbox: true },
+                    { field: 'name', title: '员工姓名' },
+                    { field: 'phone', title: '员工手机' },
+                    { field: 'idCard', title: '身份证号码' },
+                    { field: 'cardNo', title: '员工工号' },
+                    { field: 'positions', title: '员工职位' },
+                    { field: 'status', title: '状态' }
                 ]
-            ],
-            defaultToolbar: []
-        });
-
-
-        table.on('toolbar(list)', function(obj) {
-            switch (obj.event) {
-                case 'add':
-                    xadmin.open('新增供应商', './add.html')
-                    break;
-                case 'export':
-                    break;
-                case 'tableSet':
-                    break;
-            };
+            ]
         });
 
         table.on('checkbox(staffList)', function(obj) {
-            console.log(obj)
+            
+
+ 
         });
+        $('#commit').on('click',function(){
+            var list = table.checkStatus('staffList');
+            window.parent.approvalManager.selectStaff(params.code,params.index,list)
+            xadmin.close();
+        })
+
 
     })
     </script>
