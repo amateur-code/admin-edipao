@@ -56,8 +56,11 @@
       </div>
     </script>
     <script type="text/html" id="rowBtns">
+
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">修改</a>
+        {{# if(d.needApproval){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="check">审核</a>
+        {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="preview">查看</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
@@ -92,9 +95,6 @@
                     loginStaffId: edipao.getLoginStaffId()
                 },
                 parseData: function(res) { //res 即为原始返回的数据
-                    layui.each(res.data.supplierRespList,function(index, el) {
-                        el.supplierTypeName = SupplierTypeConfig[el.supplierType]
-                    });
                     return {
                         code: res.code, //解析接口状态
                         msg: res.message, //解析提示文本
@@ -106,12 +106,14 @@
                 cols: [
                     [ //表头
                         { checkbox: true },
-                        { field: 'supplierName', title: '供应商名称' },
-                        { field: 'loginPhone', title: '登录手机号' },
-                        { field: 'contractName', title: '联系人' },
-                        { field: 'supplierTypeName', title: '类型' },
-                        { field: 'productCount', title: '合作产品/网点' },
-                        { field: 'statusDesc', title: '状态' },
+                        { field: 'supplierName', title: '供应商名称',width: 200 },
+                        { field: 'loginPhone', title: '登录手机号',width: 200 },
+                        { field: 'contractName', title: '联系人',width: 200 },
+                        { field: 'supplierType', title: '类型',width: 200,templet:function(d){
+                            return SupplierTypeConfig[d.supplierType]
+                        }},
+                        { field: 'productCount', title: '合作产品/网点',width: 200 },
+                        { field: 'statusDesc', title: '状态',width: 100 },
                         { title: '操作', toolbar: '#rowBtns', width: 400 }
                     ]
                 ],
@@ -151,7 +153,7 @@
                     });
                     break;
                 case 'log':
-
+                    xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.supplierNo + '&type=1');
                     break;
                 case 'trade-record':
                     xadmin.open('交易记录', './trade-record.html?id=' + data.supplierNo)

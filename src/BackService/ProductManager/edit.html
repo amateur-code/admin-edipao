@@ -104,6 +104,20 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="layui-col-xs4">
+                                    <div class="layui-form-item">
+                                        <label for="contractPhone" class="layui-form-label">
+                                            <span class="x-red">*</span>状态
+                                        </label>
+                                        <div class="layui-input-block">
+                                            <select name="status">
+                                                <option value="0">待审核</option>
+                                                <option value="1">有效</option>
+                                                <option value="2">失效</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -192,6 +206,11 @@
             }
         }).then(function(res) {
             if (res.code == 0) {
+                detailAddress = {
+                    address: res.data.detailAddress,
+                    lng: res.data.lng,
+                    lat: res.data.lat
+                }
                 form.val("edit", res.data);
             }
         })
@@ -205,7 +224,6 @@
                     document.getElementById('supplierNo').innerHTML = html;
                 })
                 form.render();
-                
             }
         })
         //自定义验证规则
@@ -222,16 +240,16 @@
             }
         });
 
-        form.on('submit(add)', function(data) {
-            console.log(data)
+        form.on('submit(edit)', function(data) {
+            data.field.productNo = params.id;
             data.field.lng = detailAddress.lng;
             data.field.lat = detailAddress.lat;
             edipao.request({
-                url: '/admin/product/add',
+                url: '/admin/product/update',
                 data: data.field,
             }).done(function(res) {
                 if (res.code == 0) {
-                    layer.alert("网点添加成功", { icon: 6 }, function() {
+                    layer.alert("网点修改成功", { icon: 6 }, function() {
                         xadmin.close();
                         xadmin.father_reload();
                     });

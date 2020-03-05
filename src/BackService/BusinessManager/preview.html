@@ -65,6 +65,8 @@
                 <div><span class="x-red">待审：</span>{{d.check.supplierTypeName}}</div>
                 {{# } }}
             </div>
+        </div>
+        <div class="layui-row">
             <div class="layui-col-xs4">
                 联系人： <span>{{d.detail.contractName}}({{d.detail.contractPhone}})</span>
                 {{# if(d.check.contractName || d.check.contractPhone){ }}
@@ -73,7 +75,7 @@
             </div>
             <div class="layui-col-xs4">
                 状态： <span>{{d.detail.statusDesc}}</span>
-                {{# if(d.check.supplierName){ }}
+                {{# if(d.check.statusDesc){ }}
                 <div><span class="x-red">待审：</span>{{d.check.statusDesc}} </div>
                 {{# } }}
             </div>
@@ -108,19 +110,23 @@
         var params = edipao.urlGet();
 
         function waitCheck(detail){
-        	edipao.request({
-	        	type: 'GET',
-	        	url: "/admin/supplier/getNoCheckField",
-	        	data:{
-	        		supplierNo: params.id
-	        	}
-	        }).then(function(res){
-	        	if(res.code == 0){
-	        		res.data.supplierTypeName = SupplierTypeConfig[res.data.supplierType]
-	        		check = res.data;
+            edipao.request({
+                type: 'GET',
+                url: "/admin/log/last-modify/get",
+                data:{
+                    operationModule: 1,
+                    dataPk: params.id
+                }
+            }).then(function(res){
+                if(res.code == 0){
+                    if(res.data){
+                        var editData = JSON.parse(res.data.modifyAfterJson)
+                        check = editData.newMap
+                        check.supplierTypeName = SupplierTypeConfig[check.supplierType]
+                    }
                     render()
-	        	}
-	        })
+                }
+            })
         }
         
         function getDetail() {

@@ -57,12 +57,11 @@
     </script>
     <script type="text/html" id="rowBtns">
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">修改</a>
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">审核</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="check">审核</a>
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="preview">查看</a>
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">交易记录</a>
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="trade-record">交易记录</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
-        
     </script>
     <script type="text/javascript">
     layui.use(['table', 'layer'], function(table, layer) {
@@ -121,7 +120,7 @@
                 case 'delete':
                     layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
                         edipao.request({
-                            url: '/admin/supplier/del',
+                            url: '/admin/product/del',
                             data: {
                                 productNo: data.productNo
                             }
@@ -137,7 +136,7 @@
                     });
                     break;
                 case 'log':
-
+                    xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.productNo + '&type=2');
                     break;
                 case 'trade-record':
                     xadmin.open('交易记录', './trade-record.html?id=' + data.productNo)
