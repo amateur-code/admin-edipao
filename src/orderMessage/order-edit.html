@@ -30,7 +30,7 @@
             <a>业务管理</a>
             <a>订单管理</a>
             <a>
-                <cite>订单修改</cite>
+                <cite class="page_title_text">订单修改</cite>
             </a>
         </span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
@@ -46,7 +46,7 @@
                         <div class="layui-col-md6">
                             <div class="title">基础信息</div>
                         </div>
-                        <div style="line-height: 32px;" class="layui-col-md1 layui-col-md-offset5">
+                        <div style="line-height: 32px;" class="layui-col-md1 layui-col-md-offset5 btn_btn">
                             <span id="add_car" class="blue pointer">添加车辆</span>
                         </div>
                     </div>
@@ -99,13 +99,13 @@
                         <div class="layui-col-md1">
                             <div class="title">车辆信息</div>
                         </div>
-                        <div style="line-height: 32px;" class="layui-col-md1 blue pointer">
-                            <span>选择vin码</span>
+                        <div style="line-height: 32px;" class="layui-col-md1 blue pointer btn_btn">
+                            <span class="select_vin" data-filter="CARFORM">选择vin码</span>
                         </div>
-                        <div style="line-height: 32px;" class="layui-col-md1 layui-col-md-offset8">
-                            <input type="checkbox" name="xxx"  lay-text="上车|下车"  lay-skin="switch">
+                        <div style="line-height: 32px;" class="layui-col-md1 layui-col-md-offset8 btn_btn">
+                            <input type="checkbox" name="masterFlag" lay-text="上车|下车"  lay-skin="switch">
                         </div>
-                        <div style="line-height: 32px;" class="layui-col-md1">
+                        <div style="line-height: 32px;" class="layui-col-md1 btn_btn">
                             <span data-filter="CARFORM" class="del_car_btn blue pointer">删除车辆</span>
                         </div>
                     </div>
@@ -433,12 +433,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="form_item_container">
+                <div id="form_fee_list" class="form_item_container">
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">司机姓名</label><br>
                             <div class="layui-input-inline">
-                                <input type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -468,78 +468,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="layui-form-item layui-row">
-                        <div class="form_item_inner">
-                            <div>
-                                预付款
-                                <span data-type="preFee" class="add_fee blue pointer">+增加费用</span>
-                            </div>
-                            <div style="padding-left: 20px;">
-                                <div class="layui-inline layui-col-md3">
-                                    <label class="layui-form-label text_left form_label">住宿费：</label>
-                                    <div class="layui-input-inline">
-                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
-                                    </div>
-                                </div>
-                                <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                                    <label class="layui-form-label text_left form_label">洗车费：</label>
-                                    <div class="layui-input-inline">
-                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
-                                    </div>
-                                </div>
-                                <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                                    <label class="layui-form-label text_left form_label">油耗：</label>
-                                    <div class="layui-input-inline">
-                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layui-form-item layui-row">
-                        <div class="form_item_inner">
-                            <div>
-                                到付款
-                                <span data-type="arriveFee" class="add_fee blue pointer">+增加费用</span>
-                            </div>
-                            <div style="padding-left: 20px;">
-                                <div class="layui-inline layui-col-md3">
-                                    <label class="layui-form-label text_left form_label">回程费：</label>
-                                    <div class="layui-input-inline">
-                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layui-form-item layui-row">
-                        <div class="form_item_inner">
-                            <div>
-                                尾款
-                                <span data-type="lastFee" class="add_fee blue pointer">+增加费用</span>
-                            </div>
-                            <div style="padding-left: 20px;">
-                                <div class="layui-inline layui-col-md3">
-                                    <label class="layui-form-label text_left form_label">运费：</label>
-                                    <div class="layui-input-inline">
-                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
-                                    </div>
-                                </div>
-                                <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                                    <label class="layui-form-label text_left form_label">油费补贴：</label>
-                                    <div class="layui-input-inline">
-                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
-                                    </div>
-                                </div>
-                                <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                                    <label class="layui-form-label text_left form_label">尾款账期：</label>
-                                    <div class="layui-input-inline">
-                                        <input type="tel" name="" lay-verify="required" autocomplete="off" class="layui-input">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="fee_list_container"></div>
                 </div>
                 <div id="btn_container" class="btn_container">
                     <div class="layui-row">
@@ -554,16 +483,72 @@
             </form>
         </div>
     </div>
+    <script id="fee_list_tpl" type="text/html">
+        <div class="layui-form-item layui-row">
+            <div class="form_item_inner">
+                <div>
+                    预付款
+                    <span data-type="prePay" class="add_fee blue pointer">+增加费用</span>
+                </div>
+                <div style="padding-left: 20px;">
+                    {{#  layui.each(d.prePay, function(index, item){ }}
+                    <div class="layui-inline layui-col-md3">
+                        <label class="layui-form-label text_left form_label">{{item.key}}：</label>
+                        <div class="layui-input-inline">
+                            <input value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    {{#  }); }}
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-row">
+            <div class="form_item_inner">
+                <div>
+                    到付款
+                    <span data-type="arrivePay" class="add_fee blue pointer">+增加费用</span>
+                </div>
+                <div style="padding-left: 20px;">
+                    {{#  layui.each(d.arrivePay, function(index, item){ }}
+                    <div class="layui-inline layui-col-md3">
+                        <label class="layui-form-label text_left form_label">{{item.key}}：</label>
+                        <div class="layui-input-inline">
+                            <input value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    {{#  }); }}
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-row">
+            <div class="form_item_inner">
+                <div>
+                    尾款
+                    <span data-type="tailPay" class="add_fee blue pointer">+增加费用</span>
+                </div>
+                <div style="padding-left: 20px;">
+                    {{#  layui.each(d.tailPay, function(index, item){ }}
+                    <div class="layui-inline layui-col-md3">
+                        <label class="layui-form-label text_left form_label">{{item.key}}：</label>
+                        <div class="layui-input-inline">
+                            <input value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    {{#  }); }}
+                </div>
+            </div>
+        </div>
+    </script>
     <script type="text/html" id="fee_tpl">
         <div class="fee_container">
-            <form class="fee_list layui-form">
-                <input type="checkbox" name="a" title="发呆" lay-skin="primary">
-                <input type="checkbox" name="b" title="发呆" lay-skin="primary">
-                <input type="checkbox" name="c" title="发呆" lay-skin="primary">
-                <input type="checkbox" name="c" title="发呆" lay-skin="primary">
-                <input type="checkbox" name="c" title="发呆" lay-skin="primary">
-                <input type="checkbox" name="c" title="发呆" lay-skin="primary">
-                <input type="checkbox" name="c" title="发呆" lay-skin="primary">
+            <form lay-filter="add_fee_form" class="fee_list layui-form">
+                <div class="layui-row">
+                    {{#  layui.each(d.feeList, function(index, item){ }}
+                        <div class="layui-col-md4">
+                        <input type="checkbox" {{item.checked?'checked':''}} name="{{item.key}}" title="{{item.key}}" lay-skin="primary">
+                        </div>
+                    {{#  }); }}
+                </div>
             </form>
             <div class="fee_footer">
                 费用不够？<span id="add_fee_item" class="blue pointer">增加费用项</span>
@@ -576,12 +561,14 @@
                 <div style="width:100%" class="layui-inline">
                     <label class="layui-form-label text_left form_label">费用项名称</label><br>
                     <div style="width:100%" class="layui-input-inline">
-                        <input type="tel" name="phone" lay-verify="required" autocomplete="off" class="layui-input">
+                        <input id="addFeeName" type="tel" name="addFeeName" lay-verify="required" autocomplete="off" class="layui-input">
                     </div>
                 </div>
             </form>
         </div>
     </script>
+    <div lay-filter="cars_table" id="cars_table"></div>
+    <div lay-filter="drivers_table" id="drivers_table"></div>
 </body>
 <script src="./js/order-edit.js"></script>
 
