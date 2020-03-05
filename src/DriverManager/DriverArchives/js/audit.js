@@ -7,7 +7,7 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
     form.on('submit(add)',
         function(data) {
             var auditParams = data.field;
-            auditParams['dataPk'] = params.id;
+            auditParams['driverId'] = params.id;
             edipao.request({
                 type: 'POST',
                 url: '/admin/driver/info/audit',

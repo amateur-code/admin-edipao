@@ -8,9 +8,11 @@
     <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
     <link rel="stylesheet" href="../../css/font.css">
     <link rel="stylesheet" href="../../css/xadmin.css">
+    <link rel="stylesheet" href="../../lib/jqboxImg/boxImg.css">
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script src="../../lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../../js/xadmin.js"></script>
+    <script src="../../lib/jqboxImg/boxImg.js"></script>
     <script src="../../js/common.js"></script>
     <script src="js/xcity.js"></script>
     <script src="js/driverCommon.js"></script>
@@ -94,7 +96,6 @@
         }
         .driver-add .no-data{
             color: #AAAAAA;
-            padding:7px 10px;
         }
         .driver-add .layui-card-header{
             font-weight: bold;
@@ -124,7 +125,7 @@
                                     <div class="layui-row layui-col-space10 layui-form-item">
                                         <div class="layui-col-md6 layui-text-align">
                                             <div>
-                                                <div class="layui-upload-drag-title">正面<span class="sample-graph" onclick="showImg(this)" data-src="../../images/front.png">查看示例图</span></div>
+                                                <div class="layui-upload-drag-title">正面<span class="sample-graph boxZoomImg"  src="../../images/front.png"><img src="../../images/front.png" class="layui-hide"/>查看示例图</span></div>
                                                 <div class="layui-upload-drag" id="idLicenceFrontImgDiv">
                                                     <i class="upload-bg"></i>
                                                     <p>点击上传</p>
@@ -136,7 +137,7 @@
                                             </div>
                                         </div>
                                         <div class="layui-col-md6 layui-text-align">
-                                            <div class="layui-upload-drag-title">背面<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/back.png">查看示例图</span></div>
+                                            <div class="layui-upload-drag-title">背面<span class="sample-graph boxZoomImg"  src="../../images/back.png"><img src="../../images/back.png" class="layui-hide"/>查看示例图</span></div>
                                             <div class="layui-upload-drag" id="idLicenceBackImgDiv">
                                                 <i class="upload-bg"></i>
                                                 <p>点击上传</p>
@@ -153,7 +154,7 @@
                                     <div><span class="x-red">*</span>驾驶证</div>
                                     <div class="layui-row layui-col-space10 layui-form-item">
                                         <div class="layui-col-md6 layui-text-align">
-                                            <div class="layui-upload-drag-title">正本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/front.png">查看示例图</span></div>
+                                            <div class="layui-upload-drag-title">正本<span class="sample-graph boxZoomImg"  src="../../images/front.png"><img src="../../images/back.png" class="layui-hide"/>查看示例图</span></div>
                                             <div class="layui-upload-drag" id="driveLicenceFrontImgDiv">
                                                 <i class="upload-bg"></i>
                                                 <p>点击上传</p>
@@ -164,7 +165,7 @@
                                             </div>
                                         </div>
                                         <div class="layui-col-md6 layui-text-align">
-                                            <div class="layui-upload-drag-title">副本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/back.png">查看示例图</span></div>
+                                            <div class="layui-upload-drag-title">副本<span class="sample-graph boxZoomImg"  src="../../images/back.png"><img src="../../images/back.png" class="layui-hide"/>查看示例图</span></div>
                                             <div class="layui-upload-drag" id="driveLicenceBackImgDiv">
                                                 <i class="upload-bg"></i>
                                                 <p>点击上传</p>
@@ -199,7 +200,7 @@
                             <div class="layui-row layui-col-space10 layui-form-item">
                                 <div class="layui-col-md6 layui-text-align">
                                     <div>
-                                        <div class="layui-upload-drag-title">正本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/front.png">查看示例图</span></div>
+                                        <div class="layui-upload-drag-title">正本<span class="sample-graph boxZoomImg"  src="../../images/back.png"><img src="../../images/front.png" class="layui-hide"/>查看示例图</span></div>
                                         <div class="layui-upload-drag" id="qualificationsFrontImgDiv">
                                             <i class="upload-bg"></i>
                                             <p>点击上传</p>
@@ -211,7 +212,7 @@
                                     </div>
                                 </div>
                                 <div class="layui-col-md6 layui-text-align">
-                                    <div class="layui-upload-drag-title">副本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/back.png">查看示例图</span></div>
+                                    <div class="layui-upload-drag-title">副本<span class="sample-graph boxZoomImg"  src="../../images/back.png"><img src="../../images/back.png" class="layui-hide"/>查看示例图</span></div>
                                     <div class="layui-upload-drag" id="qualificationsBackImgDiv">
                                         <i class="upload-bg"></i>
                                         <p>点击上传</p>
@@ -447,7 +448,7 @@
                     <div class="layui-card-header">心愿线路<span class="wishJourney-btn-add" id="addWishJourney">+添加</span></div>
                     <div class="layui-card-body layui-row layui-col-space10">
                         <div class="layui-col-md12" id="wishJourney">
-                            <div class="no-data">暂无数据</div>
+                            <div class="no-data"><label class="layui-form-label">暂无数据</label></div>
                         </div>
                         <div class="layui-form-item layui-text-align">
                             <button  class="layui-btn layui-bg-gray" lay-filter="cancel" lay-submit="" id="addCancel">

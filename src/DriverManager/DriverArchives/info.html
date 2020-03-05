@@ -8,9 +8,11 @@
     <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
     <link rel="stylesheet" href="../../css/font.css">
     <link rel="stylesheet" href="../../css/xadmin.css">
+    <link rel="stylesheet" href="../../lib/jqboxImg/boxImg.css">
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script src="../../lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../../js/xadmin.js"></script>
+    <script src="../../lib/jqboxImg/boxImg.js"></script>
     <script src="../../js/common.js"></script>
     <script src="js/info.js"></script>
     <!--[if lt IE 9]>
@@ -60,15 +62,29 @@
             user-select:none;
             cursor: pointer;
         }
+        .driver-add .check-line{
+            color: #3490e9;
+            -moz-user-select:none; /*火狐*/
+            -webkit-user-select:none; /*webkit浏览器*/
+            -ms-user-select:none; /*IE10*/
+            -khtml-user-select:none; /*早期浏览器*/
+            user-select:none;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
         .driver-add .tips{
             font-family: '微软雅黑', sans-serif;
             font-weight: 400;
             font-style: normal;
             color: #F59A23;
         }
+        .driver-add .layui-form-item{
+            position: relative;
+        }
         .driver-add .layui-input-block{
             /*margin-left: 0px;*/
-            line-height: 36px;
+            line-height: 38px;
         }
         .upload-bg{
             width: 180px;
@@ -93,7 +109,6 @@
         }
         .driver-add .no-data{
             color: #AAAAAA;
-            padding:7px 10px;
         }
         .driver-add .name-color{
             color: #3490e9;
@@ -101,8 +116,21 @@
         .driver-add .layui-form-label{
             width: 110px;
         }
+        .driver-add .check{
+            position: absolute;
+            bottom: -25px;
+            width: 100%;
+        }
         .driver-add .layui-card-header{
             font-weight: bold;
+        }
+        #wishJourneyCheck{
+             position: relative;
+             top:-20px
+        }
+        .wishJourneyCheck-label{
+            position: absolute;
+            padding: 9px 15px;
         }
     </style>
 </head>
@@ -110,328 +138,472 @@
 <div class="layui-fluid driver-add">
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
-            <form class="layui-form">
-                <div class="layui-card">
-                    <div class="layui-card-header">证件图片</div>
-                    <div class="layui-card-body layui-row layui-col-space10">
-                        <div class="layui-col-md12">
-                            <div class="layui-row layui-col-space10 layui-form-item">
-                                <div class="layui-col-md5">
-                                    <div>身份证图片</div>
-                                    <div class="layui-row layui-col-space10 layui-form-item">
-                                        <div class="layui-col-md6 layui-text-align">
-                                            <div>
-                                                <div class="layui-upload-drag-title">正面<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/front.png">查看示例图</span></div>
-                                                <div class="layui-upload-drag" id="idLicenceFrontImgDiv">
-                                                    <i class="upload-bg"></i>
-                                                    <!--<p>点击上传</p>-->
-                                                    <div id="idLicenceFrontImgView" class="layui-hide">
-                                                        <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
-                                                    </div>
-                                                    <input type="text" name="idLicenceFrontImg" id="idLicenceFrontImg" lay-verify="idLicenceFrontImgVerify" placeholder="" autocomplete="off" class="layui-hide">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="layui-col-md6 layui-text-align">
-                                            <div class="layui-upload-drag-title">背面<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/back.png">查看示例图</span></div>
-                                            <div class="layui-upload-drag" id="idLicenceBackImgDiv">
-                                                <i class="upload-bg"></i>
-                                                <!--<p>点击上传</p>-->
-                                                <div  id="idLicenceBackImgView" class="layui-hide">
-                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
-                                                </div>
-                                                <input type="text" name="idLicenceBackImg" id="idLicenceBackImg" lay-verify="idLicenceBackImgVerify" placeholder="" autocomplete="off" class="layui-hide">
+            <form class="layui-form" id="info">
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-col-md5">
-                                    <div>驾驶证</div>
-                                    <div class="layui-row layui-col-space10 layui-form-item">
-                                        <div class="layui-col-md6 layui-text-align">
-                                            <div class="layui-upload-drag-title">正本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/front.png">查看示例图</span></div>
-                                            <div class="layui-upload-drag" id="driveLicenceFrontImgDiv">
-                                                <i class="upload-bg"></i>
-                                                <!--<p>点击上传</p>-->
-                                                <div  id="driveLicenceFrontImgView" class="layui-hide">
-                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
-                                                </div>
-                                                <input type="text" name="driveLicenceFrontImg" id="driveLicenceFrontImg" lay-verify="driveLicenceFrontImgVerify" placeholder="" autocomplete="off" class="layui-hide">
-                                            </div>
-                                        </div>
-                                        <div class="layui-col-md6 layui-text-align">
-                                            <div class="layui-upload-drag-title">副本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/back.png">查看示例图</span></div>
-                                            <div class="layui-upload-drag" id="driveLicenceBackImgDiv">
-                                                <i class="upload-bg"></i>
-                                                <!--<p>点击上传</p>-->
-                                                <div id="driveLicenceBackImgView" class="layui-hide">
-                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
-                                                </div>
-                                                <input type="text" name="driveLicenceBackImg" id="driveLicenceBackImg" lay-verify="driveLicenceBackImgVerify" placeholder="" autocomplete="off" class="layui-hide">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-col-md2">
-                                    <div>头像</div>
-                                    <div class="layui-row layui-col-space10 layui-form-item">
-                                        <div class="layui-col-md12 layui-text-align">
-                                            <div class="layui-upload-drag-title">&nbsp;</div>
-                                            <div class="layui-upload-drag" id="avatarImgDiv">
-                                                <i class="upload-bg"></i>
-                                                <!--<p>点击上传</p>-->
-                                                <div id="avatarImgView" class="layui-hide">
-                                                    <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
-                                                </div>
-                                                <input type="text" name="avatarImg" id="avatarImg"  placeholder="" autocomplete="off" class="layui-hide">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md5">
-                            <div>从业资格证</div>
-                            <div class="layui-row layui-col-space10 layui-form-item">
-                                <div class="layui-col-md6 layui-text-align">
-                                    <div>
-                                        <div class="layui-upload-drag-title">正本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/front.png">查看示例图</span></div>
-                                        <div class="layui-upload-drag" id="qualificationsFrontImgDiv">
-                                            <i class="upload-bg"></i>
-                                            <!--<p>点击上传</p>-->
-                                            <div id="qualificationsFrontImgView" class="layui-hide">
-                                                <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
-                                            </div>
-                                            <input type="text" name="qualificationsFrontImg" id="qualificationsFrontImg" lay-verify="qualificationsFrontImgVerify"  placeholder="" autocomplete="off" class="layui-hide">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="layui-col-md6 layui-text-align">
-                                    <div class="layui-upload-drag-title">副本<span class="sample-graph"  onclick="showImg(this)" data-src="../../images/back.png">查看示例图</span></div>
-                                    <div class="layui-upload-drag" id="qualificationsBackImgDiv">
-                                        <i class="upload-bg"></i>
-                                        <!--<p>点击上传</p>-->
-                                        <div  id="qualificationsBackImgView" class="layui-hide">
-                                            <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
-                                        </div>
-                                        <input type="text" name="qualificationsBackImg" id="qualificationsBackImg" lay-verify="qualificationsBackImgVerify"  placeholder="" autocomplete="off" class="layui-hide">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md5">
-                            <div>运输协议</div>
-                            <div class="layui-row layui-col-space10 layui-form-item">
-                                <div class="layui-col-md6 layui-text-align">
-                                    <div class="layui-upload-drag-title">协议1</div>
-                                    <div class="layui-upload-drag" id="transportProtocolImg1Div">
-                                        <i class="upload-bg"></i>
-                                        <!--<p>点击上传</p>-->
-                                        <div id="transportProtocolImg1View" class="layui-hide">
-                                            <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
-                                        </div>
-                                        <input type="text" name="transportProtocolImg1" id="transportProtocolImg1"  placeholder="" autocomplete="off" class="layui-hide">
-                                    </div>
-                                </div>
-                                <div class="layui-col-md6 layui-text-align">
-                                    <div class="layui-upload-drag-title">协议2</div>
-                                    <div class="layui-upload-drag" id="transportProtocolImg2Div">
-                                        <i class="upload-bg"></i>
-                                        <!--<p>点击上传</p>-->
-                                        <div  id="transportProtocolImg2View" class="layui-hide">
-                                            <img src="" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
-                                        </div>
-                                        <input type="text" name="transportProtocolImg2" id="transportProtocolImg2"  placeholder="" autocomplete="off" class="layui-hide">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-card layui-form">
-                    <div class="layui-card-header">基础信息</div>
-                    <div class="layui-card-body layui-row layui-col-space10">
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">司机姓名：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" id="name"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">司机手机：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="phone" id="phone"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">身份证号：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="idNum" id="idNum"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label  class="layui-form-label">司机类型：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="driverType" id="driverType"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">驾照类型：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="driveLicenceType" id="driveLicenceType"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">驾龄：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="drivingAge" id="drivingAge"></span><span style="margin-left: 5px">年</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">身份证有效期：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="idLicenceValidity" id="idLicenceValidity"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">驾驶证有效期：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="driveLicenceValidity" id="driveLicenceValidity"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">从业资格证有效期：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="qualificationsValidity" id="qualificationsValidity"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">当前住址：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="address" id="address"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">状态：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="status" id="status"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-card layui-form" >
-                    <div class="layui-card-header">押金信息</div>
-                    <div class="layui-card-body layui-row layui-col-space10">
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">押金金额：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="deposit" id="deposit"></span><span style="margin-left: 5px">元</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">押金状态：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="depositStatus" id="depositStatus"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4 layui-hide" id="depositTradeNumberDiv">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">支付流水：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="depositTradeNumber" id="depositTradeNumber"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-card layui-form" >
-                    <div class="layui-card-header">银行账户</div>
-                    <div class="layui-card-body layui-row layui-col-space10">
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">银行卡账户：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="accountName" id="accountName"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">银行卡账号：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="accountNumber" id="accountNumber"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">开户银行：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="accountBank" id="accountBank"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">开户省市：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="accountCity" id="accountCity"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md4">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">开户行地址：</label>
-                                <div class="layui-input-block">
-                                    <span class="name-color" name="accountBankAddress" id="accountBankAddress"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-card layui-form" >
-                    <div class="layui-card-header">心愿线路</div>
-                    <div class="layui-card-body layui-row layui-col-space10">
-                        <div class="layui-col-md12" id="wishJourney">
-                            <div class="no-data">暂无数据</div>
-                        </div>
-                        <div class="layui-form-item layui-text-align">
-                            <button  class="layui-btn layui-bg-gray" lay-filter="cancel" lay-submit="" id="addCancel">
-                                &emsp;返回&emsp;
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </form>
         </div>
     </div>
 </div>
+<script id="preview" type="text/html">
+<div class="layui-card">
+    <div class="layui-card-header">证件图片</div>
+    <div class="layui-card-body layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-row layui-col-space10 layui-form-item">
+                <div class="layui-col-md5">
+                    <div>身份证图片</div>
+                    <div class="layui-row layui-col-space10 layui-form-item">
+                        <div class="layui-col-md6 layui-text-align">
+                            <div>
+                                <div class="layui-upload-drag-title">正面<span class="sample-graph boxZoomImg"  src="../../images/front.png"><img src="../../images/front.png" class="layui-hide"/>查看示例图</span></div>
+                                <div class="layui-upload-drag" id="idLicenceFrontImgDiv">
+                                    {{# if(d.detail.idLicenceFrontImg == ''){ }}
+                                    <i class="upload-bg"></i>
+                                    {{#  } else { }}
+                                    <div id="idLicenceFrontImgView">
+                                        <img class="boxZoomImg" src="{{d.detail.idLicenceFrontImg}}" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
+                                    </div>
+                                    {{#  } }}
+                                </div>
+                                {{# if(d.check.idLicenceFrontImg){ }}
+                                <div class="check"><label class="x-red">待审：</label><span class="check-line boxZoomImg"  src="{{d.check.idLicenceFrontImg}}"><img src="{{d.check.idLicenceFrontImg}}" class="layui-hide"/>正面图片</span></div>
+                                {{# } }}
+                            </div>
+                        </div>
+                        <div class="layui-col-md6 layui-text-align">
+                            <div class="layui-upload-drag-title">背面<span class="sample-graph boxZoomImg"  src="../../images/back.png"><img src="../../images/back.png" class="layui-hide"/>查看示例图</span></div>
+                            <div class="layui-upload-drag" id="idLicenceBackImgDiv">
+                                {{# if(d.detail.idLicenceBackImg == ''){ }}
+                                <i class="upload-bg"></i>
+                                {{#  } else { }}
+                                <div  id="idLicenceBackImgView">
+                                    <img class="boxZoomImg" src="{{d.detail.idLicenceBackImg}}" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
+                                </div>
+                                {{#  } }}
+                            </div>
+                            {{# if(d.check.idLicenceBackImg){ }}
+                            <div class="check"><label class="x-red">待审：</label><span class="check-line boxZoomImg" src="{{d.check.idLicenceBackImg}}"><img src="{{d.check.idLicenceBackImg}}" class="layui-hide"/>背面图片</span></div>
+                            {{# } }}
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md5">
+                    <div>驾驶证</div>
+                    <div class="layui-row layui-col-space10 layui-form-item">
+                        <div class="layui-col-md6 layui-text-align">
+                            <div class="layui-upload-drag-title">正本<span class="sample-graph boxZoomImg"  src="../../images/front.png"><img src="../../images/front.png" class="layui-hide"/>查看示例图</span></div>
+                            <div class="layui-upload-drag" id="driveLicenceFrontImgDiv">
+                                {{# if(d.detail.driveLicenceFrontImg == ''){ }}
+                                <i class="upload-bg"></i>
+                                {{#  } else { }}
+                                <div  id="driveLicenceFrontImgView">
+                                    <img class="boxZoomImg" src="{{d.detail.driveLicenceFrontImg}}" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
+                                </div>
+                                {{#  } }}
+                            </div>
+                            {{# if(d.check.driveLicenceFrontImg){ }}
+                            <div class="check"><label class="x-red">待审：</label><span class="check-line boxZoomImg" src="{{d.check.driveLicenceFrontImg}}"><img src="{{d.check.driveLicenceFrontImg}}" class="layui-hide"/>正本图片</span></div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-col-md6 layui-text-align">
+                            <div class="layui-upload-drag-title">副本<span class="sample-graph boxZoomImg"  src="../../images/back.png"><img src="../../images/back.png" class="layui-hide"/>查看示例图</span></div>
+                            <div class="layui-upload-drag" id="driveLicenceBackImgDiv">
+                                {{# if(d.detail.driveLicenceBackImg == ''){ }}
+                                <i class="upload-bg"></i>
+                                {{#  } else { }}
+                                <div id="driveLicenceBackImgView">
+                                    <img class="boxZoomImg" src="{{d.detail.driveLicenceBackImg}}" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
+                                </div>
+                                {{#  } }}
+                            </div>
+                            {{# if(d.check.driveLicenceBackImg){ }}
+                            <div class="check"><label class="x-red">待审：</label><span class="check-line boxZoomImg" src="{{d.check.driveLicenceBackImg}}"><img src="{{d.check.driveLicenceBackImg}}" class="layui-hide"/>副本图片</span></div>
+                            {{# } }}
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md2">
+                    <div>头像</div>
+                    <div class="layui-row layui-col-space10 layui-form-item">
+                        <div class="layui-col-md12 layui-text-align">
+                            <div class="layui-upload-drag-title">&nbsp;</div>
+                            <div class="layui-upload-drag" id="avatarImgDiv">
+                                {{# if(d.detail.avatarImg == ''){ }}
+                                <i class="upload-bg"></i>
+                                {{#  } else { }}
+                                <div id="avatarImgView">
+                                    <img class="boxZoomImg" src="{{d.detail.avatarImg}}" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
+                                </div>
+                                {{#  } }}
+                            </div>
+                            {{# if(d.check.avatarImg){ }}
+                            <div class="check"><label class="x-red">待审：</label><span class="check-line boxZoomImg" src="{{d.check.avatarImg}}"><img src="{{d.check.avatarImg}}" class="layui-hide"/>头像图片</span></div>
+                            {{# } }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md5">
+            <div>从业资格证</div>
+            <div class="layui-row layui-col-space10 layui-form-item">
+                <div class="layui-col-md6 layui-text-align">
+                    <div>
+                        <div class="layui-upload-drag-title">正本<span class="sample-graph boxZoomImg"  src="../../images/front.png"><img src="../../images/front.png" class="layui-hide"/>查看示例图</span></div>
+                        <div class="layui-upload-drag" id="qualificationsFrontImgDiv">
+                            {{# if(d.detail.qualificationsFrontImg == ''){ }}
+                            <i class="upload-bg"></i>
+                            {{#  } else { }}
+                            <div id="qualificationsFrontImgView">
+                                <img class="boxZoomImg" src="{{d.detail.qualificationsFrontImg}}" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
+                            </div>
+                            {{#  } }}
+                        </div>
+                        {{# if(d.check.qualificationsFrontImg){ }}
+                        <div class="check"><label class="x-red">待审：</label><span class="check-line boxZoomImg" src="{{d.check.qualificationsFrontImg}}"><img src="{{d.check.qualificationsFrontImg}}" class="layui-hide"/>正本图片</span></div>
+                        {{# } }}
+                    </div>
+                </div>
+                <div class="layui-col-md6 layui-text-align">
+                    <div class="layui-upload-drag-title">副本<span class="sample-graph boxZoomImg"  src="../../images/back.png"><img src="../../images/back.png" class="layui-hide"/>查看示例图</span></div>
+                    <div class="layui-upload-drag" id="qualificationsBackImgDiv">
+                        {{# if(d.detail.qualificationsBackImg == ''){ }}
+                        <i class="upload-bg"></i>
+                        {{#  } else { }}
+                        <div  id="qualificationsBackImgView">
+                            <img class="boxZoomImg" src="{{d.detail.qualificationsBackImg}}" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
+                        </div>
+                        {{#  } }}
+                    </div>
+                    {{# if(d.check.qualificationsBackImg){ }}
+                    <div class="check"><label class="x-red">待审：</label><span class="check-line boxZoomImg" src="{{d.check.qualificationsBackImg}}"><img src="{{d.check.qualificationsBackImg}}" class="layui-hide"/>副本图片</span></div>
+                    {{# } }}
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md5">
+            <div>运输协议</div>
+            <div class="layui-row layui-col-space10 layui-form-item">
+                <div class="layui-col-md6 layui-text-align">
+                    <div class="layui-upload-drag-title">协议1</div>
+                    <div class="layui-upload-drag" id="transportProtocolImg1Div">
+                        {{# if(d.detail.transportProtocolImg1 == ''){ }}
+                        <i class="upload-bg"></i>
+                        {{#  } else { }}
+                        <div id="transportProtocolImg1View">
+                            <img class="boxZoomImg" src="{{d.detail.transportProtocolImg1}}" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
+                        </div>
+                        {{#  } }}
+                    </div>
+                    {{# if(d.check.transportProtocolImg1){ }}
+                    <div class="check"><label class="x-red">待审：</label><span class="check-line boxZoomImg" src="{{d.check.transportProtocolImg1}}"><img src="{{d.check.transportProtocolImg1}}" class="layui-hide"/>协议1图片</span></div>
+                    {{# } }}
+                </div>
+                <div class="layui-col-md6 layui-text-align">
+                    <div class="layui-upload-drag-title">协议2</div>
+                    <div class="layui-upload-drag" id="transportProtocolImg2Div">
+                        {{# if(d.detail.transportProtocolImg2 == ''){ }}
+                        <i class="upload-bg"></i>
+                        {{#  } else { }}
+                        <div  id="transportProtocolImg2View">
+                            <img class="boxZoomImg" src="{{d.detail.transportProtocolImg2}}" alt="上传成功后渲染" style="max-width: 180px;max-height: 130px;">
+                        </div>
+                        {{#  } }}
+                    </div>
+                    {{# if(d.check.transportProtocolImg2){ }}
+                    <div class="check"><label class="x-red">待审：</label><span class="check-line boxZoomImg" src="{{d.check.transportProtocolImg2}}"><img src="{{d.check.transportProtocolImg2}}" class="layui-hide"/>协议2图片</span></div>
+                    {{# } }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="layui-card layui-form">
+    <div class="layui-card-header">基础信息</div>
+    <div class="layui-card-body layui-row layui-col-space10">
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">司机姓名：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" id="name">{{d.detail.name}}</span>
+                </div>
+                {{# if(d.check.name){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.name}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">司机手机：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="phone" id="phone">{{d.detail.phone}}</span>
+                </div>
+                {{# if(d.check.phone){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.phone}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证号：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="idNum" id="idNum">{{d.detail.idNum}}</span>
+                </div>
+                {{# if(d.check.idNum){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.idNum}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label  class="layui-form-label">司机类型：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="driverType" id="driverType">{{d.detail.driverType}}</span>
+                </div>
+                {{# if(d.check.driverType){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.driverType}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">驾照类型：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="driveLicenceType" id="driveLicenceType">{{d.detail.driveLicenceType}}</span>
+                </div>
+                {{# if(d.check.driveLicenceType){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.driveLicenceType}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">驾龄：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="drivingAge" id="drivingAge">{{d.detail.drivingAge}}</span><span style="margin-left: 5px">年</span>
+                </div>
+                {{# if(d.check.drivingAge){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.drivingAge}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证有效期：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="idLicenceValidity" id="idLicenceValidity">{{d.detail.idLicenceValidity}}</span>
+                </div>
+                {{# if(d.check.idLicenceValidity){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.idLicenceValidity}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">驾驶证有效期：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="driveLicenceValidity" id="driveLicenceValidity">{{d.detail.driveLicenceValidity}}</span>
+                </div>
+                {{# if(d.check.driveLicenceValidity){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.driveLicenceValidity}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">从业资格证有效期：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="qualificationsValidity" id="qualificationsValidity">{{d.detail.qualificationsValidity}}</span>
+                </div>
+                {{# if(d.check.qualificationsValidity){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.qualificationsValidity}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">当前住址：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="address" id="address">{{d.detail.address}}</span>
+                </div>
+                {{# if(d.check.address){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.address}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="status" id="status">{{d.detail.status}}</span>
+                </div>
+                {{# if(d.check.status){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.status}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="layui-card layui-form" >
+    <div class="layui-card-header">押金信息</div>
+    <div class="layui-card-body layui-row layui-col-space10">
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">押金金额：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="deposit" id="deposit">{{d.detail.deposit}}</span><span style="margin-left: 5px">元</span>
+                </div>
+                {{# if(d.check.deposit){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.deposit}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">押金状态：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="depositStatus" id="depositStatus">{{d.detail.depositStatus}}</span>
+                </div>
+                {{# if(d.check.depositStatus){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.depositStatus}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        {{# if(d.detail.depositStatus == '已支付' || d.check.depositStatus== '已支付'){ }}
+        <div class="layui-col-md4" id="depositTradeNumberDiv">
+            <div class="layui-form-item">
+                <label class="layui-form-label">支付流水：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="depositTradeNumber" id="depositTradeNumber">{{d.detail.depositTradeNumber}}</span>
+                </div>
+                {{# if(d.check.depositTradeNumber){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.depositTradeNumber}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        {{#  } }}
+    </div>
+</div>
+<div class="layui-card layui-form" >
+    <div class="layui-card-header">银行账户</div>
+    <div class="layui-card-body layui-row layui-col-space10">
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">银行卡账户：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="accountName" id="accountName">{{d.detail.accountName}}</span>
+                </div>
+                {{# if(d.check.accountName){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.accountName}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">银行卡账号：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="accountNumber" id="accountNumber">{{d.detail.accountNumber}}</span>
+                </div>
+                {{# if(d.check.accountNumber){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.accountNumber}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">开户银行：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="accountBank" id="accountBank">{{d.detail.accountBank}}</span>
+                </div>
+                {{# if(d.check.accountBank){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.accountBank}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">开户省市：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="accountCity" id="accountCity">{{d.detail.accountCity}}</span>
+                </div>
+                {{# if(d.check.accountCity){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.accountCity}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">开户行地址：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="accountBankAddress" id="accountBankAddress">{{d.detail.accountBankAddress}}</span>
+                </div>
+                {{# if(d.check.accountBankAddress){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.accountBankAddress}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="layui-card layui-form" >
+    <div class="layui-card-header">心愿线路</div>
+    <div class="layui-card-body layui-row layui-col-space10">
+        <div class="layui-col-md12" id="wishJourney">
+            {{#  if(d.detail.wishJourney.length == 0){ }}
+            <div class="no-data"><label class="layui-form-label">暂无数据</label></div>
+            {{#  } else { }}
+            {{#  layui.each(d.detail.wishJourney, function(index, item){ }}
+                <div class="layui-row">
+                    <div class="layui-col-md3">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">始发地：</label>
+                            <div class="layui-input-block">
+                                <span class="name-color">{{item.start}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md3">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">目的地：</label>
+                            <div class="layui-input-block">
+                                <span class="name-color">{{item.end}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{# }) }}
+            {{#  } }}
+        </div>
+        {{# if(d.check.wishJourney){ }}
+        <div class="layui-col-md12" id="wishJourneyCheck">
+            <label class="x-red wishJourneyCheck-label layui-form-label" style="width: 60px;">待审：</label>
+            {{#  if(d.check.wishJourney.length == 0){ }}
+            <div class="no-data"><label class="layui-form-label">暂无数据</label></div>
+            {{#  } else { }}
+            {{#  layui.each(d.check.wishJourney, function(index, item){ }}
+            <div class="layui-row">
+                <div class="layui-col-md3">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">始发地：</label>
+                        <div class="layui-input-block">
+                            <span>{{item.start}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">目的地：</label>
+                        <div class="layui-input-block">
+                            <span>{{item.end}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{# }) }}
+            {{#  } }}
+        </div>
+        {{# } }}
+    </div>
+</div>
+</script>
 </body>
 </html>
