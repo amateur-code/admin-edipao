@@ -170,8 +170,6 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
                 $('#depositTradeNumber').focus();
                 layer.msg('请输入押金支付流水号', {icon: 5,anim: 6});
                 return false
-            }else{
-                data.field.depositTradeNumber='';
             }
             var param ={
                 'id': params.id,
