@@ -30,6 +30,7 @@
         height: 100%;
         text-align: center;
         border: 1px solid #ddd;
+        padding-bottom: 200px;
     }
     #approvalModuleList li{
         height: 50px;
@@ -43,11 +44,6 @@
     #approvalModuleList li.active{
         background-color: #009688;
         color:#fff;
-    }
-    
-    #approvalModuleList li.rizhi{
-        height: 200px;
-        font-size: 18px;
     }
     .btn-ok{
         display: block;
@@ -100,6 +96,7 @@
                 <div class="layui-timeline-title">
                     <div class="title">开始审核</div>
                     <button type="button" class="layui-btn layui-btn-sm node-add" data-code="{{d.flowCode}}" data-index="0">添加节点</button>
+                    <button type="button" class="layui-btn layui-btn-sm node-log" data-id="{{d.flowId}}" data-index="0">查看日志</button>
                 </div>
             </div>
         </li>
@@ -150,7 +147,6 @@
         {{#  layui.each(d.list, function(index, item){ }}
         <li data-code="{{item.flowModuleCode}}">{{item.flowModuleName}}</li>
         {{# }) }}
-        <li class="rizhi" data-code="rizhi">日志</li>
     </script>
     <script type="text/javascript">
     var approvalManager = {};
@@ -173,10 +169,8 @@
 
         $('#approvalModuleList').on('click', 'li', function() {
             var code = $(this).data('code');
-            if(code == 'rizhi'){
-                return xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.roleId + '&type=6');
-            }
-             $('#approvalModuleList li').removeClass('active');
+            
+            $('#approvalModuleList li').removeClass('active');
             $(this).addClass("active");
 
 
@@ -224,6 +218,9 @@
             laytpl(approvalFlowTpl.innerHTML).render(CONFIG_CACHE[code], function(html) {
                 document.getElementById(code).innerHTML = html;
             })
+        })
+        $('#approvalFlowList').on('click', '.node-log', function() {
+            xadmin.open('操作日志', '../../OperateLog/log.html?id=' + $(this).data('id') +'&type=6');
         })
 
         $('#approvalFlowList').on('click', '.node-staff', function() {
