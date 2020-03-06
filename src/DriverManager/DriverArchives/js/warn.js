@@ -1,8 +1,8 @@
 layui.use(['form', 'layer'],
     function() {
         $ = layui.jquery;
-        var form = layui.form,
-            layer = layui.layer,
+           var layer = layui.layer,
+               form = layui.form,
             edipao = layui.edipao;
         //自定义验证规则
         form.verify({
@@ -40,17 +40,33 @@ layui.use(['form', 'layer'],
                 }
             }
         });
-
+        // 获取预警
+        edipao.request({
+            type: 'GET',
+            url: '/admin/driver/info/warn/get',
+        }).done(function(res) {
+            if (res.code == 0) {
+                var data = JSON.parse(res.data);
+                $('#driveLicenceWarn').val(data.driveLicenceWarn);
+                $('#idLicenceWarn').val(data.idLicenceWarn);
+                $('#qualificationsWarn').val(data.qualificationsWarn);
+            } else {
+                layer.msg(res.message, {icon: 5,anim: 6});
+            }
+        })
         //监听提交
         form.on('submit(add)',
             function (data) {
+                var param ={
+                    'warnJson':JSON.stringify(data.field)
+                }
                 edipao.request({
                     type: 'POST',
-                    url: '/admin/driver/info/save',
-                    data:data.field,
+                    url: '/admin/driver/info/warn/set',
+                    data:param,
                 }).done(res=>{
                     if(res.code == 0){
-                        layer.alert("增加成功", {icon: 6},
+                        layer.alert("设置成功", {icon: 6},
                             function() {
                                 //关闭当前frame
                                 xadmin.close();

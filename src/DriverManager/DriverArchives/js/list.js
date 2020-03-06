@@ -7,6 +7,12 @@ var depositStatusData = {
     '0':'未支付',
     '1':'已支付'
 };
+// 预警状态
+var warnData = {
+    'idLicenceWarn':'身份证',
+    'driveLicenceWarn':'驾驶证',
+    'qualificationsWarn':'从业资格证',
+}
 var driveLicenceTypeData = {};
 layui.config({
     base: '../../lib/TableFilter/'
@@ -93,13 +99,26 @@ layui.config({
                     return DataNull(val)
                 }
             },
-            { field: 'idNum', title: '司机身份证号',
+            { field: 'idNum', title: '司机身份证号',width: 150,
                 templet: function (data) {
                     var val = data.idNum;
                     return DataNull(val)
                 }
             },
-            { field: 'drivingAge', title: '驾龄',
+            {
+                field: 'driverType', title: '司机类型',width: 80,
+                templet: function (data) {
+                    var val = data.driverType;
+                    return val || '--'
+                }
+            },
+            { field: 'driveLicenceType', title: '驾照类型',width: 80,
+                templet: function (data) {
+                    var val = data.driveLicenceType;
+                    return DataNull(val)
+                }
+            },
+            { field: 'drivingAge', title: '驾龄',width: 100,
                 templet: function (data) {
                     var val = data.drivingAge;
                     if(val!=''&&val!=null){
@@ -109,50 +128,6 @@ layui.config({
                     }
                 }
             },
-            {
-                field: 'driverType', title: '司机类型',
-                templet: function (data) {
-                    var val = data.driverType;
-                    return driverTypesData[val] || '--'
-                }
-            },
-            { field: 'driveLicenceType', title: '驾照类型',
-                templet: function (data) {
-                    var val = data.driveLicenceType;
-                    return DataNull(val)
-                }
-            },
-           /* { field: 'idLicenceValidity', title: '身份证有效期',
-                templet: function (data) {
-                    var val = data.idLicenceValidity;
-                    return DataNull(val)
-                }
-            },
-            { field: 'driveLicenceValidity', title: '驾照有效期',
-                templet: function (data) {
-                    var val = data.driveLicenceValidity;
-                    return DataNull(val)
-                }
-            },
-            { field: 'qualificationsValidity', title: '从业资格证有效期',
-                templet: function (data) {
-                    var val = data.qualificationsValidity;
-                    return DataNull(val)
-                }
-            },*/
-            {
-                field: 'status', title: '司机状态',
-                templet: function (data) {
-                    var val = data.status;
-                    return  driverStatusData[val] || '--'
-                }
-            },
-            // { field: 'address', title: '司机当前住址',
-            //     templet: function (data) {
-            //         var val = data.address;
-            //         return DataNull(val)
-            //     }
-            // },
             {
                 field: 'wishJourney', title: '意向线路',
                 templet: function (data) {
@@ -170,16 +145,16 @@ layui.config({
                     return DataNull(val)
                 }
             },
-            { field: 'deposit', title: '押金',
+            { field: 'deposit', title: '押金', width: 120,
                 templet: function (data) {
                     var val = data.deposit;
                     if(val == null||val == ''){
                         return '--'
                     }else{
                         var depositStatusVal = data.depositStatus;
-                        if(depositStatusVal=='0'){
+                        if(depositStatusVal=='未支付'){
                             return val+'元<span style="margin-left: 10px;color: #EE5B22;">未支付</span>'
-                        }else  if(depositStatusVal=='1'){
+                        }else  if(depositStatusVal=='已支付'){
                             return val+'元<span style="margin-left: 10px;color: #3490E9;">已支付</span>'
                         }else{
                             return  val
@@ -187,43 +162,48 @@ layui.config({
                     }
                 }
             },
-            // { field: 'depositStatus', title: '押金状态',
-            //     templet: function (data) {
-            //         var val = data.depositStatus
-            //         return DataNull(val)
-            //     }
-            // },
-            // {field: 'accountBank', title: '开户行',
-            //     templet: function (data) {
-            //         var val = data.accountBank
-            //         return DataNull(val)
-            //     }
-            // },
-            // {field: 'accountBankAddress', title: '开户行地址',
-            //     templet: function (data) {
-            //         var val = data.accountBankAddress
-            //         return DataNull(val)
-            //     }
-            // },
-            // {field: 'accountNumber', title: '账号号码',
-            //     templet: function (data) {
-            //         var val = data.accountNumber
-            //         return DataNull(val)
-            //     }
-            // },
-            // {field: 'accountName', title: '账号姓名',
-            //     templet: function (data) {
-            //         var val = data.accountName
-            //         return DataNull(val)
-            //     }
-            // },
             {
-                field: 'audit',title: '操作', width: 350,
+                field: 'licenceWarn', title: '证件预警',width: 160,
                 templet: function (data) {
-                    var val = data.audit;
+                    var val = JSON.parse(data.licenceWarn)
+                    if(val!=''&&val!=null){
+                        var html='';
+                        for(var i in val){
+                            html+='<p style="color: #EE5B22;">'+warnData[i]+(val[i]>0?''+val[i]+'天后到期':'已过期')+'</p>';
+                        }
+                        return html;
+                    }else{
+                        return '--'
+                    }
+                }
+            },
+            {
+                field: 'status', title: '司机状态',
+                templet: function (data) {
+                    var val = data.status;
+                    return  val || '--'
+                }
+            },
+            {
+                field: 'approvalFlag', title: '审核状态',
+                templet: function (data) {
+                    var val = data.approvalFlag;
+                    if(val=='0'){
+                        return '未审核'
+                    }else if(val=='1'){
+                        return '已审核'
+                    }else{
+                        return '--'
+                    }
+                }
+            },
+            {
+                field: 'approvalDisplay',title: '操作', width: 300,
+                templet: function (data) {
+                    var val = data.approvalDisplay;
                     var html = '';
                     html += '<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>';
-                    if (val == '0') {
+                    if (val) {
                         html += '<a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="audit">审核</a>';
                     }
                     html += '<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="info">查看</a>';
@@ -285,7 +265,6 @@ layui.config({
             { field: 'accountName', type: 'input' }
         ],
         'done': function (filters) {
-            debugger
 
         }
     })*/
@@ -295,13 +274,13 @@ layui.config({
         let data = obj.data
         switch (obj.event) {
             case 'edit':
-                xadmin.open('修改司机', './edit.html?id=' + data.id,1200,600)
+                xadmin.open('修改司机', './edit.html?id=' + data.id)
                 break;
             case 'audit':
-                xadmin.open('审核司机', './audit.html?id=' + data.id,1200,600)
+                xadmin.open('审核司机', './audit.html?id=' + data.id)
                 break;
             case 'info':
-                xadmin.open('查看司机', './info.html?id=' + data.id,1200,600)
+                xadmin.open('查看司机', './info.html?id=' + data.id)
                 break;
             case 'del':
                 layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
@@ -323,7 +302,7 @@ layui.config({
                 });
                 break;
             case 'log':
-                xadmin.open('查看日志', './log.html?id=' + data.id,1200,600)
+                xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=3');
                 break;
         };
     });
@@ -331,13 +310,13 @@ layui.config({
     table.on('toolbar(driverList)', function(obj) {
         switch (obj.event) {
             case 'add':
-                xadmin.open('新增司机', './add.html', 1200,600)
+                xadmin.open('新增司机', './add.html')
                 break;
             case 'warn':
                 xadmin.open('预警设置', './warn.html', 345,370)
                 break;
             case 'export':
-                layer.msg('导出');
+               layer.msg('导出');
                 break;
             case 'tableSet':
                 layer.msg('设置');

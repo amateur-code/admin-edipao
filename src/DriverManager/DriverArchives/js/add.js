@@ -27,17 +27,12 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             }
             // 押金状态
             if(data.field.depositStatus=='1'&&data.field.depositTradeNumber==''){
-                layer.msg('请输入押金支付流水号', {icon: 5,anim: 6});
                 $('#depositTradeNumber').focus();
+                layer.msg('请输入押金支付流水号', {icon: 5,anim: 6});
                 return false
             }else{
                 data.field.depositTradeNumber='';
             }
-            // 日期去掉横线
-            var dateTest = new RegExp(/-/g);
-            var idLicenceValidity = data.field.idLicenceValidity.replace(dateTest,"");
-            var driveLicenceValidity = data.field.driveLicenceValidity.replace(dateTest,"");
-            var qualificationsValidity = data.field.qualificationsValidity.replace(dateTest,"");
             var param ={
                 'name':data.field.name,
                 'phone':data.field.phone,
@@ -45,9 +40,9 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
                 'drivingAge':data.field.drivingAge,
                 'driverType':data.field.driverType,
                 'driveLicenceType':data.field.driveLicenceType,
-                'idLicenceValidity':idLicenceValidity,
-                'driveLicenceValidity':driveLicenceValidity,
-                'qualificationsValidity':qualificationsValidity,
+                'idLicenceValidity':data.field.idLicenceValidity,
+                'driveLicenceValidity':data.field.driveLicenceValidity,
+                'qualificationsValidity':data.field.qualificationsValidity,
                 'status':data.field.status,
                 'address':data.field.address,
                 'avatarImg':data.field.avatarImg,

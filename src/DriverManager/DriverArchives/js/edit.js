@@ -2,6 +2,27 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
     var $ = layui.jquery,
         edipao = layui.edipao;
     form = layui.form;
+    // 获取所有司机状态  key和val交换
+    var driverStatusData = parent.driverStatusData;
+    var driverStatusVal = {};
+    for (let k in driverStatusData) {
+        let value = driverStatusData[k];
+        driverStatusVal[value] = k;
+    }
+    // 	获取所有司机类型
+    var driverTypesData = parent.driverTypesData;
+    var driverTypesVal = {};
+    for (let k in driverTypesData) {
+        let value = driverTypesData[k];
+        driverTypesVal[value] = k;
+    }
+    // 获取押金状态
+    var depositStatusData = parent.depositStatusData;
+    var depositStatusVal = {};
+    for (let k in depositStatusData) {
+        let value = depositStatusData[k];
+        depositStatusVal[value] = k;
+    }
     // 获取详情
     var params = edipao.urlGet();
 
@@ -21,22 +42,10 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
 
 
     function initData(data){
-        // 日期格式转化
-        if(data.idLicenceValidity!=''&&data.idLicenceValidity!='0'&&data.idLicenceValidity!=null){
-            data.idLicenceValidity = getFormatDate(JSON.stringify(data.idLicenceValidity));
-        }else{
-            data.idLicenceValidity = '';
-        }
-        if(data.driveLicenceValidity!=''&&data.driveLicenceValidity!='0'&&data.driveLicenceValidity!=null){
-            data.driveLicenceValidity = getFormatDate(JSON.stringify(data.driveLicenceValidity));
-        }else{
-            data.driveLicenceValidity = '';
-        }
-        if(data.qualificationsValidity!=''&&data.qualificationsValidity!='0'&&data.qualificationsValidity!=null){
-            data.qualificationsValidity = getFormatDate(JSON.stringify(data.qualificationsValidity));
-        }else{
-            data.qualificationsValidity = '';
-        }
+        data.depositStatus = depositStatusVal[data.depositStatus];
+        data.driverType = driverTypesVal[data.driverType];
+        data.status = driverStatusVal[data.status];
+
         form.val("driverEdit", data);
         // 开户省市
         if(data.accountCity!=null&&data.accountCity!=''){
@@ -44,19 +53,13 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             var city = data.accountCity.split('-')[1];
             $('#accountCity').xcity(province,city);
         }
-
         // 显示押金支付流水
-        if(data.depositStatus=='1'){
+        if(data.depositStatus=='1'||data.depositStatus=='已支付'){
             $('#depositTradeNumberDiv').removeClass('layui-hide');
             $('#deposit').attr("disabled","disabled");
             $('#depositTradeNumber').attr("disabled","disabled");
         }
-        // 如果为已审核 押金状态不能修改
-        if(data.audit =='1'){
-            $('#deposit').attr("disabled","disabled");
-            $('#depositStatus').attr("disabled","disabled");
-            $('#depositTradeNumber').attr("disabled","disabled");
-        }
+
 
         // 显示图片
         if(data.idLicenceFrontImg!=''&&data.idLicenceFrontImg!=null){
@@ -164,18 +167,12 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             }
             // 押金状态
             if(data.field.depositStatus=='1'&&data.field.depositTradeNumber==''){
-                layer.msg('请输入押金支付流水号', {icon: 5,anim: 6});
                 $('#depositTradeNumber').focus();
+                layer.msg('请输入押金支付流水号', {icon: 5,anim: 6});
                 return false
             }else{
                 data.field.depositTradeNumber='';
             }
-
-            // 日期去掉横线
-            var dateTest = new RegExp(/-/g);
-            var idLicenceValidity = data.field.idLicenceValidity.replace(dateTest,"");
-            var driveLicenceValidity = data.field.driveLicenceValidity.replace(dateTest,"");
-            var qualificationsValidity = data.field.qualificationsValidity.replace(dateTest,"");
             var param ={
                 'id': params.id,
                 'name':data.field.name,
@@ -184,9 +181,9 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
                 'drivingAge':data.field.drivingAge,
                 'driverType':data.field.driverType,
                 'driveLicenceType':data.field.driveLicenceType,
-                'idLicenceValidity':idLicenceValidity,
-                'driveLicenceValidity':driveLicenceValidity,
-                'qualificationsValidity':qualificationsValidity,
+                'idLicenceValidity':data.field.idLicenceValidity,
+                'driveLicenceValidity':data.field.driveLicenceValidity,
+                'qualificationsValidity':data.field.qualificationsValidity,
                 'status':data.field.status,
                 'address':data.field.address,
                 'avatarImg':data.field.avatarImg,

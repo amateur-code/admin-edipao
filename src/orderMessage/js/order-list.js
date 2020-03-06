@@ -5,7 +5,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
     var layer = layui.layer;
     var upload = layui.upload;
     var laytpl = layui.laytpl;
-  
+    var user = JSON.parse(sessionStorage.user);
     table.render({
         elem: '#orderList'
         , url: ipUrl+'admin/order/list'
@@ -18,7 +18,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             pageName: 'pageNumber' //页码的参数名称，默认：page
             , limitName: 'pageSize' //每页数据量的参数名，默认：limit
         }
-        , where:{ loginStaffId: 17718571615 }
+        , where: { loginStaffId: user.staffId }
         , height: 'full'
         , autoSort: true
         , id: 'orderList'
@@ -44,6 +44,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                         layer.open({
                             type: 1, 
                             content: $("#uploadPic").html(), //这里content是一个普通的String,
+                            area: "600px",
                             btn: ["取消", "确定"],
                             success: function () {
                                 var uploadInst = upload.render({
@@ -55,7 +56,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                                     ,error: function(){
                                         //请求异常回调
                                     }
-                                    });
+                                });
                             }
                         });
                     }else{

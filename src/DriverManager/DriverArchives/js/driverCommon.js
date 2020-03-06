@@ -335,6 +335,8 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
     $('#name').blur(function () {
         $('#accountName').val($(this).val());
     });
+    // 初始化图片放大
+    zoomImg ()
 });
 // 移除
 function removeWishJourney (_this) {
