@@ -32,7 +32,7 @@
         <span class="layui-breadcrumb">
             <a>系统设置</a>
             <a>
-                <cite>员工管理</cite>
+                <cite>权限管理</cite>
             </a>
         </span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
@@ -68,42 +68,68 @@
     </script>
     <script type="text/javascript">
     layui.use(['table', 'layer'], function(table, layer) {
-        xadmin = layui.xadmin;
-        edipao = layui.edipao;
+        var xadmin = layui.xadmin,
+            edipao = layui.edipao,
+            tableKey = 'SystemSetting-PermissionManager-list'
+            tableCols = [ //表头
+                { checkbox: true },
+                { field: 'roleName', title: '角色名称' },
+                { field: 'staffNumber', title: '关联员工数' , templet: '#stffList'},
+                { field: 'createUser', title: '创建人' },
+                { field: 'createTime', title: '创建时间' },
+                { title: '操作', toolbar: '#rowBtns', width: 350 }
+            ]
+        edipao.request({
+            type: 'GET',
+            url: '/admin/table/show-field/get',
+            data: {
+                tableName: tableKey
+            }
+        }).done(function(res) {
+            if (res.code == 0) {
+                if(res.data){
+                    var showList = [];
+                    try{
+                        showList = JSON.parse(res.data);
+                    }catch(e){}
+                    layui.each(tableCols, function(index, item){
+                        if(item.field && showList.indexOf(item.field) == -1){
+                           item.hide = true;
+                        }
+                    })
+                }
+                renderTable();
+            } 
+        })
 
-        table.render({
-            elem: '#roleList',
-            url: edipao.API_HOST + '/admin/permission/role/list ',
-            method: 'POST',
-            request: {
-                pageName: 'pageNo',
-                limitName: 'pageSize'
-            },
-            where: {
-                loginStaffId: edipao.getLoginStaffId()
-            },
-            parseData: function(res) { //res 即为原始返回的数据
-                return {
-                    code: res.code, //解析接口状态
-                    msg: res.message, //解析提示文本
-                    count: res.data.totalSize, //解析数据长度
-                    data: res.data.roleDTOList  //解析数据列表
-                };
-            },
-            page: true,
-            cols: [
-                [ //表头
-                    { checkbox: true },
-                    { field: 'roleName', title: '角色名称' },
-                    { field: 'staffNumber', title: '关联员工数' , templet: '#stffList'},
-                    { field: 'createUser', title: '创建人' },
-                    { field: 'createTime', title: '创建时间' },
-                    { title: '操作', toolbar: '#rowBtns', width: 350 }
-                ]
-            ],
-            toolbar: '#headerBtns',
-            defaultToolbar: []
-        });
+
+        function renderTable(){
+            table.render({
+                elem: '#roleList',
+                url: edipao.API_HOST + '/admin/permission/role/list ',
+                method: 'POST',
+                request: {
+                    pageName: 'pageNo',
+                    limitName: 'pageSize'
+                },
+                where: {
+                    loginStaffId: edipao.getLoginStaffId()
+                },
+                parseData: function(res) { //res 即为原始返回的数据
+                    return {
+                        code: res.code, //解析接口状态
+                        msg: res.message, //解析提示文本
+                        count: res.data.totalSize, //解析数据长度
+                        data: res.data.roleDTOList  //解析数据列表
+                    };
+                },
+                page: true,
+                cols: [ tableCols ],
+                toolbar: '#headerBtns',
+                defaultToolbar: []
+            });
+        }
+        
 
         table.on('tool(roleList)', function(obj) {
             let data = obj.data
@@ -148,6 +174,7 @@
                 case 'export':
                     break;
                 case 'tableSet':
+                    xadmin.open('表格设置', './table-set.html', 600, 600)
                     break;
             };
         });
