@@ -7,6 +7,10 @@ layui.use(['layer','element'],function(layer,element) {
     }
     // 打开页面初始
     xadmin.init();
+    var user = layui.sessionData('user');
+    if(user){
+        $('#userName').html(user.name)
+    }
 
     //关闭tab清除记忆
     element.on('tabDelete(xbs_tab)', function(data){
@@ -61,7 +65,7 @@ layui.use(['layer','element'],function(layer,element) {
                 $(this).siblings().removeClass('open');
             }
         }
-        event.stopPropagation(); 
+        event.stopPropagation();
     })
     var left_tips_index = null;
     $('.left-nav #nav').on('mouseenter', '.left-nav-li', function(event) {
@@ -72,7 +76,7 @@ layui.use(['layer','element'],function(layer,element) {
     })
 
     $('.left-nav #nav').on('mouseout', '.left-nav-li', function(event) {
-        layer.close(left_tips_index); 
+        layer.close(left_tips_index);
     })
     // 隐藏左侧
     $('.container .left_open i').click(function(event) {

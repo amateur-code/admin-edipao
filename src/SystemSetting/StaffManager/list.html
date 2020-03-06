@@ -7,13 +7,15 @@
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
-    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="Expires" CONTENT="-1">
+    <meta http-equiv="Cache-Control" CONTENT="no-cache">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
     <link rel="stylesheet" href="../../css/font.css">
     <link rel="stylesheet" href="../../css/xadmin.css">
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js"></script>
-    <script type="text/javascript" src="../../js/common.js"></script>
+    <script type="text/javascript" src="../../js/common.js?VERSION"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
           <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -65,44 +67,73 @@
     <script type="text/javascript">
     layui.use(['table', 'layer'], function(table, layer) {
         var xadmin = layui.xadmin,
-            edipao = layui.edipao;
+            edipao = layui.edipao,
+            tableKey = 'SystemSetting-StaffManager-list',
+            tableCols = [ //表头
+                { checkbox: true },
+                { field: 'name', title: '员工姓名', width: 200 },
+                { field: 'phone', title: '员工手机', width: 200 },
+                { field: 'idCard', title: '身份证号码', width: 200 },
+                { field: 'dept', title: '所属部门', width: 200 },
+                { field: 'cardNo', title: '员工工号', width: 200 },
+                { field: 'positions', title: '员工职位', width: 200 },
+                { field: 'roleNames', title: '拥有权限', width: 200 },
+                { field: 'status', title: '状态', align: 'center'},
+                { title: '操作', toolbar: '#rowBtns', 'width': 350, fixed: 'right', align: 'center' }
+            ];
+        edipao.request({
+            type: 'GET',
+            url: '/admin/table/show-field/get',
+            data: {
+                tableName: tableKey
+            }
+        }).done(function(res) {
+            if (res.code == 0) {
+                if(res.data){
+                    var showList = [];
+                    try{
+                        showList = JSON.parse(res.data);
+                    }catch(e){}
+                    layui.each(tableCols, function(index, item){
+                        if(item.field && showList.indexOf(item.field) == -1){
+                           item.hide = true;
+                        }
+                    })
+                }
+                renderTable();
+            } 
+        })
 
-        table.render({
-            elem: '#staffList',
-            url: edipao.API_HOST + '/admin/staff/list',
-            request: {
-                pageName: 'pageNo',
-                limitName: 'pageSize'
-            },
-            where: {
-                loginStaffId: edipao.getLoginStaffId()
-            },
-            parseData: function(res) { //res 即为原始返回的数据
-                return {
-                    code: res.code, //解析接口状态
-                    msg: res.message, //解析提示文本
-                    count: res.data.totalSize, //解析数据长度
-                    data: res.data.staffDtoList //解析数据列表
-                };
-            },
-            page: true,
-            cols: [
-                [ //表头
-                    { checkbox: true },
-                    { field: 'name', title: '员工姓名' },
-                    { field: 'phone', title: '员工手机' },
-                    { field: 'idCard', title: '身份证号码' },
-                    { field: 'dept', title: '所属部门' },
-                    { field: 'cardNo', title: '员工工号' },
-                    { field: 'positions', title: '员工职位' },
-                    { field: 'roleNames', title: '拥有权限' },
-                    { field: 'status', title: '状态' },
-                    { title: '操作', toolbar: '#rowBtns', width: 350 }
-                ]
-            ],
-            toolbar: '#headerBtns',
-            defaultToolbar: []
-        });
+        function renderTable(){
+            table.render({
+                id: 'list',
+                elem: '#staffList',
+                url: edipao.API_HOST + '/admin/staff/list',
+                request: {
+                    pageName: 'pageNo',
+                    limitName: 'pageSize'
+                },
+                where: {
+                    loginStaffId: edipao.getLoginStaffId()
+                },
+                parseData: function(res) { //res 即为原始返回的数据
+                    return {
+                        code: res.code, //解析接口状态
+                        msg: res.message, //解析提示文本
+                        count: res.data.totalSize, //解析数据长度
+                        data: res.data.staffDtoList //解析数据列表
+                    };
+                },
+                page: true,
+                cols: [tableCols],
+                toolbar: '#headerBtns',
+                defaultToolbar: []
+            });
+
+        }
+        
+        
+
 
         table.on('tool(staffList)', function(obj) {
             let data = obj.data
@@ -118,7 +149,6 @@
                     break;
                 case 'delete':
                     layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
-
                         edipao.request({
                             url: '/admin/staff/delete',
                             data: {
@@ -150,7 +180,7 @@
                     layer.msg('删除');
                     break;
                 case 'tableSet':
-                    layer.msg('编辑');
+                    xadmin.open('表格设置', './table-set.html', 600, 600)
                     break;
             };
         });

@@ -7,7 +7,9 @@
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
-    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="Expires" CONTENT="-1">
+    <meta http-equiv="Cache-Control" CONTENT="no-cache">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
     <link rel="stylesheet" href="../../css/font.css">
     <link rel="stylesheet" href="../../css/xadmin.css">
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
@@ -69,8 +71,22 @@
     <script type="text/javascript">
     layui.use(['table', 'layer'], function(table, layer) {
         var xadmin = layui.xadmin,
-            edipao = layui.edipao;
-            SupplierTypeConfig = {};
+            edipao = layui.edipao,
+            SupplierTypeConfig = {},
+            tableKey = 'BackService-BusinessManager-list',
+            tableCols = [ //表头
+                { checkbox: true },
+                { field: 'supplierName', title: '供应商名称',width: 200 },
+                { field: 'loginPhone', title: '登录手机号',width: 200 },
+                { field: 'contractName', title: '联系人',width: 200 },
+                { field: 'supplierType', title: '类型',width: 200,templet:function(d){
+                    return SupplierTypeConfig[d.supplierType]
+                }},
+                { field: 'productCount', title: '合作产品/网点',width: 200 },
+                { field: 'statusDesc', title: '状态',width: 100 },
+                { title: '操作', toolbar: '#rowBtns', width: 400 }
+            ];
+
         edipao.request({
             type: 'get',
             url: '/admin/supplier/getSupplierType'
@@ -79,9 +95,34 @@
                layui.each(res.data,function(index, el) {
                    SupplierTypeConfig[el.code] = el.name
                });
-               renderTable();
+               getTableHeader();
             }
         })
+
+        function getTableHeader(){
+            edipao.request({
+                type: 'GET',
+                url: '/admin/table/show-field/get',
+                data: {
+                    tableName: tableKey
+                }
+            }).done(function(res) {
+                if (res.code == 0) {
+                    if(res.data){
+                        var showList = [];
+                        try{
+                            showList = JSON.parse(res.data);
+                        }catch(e){}
+                        layui.each(tableCols, function(index, item){
+                            if(item.field && showList.indexOf(item.field) == -1){
+                               item.hide = true;
+                            }
+                        })
+                    }
+                    renderTable();
+                } 
+            })
+        }
 
         function renderTable(){
             table.render({
@@ -103,20 +144,7 @@
                     };
                 },
                 page: true,
-                cols: [
-                    [ //表头
-                        { checkbox: true },
-                        { field: 'supplierName', title: '供应商名称',width: 200 },
-                        { field: 'loginPhone', title: '登录手机号',width: 200 },
-                        { field: 'contractName', title: '联系人',width: 200 },
-                        { field: 'supplierType', title: '类型',width: 200,templet:function(d){
-                            return SupplierTypeConfig[d.supplierType]
-                        }},
-                        { field: 'productCount', title: '合作产品/网点',width: 200 },
-                        { field: 'statusDesc', title: '状态',width: 100 },
-                        { title: '操作', toolbar: '#rowBtns', width: 400 }
-                    ]
-                ],
+                cols: [ tableCols ],
                 toolbar: '#headerBtns',
                 defaultToolbar: []
             });
@@ -169,6 +197,7 @@
                 case 'export':
                     break;
                 case 'tableSet':
+                    xadmin.open('表格设置', './table-set.html', 600, 600)
                     break;
             };
         });
