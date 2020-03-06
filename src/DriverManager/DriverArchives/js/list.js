@@ -132,8 +132,13 @@ layui.config({
                 field: 'wishJourney', title: '意向线路',
                 templet: function (data) {
                     var val = data.wishJourney;
-                    if(val!=null&&val!=''){
-                        return JSON.parse(val).length
+                    if(val!=null&&val!=''&&val!='null'){
+                        var newVal = JSON.parse(val);
+                        if(newVal){
+                            return newVal.length || '--'
+                        }else{
+                            return '--'
+                        }
                     }else{
                         return '--'
                     }
