@@ -47,6 +47,10 @@
 .btn_container {
   margin-bottom: 20px;
 }
+.no_border {
+  border: none !important;
+  color: #3490E9 !important;
+}
 .blue {
   color: #3490E9;
 }

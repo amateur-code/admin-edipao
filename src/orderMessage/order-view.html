@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/order-list.css">
     <link rel="stylesheet" href="./css/order-edit.css">
+    <link rel="stylesheet" href="./css/order-view.css">
     <script src="../js/jquery.min.js"></script>
     <script src="../lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/xadmin.js"></script>
@@ -25,8 +26,415 @@
 </head>
 
 <body>
-    
+    <div class="x-nav">
+        <span class="layui-breadcrumb">
+            <a>业务管理</a>
+            <a>订单管理</a>
+            <a>
+                <cite class="page_title_text">订单修改</cite>
+            </a>
+        ：</span>
+        <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+            <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+        </a>
+    </div>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15 page_block">
+            <div class="layui-col-md12 page-container">
+                <!-- 头部 -->
+                <div class="page-header border-bottom">
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="title">基础信息</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="base_info" class="page_content"></div>
+            </div>
+        </div>
+        <div id="car_form_container" class="car_car_form_container"></div>
+        <script id="base_info_tpl" type="text/html">
+            <div class="layui-row">
+                <div class="layui-col-md6">
+                    <span class="content_name">业务单号：</span>
+                    <span id="" class="content_name blue">{{d.orderNo}}</span>
+                </div>
+                <div class="layui-col-md6">
+                    <span class="content_name">订单类型：</span>
+                    <span class="content_name blue">
+                        {{#  
+                            var fn = function(type){
+                                if(type == 1){
+                                    return '单车单';
+                                }else if(type == 2){
+                                    return '背车单';
+                                }else{
+                                    return '非法类型';
+                                }
+                            }; 
+                        }}
+                          {{fn(d.orderType)}}
+                    </span>
+                </div>
+            </div>
+        </script>
+        <script id="income_info_tpl" type="text/html">
+            <div class="layui-row">
+                <div class="layui-col-md6">
+                    <span class="content_name">收入总金额：</span>
+                    <span class="content_name blue">{{d.totalIncome}} 元</span>
+                </div>
+                <div class="layui-col-md6">
+                    <span class="content_name">管理费总金额：</span>
+                    <span class="content_name blue">{{d.totalManageFee}} 元</span>
+                </div>
+            </div>
+        </script>
+        <script id="car_info_tpl" type="text/html">
+            <form lay-filter="CARFORM" class="car_info_form layui-row layui-col-space15 page_block layui-form CARFORM">
+                <div class="page-header border-bottom">
+                    <div class="layui-row">
+                        <div class="layui-col-md1">
+                            <div class="title">车辆信息</div>
+                        </div>
+                        <div style="line-height: 32px;" class="layui-col-md1 blue pointer btn_btn">
+                            <span class="select_vin" data-filter="CARFORM">选择vin码：</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form_item_container">
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">车辆vin码：</span>
+                            <input disabled type="tel" name="vinCode" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">产品代码：</span>
+                            <input disabled type="text" name="productCode" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">车型：</span>
+                            <input disabled disabled type="text" name="model" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">轴数：</span>
+                                <input disabled disabled type="tel" name="shaftNum" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">功率：</span>
+                                <input disabled disabled type="text" name="power" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">GPS设备编号：</span>
+                                <input disabled disabled type="text" name="gpsDeviceCode" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">客户名称：</span>
+                                <input disabled type="text" name="customerFullName" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">发车仓库：</span>
+                                <input disabled type="text" name="startWarehouse" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">仓库单号：</span>
+                                <input disabled disabled type="text" name="warehouseNo" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">发车停车场：</span>
+                                <input disabled type="text" name="startPark" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">发车城市：</span>
+                                <input disabled type="text" name="startCity" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">发车地址：</span>
+                                <input disabled disabled type="text" name="startAddress" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">收车网点：</span>
+                                <input disabled type="text" name="endPark" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">收车城市：</span>
+                                <input disabled disabled type="text" name="endCity" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">收车地址：</span>
+                                <input disabled disabled type="text" name="endAddress" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">最迟送达时间：</span>
+                                <input disabled type="text" name="latestArriveTime" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">客户里程：</span>
+                                <input disabled disabled type="text" name="customerMileage" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">收入单价：</span>
+                                <input disabled disabled type="text" name="pricePerMeliage" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">收入金额：</span>
+                                <input disabled disabled type="text" name="income" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">管理费：</span>
+                                <input disabled disabled type="text" name="manageFee" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">结算方式：</span>
+                                <input disabled type="text" name="settleWay" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset4">
+                            <span class="layui-form-span text_left form_span">临牌号：</span>
+                                <input disabled disabled type="text" name="tempLicense" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">行驶证：</span>
+                            <input disabled disabled type="text" name="tempLicenseBackImage" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md5">
+                            <span class="layui-form-span text_left form_span">销售备注：</span>
+                            <input disabled name="saleRemark" required lay-verify="" placeholder="请输入" class="layui-input"/>
+                        </div>
+                        <div class="layui-inline layui-col-md5 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">储运备注：</span>
+                            <input disabled name="storageAndDeliverRemark" required lay-verify="" placeholder="请输入" class="layui-input"/>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md5">
+                            <span class="layui-form-span text_left form_span">经销商备注：</span>
+                            <input disabled name="dealerRemark" required lay-verify="required" placeholder="请输入" class="layui-input"/>
+                        </div>
+                        <div class="layui-inline layui-col-md5 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">发运资源库备注（委改库）：</span>
+                            <input disabled name="deliverResourceRemark" required lay-verify="required" placeholder="请输入" class="layui-input"/>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md5">
+                            <span class="layui-form-span text_left form_span">运输商备注：</span>
+                            <input disabled name="transportRemark" required lay-verify="required" placeholder="请输入" class="layui-input" />
+                        </div>
+                    </div>
+                    IMAGESTR
+                </div>
+            </form>
+        </script>
+        <script id="image_tpl" type="text/html">
+            <div class="layui-form-item layui-row">
+                <div class="layui-inline layui-col-md5">
+                    <span class="layui-form-span text_left form_span">发车单：</span>
+                    <div>
+                        <img width="100%" class="car_image" src="{{d.startBillImage}}">
+                    </div>
+                </div>
+                <div class="layui-inline layui-col-md5 layui-col-md-offset1">
+                    <span class="layui-form-span text_left form_span">行驶证：</span>
+                    <div>
+                        <img width="100%" class="car_image" src="{{d.tempLicenseBackImage}}">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item layui-row">
+                {{#  layui.each(d.fetchImages, function(index, item){ }}
+                <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                    <span class="layui-form-span text_left form_span">提车图片：</span>
+                    <div>
+                        <img width="100%" class="car_image" src="{{item}}">
+                    </div>
+                </div>
+                {{#  }); }}
+            </div>
+        </script>
+        <div class="layui-row layui-col-space15 page_block">
+            <form class="layui-col-md12 page-container layui-form">
+                <!-- 头部 -->
+                <div class="page-header border-bottom">
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="title">收入汇总信息</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="income_info" class="page_content"></div>
+            </form>
+        </div>
+        <div class="layui-row layui-col-space15 page_block">
+            <form lay-filter="form_ascription" class="layui-form">
+                <!-- 头部 -->
+                <div class="page-header border-bottom">
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="title">跟单与归属</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form_item_container">
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">调度员：</span>
+                                <input disabled type="text" name="dispatchOperator" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">提车员：</span>
+                                <input disabled type="text" name="fetchOperator" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">发运员：</span>
+                                <input disabled type="text" name="deliveryOperator" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">跟单员：</span>
+                                <input disabled type="text" name="followOperator" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">归属部门：</span>
+                                <input disabled type="text" name="department" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-row layui-col-space15 page_block">
+            <form lay-filter="form_dispatch" class="layui-col-md12 page-container layui-form">
+                <!-- 头部 -->
+                <div class="page-header border-bottom">
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="title">调度信息</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="form_fee_list" class="form_item_container">
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">司机姓名：</span>
+                                <input disabled id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">司机手机：</span>
+                                <input disabled type="text" name="driverPhone" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">司机身份证：</span>
+                                <input disabled disabled type="text" name="driverIdCard" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">司机驾照：</span>
+                                <input disabled disabled type="tel" name="driverCertificate" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <span class="layui-form-span text_left form_span">承运公里数：</span>
+                                <input disabled disabled type="tel" name="driverMileage" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div id="fee_list_container"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script id="fee_list_tpl" type="text/html">
+        <div class="layui-form-item layui-row">
+            <div class="form_item_inner">
+                <div>
+                    预付款
+                </div>
+                <div style="padding-left: 20px;">
+                    {{#  layui.each(d.prePay, function(index, item){ }}
+                    <div class="layui-inline layui-col-md3">
+                        <span class="layui-form-span text_left form_span">{{item.key}}：：</span>
+                            <input disabled value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                    {{#  }); }}
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-row">
+            <div class="form_item_inner">
+                <div>
+                    到付款
+                </div>
+                <div style="padding-left: 20px;">
+                    {{#  layui.each(d.arrivePay, function(index, item){ }}
+                    <div class="layui-inline layui-col-md3">
+                        <span class="layui-form-span text_left form_span">{{item.key}}：：</span>
+                            <input disabled value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                    {{#  }); }}
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-row">
+            <div class="form_item_inner">
+                <div>
+                    尾款
+                </div>
+                <div style="padding-left: 20px;">
+                    {{#  layui.each(d.tailPay, function(index, item){ }}
+                    <div class="layui-inline layui-col-md3">
+                        <span class="layui-form-span text_left form_span">{{item.key}}：：</span>
+                            <input disabled value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                    {{#  }); }}
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="fee_tpl">
+        <div class="fee_container">
+            <form lay-filter="add_fee_form" class="fee_list layui-form">
+                <div class="layui-row">
+                    {{#  layui.each(d.feeList, function(index, item){ }}
+                        <div class="layui-col-md4">
+                        <input disabled type="checkbox" {{item.checked?'checked':''}} name="{{item.key}}" title="{{item.key}}" lay-skin="primary">
+                        </div>
+                    {{#  }); }}
+                </div>
+            </form>
+            <div class="fee_footer">
+                费用不够？<span id="add_fee_item" class="blue pointer">增加费用项：</span>
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="fee_item_tpl">
+        <div class="fee_container">
+            <form class="fee_list layui-form">
+                <div style="width:100%" class="layui-inline">
+                    <span class="layui-form-span text_left form_span">费用项名称：</span>
+                    <div style="width:100%" class="layui-input-inline">
+                        <input disabled id="addFeeName" type="tel" name="addFeeName" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </script>
+    <div lay-filter="cars_table" id="cars_table"></div>
+    <div lay-filter="drivers_table" id="drivers_table"></div>
 </body>
 <script src="./js/order-view.js"></script>
-
 </html>

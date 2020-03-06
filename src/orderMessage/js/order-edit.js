@@ -40,21 +40,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
         _this.orderData = res.data;
         _this.setData(res.data);
         _this.bindEvents();
-        if(_this.action == "see"){
-          $("#page_title_text").text("订单查看");
-          $("#btn_container").remove();
-          $('.btn_btn').each(function (index, item) {
-            $(item).hide();
-          });
-          $(".layui-textarea").each(function (index, item) {
-            $(item).addClass("no_border");
-          });
-          $(".layui-input").each(function (index, item) {
-            $(item).addClass("no_border");
-          });;
-        }
       }else{
-        layer.msg(data.message, {icon: 5,anim: 6});
+        layer.msg(res.message, {icon: 5,anim: 6});
       }
     });
   }
@@ -88,7 +75,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
       if(res.code == "0"){
         _this.feeItemList = res.data;
       }else{
-        layer.msg(data.message, {icon: 5,anim: 6});
+        layer.msg(res.message, {icon: 5,anim: 6});
       }
     });
   }
@@ -282,11 +269,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
                           _this.feeItemList = res.data;
                           _this.openAddFee();
                         }else{
-                          layer.msg(data.message, {icon: 5,anim: 6});
+                          layer.msg(res.message, {icon: 5,anim: 6});
                         }
                       });
                     }else{
-                      layer.msg(data.message, {icon: 5,anim: 6});
+                      layer.msg(res.message, {icon: 5,anim: 6});
                     }
                   });
                 },

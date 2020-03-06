@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../lib/TableFilter/tableFilter.css">
     <link rel="stylesheet" href="./css/common.css">
     <link rel="stylesheet" href="./css/order-list.css">
+    <script src="../js/jquery.min.js"></script>
     <script src="../lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../js/xadmin.js"></script>
     <script src="../lib/TableFilter/tableFilter.js"></script>
@@ -55,19 +56,88 @@
             </div>
         </div>
     </div>
+    <div class="hide">
+        <div id="pre_fee_verify_table"></div>
+    </div>
 </body>
+<script id="arrive_fee_verify_tpl" type="text/html">
+    <div style="padding:10px;">
+        <div class="">
+            <div style="padding:10px;" class="">费用明细</div>
+            TABLE
+        </div>
+        <form lay-filter="arrive_fee_verify_form" class="layui-form">
+            <div class="layui-row">
+                <div class="layui-form-item">
+                    <div style="line-height:34px;" class="layui-col-md3">
+                        审核结果：
+                    </div>
+                    <div class="layui-col-md3">
+                        <input type="radio" name="arrive_verify_result" value="yes" title="通过" checked>
+                    </div>
+                    <div class="layui-col-md3">
+                        <input type="radio" name="arrive_verify_result" value="no" title="驳回">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div>审核备注：</div>
+                <textarea name="arrive_verify_remark" placeholder="请输入" class="layui-textarea"></textarea>
+            </div>
+        </form>
+    </div>
+</script>
+<script id="pre_fee_verify_tpl" type="text/html">
+    <div style="padding:10px;">
+        <div class="">
+            <div style="margin-bottom:20px;" class="text_center">TITLE</div>
+            TABLE
+        </div>
+    </div>
+</script>
 <script type="text/html" id="uploadPic">
     <div style="padding:20px;">
-        <button type="button" class="layui-btn" id="uploadPicBtn">
-            <i class="layui-icon">&#xe67c;</i>上传图片
-        </button>
+          <div class="layui-upload">
+            <button type="button" class="layui-btn" id="uploadPicBtn">选择图片</button> 
+            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+              预览图：
+              <div class="layui-upload-list" id="image_preview"></div>
+           </blockquote>
+          </div>
+    </div>
+</script>
+<script type="text/html" id="uploadStartPic">
+    <div style="padding:20px;">
+          <div class="layui-upload">
+           <form lay-filter="uploadStartPic" class="layui-form">
+                <div>车辆vin码</div>
+                <div>
+                    <select name="vinCode" lay-verify="">
+                        <option disabled selected value="">请选择vin码</option>
+                        {{#  layui.each(d.list, function(index, item){ }}
+                        <option value="{{item.vinCode}}">{{item.vinCode}}</option>
+                        {{#  }); }}
+                      </select>  
+                </div>
+                {{#  layui.each(d.num, function(index, item){ }}
+                <div class="layui-row upload_start_row">
+                    <div class="layui-col-md5">
+                        <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
+                    </div>
+                    <div id="{{'upload_start_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
+                        
+                    </div>
+                </div>
+                {{#  }); }}
+           </form>
+          </div>
     </div>
 </script>
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>
     <a class="layui-btn layui-btn-xs layui-bg-red" lay-event="examine">审核</a>
     <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="view">查看</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="cancel">取消</a>
     <a class="layui-btn layui-bg-cyan layui-btn-xs" lay-event="log">日志</a>
 </script>
 
