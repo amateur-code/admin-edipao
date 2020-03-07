@@ -3,7 +3,6 @@ $(function  () {
         var form = layui.form,
         $ = layui.$,
         edipao = layui.edipao;
-        $.idcode.setCode();
         //自定义验证规则
         form.verify({
             phoneVerify: function(value) {
@@ -22,20 +21,9 @@ $(function  () {
                     return '请输入密码';
                 }
             }
-            ,idcodeVerify: function(value) {
-                if(value!=''){
-                    var IsBy = $.idcode.validateCode();
-                    if(!IsBy){
-                        return '验证码不正确';
-                    }
-                }else{
-                    return '请输入验证码';
-                }
-            }
         });
         //监听提交
         form.on('submit(login)', function(data){
-            // console.log(data)
             //登陆
             edipao.request({
                 url: '/admin/staff/login',
