@@ -47,7 +47,7 @@ $(function  () {
                     })
                     location.href='../index.html'
                 }else{
-                    layer.msg(data.message, {icon: 5,anim: 6});
+                    layer.msg(res.message, {icon: 5,anim: 6});
                 }
             })
         });
