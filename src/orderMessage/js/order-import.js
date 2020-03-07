@@ -9,7 +9,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
   function renderTable(){
     table.render({
         elem: '#importOrderList'
-        , url: ipUrl+'admin/order/list'
+        , url: layui.edipao.API_HOST+'/admin/order/list'
         , title: '订单列表'
         , method: "get" // 请求方式  默认get
         , page: true //开启分页
@@ -36,7 +36,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 var field = e.target.dataset.field;
                 var truckId = e.target.dataset.truck;
                 $.ajax({
-                    url: ipUrl + 'admin/truck/getById',
+                    url: layui.edipao.API_HOST + '/admin/truck/getById',
                     method: "get",
                     data: {truckId: truckId}
                 }).done(function(data){
@@ -96,10 +96,10 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         }
     });
   }
-  $("#download_tpl").attr("href", ipUrl + "admin/page/order/download");
+  $("#download_tpl").attr("href", layui.edipao.API_HOST + "/admin/page/order/download");
   var uploadInst = upload.render({
     elem: '#btn_select_document' //绑定元素
-    , url: ipUrl + 'admin/page/order/fileUpload' //上传接口
+    , url: layui.edipao.API_HOST + '/admin/page/order/fileUpload' //上传接口
     , accept: 'file'
     , field: 'file'
     , done: function (res) {

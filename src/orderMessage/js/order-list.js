@@ -29,7 +29,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 var number = e.target.dataset.number * 1;
                 elem = $("#uploadStartPic").html();
                $.ajax({
-                    url: ipUrl + 'admin/truck/getById',
+                    url: layui.edipao.API_HOST + '/admin/truck/getById',
                     method: "get",
                     data: {truckId: truckId}
                 }).done(function(data){
@@ -39,13 +39,14 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                         method.getOrder(orderNo).done(function (res) {
                             if(res.code == "0"){
                                 uploadTruckId = res.data.truckDTOList[0].id;
-                                laytpl(elem).render({
+                                var renderData = {
                                     list: res.data.truckDTOList, 
                                     six: [1,1,1,1,1,1],
-                                    five: [1,1,1,1,1,1],
-                                    three: [1,1,1,1,1,1],
-                                }, function (html) {
-                                    method.openUpload(html, number, type, truckId);
+                                    five: [1,1,1,1,1],
+                                    three: [1,1,1],
+                                };
+                                laytpl(elem).render(renderData, function (html) {
+                                    method.openUpload(html, renderData, type, truckId);
                                 });
                             }else{
                                 layer.msg(res.message, {icon: 5,anim: 6});
@@ -57,13 +58,31 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 });
             });
         },
-        openUpload: function (html, number, type, truckId) {
-            var num = [1];
-            if(type == 3) num = [1,1,1,1,1,1];
+        openUpload: function (html, renderData, type, truckId) {
+            var renderObj = [
+                {
+                    num: renderData.six,
+                    holder: "#upload_start_holder_",
+                    pre: "#upload_start_pre_",
+                    type: 3
+                },
+                {
+                    num: renderData.five,
+                    holder: "#upload_get_holder_",
+                    pre: "#upload_get_pre_",
+                    type: 2
+                },
+                {
+                    num: renderData.three,
+                    holder: "#upload_give_holder_",
+                    pre: "#upload_give_pre_",
+                    type: 5
+                },
+            ]
             var index = layer.open({
                 type: 1, 
                 content: html, //这里content是一个普通的String,
-                area: ["600px", "500px"],
+                area: ["600px", "400px"],
                 btn: ["取消", "确定"],
                 yes: function () {
                     table.reload("orderList");
@@ -72,65 +91,43 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 success: function () {
                     form.render("select");
                     //多图片上传
-                    if(type == 3){
-                        form.on("select(uploadStartPic)", function (data) {
-                            console.log(data)
-                        });
-                        num.forEach(function (item, index) {
+                    form.on("select", function (data) {
+                        if(data.elem.name == "vinCode"){
+                            uploadTruckId = data.value;
+                        }
+                    });
+                    renderObj.forEach(function (item) {
+                        item.num.forEach(function (item2, index) {
                             var uploadInst = upload.render({
-                                elem: '#upload_start_holder_' + index //绑定元素
+                                elem: item.holder + index + "" //绑定元素
                                 ,accept : "images"
                                 ,multiple: true
-                                ,number: number
-                                ,url: ipUrl+'admin/truck/upload/image' //上传接口
+                                ,url: layui.edipao.API_HOST+'/admin/truck/upload/image' //上传接口
                                 ,before: function(obj){
                                     //预读本地文件示例，不支持ie8
-                                    obj.preview(function(index, file, result){
-                                        $('#upload_start_pre_' + index).append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img pre_img">')
+                                    obj.preview(function(idx, file, result){
+                                        console.log(item.pre + index)
+                                        $(item.pre + index + "").append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img pre_img">')
                                     });
                                 }
                                 ,data: {
                                     loginStaffId: user.staffId,
-                                    type: type,
+                                    type: item.type,
                                     truckId: truckId,
                                 }
                                 ,done: function(res){
-                                    //上传完毕回调
+                                    if(res.code == "0"){
+                                        layer.msg("上传成功", {icon: 1});
+                                    }else{
+                                        layer.msg(data.message, {icon: 5,anim: 6});
+                                    }
                                 }
                                 ,error: function(){
                                     //请求异常回调
                                 }
                             });
                         });
-                    }else{
-                        form.on("select(uploadPic)", function (data) {
-                            console.log(data)
-                        });
-                        upload.render({
-                            elem: '#uploadPicBtn' //绑定元素
-                            ,accept : "images"
-                            ,multiple: true
-                            ,number: number
-                            ,url: ipUrl+'admin/truck/upload/image' //上传接口
-                            ,before: function(obj){
-                                //预读本地文件示例，不支持ie8
-                                obj.preview(function(index, file, result){
-                                    $('#image_preview').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img">')
-                                });
-                            }
-                            ,data: {
-                                loginStaffId: user.staffId,
-                                type: type,
-                                truckId: truckId,
-                            }
-                            ,done: function(res){
-                                //上传完毕回调
-                            }
-                            ,error: function(){
-                                //请求异常回调
-                            }
-                        });
-                    }
+                    });
                 }
             });
         },
@@ -147,8 +144,8 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 table.render({
                     elem: '#pre_fee_verify_table'
                     , method: "get" // 请求方式  默认get
-                    // , url: ipUrl + "admin/order/detail"
-                    , url: "js/order.json"
+                    , url: layui.edipao.API_HOST + "/admin/order/detail"
+                    // , url: "js/order.json"
                     , where: { loginStaffId: user.staffId, orderNo: orderNo }
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
@@ -173,6 +170,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                             },
                             yes: function () {
                                 var data = form.val("arrive_fee_verify_form");
+                                table.reload("orderList");
                                 layer.close(index);
                             }
                         });
@@ -203,8 +201,8 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 table.render({
                     elem: '#pre_fee_verify_table'
                     , method: "get" // 请求方式  默认get
-                    // , url: ipUrl + "admin/order/detail"
-                    , url: "js/order.json"
+                    , url: layui.edipao.API_HOST + "/admin/order/detail"
+                    // , url: "js/order.json"
                     , where: { loginStaffId: user.staffId, orderNo: orderNo }
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
@@ -238,6 +236,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                                 }).done(function (res) {
                                     if(res.code == "0"){
                                         layer.msg("成功", {icon: 1,anim: 6});
+                                        table.reload("orderList");
                                         layer.close(index);
                                     }else{
                                         layer.msg(data.message, {icon: 5,anim: 6});
@@ -276,7 +275,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
     }
     var mainTable = table.render({
         elem: '#orderList'
-        , url: ipUrl+'admin/order/list'
+        , url: layui.edipao.API_HOST+'/admin/order/list'
         , title: '订单列表'
         , method: "get" // 请求方式  默认get
         , page: true //开启分页

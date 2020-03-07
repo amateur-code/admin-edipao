@@ -140,7 +140,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     var _this = this;
     table.render({
       elem: '#cars_table'
-      , url: ipUrl+'admin/truck/getUnDealTrucks'
+      , url: layui.edipao.API_HOST+'/admin/truck/getUnDealTrucks'
       // , url: "js/cars.json"
       , title: '车辆列表'
       , method: "get" // 请求方式  默认get
@@ -373,7 +373,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     _this.carFormList.forEach(function (item, index) {
       if(index > (truckDTOList.length - 1)) return;
       var itemData = form.val(item);
-      console.log(itemData)
       truckUpdateReqList.push({
         truckId: truckDTOList[index].id||"",
         masterFlag: itemData.masterFlag == "on" ? "否" : "是",
@@ -432,9 +431,24 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     _this.submitAll(edipao.request({
       url: "/admin/order/updateOrder",
       method: "POST",
-      data: data,
-      dataType: "json"
+      data: getParams(data),
     }));
+    function getParams(data){
+      var arr = [];
+      Object.keys(data).forEach(function(item){
+        if(data[item] instanceof Array){
+          data[item].forEach(function (item2, index) {
+            Object.keys(item2).forEach(function (item3) {
+              arr.push(item+"["+index+"]"+"."+item3 + "=" + item2[item3]);
+            });
+          })
+        }else{
+          arr.push(item + "=" + data[item]);
+        }
+      });
+      console.log(arr)
+      return encodeURI(arr.join("&"));
+    }
   }
   Edit.prototype.submitAll = function(req1){
     var _this = this;
@@ -447,7 +461,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
       if(index == 0){
         $.when(req1, edipao.request({
           url: "/admin/truck/addTruck",
-          data: data
+          data: data,
         })).done(function (res1, res2) {
           var res1 = res1[0];
           var res2 = res2[0];
@@ -491,8 +505,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
       success: function () {
         table.render({
           elem: '#drivers_table'
-          // , url: ipUrl+'admin/truck/getUnDealTrucks'
-          , url: ipUrl + "admin/driver/info/list"
+          // , url: layui.edipao.API_HOST+'admin/truck/getUnDealTrucks'
+          , url: layui.edipao.API_HOST + "/admin/driver/info/list"
           , title: '车辆列表'
           , method: "get" // 请求方式  默认get
           , page: true //开启分页

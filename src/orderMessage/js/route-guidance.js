@@ -9,7 +9,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
   // 批量导入
   table.render({
       elem: '#routeList',
-      url: ipUrl+'admin/order/list',
+      url: layui.edipao.API_HOST+'/admin/order/list',
       title: '订单列表',
       method: "get", // 请求方式  默认get
       page: true, //开启分页

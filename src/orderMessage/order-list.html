@@ -124,7 +124,7 @@
                 <div>
                     <select name="vinCode" lay-verify="">
                         {{#  layui.each(d.list, function(index, item){ }}
-                        <option {{index==0?'selected':''}} value="{{item.vinCode}}">{{item.vinCode}}</option>
+                        <option {{index==0?'selected':''}} value="{{item.id}}">{{item.vinCode}}</option>
                         {{#  }); }}
                     </select>  
                 </div>
@@ -132,9 +132,9 @@
                 {{#  layui.each(d.five, function(index, item){ }}
                 <div class="layui-row upload_start_row">
                     <div class="layui-col-md5">
-                        <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
+                        <div id="{{'upload_get_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
                     </div>
-                    <div id="{{'upload_start_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
+                    <div id="{{'upload_get_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
                         
                     </div>
                 </div>
@@ -154,9 +154,9 @@
                 {{#  layui.each(d.three, function(index, item){ }}
                 <div class="layui-row upload_start_row">
                     <div class="layui-col-md5">
-                        <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
+                        <div id="{{'upload_give_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
                     </div>
-                    <div id="{{'upload_start_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
+                    <div id="{{'upload_give_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
                         
                     </div>
                 </div>
