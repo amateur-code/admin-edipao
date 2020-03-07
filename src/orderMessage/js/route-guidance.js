@@ -9,7 +9,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
   // 批量导入
   table.render({
       elem: '#routeList',
-      url: ipUrl+'admin/order/list',
+      url: ipUrl+'/admin/order/list',
       title: '订单列表',
       method: "get", // 请求方式  默认get
       page: true, //开启分页
@@ -24,6 +24,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
       autoSort: true,
       id: 'routeList',
       parseData: function (res) {
+          console.log(res)
           return {
               "code": res.code, //解析接口状态
               "msg": res.message, //解析提示文本
@@ -38,9 +39,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
           none: "暂无数据"
       },
       cols: [[
-          {field: 'updateTime', title: '出发地', sort: false,width:200,templet:function(d){
-              return '长春市绿园区解放路10000号（一汽仓库'
-          }},
+          {field: 'updateTime', title: '出发地', sort: false,width:300,templet:function(d) {}},
           {field: 'updateTime', title: '目的地', sort: false,minWwidth:200, templet:function(d){
               return '广州是海珠区海珠大道20号（广州一汽4S店）'
           }},
@@ -66,7 +65,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
       var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
       var tr = obj.tr; //获得当前行 tr 的DOM对象
       if (layEvent === 'edit') { //下载
-          console.log(0)
+        top.xadmin.add_tab('线路规划', 'orderMessage/route-plan.html?orderId=111');
       }
   });
 
