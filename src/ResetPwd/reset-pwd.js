@@ -79,7 +79,7 @@ layui.config({
             'verifyCode':verifyCode
         }
         edipao.request({
-            url: '/forget-pass/verify-code/check',
+            url: '/admin/staff/forget-pass/verify-code/check',
             data: param,
         }).done(function(res){
             if(res.code == 0){
