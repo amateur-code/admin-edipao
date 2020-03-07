@@ -67,18 +67,20 @@
         <a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.staffNumber}}</a>
     </script>
     <script type="text/javascript">
-    layui.use(['table', 'layer'], function(table, layer) {
+    layui.config({
+        base: '../../lib/layui_exts/'
+    }).use(['table', 'layer', 'excel'], function(table, layer, excel) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao,
-            tableKey = 'SystemSetting-PermissionManager-list'
+            tableKey = 'SystemSetting-PermissionManager-list',
             tableCols = [ //表头
                 { checkbox: true },
                 { field: 'roleName', title: '角色名称' },
-                { field: 'staffNumber', title: '关联员工数' , templet: '#stffList'},
+                { field: 'staffNumber', title: '关联员工数', templet: '#stffList' },
                 { field: 'createUser', title: '创建人' },
                 { field: 'createTime', title: '创建时间' },
                 { title: '操作', toolbar: '#rowBtns', width: 350 }
-            ]
+            ];
         edipao.request({
             type: 'GET',
             url: '/admin/table/show-field/get',
@@ -87,26 +89,28 @@
             }
         }).done(function(res) {
             if (res.code == 0) {
-                if(res.data){
+                if (res.data) {
                     var showList = [];
-                    try{
+                    try {
                         showList = JSON.parse(res.data);
-                    }catch(e){}
-                    layui.each(tableCols, function(index, item){
-                        if(item.field && showList.indexOf(item.field) == -1){
-                           item.hide = true;
+                    } catch (e) {}
+                    layui.each(tableCols, function(index, item) {
+                        if (item.field && showList.indexOf(item.field) == -1) {
+                            item.hide = true;
                         }
                     })
                 }
                 renderTable();
-            } 
+            }
         })
 
+        var roleList;
 
-        function renderTable(){
-            table.render({
+        function renderTable() {
+            roleList = table.render({
+                id: 'roleList',
                 elem: '#roleList',
-                url: edipao.API_HOST + '/admin/permission/role/list ',
+                url: edipao.API_HOST + '/admin/permission/role/list',
                 method: 'POST',
                 request: {
                     pageName: 'pageNo',
@@ -120,16 +124,16 @@
                         code: res.code, //解析接口状态
                         msg: res.message, //解析提示文本
                         count: res.data.totalSize, //解析数据长度
-                        data: res.data.roleDTOList  //解析数据列表
+                        data: res.data.roleDTOList //解析数据列表
                     };
                 },
                 page: true,
-                cols: [ tableCols ],
+                cols: [tableCols],
                 toolbar: '#headerBtns',
                 defaultToolbar: []
             });
         }
-        
+
 
         table.on('tool(roleList)', function(obj) {
             let data = obj.data
@@ -148,13 +152,13 @@
                         edipao.request({
                             url: '/admin/permission/role/del',
                             data: {
-                                roleId:  data.roleId
+                                roleId: data.roleId
                             }
-                        }).then(function(res){
-                            if(res.code == 0){
+                        }).then(function(res) {
+                            if (res.code == 0) {
                                 layer.msg('删除成功')
                                 location.reload();
-                            }else{
+                            } else {
                                 layer.msg(res.message)
                             }
                         })
@@ -166,12 +170,43 @@
             };
         });
 
+        function exportData() {
+            edipao.request({
+                url: '/admin/permission/role/list',
+                data: {
+                    pageNo: 1,
+                    pageSize: 10000,
+                }
+            }).then(function(res) {
+                if (res.code == 0) {
+                    var data = [], list = res.data.roleDTOList;
+                    list = [{}].concat(list);
+                    layui.each(list, function(index2, item2) {
+                        var dataItem = {};
+                        layui.each(tableCols, function(index, item) {
+                            if(item.field && item.hide != true){
+                                if(index2 == 0){
+                                    dataItem[item.field] = item.title; 
+                                }else{
+                                    dataItem[item.field] = item2[item.field]
+                                }
+                                
+                            } 
+                        })
+                        data.push(dataItem)
+                    })
+                    excel.exportExcel({sheet1: data}, '权限管理.xlsx', 'xlsx');
+                }
+            })
+        }
+
         table.on('toolbar(roleList)', function(obj) {
             switch (obj.event) {
                 case 'add':
                     xadmin.open('添加角色', './add.html')
                     break;
                 case 'export':
+                    exportData();
                     break;
                 case 'tableSet':
                     xadmin.open('表格设置', './table-set.html', 600, 600)
