@@ -12,6 +12,11 @@ layui.use(['layer','element'],function(layer,element) {
         $('#userName').html(user.name)
     }
 
+    // 退出登录
+    $('#logout').click(function () {
+        edipao.tokenExpired();
+    })
+
     //关闭tab清除记忆
     element.on('tabDelete(xbs_tab)', function(data){
         var id  = $(this).parent().attr('lay-id');
