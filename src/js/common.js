@@ -1,11 +1,7 @@
-// 请求地址
-var ipUrl = 'http://www.d.edipao.cn/';
-
-
 layui.define([], function(exports) {
     var Common = function() {
         this.VERSION = '1.0.0';
-        this.API_HOST = 'http://www.d.edipao.cn';
+        this.API_HOST = 'https://www.d.edipao.cn';
         this.requestDefaultOption = {
             type: "POST",
             dataType: 'json',
@@ -23,18 +19,24 @@ layui.define([], function(exports) {
         }
         return $.ajax(options)
             .done(function(res) {
-                if(['4004','4010'].indexOf(res.code) !== -1){
-                    that.tokenExpired()
-                }
-                if(res.code != 0){
-                   layui.layer.msg(res.message)
-                }
-            }).fail(function() {});
+              that.codeMiddleware(res)
+            }).fail(function() {
+              layui.layer.msg('网络异常，请重试');
+            });
+    }
+
+    Common.prototype.codeMiddleware = function(res){
+      if(res.code == 0) return;
+      layui.layer.msg(res.message);
+      if(['4010'].indexOf(res.code) !== -1){
+         this.tokenExpired()
+      }
     }
 
     Common.prototype.tokenExpired = function() {
-      layui.sessionData('user',null);
-      window.top.goToLogin();
+      var list = window.top.location.pathname.split('/')
+      list[list.length -1] = 'Login/login.html';
+      window.top.location.href = list.join('/')
     }
 
     Common.prototype.getLoginStaffId = function() {
@@ -57,7 +59,6 @@ layui.define([], function(exports) {
       return args;
     }
 
-
     exports('edipao', new Common());
 });
 
@@ -71,30 +72,20 @@ layui.define(['layer','element'], function(exports) {
         };
 
     Xadmin.prototype.init = function() {
+        var current = this.get_current_tab();
         var tab_list = this.get_data();
         for (var i in tab_list) {
             this.add_lay_tab(tab_list[i].title, tab_list[i].url, i);
         }
-        element.tabChange('xbs_tab', i);
+        if(current) element.tabChange('xbs_tab', current);
     };
     /**
      * [end 执行结束要做的]
      * @return {[type]} [description]
      */
-    Xadmin.prototype.end = function() {
-
-        var cate_list = this.get_cate_data();
-
-        for (var i in cate_list) {
-            if (cate_list[i] != null) {
-                $('.left-nav #nav li').eq(cate_list[i]).click();
-            }
-        }
-    };
 
     Xadmin.prototype.add_tab = function(title, url, is_refresh) {
-        var id = url; //md5每个url
-
+        var id = encodeURIComponent(title).replace(/%/g,'a');
         //重复点击
         for (var i = 0; i < $('.x-iframe').length; i++) {
             if ($('.x-iframe').eq(i).attr('tab-id') == id) {
@@ -112,7 +103,6 @@ layui.define(['layer','element'], function(exports) {
     }
 
     Xadmin.prototype.del_tab = function(id) {
-
         if (id) {
             console.log(88);
         } else {
@@ -127,6 +117,14 @@ layui.define(['layer','element'], function(exports) {
             content: '<iframe tab-id="' + id + '" frameborder="0" src="' + url + '" scrolling="yes" class="x-iframe"></iframe>',
             id: id
         })
+    }
+
+    Xadmin.prototype.set_current_tab = function(id){
+      localStorage.setItem('current_tab',id)
+    }
+
+    Xadmin.prototype.get_current_tab = function(){
+      return localStorage.getItem('current_tab');
     }
     /**
      * [open 打开弹出层]
@@ -257,6 +255,8 @@ layui.define(['layer','element'], function(exports) {
             value: tab_list[id]
         });
     };
+    var xadmin = new Xadmin()
+    window.xadmin = xadmin
 
-    exports('xadmin', new Xadmin());
+    exports('xadmin', xadmin);
 })

@@ -62,7 +62,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">审核备注</label>
                             <div class="layui-input-block">
-                                <textarea name="checkRemark" placeholder="请输入审核备注" class="layui-textarea"></textarea>
+                                <textarea name="checkRemark" lay-verify="checkRemark" placeholder="请输入审核备注" class="layui-textarea"></textarea>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -186,6 +186,20 @@
                 document.getElementById('info').innerHTML = html;
             })
         }
+
+         //自定义验证规则
+        form.verify({
+            checkRemark: function(value){
+                var result = $("input[name=checkResult]:checked").val();
+                console.log(result,value)
+                if(result == 'reject' && value == ''){
+                    return '审核结果为驳回时，审核备注必填';
+                }
+                if(value.length > 300){
+                    return '审核备注不能超过300个字符'
+                }
+            }
+        });
 
         form.on('submit(check)', function(data) {
             data.field.supplierNo = params.id;

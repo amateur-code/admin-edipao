@@ -65,7 +65,9 @@
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
     </script>
     <script type="text/javascript">
-    layui.use(['table', 'layer'], function(table, layer) {
+    layui.config({
+        base: '../../lib/layui_exts/'
+    }).use(['table', 'layer', 'excel'], function(table, layer, excel) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao,
             tableKey = 'SystemSetting-StaffManager-list',
@@ -117,6 +119,7 @@
                     loginStaffId: edipao.getLoginStaffId()
                 },
                 parseData: function(res) { //res 即为原始返回的数据
+                    edipao.codeMiddleware(res);
                     return {
                         code: res.code, //解析接口状态
                         msg: res.message, //解析提示文本
@@ -170,6 +173,36 @@
                     break;
             };
         });
+        function exportData() {
+            edipao.request({
+                type: 'get',
+                url: '/admin/staff/list',
+                data: {
+                    pageNo: 1,
+                    pageSize: 10000,
+                }
+            }).then(function(res) {
+                if (res.code == 0) {
+                    var data = [], list = res.data.staffDtoList;
+                    list = [{}].concat(list);
+                    layui.each(list, function(index2, item2) {
+                        var dataItem = {};
+                        layui.each(tableCols, function(index, item) {
+                            if(item.field && item.hide != true){
+                                if(index2 == 0){
+                                    dataItem[item.field] = item.title; 
+                                }else{
+                                    dataItem[item.field] = item2[item.field] || '--'
+                                }
+                                
+                            } 
+                        })
+                        data.push(dataItem)
+                    })
+                    excel.exportExcel({sheet1: data}, '员工管理.xlsx', 'xlsx');
+                }
+            })
+        }
 
         table.on('toolbar(staffList)', function(obj) {
             switch (obj.event) {
@@ -177,7 +210,7 @@
                     xadmin.open('添加员工', './add.html', 600, 600)
                     break;
                 case 'export':
-                    layer.msg('删除');
+                    exportData();
                     break;
                 case 'tableSet':
                     xadmin.open('表格设置', './table-set.html', 600, 600)

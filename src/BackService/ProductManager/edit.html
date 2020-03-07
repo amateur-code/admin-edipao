@@ -58,7 +58,7 @@
                                             <span class="x-red">*</span>网点名称
                                         </label>
                                         <div class="layui-input-block">
-                                            <input type="text" id="productName" name="productName" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                                            <input type="text" id="productName" name="productName" lay-verify="required|productName" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                 </div>
@@ -68,7 +68,7 @@
                                             <span class="x-red">*</span>详细地址
                                         </label>
                                         <div class="layui-input-block">
-                                            <input type="text" id="detailAddress" name="detailAddress" required="" lay-verify="detailAddress" autocomplete="off" class="layui-input" readonly placeholder="请选择地址">
+                                            <input type="text" id="detailAddress" name="detailAddress" lay-verify="required" autocomplete="off" class="layui-input" readonly placeholder="请选择地址">
                                             <button type="button" class="layui-btn" id="openMap">选择</button>
                                         </div>
                                     </div>
@@ -92,7 +92,7 @@
                                             联系人
                                         </label>
                                         <div class="layui-input-block">
-                                            <input type="text" id="contractName" name="contractName" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                                            <input type="text" id="contractName" name="contractName" lay-verify="contractName" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                 </div>
@@ -102,7 +102,7 @@
                                             联系人手机号
                                         </label>
                                         <div class="layui-input-block">
-                                            <input type="text" id="contractPhone" name="contractPhone" required="" lay-verify="phone" autocomplete="off" class="layui-input">
+                                            <input type="text" id="contractPhone" name="contractPhone" lay-verify="contractPhone" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                 </div>
@@ -135,7 +135,7 @@
                                             <span class="x-red">*</span>单价
                                         </label>
                                         <div class="layui-input-block">
-                                            <input type="text" id="unitPrice" name="unitPrice" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                                            <input type="text" id="unitPrice" name="unitPrice" lay-verify="required|unitPrice" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                 </div>
@@ -145,7 +145,7 @@
                                             <span class="x-red">*</span>生效时间
                                         </label>
                                         <div class="layui-input-block">
-                                            <input type="text" id="effectiveTime" name="effectiveTime" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                                            <input type="text" id="effectiveTime" name="effectiveTime" lay-verify="required" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                 </div>
@@ -161,7 +161,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">备注</label>
                             <div class="layui-input-block">
-                              <textarea name="remark" placeholder="请输入备注说明" class="layui-textarea"></textarea>
+                              <textarea name="remark" placeholder="请输入备注说明" lay-verify="remark" class="layui-textarea"></textarea>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -230,15 +230,30 @@
         })
         //自定义验证规则
         form.verify({
-            phone: function(value) {
-                if (!/^1\d{10}$/.test(value)) {
-                    return '手机号格式不正确';
+            productName: function(value) {
+                if (value.length > 50) {
+                    return '网点名称不能超出50个字符';
+                }  
+            },
+            contractName: function(value) {
+                if (value.length > 50) {
+                    return '联系人姓名不能超过50个字符';
                 }
             },
-            detailAddress: function(value){
-               if(!detailAddress || !detailAddress.address || !detailAddress.lng){
-                    return '请选择地址';
-               }
+            contractPhone: function(value){
+                if (value !== '' && !/^1\d{10}$/.test(value) && !/^0\d{2,3}-?\d{7,8}$/.test(value)) {
+                    return '手机号或固定电话格式不正确';
+                }
+            },
+            unitPrice: function(value){
+                if(!/^\d+(?=\.{0,1}\d+$|$)/.test(value)){
+                    return '单价格式不正确';
+                }
+            },
+            remark: function(value){
+                if (value.length > 300) {
+                    return '备注不能超过300个字符';
+                }
             }
         });
 
