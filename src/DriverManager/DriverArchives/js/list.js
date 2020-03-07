@@ -242,6 +242,7 @@ layui.config({
                 limitName: 'pageSize' //每页数据量的参数名
             },
             parseData: function (res) {
+                edipao.codeMiddleware(res);
                 if (res.code == 0) {
                     return {
                         "code": res.code,
