@@ -1,11 +1,11 @@
 // 请求地址
-var ipUrl = 'http://www.d.edipao.cn/';
+var ipUrl = 'https://www.d.edipao.cn/';
 
 
 layui.define([], function(exports) {
     var Common = function() {
         this.VERSION = '1.0.0';
-        this.API_HOST = 'http://www.d.edipao.cn';
+        this.API_HOST = 'https://www.d.edipao.cn';
         this.requestDefaultOption = {
             type: "POST",
             dataType: 'json',

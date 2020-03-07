@@ -21,6 +21,9 @@
   left: 0;
   z-index: 1;
 }
+.upload_pic_title {
+  padding: 10px 0;
+}
 .table_a {
   cursor: pointer;
   color: #3490E9;

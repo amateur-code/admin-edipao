@@ -8,6 +8,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
   function View() {
     var qs = edipao.urlGet();
     this.orderId = qs.orderId;
+    this.action = qs.action || "";
     this.user = JSON.parse(sessionStorage.user);
     this.prePay = [];
     this.arrivePay = [];
@@ -18,13 +19,23 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
   $.extend(View.prototype, {
     init: function () {
       var _this = this;
+      if(this.action != "verify"){
+        $("#verify_container").remove();
+      }
       this.getOrder().done(function (res) {
         if(res.code == "0"){
           _this.orderData = res.data;
           _this.setData(res.data);
+          _this.bindEvents();
         }else{
           layer.msg(res.message, {icon: 5,anim: 6});
         }
+      });
+    },
+    bindEvents: function () {
+      $("#verify_submit").unbind().on("click", function (e) {
+        var data = form.val("verify_form");
+
       });
     },
     setFeeList: function () {

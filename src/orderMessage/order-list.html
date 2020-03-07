@@ -47,7 +47,7 @@
                         <div class="layui-col-md6 tr">
                             <button class="layui-btn" onclick="xadmin.open('订单录入','./order-import.html',1200,600)">录入订单</button>
                             <button class="layui-btn layui-bg-orange" onclick="xadmin.open('预警设置','./warn.html',340,370)">合并背车</button>
-                            <button class="layui-btn layui-bg-blue" onclick="xadmin.open('导出','./list-add.html',600,400)">导出</button>
+                            <button id="export_data" class="layui-btn layui-bg-blue">导出</button>
                             <button class="layui-btn layui-bg-black" onclick="xadmin.open('表格设置','./list-add.html',600,400)">表格设置</button>
                         </div>
                     </div>
@@ -90,20 +90,30 @@
 <script id="pre_fee_verify_tpl" type="text/html">
     <div style="padding:10px;">
         <div class="">
-            <div style="margin-bottom:20px;" class="text_center">TITLE</div>
+            <div style="margin-bottom:20px;" class="text_center"></div>
             TABLE
         </div>
     </div>
 </script>
 <script type="text/html" id="uploadPic">
     <div style="padding:20px;">
-          <div class="layui-upload">
-            <button type="button" class="layui-btn" id="uploadPicBtn">选择图片</button> 
-            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
-              预览图：
-              <div class="layui-upload-list" id="image_preview"></div>
-           </blockquote>
-          </div>
+        <div class="layui-upload">
+            <form lay-filter="uploadPic" class="layui-form">
+                <div>车辆vin码</div>
+                <div>
+                    <select name="vinCode">
+                        {{#  layui.each(d.list, function(index, item){ }}
+                        <option {{index==0?'selected':''}} value="{{item.id}}">{{item.id}}</option>
+                        {{#  }); }}
+                    </select>  
+                </div>
+                <button type="button" class="layui-btn" id="uploadPicBtn">选择图片</button> 
+                <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+                    预览图：
+                    <div class="layui-upload-list" id="image_preview"></div>
+                </blockquote>
+            </form>
+        </div>
     </div>
 </script>
 <script type="text/html" id="uploadStartPic">
@@ -113,13 +123,35 @@
                 <div>车辆vin码</div>
                 <div>
                     <select name="vinCode" lay-verify="">
-                        <option disabled selected value="">请选择vin码</option>
                         {{#  layui.each(d.list, function(index, item){ }}
-                        <option value="{{item.vinCode}}">{{item.vinCode}}</option>
+                        <option {{index==0?'selected':''}} value="{{item.vinCode}}">{{item.vinCode}}</option>
                         {{#  }); }}
-                      </select>  
+                    </select>  
                 </div>
-                {{#  layui.each(d.num, function(index, item){ }}
+                <div class="upload_pic_title">提车图片</div>
+                {{#  layui.each(d.five, function(index, item){ }}
+                <div class="layui-row upload_start_row">
+                    <div class="layui-col-md5">
+                        <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
+                    </div>
+                    <div id="{{'upload_start_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
+                        
+                    </div>
+                </div>
+                {{#  }); }}
+                <div class="upload_pic_title">发车单</div>
+                {{#  layui.each(d.six, function(index, item){ }}
+                <div class="layui-row upload_start_row">
+                    <div class="layui-col-md5">
+                        <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
+                    </div>
+                    <div id="{{'upload_start_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
+                        
+                    </div>
+                </div>
+                {{#  }); }}
+                <div class="upload_pic_title">交车单</div>
+                {{#  layui.each(d.three, function(index, item){ }}
                 <div class="layui-row upload_start_row">
                     <div class="layui-col-md5">
                         <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
@@ -135,7 +167,7 @@
 </script>
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>
-    <a class="layui-btn layui-btn-xs layui-bg-red" lay-event="examine">审核</a>
+    <a class="layui-btn layui-btn-xs layui-bg-red" lay-event="verify">审核</a>
     <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="view">查看</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="cancel">取消</a>
     <a class="layui-btn layui-bg-cyan layui-btn-xs" lay-event="log">日志</a>
