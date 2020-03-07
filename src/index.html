@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>E地跑运营平台</title>
+    <title>e地跑运营平台</title>
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
@@ -16,7 +16,6 @@
     <script type="text/javascript" src="./js/jquery.min.js"></script>
     <script type="text/javascript" src="./lib/layui/layui.js"></script>
     <script type="text/javascript" src="./js/common.js"></script>
-    <script type="text/javascript" src="./js/index.js"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
           <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -24,7 +23,7 @@
         <![endif]-->
     <script>
         // 是否开启刷新记忆tab功能
-        // var is_remember = false;
+    // var is_remember = false;
     </script>
 </head>
 
@@ -32,25 +31,17 @@
     <!-- 顶部开始 -->
     <div class="container">
         <div class="logo">
-            <a href="./index.html">E地跑运营平台</a></div>
+            <a href="./index.html">e地跑运营平台</a></div>
         <div class="left_open">
             <a><i title="展开左侧栏" class="iconfont">&#xe699;</i></a>
         </div>
         <ul class="layui-nav right" lay-filter="">
             <li class="layui-nav-item">
-                <a href="javascript:;" id="userName">admin</a>
+                <a href="javascript:;" id="userName"></a>
                 <dl class="layui-nav-child">
-                    <!-- 二级菜单 -->
-                    <dd>
-                        <a onclick="xadmin.open('个人信息','http://www.baidu.com')">个人信息</a></dd>
-                    <dd>
-                        <a onclick="xadmin.open('切换帐号','http://www.baidu.com')">切换帐号</a></dd>
-                    <dd>
-                        <a href="./Login/login.html">退出</a></dd>
+                    <dd><a style="color: #333;" href="javascript:;" id="logout">退出</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item to-index">
-                <a href="/">前台首页</a></li>
         </ul>
     </div>
     <!-- 顶部结束 -->
@@ -59,96 +50,6 @@
     <div class="left-nav">
         <div id="side-nav">
             <ul id="nav">
-                <li>
-                    <a href="javascript:;">
-                        <i class="iconfont left-nav-li" lay-tips="司机管理">&#xe6b8;</i>
-                        <cite>司机管理</cite>
-                        <i class="iconfont nav_right">&#xe697;</i></a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a onclick="xadmin.add_tab('司机档案','DriverManager/DriverArchives/list.html')">
-                                <i class="iconfont">&#xe6a7;</i>
-                                <cite>司机档案</cite></a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript:;">
-                        <i class="iconfont left-nav-li" lay-tips="业务管理">&#xe723;</i>
-                        <cite>业务管理</cite>
-                        <i class="iconfont nav_right">&#xe697;</i></a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a onclick="xadmin.add_tab('订单管理','orderMessage/order-list.html')">
-                                <i class="iconfont">&#xe6a7;</i>
-                                <cite>订单管理</cite></a>
-                        </li>
-                        <li>
-                            <a onclick="xadmin.add_tab('订单录入','orderMessage/order-import.html')">
-                                <i class="iconfont">&#xe6a7;</i>
-                                <cite>订单录入</cite></a>
-                        </li>
-                        <li>
-                            <a onclick="xadmin.add_tab('线路指引','orderMessage/route-guidance.html')">
-                                <i class="iconfont">&#xe6a7;</i>
-                                <cite>线路指引</cite></a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript:;">
-                        <i class="iconfont left-nav-li" lay-tips="会员管理">&#xe6b8;</i>
-                        <cite>财务管理</cite>
-                        <i class="iconfont nav_right">&#xe697;</i></a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a onclick="xadmin.add_tab('统计页面','welcome1.html')">
-                                <i class="iconfont">&#xe6a7;</i>
-                                <cite>运营报表</cite></a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript:;">
-                        <i class="iconfont left-nav-li" lay-tips="后服管理">&#xe6b8;</i>
-                        <cite>后服管理</cite>
-                        <i class="iconfont nav_right">&#xe697;</i></a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a onclick="xadmin.add_tab('供应商档案','./BackService/BusinessManager/list.html')">
-                                <i class="iconfont">&#xe6a7;</i>
-                                <cite>供应商档案</cite></a>
-                        </li>
-                        <li>
-                            <a onclick="xadmin.add_tab('后服产品','./BackService/ProductManager/list.html')">
-                                <i class="iconfont">&#xe6a7;</i>
-                                <cite>后服产品</cite></a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript:;">
-                        <i class="iconfont left-nav-li" lay-tips="系统设置">&#xe723;</i>
-                        <cite>系统设置</cite>
-                        <i class="iconfont nav_right">&#xe697;</i></a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a onclick="xadmin.add_tab('员工管理','./SystemSetting/StaffManager/list.html')">
-                                <i class="iconfont">&#xe6a7;</i>
-                                <cite>员工管理</cite></a>
-                        </li>
-                        <li>
-                            <a onclick="xadmin.add_tab('权限管理','./SystemSetting/PermissionManager/list.html')">
-                                <i class="iconfont">&#xe6a7;</i>
-                                <cite>权限管理</cite></a>
-                        </li>
-                        <li>
-                            <a onclick="xadmin.add_tab('审批管理','./SystemSetting/ApprovalManager/main.html')">
-                                <i class="iconfont">&#xe6a7;</i>
-                                <cite>审批管理</cite></a>
-                        </li>
-                    </ul>
-                </li>
             </ul>
         </div>
     </div>
@@ -179,13 +80,214 @@
     <div class="page-content-bg"></div>
     <!-- 右侧主体结束 -->
     <!-- 中部结束 -->
-    <script type="text/javascript">
-        function goToLogin(){
-            location.href = "./Login/login.html";
-        }
+    <script id="navTpl" type="text/html">
+        <div>
+            {{#
+                var list1 = [];
+                layui.each(d.list, function(index, item){
+                    if(item.pid == 0){
+                        list1.push(item)
+                    }
+                })  
+            }}
+            {{#  layui.each(list1, function(index, item){ }}
+                <li data-name="{{item.name}}" data-url="{{item.url}}">
+                    <a>
+                        <i class="iconfont left-nav-li" lay-tips="{{item.name}}">&#xe6b8;</i>
+                        <cite>{{item.name}}</cite>
+                        <i class="iconfont nav_right">&#xe697;</i>
+                    </a>
+                    <ul class="sub-menu">
+                        {{#
+                            var list2 = [];
+                            layui.each(d.list, function(index, item2){
+                                if(item2.pid == item.resourceId){
+                                    list2.push(item2)
+                                }
+                            })  
+                        }}
+                        {{# layui.each(list2, function(index, item2){ }}
+                        <li data-name="{{item2.name}}" data-url="{{item2.url}}">
+                            <a>
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>{{item2.name}}</cite>
+                            </a>
+                        </li>
+                        {{#  }); }}
+                        
+                    </ul>
+                </li>
+            {{#  }); }}
+        </div>
     </script>
+    <script type="text/javascript">
+    layui.use(['layer', 'element', 'laytpl'], function(layer, element, laytpl) {
+        var xadmin = layui.xadmin,
+            edipao = layui.edipao;
+
+        if (!edipao.getLoginStaffId()) {
+            edipao.tokenExpired()
+        }
+
+        // 打开页面初始
+        xadmin.init();
+        var user = layui.sessionData('user');
+        if (user) {
+            $('#userName').html(user.name)
+            laytpl(navTpl.innerHTML).render({ list: user.funcPermissionDTOList }, function(html) {
+                $('#nav').html(html);
+            });
+        }
+
+        // 退出登录
+        $('#logout').click(function() {
+            edipao.tokenExpired();
+        })
+
+        //关闭tab清除记忆
+        element.on('tabDelete(xbs_tab)', function(data) {
+            var id = $(this).parent().attr('lay-id');
+            xadmin.del_data(id);
+        });
+
+        element.on('tab(xbs_tab)', function(data){
+            console.log($(this).attr('lay-id'))
+            xadmin.set_current_tab($(this).attr('lay-id'))
+        });
+
+        //左侧菜单
+        $('#nav').on('click', 'li', function(event) {
+            var data = $(this).data();
+
+            if(data.url == '#'){
+                
+            }else{
+                
+            }
+            
+
+            if(data.url != '#'){
+               xadmin.add_tab(data.name,data.url) 
+            }
+
+            if ($('.left-nav').css('width') == '60px') {
+                $('.left-nav').animate({ width: '220px' }, 100);
+                $('.page-content').animate({ left: '220px' }, 100);
+                $('.left-nav i').css('font-size', '14px');
+                $('.left-nav cite,.left-nav .nav_right').show();
+            }
+
+            if ($(window).width() < 768) {
+                $('.page-content-bg').show();
+            }
+
+            $('#nav').find('a').removeClass('active');
+            $(this).children('a').addClass('active');
+            if ($(this).children('.sub-menu').length) {
+                xadmin.set_cate_data({key: data.name,value:{status: !$(this).hasClass('open')}});
+                if ($(this).hasClass('open')) {
+                    $(this).removeClass('open');
+                    $(this).find('.nav_right').html('&#xe697;');
+                    $(this).children('.sub-menu').stop(true, true).slideUp();
+                    // $(this).siblings().children('.sub-menu').slideUp();
+                } else {
+                    $(this).addClass('open');
+                    $(this).children('a').find('.nav_right').html('&#xe6a6;');
+                    $(this).children('.sub-menu').stop(true, true).slideDown();
+                    // $(this).siblings().children('.sub-menu').stop(true, true).slideUp();
+                    // $(this).siblings().find('.nav_right').html('&#xe697;');
+                    // $(this).siblings().removeClass('open');
+                }
+            }
+            xadmin.set_cate_data({key:'select',value:{name: data.name}});
+            event.stopPropagation();
+        })
+
+        var left_tips_index = null;
+        $('.left-nav #nav').on('mouseenter', '.left-nav-li', function(event) {
+            if ($('.left-nav').css('width') != '220px') {
+                var tips = $(this).attr('lay-tips');
+                left_tips_index = layer.tips(tips, $(this));
+            }
+        })
+
+        $('.left-nav #nav').on('mouseout', '.left-nav-li', function(event) {
+            layer.close(left_tips_index);
+        })
+        // 隐藏左侧
+        $('.container .left_open i').click(function(event) {
+            if ($('.left-nav').css('width') == '220px') {
+                $('.left-nav .open').click();
+                $('.left-nav i').css('font-size', '18px');
+                $('.left-nav').animate({ width: '60px' }, 100);
+                $('.left-nav cite,.left-nav .nav_right').hide();
+                $('.page-content').animate({ left: '60px' }, 100);
+                $('.page-content-bg').hide();
+            } else {
+                $('.left-nav').animate({ width: '220px' }, 100);
+                $('.page-content').animate({ left: '220px' }, 100);
+                $('.left-nav i').css('font-size', '14px');
+                $('.left-nav cite,.left-nav .nav_right').show();
+                if ($(window).width() < 768) {
+                    $('.page-content-bg').show();
+                }
+            }
+        });
+
+        $('.page-content-bg').click(function(event) {
+            $('.left-nav .open').click();
+            $('.left-nav i').css('font-size', '18px');
+            $('.left-nav').animate({ width: '60px' }, 100);
+            $('.left-nav cite,.left-nav .nav_right').hide();
+            $('.page-content').animate({ left: '60px' }, 100);
+            $(this).hide();
+        });
+
+        $(".layui-tab-title").on('contextmenu', 'li', function(event) {
+            var tab_left = $(this).position().left;
+            var tab_width = $(this).width();
+            var left = $(this).position().top;
+            var this_index = $(this).attr('lay-id');
+            $('#tab_right').css({ 'left': tab_left + tab_width / 2 }).show().attr('lay-id', this_index);
+            $('#tab_show').show();
+            return false;
+        });
+
+        $('#tab_right').on('click', 'dd', function(event) {
+            var data_type = $(this).attr('data-type');
+            var lay_id = $(this).parents('#tab_right').attr('lay-id');
+            if (data_type == 'this') {
+                $('.layui-tab-title li[lay-id=' + lay_id + ']').find('.layui-tab-close').click();
+            } else if (data_type == 'other') {
+                $('.layui-tab-title li').eq(0).find('.layui-tab-close').remove();
+                $('.layui-tab-title li[lay-id!=' + lay_id + ']').find('.layui-tab-close').click();
+            } else if (data_type == 'all') {
+                $('.layui-tab-title li[lay-id]').find('.layui-tab-close').click();
+            }
+            $('#tab_right').hide();
+            $('#tab_show').hide();
+        })
 
 
+        $('.page-content,#tab_show,.container,.left-nav').click(function(event) {
+            $('#tab_right').hide();
+            $('#tab_show').hide();
+        });
+
+        var cate_list = xadmin.get_cate_data();
+        for (var i in cate_list) {
+            if(i == 'select'){
+                $('#nav').find('li[data-name='+cate_list[i].name+']').children('a').addClass('active')
+            }else{
+                if(cate_list[i].status){
+                    $('#nav').find('li[data-name='+i+']').addClass('open')
+                    $('#nav').find('li[data-name='+i+']').children('a').find('.nav_right').html('&#xe6a6;');
+                    $('#nav').find('li[data-name='+i+']').children('.sub-menu').stop(true, true).slideDown();
+                }
+            }
+        }
+    })
+    </script>
 </body>
 
 </html>

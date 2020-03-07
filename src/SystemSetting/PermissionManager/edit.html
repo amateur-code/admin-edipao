@@ -39,7 +39,7 @@
                                 <span class="x-red">*</span>角色名
                             </label>
                             <div class="layui-input-inline">
-                                <input type="text" id="roleName" name="roleName" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input type="text" id="roleName" name="roleName" lay-verify="required|roleName" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
@@ -165,9 +165,9 @@
 
         //自定义验证规则
         form.verify({
-            name: function(value) {
-                if (value.length < 2) {
-                    return '员工姓名至少得2个字符';
+            roleName: function(value) {
+                if (value.length > 50) {
+                    return '不能超出50个字符';
                 }
             }
         });

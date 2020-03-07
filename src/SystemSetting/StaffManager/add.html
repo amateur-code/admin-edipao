@@ -36,7 +36,7 @@
                         <span class="x-red">*</span>员工姓名
                     </label>
                     <div class="layui-input-inline">
-                        <input type="text" id="name" name="name" required="" lay-verify="name" autocomplete="off" class="layui-input">
+                        <input type="text" id="name" name="name" lay-verify="required|name" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -44,7 +44,7 @@
                         <span class="x-red">*</span>员工手机
                     </label>
                     <div class="layui-input-inline">
-                        <input type="text" id="phone" name="phone" required="" lay-verify="phone" autocomplete="off" class="layui-input">
+                        <input type="text" id="phone" name="phone" lay-verify="required|phone" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -52,7 +52,10 @@
                         <span class="x-red">*</span>登录密码
                     </label>
                     <div class="layui-input-inline">
-                        <input type="password" id="pass" name="pass" required="" autocomplete="off" class="layui-input">
+                        <input type="password" id="pass" name="pass" lay-verify="required|pass" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                        <span class="x-red">*</span>6-18位字母和数字构成
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -60,23 +63,7 @@
                         <span class="x-red">*</span>身份证号
                     </label>
                     <div class="layui-input-inline">
-                        <input type="text" id="idCard" name="idCard" required="" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label for="cardNo" class="layui-form-label">
-                        <span class="x-red">*</span>员工工号
-                    </label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="cardNo" name="cardNo" required="" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label for="positions" class="layui-form-label">
-                        <span class="x-red">*</span>员工职位
-                    </label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="positions" name="positions" required="" autocomplete="off" class="layui-input">
+                        <input type="text" id="idCard" name="idCard" lay-verify="required|idCard" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -84,9 +71,26 @@
                         <span class="x-red">*</span>所属部门
                     </label>
                     <div class="layui-input-inline">
-                        <input type="text" id="dept" name="dept" required="" autocomplete="off" class="layui-input">
+                        <input type="text" id="dept" name="dept" lay-verify="required|dept" autocomplete="off" class="layui-input">
                     </div>
                 </div>
+                <div class="layui-form-item">
+                    <label for="cardNo" class="layui-form-label">
+                        员工工号
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="cardNo" name="cardNo" lay-verify="cardNo" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="positions" class="layui-form-label">
+                        员工职位
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="positions" name="positions" lay-verify="positions" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                
                 <div class="layui-form-item">
                     <label class="layui-form-label"><span class="x-red">*</span>状态</label>
                     <div class="layui-input-inline">
@@ -108,17 +112,42 @@
     layui.use(['form', 'layer', 'element'], function(form, layer) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao;
-        console.log(xadmin)
         //自定义验证规则
         form.verify({
             name: function(value) {
-                if (value.length < 2) {
-                    return '员工姓名至少得2个字符';
+                if (value.length > 15) {
+                    return '员工姓名不能超过15个字符';
                 }
             },
             phone: function(value) {
                 if (!/^1\d{10}$/.test(value)) {
                     return '手机号格式不正确';
+                }
+            },
+            pass: function(value){
+                if (!/[0-9A-Za-z]{6,18}/.test(value)) {
+                    return '6-18位字母和数字构成';
+                }
+            },
+            idCard: function(value){
+                var reg = /^[1-9]\d{5}(18|19|20|(3\d))\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+                if(!reg.test(value)){
+                    return '身份证号不正确';
+                }
+            },
+            dept: function(value){
+                if (value.length > 15) {
+                    return '所属部门不能超过15个字符';
+                }
+            },
+            cardNo: function(value){
+                if (value.length > 15) {
+                    return '员工工号不能超过15个字符';
+                }
+            },
+            positions: function(value){
+                if (value.length > 15) {
+                    return '员工职位不能超过15个字符';
                 }
             }
         });

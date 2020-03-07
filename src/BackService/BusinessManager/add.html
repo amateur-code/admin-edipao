@@ -58,7 +58,7 @@
                                             <span class="x-red">*</span>服务商名称
                                         </label>
                                         <div class="layui-input-block">
-                                            <input type="text" id="supplierName" name="supplierName" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                                            <input type="text" id="supplierName" name="supplierName" lay-verify="required|supplierName" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                 </div>
@@ -68,7 +68,7 @@
                                             <span class="x-red">*</span>登录手机号
                                         </label>
                                         <div class="layui-input-block">
-                                            <input type="text" id="loginPhone" name="loginPhone" required="" lay-verify="loginPhone" autocomplete="off" class="layui-input">
+                                            <input type="text" id="loginPhone" name="loginPhone" lay-verify="required|loginPhone" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                 </div>
@@ -91,7 +91,7 @@
                                             联系人
                                         </label>
                                         <div class="layui-input-block">
-                                            <input type="text" id="contractName" name="contractName" required="" lay-verify="required" autocomplete="off" class="layui-input">
+                                            <input type="text" id="contractName" name="contractName" lay-verify="contractName" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                 </div>
@@ -101,7 +101,7 @@
                                             联系人手机号
                                         </label>
                                         <div class="layui-input-block">
-                                            <input type="text" id="contractPhone" name="contractPhone" required="" lay-verify="phone" autocomplete="off" class="layui-input">
+                                            <input type="text" id="contractPhone" name="contractPhone" lay-verify="contractPhone" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                 </div>
@@ -115,7 +115,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">备注</label>
                             <div class="layui-input-block">
-                              <textarea name="remark" placeholder="请输入备注说明" class="layui-textarea"></textarea>
+                              <textarea name="remark" placeholder="请输入备注说明" lay-verify="remark" class="layui-textarea"></textarea>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -152,9 +152,29 @@
         })
         //自定义验证规则
         form.verify({
-            phone: function(value) {
+            supplierName: function(value){
+              if (value.length > 50) {
+                    return '供应商名称不能超出50个字符';
+                }  
+            },
+            loginPhone: function(value) {
                 if (!/^1\d{10}$/.test(value)) {
                     return '手机号格式不正确';
+                }
+            },
+            contractName: function(value) {
+                if (value.length > 50) {
+                    return '联系人姓名不能超过50个字符';
+                }
+            },
+            contractPhone: function(value){
+                if (value !== '' && !/^1\d{10}$/.test(value) && !/^0\d{2,3}-?\d{7,8}$/.test(value)) {
+                    return '手机号或固定电话格式不正确';
+                }
+            },
+            remark: function(value){
+                if (value.length > 300) {
+                    return '备注不能超过300个字符';
                 }
             }
         });

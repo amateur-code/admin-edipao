@@ -1,0 +1,169 @@
+.layui-tab{
+  text-align: center !important;
+  .layui-tab-content{
+    height: 200px;
+    border-bottom: 1px solid #ccc;
+  }
+  .layui-tab-item{
+    padding: 20px 0;
+    .upload-handler{
+      font-size: 0;
+      .label{
+        font-size: 12px;
+      }
+      .upload-name{
+        display: inline-block;
+        width: 45%;
+        height: 36px;
+        line-height: 36px;
+        border: 1px solid rgba(170, 170, 170, 1);
+        border-right: 0;
+        font-size: 12px;
+        text-align: left;
+        padding-left: 10px;
+        color: #ccc;
+      }
+      .upload-btn{
+        position: relative;
+        top: -4px;
+      }
+      .download-temp{
+        font-size: 14px;
+        color: #118DFF;
+        text-decoration: underline;
+        margin-left: 30px;
+      }
+      
+    }
+    .desc{
+      padding-bottom: 10px ;
+    }
+    .choose-btn{
+      margin-top: 10px;
+    }
+  }
+}
+// 司机上报
+.driver-report{
+  .title{
+    padding: 5px 0;
+    .desc{
+      padding-right: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .add-report{
+      font-size: 12px;
+      color: #118DFF;
+      text-decoration: underline;
+    }
+  }
+  .report-list{
+    .item{
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      .location-icon{
+        position: relative;
+        top: 12px;
+        color: #FF5722;
+      }
+      .item-title{
+        padding-bottom: 5px;
+        font-size: 14px;
+        .it-del{
+          color: #EE5B22;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+  .footer-laypage{
+    padding-top: 20px;
+  }
+  
+}
+.map-container{
+  height: 650px;
+  #map{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    margin:0;
+    padding:0px;
+  }
+}
+.report-form{
+  display: none;
+  padding: 10px;
+  position: relative;
+  .report-type-txt{
+    padding: 10px 0;
+  }
+  .unit{
+    position: relative;
+    top: 4px;
+  }
+  .select-location{
+    font-size: 0;
+    .label{
+      font-size: 12px;
+    }
+    .location-name{
+      display: inline-block;
+      width: 45%;
+      height: 28px;
+      line-height: 28px;
+      border: 1px solid rgba(170, 170, 170, 1);
+      border-right: 0;
+      font-size: 12px;
+      text-align: left;
+      padding-left: 10px;
+      color: #ccc;
+    }
+    .select-btn{
+      position: relative;
+      top: -4px;
+    }
+    
+  }
+}
+.select-map-dialog{
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  #select-map{
+    width: 100%;
+    height: 100%;
+  }
+  .select-location{
+    width: 500px;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    margin-left: -250px;
+    font-size: 0;
+    z-index: 9999;
+    .label{
+      font-size: 12px;
+    }
+    .location-name{
+      display: inline-block;
+      width: 400px;
+      height: 28px;
+      line-height: 28px;
+      border: 1px solid rgba(170, 170, 170, 1);
+      border-right: 0;
+      font-size: 12px;
+      text-align: left;
+      padding-left: 10px;
+      color: #333;
+      background: #fff;
+    }
+    .select-btn{
+      position: relative;
+      top: -4px;
+    }
+    
+  }
+}

@@ -1,11 +1,11 @@
 layui.config({
     base:'../lib/step/'
 }).use([ 'form', 'step','layer'], function () {
-    var $ = layui.$
+    var $ = layui.jquery
         , form = layui.form
         , step = layui.step,
-        layer = layui.layer;
-
+        layer = layui.layer,
+       edipao = layui.edipao;
     step.render({
         elem: '#stepForm',
         filter: 'stepForm',
@@ -42,11 +42,11 @@ layui.config({
         },
         passVerify: function(value) {
             if(value!=''){
-                var reg = /^[0-9a-zA-Z_]{6,18}$/;
+               /* var reg = /^[0-9a-zA-Z_]{6,18}$/;
                 var flag = reg.test(value);
                 if(!flag){
                     return '密码不合规，必须由6~18位数字、字母或者数字与字母组合构成';
-                }
+                }*/
             }else{
                 return '请输入新密码';
             }
@@ -63,7 +63,7 @@ layui.config({
     });
 
     form.on('submit(formStep)', function (data) {
-        step.next('#stepForm');
+        checkCode();
         return false;
     });
 
@@ -71,33 +71,45 @@ layui.config({
         newPassSet()
         return false;
     });
+    function checkCode () {
+        var phoneVal = $('#phone').val();
+        var verifyCode = $('#verifyCode').val();
+        var param = {
+            'phone':phoneVal,
+            'verifyCode':verifyCode
+        }
+        edipao.request({
+            url: '/admin/staff/forget-pass/verify-code/check',
+            data: param,
+        }).done(function(res){
+            if(res.code == 0){
+                step.next('#stepForm');
+            }else{
+                layer.msg(res.message, {icon: 5,anim: 6});
+            }
+        })
+    }
     function newPassSet() {
         var phoneVal = $('#phone').val();
-        var verifyCodeVal = $('#verifyCode').val();
         var newPassVal = $('#L_pass').val();
         var newPassAgainVal = $('#L_repass').val();
         var param = {
             'phone':phoneVal,
-            'verifyCode':verifyCodeVal,
             'newPass':newPassVal,
             'newPassAgain':newPassAgainVal
         }
         //获取验证码
-        $.ajax({
+        edipao.request({
             type: "POST",
-            dataType: "JSON",
-            url: ipUrl+'/admin/staff/forget-pass/new-pass/set',
+            url: '/admin/staff/forget-pass/new-pass/set',
             data:param,
-            success: function (data){
-                var code = data.code;
-                if(code=='0'){
-                    step.next('#stepForm');
-                }else{
-                    layer.msg(data.message, {icon: 5,anim: 6});
-                }
-            },
-            error: function (data) { }
-        });
+        }).done(function(res){
+            if(res.code == 0){
+                step.next('#stepForm');
+            }else{
+                layer.msg(res.message, {icon: 5,anim: 6});
+            }
+        })
     }
     $('.pre').click(function () {
         step.pre('#stepForm');
@@ -120,21 +132,17 @@ layui.config({
         InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
         var val = $('#phone').val();
         //获取验证码
-        $.ajax({
+        edipao.request({
             type: "POST",
-            dataType: "JSON",
-            url: ipUrl+'/admin/staff/forget-pass/verify-code/get',
+            url: '/admin/staff/forget-pass/verify-code/get',
             data:{'phone':val} ,
-            success: function (data){
-                var code = data.code;
-                if(code=='0'){
-                    layer.msg('发送成功', {icon: 6,anim: 6});
-                }else{
-                    layer.msg(data.message, {icon: 5,anim: 6});
-                }
-            },
-            error: function (data) { }
-        });
+        }).done(function(res){
+            if(res.code == 0){
+                layer.msg('发送成功', {icon: 6,anim: 6});
+            }else{
+                layer.msg(res.message, {icon: 5,anim: 6});
+            }
+        })
     }
 
     //timer处理函数

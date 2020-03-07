@@ -191,7 +191,9 @@ layui.config({
             }
         }
     ];
-    var showList = [];
+
+
+    var showList = [ "name", "phone","idNum","driverType","driveLicenceType", "drivingAge","wishJourney","oftenJourney","location","deposit","licenceWarn","status","approvalFlag"];
     var exportHead={};// 导出头部
     edipao.request({
         type: 'GET',
@@ -210,6 +212,14 @@ layui.config({
                     if(item.field && showList.indexOf(item.field) == -1){
                         item.hide = true;
                     }else{
+                        if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
+                            exportHead[item.field] = item.title;
+                        }
+                    }
+                })
+            }else{
+                layui.each(tableCols, function(index, item){
+                    if(item.field && showList.indexOf(item.field) != -1){
                         if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
                             exportHead[item.field] = item.title;
                         }
