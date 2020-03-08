@@ -196,6 +196,7 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             ,accept: 'images' //只允许上传图片
             ,acceptMime: 'image/*' //只筛选图片
             ,done: function(res){
+                edipao.codeMiddleware(res);
                 if(res.code=='0'){
                     layer.msg('上传成功', {icon: 6,anim: 6});
                     $('#'+id+'Div').children('i').hide();

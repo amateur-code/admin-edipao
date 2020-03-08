@@ -12,9 +12,12 @@
     <meta http-equiv="Pragma" CONTENT="no-cache">
     <link rel="stylesheet" href="../../css/font.css">
     <link rel="stylesheet" href="../../css/xadmin.css">
+    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
+
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js"></script>
+    <script type="text/javascript" src="../../lib/TableFilter/tableFilter.js"></script>
     <script type="text/javascript" src="../../js/common.js?VERSION"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
@@ -70,6 +73,7 @@
     }).use(['table', 'layer', 'excel'], function(table, layer, excel) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao,
+            tableFilter = layui.tableFilter,
             tableKey = 'SystemSetting-StaffManager-list',
             tableCols = [ //表头
                 { checkbox: true },
@@ -80,9 +84,13 @@
                 { field: 'cardNo', title: '员工工号', width: 200 },
                 { field: 'positions', title: '员工职位', width: 200 },
                 { field: 'roleNames', title: '拥有权限', width: 200 },
-                { field: 'status', title: '状态', align: 'center'},
+                { field: 'status', title: '状态',width: 200, align: 'center'},
                 { title: '操作', toolbar: '#rowBtns', 'width': 350, fixed: 'right', align: 'center' }
-            ];
+            ],
+            tableIns,
+            tableFilterIns; 
+ 
+
         edipao.request({
             type: 'GET',
             url: '/admin/table/show-field/get',
@@ -107,8 +115,8 @@
         })
 
         function renderTable(){
-            table.render({
-                id: 'list',
+            tableIns = table.render({
+                id: 'staffList',
                 elem: '#staffList',
                 url: edipao.API_HOST + '/admin/staff/list',
                 request: {
@@ -130,8 +138,52 @@
                 page: true,
                 cols: [tableCols],
                 toolbar: '#headerBtns',
-                defaultToolbar: []
+                defaultToolbar: [],
+                done: function(res,curr,count){
+                    tableFilterIns.reload()
+                }
             });
+
+            var filtersHeader = [];
+            layui.each(tableCols,function(index, el) {
+               if(el.field) {
+                    var item = {field: el.field};
+                    if(el.field == 'status'){
+                        item.type = 'radio'
+                        item.data  = [
+                            { "key":"1", "value":"有效"},
+                            { "key":"0", "value":"失效"}
+                        ]
+                    }
+
+                    filtersHeader.push(item)
+               }
+            });
+
+            tableFilterIns = tableFilter.render({
+                elem: '#staffList',
+                mode: 'self',
+                filters: filtersHeader,//过滤项配置
+                done: function(filters){
+                    var index = 0,  
+                        where = {
+                            loginStaffId: edipao.getLoginStaffId()
+                        };
+                    layui.each(filters,function(key, value){
+                        where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                        if(key == 'status'){
+                            // layui.each(value,function(key1, value2){
+                            //     where['searchFieldDTOList['+ index +'].fieldListValue[' + key1 + ']'] = value2;
+                            // })
+                        }else{
+                            
+                        }
+                        where['searchFieldDTOList['+ index +'].fieldValue'] = value;
+                        index++;
+                    })
+                    tableIns.reload({ where: where });
+                }
+            })
 
         }
         

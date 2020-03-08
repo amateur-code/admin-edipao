@@ -12,9 +12,12 @@
     <meta http-equiv="Pragma" CONTENT="no-cache">
     <link rel="stylesheet" href="../../css/font.css">
     <link rel="stylesheet" href="../../css/xadmin.css">
+    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
+
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js"></script>
+    <script type="text/javascript" src="../../lib/TableFilter/tableFilter.js"></script>
     <script type="text/javascript" src="../../js/common.js"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
@@ -72,15 +75,19 @@
     }).use(['table', 'layer', 'excel'], function(table, layer, excel) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao,
+            tableFilter = layui.tableFilter,
             tableKey = 'SystemSetting-PermissionManager-list',
             tableCols = [ //表头
                 { checkbox: true },
-                { field: 'roleName', title: '角色名称' },
-                { field: 'staffNumber', title: '关联员工数', templet: '#stffList' },
-                { field: 'createUser', title: '创建人' },
-                { field: 'createTime', title: '创建时间' },
+                { field: 'roleName', title: '角色名称', width: 200 },
+                { field: 'staffNumber', title: '关联员工数', templet: '#stffList', width: 200 },
+                { field: 'createUser', title: '创建人', width: 200 },
+                { field: 'createTime', title: '创建时间', width: 200 },
                 { title: '操作', toolbar: '#rowBtns', width: 350 }
-            ];
+            ],
+            tableIns,
+            tableFilterIns; 
+
         edipao.request({
             type: 'GET',
             url: '/admin/table/show-field/get',
@@ -107,7 +114,7 @@
         var roleList;
 
         function renderTable() {
-            roleList = table.render({
+            tableIns = table.render({
                 id: 'roleList',
                 elem: '#roleList',
                 url: edipao.API_HOST + '/admin/permission/role/list',
@@ -131,8 +138,47 @@
                 page: true,
                 cols: [tableCols],
                 toolbar: '#headerBtns',
-                defaultToolbar: []
+                defaultToolbar: [],
+                done: function(res,curr,count){
+                    tableFilterIns.reload()
+                }
             });
+
+            var filtersHeader = [];
+            layui.each(tableCols,function(index, el) {
+               if(el.field) {
+                    var item = {field: el.field};
+                    if(el.field == 'status'){
+                        item.type = 'radio'
+                        item.data  = [
+                            { "key":"1", "value":"有效"},
+                            { "key":"0", "value":"失效"}
+                        ]
+                    }
+
+                    filtersHeader.push(item)
+               }
+            });
+
+            tableFilterIns = tableFilter.render({
+                'elem' : '#roleList',//table的选择器
+                'mode' : 'self',//过滤模式
+                'filters' : filtersHeader,//过滤项配置
+                'done': function(filters){
+                    console.log(filters)
+                    var index = 0,  
+                        where = {
+                            loginStaffId: edipao.getLoginStaffId()
+                        };
+                    layui.each(filters,function(key, value){
+                        where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                        where['searchFieldDTOList['+ index +'].fieldValue'] = value;
+                        index++;
+                    })
+                    tableIns.reload({where: where});
+                    //结果回调
+                }
+            })
         }
 
 
