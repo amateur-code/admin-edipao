@@ -505,6 +505,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     }).done(function (res) {
       if(res.code == "0"){
         if(!res.data) return;
+        if(res.data.lenght < 1) return;
         _this.driverInfoListDto = res.data.driverInfoListDto;
         laytpl($("#driver_list_tpl").html()).render(res.data.driverInfoListDto, function (html) {
           $("#driver_name_select").append(html);
