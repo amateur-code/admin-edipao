@@ -93,9 +93,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
   Edit.prototype.setData = function(data){
     //渲染订单数据
     var _this =this;
-    _this.prePay = data.prePayFeeItems || [];
-    _this.tailPay = data.tailPayFeeItems || [];
-    _this.arrivePay = data.arrivePayFeeItems || [];
+    _this.prePay = JSON.parse(data.prePayFeeItems) || [];
+    _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
+    _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
     _this.setFeeList();
     laytpl($("#base_info_tpl").html()).render(data, function(html){
       $("#base_info").html(html);
@@ -494,71 +494,29 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
   Edit.prototype.openSelectDriver = function () {
     //选择司机
     var _this= this;
-    layer.open({
-      type:1,
-      title: "选择司机",
-      area: '1050px',
-      content: $("#drivers_table"),
-      cancel: function () {
-        $(".layui-table-view[lay-id=drivers_table]").remove();
-      },
-      success: function () {
-        table.render({
-          elem: '#drivers_table'
-          // , url: layui.edipao.API_HOST+'admin/truck/getUnDealTrucks'
-          , url: layui.edipao.API_HOST + "/admin/driver/info/list"
-          , title: '车辆列表'
-          , method: "get" // 请求方式  默认get
-          , page: true //开启分页
-          , limit: 20  //每页显示条数
-          , limits: [20, 40] //每页显示条数可选择
-          , request: {
-              pageName: 'pageNumber' //页码的参数名称，默认：page
-              , limitName: 'pageSize' //每页数据量的参数名，默认：limit
-          }
-          , where: {loginStaffId: _this.user.staffId}
-          , parseData: function (res) {
-            return {
-                "code": res.code, //解析接口状态
-                "msg": res.message, //解析提示文本
-                "count": res.data.totalSize, //解析数据长度
-                "data": res.data.driverInfoListDtoList //解析数据列表
-            }
-        }
-        , done: function () {
-          table.on('row(drivers_table)', function(obj){
-            var data = {
-              driverName: obj.data.name,
-              driverPhone: obj.data.phone,
-              driverIdCard: obj.data.idNum,
-              driverCertificate: obj.data.driveLicenceType||"",
-              driverMileage: obj.data.driverMileage||"",
-            }
+    var id = "driver_name_select";
+    edipao.request({
+      url: "/admin/order/matchDriver/list",
+      method: "GET",
+      data: {
+        loginStaffId: _this.user.staffId,
+        orderNo: _this.orderId,
+      }
+    }).done(function (res) {
+      if(res.code == "0"){
+        if(!res.data) return;
+        _this.driverInfoListDto = res.data.driverInfoListDto;
+        laytpl($("#driver_list_tpl").html()).render(res.data.driverInfoListDto, function (html) {
+          $("#driver_name_select").append(html);
+          $(".driver_item").unbind().on("click", function (e) {
+            var index = e.target.dataset.index;
+            var data = _this.driverInfoListDto[index*1];
             form.val("form_dispatch", data);
-            $(".layui-table-view[lay-id=drivers_table]").remove();
-            layer.closeAll();
+            $('#match_driver_list').remove();
           });
-        }
-          , height: 'full'
-          , autoSort: true
-          , id: 'drivers_table'
-          , text: {
-              none: "暂无数据"
-          }
-          , cols: [[
-              {field: 'name', title: '司机姓名', sort: false,width:100},
-              {field: 'phone', title: '司机手机', sort: false,width:100},
-              {field: 'driverType', title: '司机类型', sort: false,width:100},
-              {field: 'driveLicenceType', title: '驾照类型', sort: false,width:100},
-              {field: 'drivingAge', title: '驾龄', sort: false,},
-              {field: 'wishJourney', title: '意向线路', sort: false,width:150,},
-              {field: 'a', title: '熟手', sort: false,},
-              {field: 'status', title: '状态', sort: false,},
-              {field: 'location', title: '当前位置', sort: false,width:100},
-          ]]
         });
       }
-    })
+    });
   }
   Edit.prototype.bindEvents = function(){
     var _this = this;

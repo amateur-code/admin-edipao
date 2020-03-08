@@ -44,6 +44,28 @@
   padding-top: 10px;
   border-top: 1px solid #EFEEF0;
 }
+#driver_name_select {
+  position: relative;
+}
+#driver_name_select .match_driver_list {
+  position: absolute;
+  width: 100%;
+  top: 30px;
+  border: 1px solid #e6e6e6;
+}
+#driver_name_select .match_driver_list .driver_item {
+  position: relative;
+  height: 28px;
+  line-height: 28px;
+  cursor: pointer;
+}
+#driver_name_select .match_driver_list .driver_item:hover {
+  background-color: #eee;
+}
+#driver_name_select .match_driver_list .driver_item .driver_name {
+  position: absolute;
+  left: 10px;
+}
 .btn_container {
   margin-bottom: 20px;
 }

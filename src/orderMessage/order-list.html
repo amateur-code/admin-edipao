@@ -60,6 +60,62 @@
         <div id="pre_fee_verify_table"></div>
     </div>
 </body>
+<script id="pic_view_tpl" type="text/html">
+    <div style="padding: 10px">
+        <form id="pic_view_form" lay-filter="uploadPic" class="layui-form">
+            <div>车辆vin码</div>
+            <div>
+                <select name="pic_view">
+                    {{#  layui.each(d.list, function(index, item){ }}
+                    <option data-index="{{index}}" {{index==0?'selected':''}} value="{{item.id}}">{{item.vinCode}}</option>
+                    {{#  }); }}
+                </select>
+            </div>
+            <div id="pic_view_list_container" class="pic_view_list"></div>
+        </form>
+    </div>
+</script>
+<script id="pic_view_list_tpl" type="text/html">
+    <div style="margin-top:20px;" class="view_pic_container">
+        <div style="margin-bottom: 20px;">提车图片</div>
+        <div class="layui-row">
+            {{#  layui.each(d.fetchImages, function(index, item){ }}
+            <img class="pic_view_image" src="{{item}}">
+            {{#  }); }}
+        </div>
+        <div style="margin-bottom: 20px;">发车单</div>
+        <div class="layui-row">
+            {{#  layui.each(d.startBillImage, function(index, item){ }}
+            <img class="pic_view_image" src="{{item}}">
+            {{#  }); }}
+        </div>
+        <div style="margin-bottom: 20px;">交车单</div>
+        <div class="layui-row">
+            {{#  layui.each(d.returnImages, function(index, item){ }}
+            <img class="pic_view_image" src="{{item}}">
+            {{#  }); }}
+        </div>
+    </div>
+</script>
+<script id="pic_view_tpl" type="text/html">
+    <div style="padding:10px 0;">
+        <form lay-filter="uploadPic" class="layui-form">
+            <div>车辆vin码</div>
+            <div>
+                <select name="vinCode">
+                    {{#  layui.each(d.list, function(index, item){ }}
+                    <option {{index==0?'selected':''}} value="{{item.id}}">{{item.id}}</option>
+                    {{#  }); }}
+                </select>  
+            </div>
+            <button type="button" class="layui-btn" id="uploadPicBtn">选择图片</button> 
+            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+                预览图：
+                <div class="layui-upload-list" id="image_preview"></div>
+            </blockquote>
+        </form>
+    </div>
+</script>
 <script id="arrive_fee_verify_tpl" type="text/html">
     <div style="padding:10px;">
         <div class="">

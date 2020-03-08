@@ -439,8 +439,9 @@
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">司机姓名</label><br>
-                            <div class="layui-input-inline">
+                            <div id="driver_name_select" class="layui-input-inline">
                                 <input id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
+                                
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -485,6 +486,15 @@
             </form>
         </div>
     </div>
+    <script id="driver_list_tpl" type="text/html">
+        <div id="match_driver_list" class="match_driver_list">
+            {{#  layui.each(d.list, function(index, item){ }}
+            <div class="driver_item">
+                <span data-index="{{index}}" class="driver_name">{{item.name}}</span>
+            </div>
+            {{#  }); }}
+        </div>
+    </script>
     <script id="fee_list_tpl" type="text/html">
         <div class="layui-form-item layui-row">
             <div class="form_item_inner">
