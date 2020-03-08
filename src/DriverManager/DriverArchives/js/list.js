@@ -13,6 +13,8 @@ var warnData = {
     'driveLicenceWarn':'驾驶证',
     'qualificationsWarn':'从业资格证',
 }
+// 预警值
+var warnDataVal = {};
 // 审核状态
 var approvalFlagData={
     '0':'未审核',
@@ -20,13 +22,26 @@ var approvalFlagData={
 }
 var driveLicenceTypeData = {};
 layui.config({
+    base:'./static/js/'
+});
+layui.config({
     base: '../../lib/layui_exts/'
-}).use(['jquery', 'table','layer','excel'], function () {
+})
+//config的设置是全局的
+layui.config({
+    base: '../../lib/'
+}).extend({
+    excel: 'layui_exts/excel',
+    tableFilter: 'tableFilter/tableFilter'
+}).use(['jquery', 'table','layer','excel','tableFilter','form'], function () {
     var $ = layui.jquery,
         table = layui.table,
         layer = layui.layer,
         excel = layui.excel,
-        edipao = layui.edipao;
+        tableFilter = layui.tableFilter,
+        edipao = layui.edipao,
+        tableIns,tableFilterIns;
+    form = layui.form;
 
     // 获取所有司机状态
     edipao.request({
@@ -58,6 +73,7 @@ layui.config({
     edipao.request({
         type: 'GET',
         dataType: "JSON",
+        async: false,
         url: '/admin/driver/info/licenceType',
     }).done(res=>{
         if(res.code == 0){
@@ -66,7 +82,18 @@ layui.config({
             layer.msg(res.message, {icon: 5,anim: 6});
         }
     });
-
+    // 获取预警
+    edipao.request({
+        type: 'GET',
+        url: '/admin/driver/info/warn/get',
+    }).done(function(res) {
+        if (res.code == 0) {
+            var data = JSON.parse(res.data);
+            warnDataVal = data;
+        } else {
+            layer.msg(res.message, {icon: 5,anim: 6});
+        }
+    })
 
     var tableKey = 'DriverManager-DriverArchives-list';
     var tableCols = [
@@ -84,7 +111,7 @@ layui.config({
                 return DataNull(val)
             }
         },
-        { field: 'idNum', title: '司机身份证号',width: 155,
+        { field: 'idNum', title: '身份证号',
             templet: function (data) {
                 var val = data.idNum;
                 return DataNull(val)
@@ -125,22 +152,25 @@ layui.config({
         { field: 'location', title: '位置',
             templet: function (data) {
                 var val = data.location;
-                return DataNull(val)
+                return DataNull(val);
             }
         },
-        { field: 'deposit', title: '押金', width: 120,
+        { field: 'deposit', title: '押金',
             templet: function (data) {
                 var val = data.deposit;
+               return depositNull(val)
+            }
+        },
+        { field: 'depositStatus', title: '押金状态',
+            templet: function (data) {
+                var val = data.depositStatus;
                 if(val == null||val == ''){
                     return '--'
                 }else{
-                    var depositStatusVal = data.depositStatus;
-                    if(depositStatusVal=='未支付'){
-                        return val+'元<span style="margin-left: 10px;color: #EE5B22;">未支付</span>'
-                    }else  if(depositStatusVal=='已支付'){
-                        return val+'元<span style="margin-left: 10px;color: #3490E9;">已支付</span>'
-                    }else{
-                        return  val
+                    if(val=='未支付'||val=='0'){
+                        return '<span style="margin-left: 10px;color: #EE5B22;">未支付</span>'
+                    }else  if(val=='已支付' || val=='1'){
+                        return '<span style="margin-left: 10px;color: #3490E9;">已支付</span>'
                     }
                 }
             }
@@ -193,7 +223,7 @@ layui.config({
     ];
 
 
-    var showList = [ "name", "phone","idNum","driverType","driveLicenceType", "drivingAge","wishJourney","oftenJourney","location","deposit","licenceWarn","status","approvalFlag"];
+    var showList = [ "name", "phone","idNum","driverType","driveLicenceType", "drivingAge","wishJourney","oftenJourney","location","deposit","depositStatus","licenceWarn","status","approvalFlag"];
     var exportHead={};// 导出头部
     edipao.request({
         type: 'GET',
@@ -230,7 +260,7 @@ layui.config({
         }
     })
     function renderTable(){
-        table.render({
+        tableIns = table.render({
             elem: '#driverList',
             url: edipao.API_HOST + '/admin/driver/info/list',
             page: true,
@@ -257,11 +287,110 @@ layui.config({
             cols: [tableCols],
             done: function (res, curr, count) {
                 // console.log("监听where:", this.where);
-
+                tableFilterIns.reload() // 搜索
             }
         });
     };
+    // 查询
+    var driverTypeFilter = [];
+    layui.each(driverTypesData,function (index,item) {
+        driverTypeFilter.push({
+            'key':index,
+            'value':item
+        })
+    });
 
+    var driveLicenceTypeFilter = [];
+    layui.each(driveLicenceTypeData,function (index,item) {
+        driveLicenceTypeFilter.push({
+            'key':item,
+            'value':item
+        });
+    });
+    var depositStatusFilter = [];
+    layui.each(depositStatusData,function (index,item) {
+        depositStatusFilter.push({
+            'key':index,
+            'value':item
+        })
+    });
+    var driverStatusFilter = [];
+    layui.each(driverStatusData,function (index,item) {
+        driverStatusFilter.push({
+            'key':index,
+            'value':item
+        })
+    });
+    var approvalFlagFilter = [];
+    layui.each(approvalFlagData,function (index,item) {
+        approvalFlagFilter.push({
+            'key':index,
+            'value':item
+        })
+    });
+    var licenceWarnFilter = [
+        {'key': 'idLicenceWarn','value': '身份证预警'},{'key': 'driveLicenceWarn','value': '驾驶证预警'},{'key': 'qualificationsWarn','value': '从业资格证预警'}
+    ];
+    // 证件预警对应各个证件有效期
+    var validityData = {
+       'idLicenceWarn':'idLicenceValidity',
+        'driveLicenceWarn':'driveLicenceValidity',
+        'qualificationsWarn':'qualificationsValidity'
+    }
+    var filters = [
+        { field: 'name', type: 'input' },
+        { field: 'phone', type: 'input' },
+        { field: 'idNum', type: 'input' },
+        { field: 'driverType', type: 'radio', data: driverTypeFilter },
+        { field: 'driveLicenceType', type: 'radio', data: driveLicenceTypeFilter },
+        { field: 'drivingAge', type: 'numberslot' },
+        { field: 'wishJourney', type: 'city' },
+        { field: 'oftenJourney', type: 'city' },
+        { field: 'location', type: 'input' },
+        { field: 'deposit', type: 'numberslot' },
+        { field: 'depositStatus', type: 'radio',data:depositStatusFilter },
+        { field: 'licenceWarn', type: 'radio', data:licenceWarnFilter },
+        { field: 'status', type: 'radio',data:driverStatusFilter },
+        { field: 'approvalFlag', type: 'radio',data:approvalFlagFilter }
+    ]
+    tableFilterIns = tableFilter.render({
+        'elem' : '#driverList',//table的选择器
+        'mode' : 'self',//过滤模式
+        'filters' : filters,//过滤项配置
+        'done': function(filters){
+            var index = 0,
+                where = {
+                    loginStaffId: edipao.getLoginStaffId(),
+                    pageNumber: 1
+                };
+
+            layui.each(filters,function(key, value){
+                if(key=='licenceWarn'){
+                    // 证件预警 比如预警是30天, 今天是3月8号, 传值4月8日。
+                    where['searchFieldDTOList['+ index +'].fieldName'] = validityData[value];
+                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = getDay(warnDataVal[value]);
+                }else if(key=='wishJourney'||key=='oftenJourney'){
+                    // 意向线路、常跑线路
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    var fieldValue = [{
+                        start:value[key+'Start-province']+'-'+value[key+'Start-city'],
+                        end:value[key+'End-province']+'-'+value[key+'End-city']
+                    }];
+                    where['searchFieldDTOList['+ index +'].fieldValue'] = JSON.stringify(fieldValue);
+                }else if(key == 'drivingAge'||key == 'deposit'){
+                    // 驾龄、押金
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+                }else{
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    where['searchFieldDTOList['+ index +'].fieldValue'] = value;
+                }
+                index++;
+            })
+            tableIns.reload( { where: where, page: { curr: 1 }});
+        }
+    })
     function DataNull (data) {
         if(data == null||data == ''){
             return '--'
@@ -299,25 +428,17 @@ layui.config({
     // 驾龄
     function drivingAgeNull(val){
         if(val!=''&&val!=null){
-            return val+'年'
+            return val+'年';
         }else{
-            return '--'
+            return '--';
         }
     }
     // 押金
-    function depositNull(deposit,depositStatus){
-        var val = deposit;
+    function depositNull(val){
         if(val != null||val != ''){
-            var depositStatusVal = depositStatus;
-            if(depositStatusVal=='未支付'){
-                return val+'元未支付'
-            }else  if(depositStatusVal=='已支付'){
-                return val+'元已支付'
-            }else{
-                return  val
-            }
+            return  val + '元';
         }else{
-            return '--'
+            return '--';
         }
     }
     table.on('tool(driverList)', function(obj) {
@@ -380,7 +501,7 @@ layui.config({
             url: '/admin/driver/info/list',
             data: {
                 pageNumber: 1,
-                pageSize:100000,
+                pageSize:10000,
             }
         }).done(function(res) {
             if (res.code == 0) {
@@ -409,7 +530,7 @@ layui.config({
                                         break;
                                     case 'deposit':
                                         // 押金-处理数据
-                                        exportObj[index] = depositNull(item,v.depositStatus)
+                                        exportObj[index] = depositNull(item)
                                         break;
                                     case 'licenceWarn':
                                         // 证件预警-处理数据
@@ -434,4 +555,39 @@ layui.config({
             }
         })
     }
+    // 获取今天之后几天的日期
+    function getDay (val) {
+        var today = new Date();
+        var targetday_milliseconds=today.getTime() + 1000*60*60*24*val;
+        today.setTime(targetday_milliseconds);
+        var tYear = today.getFullYear();
+        var tMonth = today.getMonth();
+        var tDate = today.getDate();
+        tMonth = doHandleMonth(tMonth + 1);
+        tDate = doHandleMonth(tDate);
+        return tYear+"-"+tMonth+"-"+tDate;
+    }
+    function doHandleMonth(month){
+        var m = month;
+        if(month.toString().length == 1){
+            m = "0" + month;
+        }
+        return m;
+    }
+
+
+    // 搜索框自定义验证
+    // 自定义验证规则
+    form.verify({
+        provinceVerify: function(value) {
+            if(value==''||value=='请选择省份'){
+                return '请选择省份';
+            }
+        },
+        cityVerify: function(value) {
+            if(value==''||value=='请选择市级'){
+                return '请选择市级';
+            }
+        }
+    });
 });
