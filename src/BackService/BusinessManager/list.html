@@ -68,6 +68,9 @@
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="trade-record">交易记录</a>
     </script>
+    <script type="text/html" id="productList">
+        <a lay-event="productList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.productCount}}</a>
+    </script>
     <script type="text/javascript">
     layui.config({
         base: '../../lib/layui_exts/'
@@ -84,7 +87,7 @@
                 { field: 'supplierType', title: '类型',width: 200,templet:function(d){
                     return SupplierTypeConfig[d.supplierType]
                 }},
-                { field: 'productCount', title: '合作产品/网点',width: 200 },
+                { field: 'productCount', title: '合作产品/网点',width: 200, templet:'#productList'  },
                 { field: 'statusDesc', title: '状态',width: 100 },
                 { title: '操作', toolbar: '#rowBtns', width: 400 }
             ];
@@ -156,6 +159,9 @@
         table.on('tool(list)', function(obj) {
             let data = obj.data
             switch (obj.event) {
+                case 'productList':
+                    xadmin.open('合作产品/网点列表', './product-list.html?id=' + data.supplierNo)
+                    break;
                 case 'edit':
                     xadmin.open('修改供应商', './edit.html?id=' + data.supplierNo)
                     break;

@@ -68,10 +68,10 @@
                 </div>
                 <div class="layui-form-item">
                     <label for="dept" class="layui-form-label">
-                        <span class="x-red">*</span>所属部门
+                        所属部门
                     </label>
                     <div class="layui-input-inline">
-                        <input type="text" id="dept" name="dept" lay-verify="required|dept" autocomplete="off" class="layui-input">
+                        <input type="text" id="dept" name="dept" lay-verify="dept" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -144,7 +144,7 @@
                 }
             },
             pass: function(value){
-                if (value !== '' && !/[0-9A-Za-z]{6,18}/.test(value)) {
+                if (value !== '' && !/^[0-9A-Za-z]{6,18}$/.test(value)) {
                     return '6-18位字母和数字构成';
                 }
             },
@@ -179,7 +179,7 @@
                 data: data.field,
             }).done(function(res) {
                 if (res.code == 0) {
-                    layer.alert("跟新员工成功", { icon: 6 }, function() {
+                    layer.alert("更新员工成功", { icon: 6 }, function() {
                         xadmin.close();
                         xadmin.father_reload();
                     });
