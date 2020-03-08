@@ -353,15 +353,15 @@ layui.config({
         { field: 'status', type: 'radio',data:driverStatusFilter },
         { field: 'approvalFlag', type: 'radio',data:approvalFlagFilter }
     ]
+    var where = {};
     tableFilterIns = tableFilter.render({
         'elem' : '#driverList',//table的选择器
         'mode' : 'self',//过滤模式
         'filters' : filters,//过滤项配置
         'done': function(filters){
-            var index = 0,
-                where = {
-                    loginStaffId: edipao.getLoginStaffId(),
-                    pageNumber: 1
+            var index = 0;
+            where = {
+                    loginStaffId: edipao.getLoginStaffId()
                 };
 
             layui.each(filters,function(key, value){
@@ -496,13 +496,13 @@ layui.config({
     });
     // 导出
     function exportExcel() {
+        var param = where;
+        param['pageNumber']= 1;
+        param['pageSize'] =10000;
         edipao.request({
             type: 'GET',
             url: '/admin/driver/info/list',
-            data: {
-                pageNumber: 1,
-                pageSize:10000,
-            }
+            data: param
         }).done(function(res) {
             if (res.code == 0) {
                 if(res.data){
