@@ -2,12 +2,13 @@
 	TABLEFILTER
 **/
 
-layui.define(['table', 'jquery', 'form'], function (exports) {
+layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 
     var MOD_NAME = 'tableFilter',
 		$ = layui.jquery,
 		table = layui.table,
-		form = layui.form;
+		form = layui.form,
+		laydate = layui.laydate;
 
 	var tableFilter = {
 		"v" : '1.0.0'
@@ -104,6 +105,15 @@ layui.define(['table', 'jquery', 'form'], function (exports) {
 							})
 						}
 					}
+					if(filterType == "timeslot"){
+						filterBox.find('form').append('<input type="text" id="'+filterName+'-timeslot" name="'+filterName+'" lay-verify="required" lay-verType="tips" placeholder="请选择时间段" class="layui-input">');
+					}
+					if(filterType == 'numberslot'){
+						filterBox.find('form').append('<input type="search" name="'+filterName+'-min" lay-verify="required|number|numberslot" lay-verType="tips" placeholder="输入最小值" class="layui-input">');
+						filterBox.find('form').append('<input type="search" name="'+filterName+'-max" lay-verify="required|number|numberslot" lay-verType="tips" placeholder="输入最大值" class="layui-input">');
+					}
+
+
 					filterBox.find('form').append('<button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="tableFilter">确定</button>');
 					filterBox.find('form').append('<button type="button" class="layui-btn layui-btn-primary layui-btn-sm filter-del layui-btn-disabled" disabled>取消过滤</button>');
 					
@@ -112,13 +122,21 @@ layui.define(['table', 'jquery', 'form'], function (exports) {
 					
 					//加入DOM
 					$(parent).append(filterBox);
+					// 渲染时间选择
+					if(filterType == "timeslot"){
+						laydate.render({
+						    elem: filterBox.find('input[name='+filterName+']')[0],
+						    type: 'datetime',
+						    range: '至'
+						});
+					}
 					
 					//赋值FORM
 					form.val("table-filter-form", tableFilter.toLayuiFrom(elemId, filterName, filterType));
 					
 					//渲染layui form
 					form.render(null, 'table-filter-form');
-					
+
 					//渲染FORM 如果是searchInput 就默认选中
 					var searchInput = filterBox.find('form input[type="search"]');
 					searchInput.focus().select();
@@ -139,6 +157,16 @@ layui.define(['table', 'jquery', 'form'], function (exports) {
 						});
 					}
 					
+					form.verify({
+			            numberslot: function(value) {
+			            	var min = filterBox.find('[name="'+filterName+'-min"]').val() - 0,
+			            		max = filterBox.find('[name="'+filterName+'-max"]').val() - 0;
+			                if (min > max) {
+			                    return '最小值不能大于最大值';
+			                }
+			            }
+			        });
+
 					//点击确认开始过滤
 					form.on('submit(tableFilter)', function(data){
 						//重构复选框结果
@@ -148,6 +176,10 @@ layui.define(['table', 'jquery', 'form'], function (exports) {
 								NEWfield.push(data.field[key])
 							}
 							data.field[filterName] = NEWfield
+						}
+
+						if(filterType == 'numberslot'){
+							data.field[filterName] = [data.field[filterName+'-min'],data.field[filterName+'-max']]
 						}
 						
 						//过滤项写入缓存
@@ -229,10 +261,12 @@ layui.define(['table', 'jquery', 'form'], function (exports) {
 
 					//点击其他区域关闭
 					$(document).mouseup(function(e){
-						var userSet_con = $('.layui-table-filter-view');
-						if(!userSet_con.is(e.target) && userSet_con.has(e.target).length === 0){
-							filterBox.remove();
+						if(!$('.layui-laydate').is(e.target) && $('.layui-laydate').has(e.target).length === 0){
+							if(!$('.layui-table-filter-view').is(e.target) && $('.layui-table-filter-view').has(e.target).length === 0){
+								filterBox.remove();
+							}
 						}
+						
 					});
 
 				})
@@ -324,7 +358,13 @@ layui.define(['table', 'jquery', 'form'], function (exports) {
 				form_val[filterName + "["+value+"]"] = true;
 			})
 			delete form_val[filterName];
+		}else if(filterType == "numberslot"){
+			if(form_val[filterName] && form_val[filterName].length ==2){
+				form_val[filterName + "-min"] = form_val[filterName][0]
+				form_val[filterName + "-max"] = form_val[filterName][1]
+			}
 		}
+		console.log(form_val)
 		return form_val;
 	}
 	

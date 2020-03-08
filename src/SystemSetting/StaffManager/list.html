@@ -181,7 +181,7 @@
                         where['searchFieldDTOList['+ index +'].fieldValue'] = value;
                         index++;
                     })
-                    tableIns.reload({ where: where });
+                    tableIns.reload({where: where, page: { curr: 1 }});
                 }
             })
 
