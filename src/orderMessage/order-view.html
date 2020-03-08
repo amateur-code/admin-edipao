@@ -31,7 +31,7 @@
             <a>业务管理</a>
             <a>订单管理</a>
             <a>
-                <cite class="page_title_text">订单修改</cite>
+                <cite class="page_title_text">订单详情</cite>
             </a>
         ：</span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
@@ -354,6 +354,40 @@
                         </div>
                     </div>
                     <div id="fee_list_container"></div>
+                </div>
+            </form>
+        </div>
+        <div id="verify_container" class="verify_container">
+            <form lay-filter="verify_form" class="layui-col-md12 page-container layui-form">
+                <div class="page-header border-bottom">
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="title">审核</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-row">
+                    <div style="line-height:34px;" class="layui-col-md1">审核结果：</div>
+                    <div class="layui-col-md1">
+                        <input type="radio" name="verify_result" value="yes" title="通过" checked>
+                    </div>
+                    <div class="layui-col-md1">
+                        <input type="radio" name="verify_result" value="no" title="驳回">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-row">
+                    <div style="line-height:34px;" class="layui-col-md1">审核备注：</div>
+                    <div class="layui-col-md10">
+                        <textarea name="verify_text" lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-row">
+                    <div class="layui-col-md1 layui-col-md-offset5">
+                        <div class="layui-btn layui-btn-primary">取消</div>
+                    </div>
+                    <div class="layui-col-md1">
+                        <div id="verify_submit" class="layui-btn layui-btn-normal">确认</div>
+                    </div>
                 </div>
             </form>
         </div>
