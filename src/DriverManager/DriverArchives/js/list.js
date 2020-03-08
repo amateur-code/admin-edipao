@@ -77,7 +77,7 @@ layui.config({
         url: '/admin/driver/info/licenceType',
     }).done(res=>{
         if(res.code == 0){
-            driveLicenceTypeData = res.data;
+            driveLicenceTypeData = res.data.sort();
         }else{
             layer.msg(res.message, {icon: 5,anim: 6});
         }
@@ -372,10 +372,10 @@ layui.config({
                 }else if(key=='wishJourney'||key=='oftenJourney'){
                     // 意向线路、常跑线路
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
-                    var fieldValue = [{
+                    var fieldValue = {
                         start:value[key+'Start-province']+'-'+value[key+'Start-city'],
                         end:value[key+'End-province']+'-'+value[key+'End-city']
-                    }];
+                    };
                     where['searchFieldDTOList['+ index +'].fieldValue'] = JSON.stringify(fieldValue);
                 }else if(key == 'drivingAge'||key == 'deposit'){
                     // 驾龄、押金
