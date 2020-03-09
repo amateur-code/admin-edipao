@@ -1,7 +1,12 @@
-layui.use(['jquery', 'upload','form','laydate'], function(){
+layui.config({
+    base: '../../lib/'
+}).extend({
+    autocomplete: '/layAutoComplete/layAutoComplete',
+}).use(['jquery', 'upload','form','laydate','autocomplete'], function(){
     var $ = layui.jquery,
         laydate = layui.laydate,
         upload = layui.upload,
+        autocomplete = layui.autocomplete,
         edipao = layui.edipao;
     form = layui.form;
     // 自定义验证规则
@@ -305,19 +310,6 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         xadmin.close();
         return false;
     });
-    // 查看图例
-    showImg =function(t) {
-        var src = $(t).attr('data-src');
-        //页面层
-        layer.open({
-            type: 1,
-            title: false,
-            closeBtn: 0,
-            area: ['216px', '156px'], //宽高
-            shadeClose: true,
-            content: '<div style="overflow: hidden;background: url(' + src +' ) no-repeat center;width:216px;height: 156px;background-size: 216px 200px;"></div>'
-        });
-    };
 
     // 押金状态控制支付流水显示隐藏
     form.on('select(depositStatusFilter)', function(data){
@@ -337,7 +329,18 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         $('#accountName').val($(this).val());
     });
     // 初始化图片放大
-    zoomImg ()
+    zoomImg ();
+
+    // 开户银行联想输入
+    autocomplete({
+        element: '#accountBank',
+        array: bankList,
+        num: 1,
+        count: 5,
+        done: function (item) {
+            console.log(JSON.stringify(item))
+        }
+    })
 });
 // 移除
 function removeWishJourney (_this) {

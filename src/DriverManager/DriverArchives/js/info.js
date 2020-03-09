@@ -75,17 +75,4 @@ layui.use(['jquery','form','laytpl'], function() {
             zoomImg ()
         })
     }
-
-    showImg =function(t) {
-        var src = $(t).attr('data-src');
-        //页面层
-        layer.open({
-            type: 1,
-            title: false,
-            closeBtn: 0,
-            area: ['216px', '156px'], //宽高
-            shadeClose: true,
-            content: '<div style="overflow: hidden;background: url(' + src +' ) no-repeat center;width:216px;height: 156px;background-size: 216px 200px;"></div>'
-        });
-    }
 })
