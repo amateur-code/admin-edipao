@@ -4,7 +4,14 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         upload = layui.upload,
         edipao = layui.edipao;
     form = layui.form;
-
+    // 押金状态控制支付流水显示隐藏
+    form.on('select(depositStatusFilter)', function(data){
+        if(data.value =='0'||data.value ==''){
+            $("#depositTradeNumberDiv").addClass('layui-hide');
+        }else{
+            $("#depositTradeNumberDiv").removeClass('layui-hide');
+        }
+    });
     // 监听提交
     form.on('submit(add)',
         function(data) {
@@ -15,7 +22,18 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
                 var endVal1 = $(this).find('.end select[name="province"]').val();
                 var endVal2 = $(this).find('.end select[name="city"]').val();
                 if(startVal2!=''&&startVal2!='请选择市级'&&endVal2!=''&&endVal2!='请选择市级'){
-                    wishJourneyVal.push({'start':startVal1+'-'+startVal2,'end':endVal1+'-'+endVal2})
+                    wishJourneyVal.push({
+                        'start': {
+                            "code": cityCode[startVal2],
+                            "province": startVal1,
+                            "city": startVal2
+                        },
+                        'end': {
+                            "code": cityCode[endVal2],
+                            "province": endVal1,
+                            "city": endVal2
+                        }
+                    })
                 }
             })
             // 开户省市
@@ -30,6 +48,9 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
                 $('#depositTradeNumber').focus();
                 layer.msg('请输入押金支付流水号', {icon: 5,anim: 6});
                 return false
+            }
+            if(data.field.depositStatus=='0'){
+                data.field.depositTradeNumber = '';
             }
             var param ={
                 'name':data.field.name,

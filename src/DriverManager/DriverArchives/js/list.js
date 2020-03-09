@@ -21,6 +21,9 @@ var approvalFlagData={
     '1':'已审核'
 }
 var driveLicenceTypeData = {};
+// 获取城市数据
+var provinceList = [];
+var cityCode = {};
 //config的设置是全局的
 layui.config({
     base: '../../lib/'
@@ -368,8 +371,16 @@ layui.config({
                     // 意向线路、常跑线路
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     var fieldValue = {
-                        start:value[key+'Start-province']+'-'+value[key+'Start-city'],
-                        end:value[key+'End-province']+'-'+value[key+'End-city']
+                        'start': {
+                            "code": cityCode[value[key+'Start-city']],
+                            "province": value[key+'Start-province'],
+                            "city": value[key+'Start-city']
+                        },
+                        'end': {
+                            "code": cityCode[value[key+'End-city']],
+                            "province": value[key+'End-province'],
+                            "city": value[key+'End-city']
+                        }
                     };
                     where['searchFieldDTOList['+ index +'].fieldValue'] = JSON.stringify(fieldValue);
                 }else if(key == 'drivingAge'||key == 'deposit'){
@@ -579,8 +590,6 @@ layui.config({
         return m;
     }
 
-
-    // 搜索框自定义验证
     // 自定义验证规则
     form.verify({
         provinceVerify: function(value) {
@@ -594,4 +603,54 @@ layui.config({
             }
         }
     });
+
+    // 获取城市数据
+    edipao.request({
+        url: '/admin/city/all',
+    }).done(res=>{
+        if(res.code == 0){
+            var data = res.data;
+            if(data){
+                provinceList = toTree(data);
+            }
+        }else{
+            layer.msg(res.message)
+        }
+    })
+    function toTree(data) {
+         var val = [
+                 {
+                     name: '请选择省份',
+                     cityList: [
+                         { name: '请选择市级', areaList: [] },
+                     ]
+                 }
+             ];
+        var level2 = [];
+        layui.each(data,function (index,item) {
+            if(item.level == 1){
+                val.push({
+                    name: item.province,
+                    code:item.code,
+                    cityList:[]
+                })
+            }else{
+                level2.push(item)
+            }
+        });
+
+        layui.each(val,function (k,v) {
+            layui.each(level2,function (m,n) {
+                if(v.name==n.province){
+                    val[k]['cityList'].push({
+                        name: n.city,
+                        code:n.code,
+                        areaList:[]
+                    });
+                    cityCode[n.city] = n.code;
+                }
+            })
+        });
+        return val;
+    }
 });

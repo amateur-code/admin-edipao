@@ -1,3 +1,4 @@
+var cityCode = parent.cityCode;
 layui.config({
     base: '../../lib/'
 }).extend({
@@ -310,17 +311,6 @@ layui.config({
         xadmin.close();
         return false;
     });
-
-    // 押金状态控制支付流水显示隐藏
-    form.on('select(depositStatusFilter)', function(data){
-        if(data.value =='0'||data.value ==''){
-            $("#depositTradeNumberDiv").addClass('layui-hide');
-            $('#deposit').attr("disabled",false);
-        }else{
-            $("#depositTradeNumberDiv").removeClass('layui-hide');
-        }
-    });
-
     // 开户省市初始化
     $('#accountCity').xcity();
 
