@@ -21,12 +21,6 @@ var approvalFlagData={
     '1':'已审核'
 }
 var driveLicenceTypeData = {};
-layui.config({
-    base:'./static/js/'
-});
-layui.config({
-    base: '../../lib/layui_exts/'
-})
 //config的设置是全局的
 layui.config({
     base: '../../lib/'
@@ -40,7 +34,8 @@ layui.config({
         excel = layui.excel,
         tableFilter = layui.tableFilter,
         edipao = layui.edipao,
-        tableIns,tableFilterIns;
+        tableIns,tableFilterIns,
+        permissionList = edipao.getMyPermission();
     form = layui.form;
 
     // 获取所有司机状态
@@ -287,7 +282,7 @@ layui.config({
             cols: [tableCols],
             done: function (res, curr, count) {
                 // console.log("监听where:", this.where);
-                tableFilterIns.reload() // 搜索
+                tableFilterIns&&tableFilterIns.reload() // 搜索
             }
         });
     };
@@ -441,9 +436,34 @@ layui.config({
             return '--';
         }
     }
-    table.on('tool(driverList)', function(obj) {
-        let data = obj.data
+    table.on('tool(driverList)', handleEvent);
+    table.on('toolbar(driverList)', handleEvent);
+    table.on('checkbox(driverList)', handleEvent);
+    function handleEvent (obj) {
+        var data = obj.data;
+        obj.event == 'add' && permissionList.indexOf('新增') == -1 && (obj.event = 'reject');
+        obj.event == 'warn' && permissionList.indexOf('预警设置') == -1 && (obj.event = 'reject');
+        obj.event == 'edit' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
+        obj.event == 'del' && permissionList.indexOf('删除') == -1 && (obj.event = 'reject');
+        obj.event == 'export' && permissionList.indexOf('导出') == -1 && (obj.event = 'reject');
+
+
         switch (obj.event) {
+            case 'reject':
+                layer.alert('你没有访问权限', {icon: 2});
+                break;
+            case 'add':
+                xadmin.open('新增司机', './add.html');
+                break;
+            case 'warn':
+                xadmin.open('预警设置', './warn.html', 345,370);
+                break;
+            case 'export':
+                exportExcel();
+                break;
+            case 'tableSet':
+                xadmin.open('表格设置', './table-set.html', 600, 600);
+                break;
             case 'edit':
                 xadmin.open('修改司机', './edit.html?id=' + data.id)
                 break;
@@ -476,24 +496,8 @@ layui.config({
                 xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=3');
                 break;
         };
-    });
 
-    table.on('toolbar(driverList)', function(obj) {
-        switch (obj.event) {
-            case 'add':
-                xadmin.open('新增司机', './add.html');
-                break;
-            case 'warn':
-                xadmin.open('预警设置', './warn.html', 345,370);
-                break;
-            case 'export':
-                exportExcel();
-                break;
-            case 'tableSet':
-                xadmin.open('表格设置', './table-set.html', 600, 600);
-                break;
-        };
-    });
+    }
     // 导出
     function exportExcel() {
         var param = where;
