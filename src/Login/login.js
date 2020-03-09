@@ -33,6 +33,7 @@ $(function  () {
                     layui.each(res.data,function(item){
                         layui.sessionData('user', {key:item, value: res.data[item]})
                     })
+                    layui.xadmin.clear_tab_data()
                     location.href='../index.html'
                 }else{
                     layer.msg(res.message, {icon: 5,anim: 6});

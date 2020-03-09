@@ -122,7 +122,7 @@ layui.define(['layer','element'], function(exports) {
         for (var i in tab_list) {
             this.add_lay_tab(tab_list[i].title, tab_list[i].url, i);
         }
-        if(current) element.tabChange('xbs_tab', current);
+        if(current) element.tabChange('xbs_tab', current || i);
     };
     /**
      * [end 执行结束要做的]
@@ -299,6 +299,12 @@ layui.define(['layer','element'], function(exports) {
             key: id,
             value: tab_list[id]
         });
+    };
+
+    Xadmin.prototype.clear_tab_data = function(id) {
+        layui.data('tab_list', null);
+        layui.data('cate', null);
+        localStorage.setItem('current_tab',null)
     };
     var xadmin = new Xadmin()
     window.xadmin = xadmin
