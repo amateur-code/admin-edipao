@@ -11,7 +11,7 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
                 return '请输入司机姓名';
             }else {
                 if (value.length > 15) {
-                    return '司机姓名不能能超过15个字符';
+                    return '司机姓名格式无效';
                 }
             }
         },
