@@ -187,6 +187,7 @@
         form.on('checkbox(second)', function(data,e){
             if(data.elem.checked){
                 $(data.elem).closest('tr').find('input').prop("checked", true);
+                $(data.elem).closest('.layui-colla-item').find('.menu').prop("checked", true);
                 form.render(); 
             }else{
                $(data.elem).closest('tr').find('input').prop("checked", false);
