@@ -223,4 +223,18 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             });
             return false;
         });
+
+
+    // 押金状态控制支付流水显示隐藏
+    form.on('select(depositStatusFilter)', function(data){
+        if(data.value =='0'||data.value ==''){
+            $("#deposit").removeClass('layui-bg-gray');
+            $("#depositTradeNumberDiv").addClass('layui-hide');
+            $('#deposit').attr("disabled",false);
+        }else{
+            $("#depositTradeNumberDiv").removeClass('layui-hide');
+            $("#deposit").addClass('layui-bg-gray');
+            $('#deposit').attr("disabled",'disabled');
+        }
+    });
 });

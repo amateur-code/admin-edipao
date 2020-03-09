@@ -8,10 +8,14 @@ layui.use(['form', 'layer'],
         form.verify({
             day: function (value) {
                 if (value != '') {
-                    var reg = /^[+]{0,1}(\d+)$/;
-                    var flag = reg.test(value);
-                    if (!flag) {
-                        return '请输入正整数';
+                    if(value>10000){
+                        return '天数不能超过10000';
+                    }else{
+                        var reg = /^[1-9]\d*$/;
+                        var flag = reg.test(value);
+                        if (!flag) {
+                            return '天数格式无效';
+                        }
                     }
                 } else {
                     return '请输入身份证预警失效前天数';
@@ -19,10 +23,14 @@ layui.use(['form', 'layer'],
             },
             day1: function (value) {
                 if (value != '') {
-                    var reg = /^[+]{0,1}(\d+)$/;
-                    var flag = reg.test(value);
-                    if (!flag) {
-                        return '请输入正整数';
+                    if(value>10000){
+                        return '天数不能超过10000';
+                    }else{
+                        var reg = /^[1-9]\d*$/;
+                        var flag = reg.test(value);
+                        if (!flag) {
+                            return '天数格式无效';
+                        }
                     }
                 } else {
                     return '请输入驾驶证预警失效前天数';
@@ -30,10 +38,14 @@ layui.use(['form', 'layer'],
             },
             day2: function (value) {
                 if (value != '') {
-                    var reg = /^[+]{0,1}(\d+)$/;
-                    var flag = reg.test(value);
-                    if (!flag) {
-                        return '请输入正整数';
+                    if(value>10000){
+                        return '天数不能超过10000';
+                    }else{
+                        var reg = /^[1-9]\d*$/;
+                        var flag = reg.test(value);
+                        if (!flag) {
+                            return '天数格式无效';
+                        }
                     }
                 } else {
                     return '请输入从业资格证预警失效前天数';

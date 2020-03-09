@@ -316,7 +316,7 @@
                             <div class="layui-form-item">
                                 <div><span class="x-red">*</span>身份证有效期</div>
                                 <div class="layui-input-block">
-                                    <input type="text" name="idLicenceValidity" id="idLicenceValidity" lay-verify="idLicenceValidityVerify" placeholder="请选择时间" autocomplete="off" class="layui-input">
+                                    <input type="text" readonly name="idLicenceValidity" id="idLicenceValidity" lay-verify="idLicenceValidityVerify" placeholder="请选择时间" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                         </div>
@@ -324,7 +324,7 @@
                             <div class="layui-form-item">
                                 <div><span class="x-red">*</span>驾驶证有效期</div>
                                 <div class="layui-input-block">
-                                    <input type="text" name="driveLicenceValidity" id="driveLicenceValidity" lay-verify="driveLicenceValidityVerify" placeholder="请选择时间" autocomplete="off" class="layui-input">
+                                    <input type="text" readonly name="driveLicenceValidity" id="driveLicenceValidity" lay-verify="driveLicenceValidityVerify" placeholder="请选择时间" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                         </div>
@@ -332,7 +332,7 @@
                             <div class="layui-form-item">
                                 <div><span class="x-red">*</span>从业资格证有效期</div>
                                 <div class="layui-input-block">
-                                    <input type="text" name="qualificationsValidity" id="qualificationsValidity" lay-verify="qualificationsValidityVerify" placeholder="请选择时间" autocomplete="off" class="layui-input">
+                                    <input type="text" readonly name="qualificationsValidity" id="qualificationsValidity" lay-verify="qualificationsValidityVerify" placeholder="请选择时间" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                         </div>
@@ -394,10 +394,10 @@
                     <div class="layui-card-header">银行账户</div>
                     <div class="layui-card-body layui-row layui-col-space10">
                         <div class="layui-col-md4">
-                            <div class="layui-form-item">
+                            <div class="layui-form-item" title="银行卡账户与司机姓名保持一致">
                                 <div>银行卡账户</div>
                                 <div class="layui-input-block">
-                                    <input type="text" name="accountName" id="accountName"  placeholder="请输入银行卡账户名" autocomplete="off" class="layui-input" disabled>
+                                    <input  type="text" name="accountName" id="accountName"  placeholder="请输入银行卡账户名" autocomplete="off" class="layui-input layui-bg-gray" disabled>
                                 </div>
                             </div>
                         </div>
