@@ -26,7 +26,7 @@ layui.config({
     base: '../../lib/'
 }).extend({
     excel: 'layui_exts/excel',
-    tableFilter: 'tableFilter/tableFilter'
+    tableFilter: 'TableFilter/tableFilter'
 }).use(['jquery', 'table','layer','excel','tableFilter','form'], function () {
     var $ = layui.jquery,
         table = layui.table,
