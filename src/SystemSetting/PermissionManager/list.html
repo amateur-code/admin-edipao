@@ -141,7 +141,7 @@
                 toolbar: '#headerBtns',
                 defaultToolbar: [],
                 done: function(res,curr,count){
-                    tableFilterIns.reload()
+                    tableFilterIns && tableFilterIns.reload()
                 }
             });
 
