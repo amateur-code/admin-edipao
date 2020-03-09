@@ -88,7 +88,8 @@
                 { title: '操作', toolbar: '#rowBtns', 'width': 350, fixed: 'right', align: 'center' }
             ],
             tableIns,
-            tableFilterIns; 
+            tableFilterIns,
+            permissionList = edipao.getMyPermission(); 
  
 
         edipao.request({
@@ -149,7 +150,7 @@
                if(el.field) {
                     var item = {field: el.field};
                     if(el.field == 'status'){
-                        item.type = 'radio'
+                        item.type = 'checkbox'
                         item.data  = [
                             { "key":"1", "value":"有效"},
                             { "key":"0", "value":"失效"}
@@ -172,13 +173,10 @@
                     layui.each(filters,function(key, value){
                         where['searchFieldDTOList['+ index +'].fieldName'] = key;
                         if(key == 'status'){
-                            // layui.each(value,function(key1, value2){
-                            //     where['searchFieldDTOList['+ index +'].fieldListValue[' + key1 + ']'] = value2;
-                            // })
+                            where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                         }else{
-                            
+                            where['searchFieldDTOList['+ index +'].fieldValue'] = value;
                         }
-                        where['searchFieldDTOList['+ index +'].fieldValue'] = value;
                         index++;
                     })
                     tableIns.reload({where: where, page: { curr: 1 }});
@@ -187,12 +185,19 @@
 
         }
         
-        
-
-
-        table.on('tool(staffList)', function(obj) {
-            let data = obj.data
+        function handleEvent(obj){
+            var data = obj.data;
+            // console.log(obj,permissionList)
+            obj.event == 'permission' && permissionList.indexOf('授权') == -1 && (obj.event = 'reject');
+            obj.event == 'edit' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
+            obj.event == 'delete' && permissionList.indexOf('删除') == -1 && (obj.event = 'reject');
+            obj.event == 'add' && permissionList.indexOf('新增') == -1 && (obj.event = 'reject');
+            obj.event == 'export' && permissionList.indexOf('导出') == -1 && (obj.event = 'reject');
+            
             switch (obj.event) {
+                case 'reject':
+                    layer.alert('你没有访问权限', {icon: 2});
+                    break;
                 case 'permission':
                     xadmin.open('授权', './add-role.html?id=' + data.staffId, 600, 600)
                     break;
@@ -217,14 +222,23 @@
                                 layer.msg(res.message)
                             }
                         })
-
                     });
                     break;
                 case 'log':
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.staffId + '&type=5');    
                     break;
+                case 'add':
+                    xadmin.open('添加员工', './add.html', 600, 600)
+                    break;
+                case 'export':
+                    exportData();
+                    break;
+                case 'tableSet':
+                    xadmin.open('表格设置', './table-set.html', 600, 600)
+                    break;
             };
-        });
+        }
+
         function exportData() {
             edipao.request({
                 type: 'get',
@@ -256,24 +270,10 @@
             })
         }
 
-        table.on('toolbar(staffList)', function(obj) {
-            switch (obj.event) {
-                case 'add':
-                    xadmin.open('添加员工', './add.html', 600, 600)
-                    break;
-                case 'export':
-                    exportData();
-                    break;
-                case 'tableSet':
-                    xadmin.open('表格设置', './table-set.html', 600, 600)
-                    break;
-            };
-        });
-
-        table.on('checkbox(staffList)', function(obj) {
-            console.log(obj)
-        });
-
+        table.on('toolbar(staffList)', handleEvent);
+        table.on('tool(staffList)', handleEvent);
+        table.on('checkbox(staffList)', handleEvent);
+        
     })
     </script>
 </body>

@@ -111,7 +111,8 @@
     <script type="text/javascript">
     layui.use(['form', 'layer', 'element'], function(form, layer) {
         var xadmin = layui.xadmin;
-        edipao = layui.edipao;
+        edipao = layui.edipao,
+        beforeJSON = {};
 
 
         var params = edipao.urlGet();
@@ -126,6 +127,7 @@
             if (res.code == 0) {
                 res.data.status = res.data.status == '无效' ? '0' : '1';
                 form.val("editStaff", res.data);
+                beforeJSON = res.data;
             } else {
                 layer.msg(res.message)
             }
@@ -173,10 +175,14 @@
 
         form.on('submit(update)', function(data) {
             data.field.staffId = params.id;
-            if (!data.field.pass) delete data.field.pass
+            if (!data.field.pass) delete data.field.pass;
+            var compare = edipao.getUpdateJSON(beforeJSON,data.field,{name:'员工姓名',pass:'密码',phone:'员工手机',idCard:'身份证号',cardNo:'员工工号',positions:'员工职位',dept:'所属部门',status:'状态'})
+            // data.field.modifyBeforeJson = compare.modifyBeforeJson;
+            // data.field.modifyAfterJson = compare.modifyAfterJson;
+            compare.staffId = params.id;
             edipao.request({
                 url: '/admin/staff/update',
-                data: data.field,
+                data: compare,
             }).done(function(res) {
                 if (res.code == 0) {
                     layer.alert("更新员工成功", { icon: 6 }, function() {

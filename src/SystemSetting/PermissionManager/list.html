@@ -86,7 +86,8 @@
                 { title: '操作', toolbar: '#rowBtns', width: 350 }
             ],
             tableIns,
-            tableFilterIns; 
+            tableFilterIns,
+            permissionList = edipao.getMyPermission(); 
 
         edipao.request({
             type: 'GET',
@@ -188,10 +189,17 @@
             })
         }
 
-
-        table.on('tool(roleList)', function(obj) {
-            let data = obj.data
+        function handleEvent(obj){
+            var data = obj.data
+            // console.log(obj,permissionList)
+            obj.event == 'update' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
+            obj.event == 'delete' && permissionList.indexOf('删除') == -1 && (obj.event = 'reject');
+            obj.event == 'add' && permissionList.indexOf('新增') == -1 && (obj.event = 'reject');
+            obj.event == 'export' && permissionList.indexOf('导出') == -1 && (obj.event = 'reject');
             switch (obj.event) {
+                case 'reject':
+                    layer.alert('你没有访问权限', {icon: 2});
+                    break;
                 case 'update':
                     xadmin.open('修改角色', './edit.html?id=' + data.roleId)
                     break;
@@ -221,8 +229,17 @@
                 case 'log':
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.roleId + '&type=7');
                     break;
-            };
-        });
+                case 'add':
+                    xadmin.open('添加角色', './add.html')
+                    break;
+                case 'export':
+                    exportData();
+                    break;
+                case 'tableSet':
+                    xadmin.open('表格设置', './table-set.html', 600, 600)
+                    break;
+            }; 
+        }
 
         function exportData() {
             edipao.request({
@@ -254,24 +271,9 @@
             })
         }
 
-        table.on('toolbar(roleList)', function(obj) {
-            switch (obj.event) {
-                case 'add':
-                    xadmin.open('添加角色', './add.html')
-                    break;
-                case 'export':
-                    exportData();
-                    break;
-                case 'tableSet':
-                    xadmin.open('表格设置', './table-set.html', 600, 600)
-                    break;
-            };
-        });
-
-        table.on('checkbox(roleList)', function(obj) {
-            console.log(obj)
-        });
-
+        table.on('tool(roleList)', handleEvent);
+        table.on('toolbar(roleList)', handleEvent);
+        table.on('checkbox(roleList)', handleEvent);
     })
     </script>
 </body>

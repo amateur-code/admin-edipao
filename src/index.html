@@ -91,7 +91,7 @@
                 })  
             }}
             {{#  layui.each(list1, function(index, item){ }}
-                <li data-name="{{item.name}}" data-url="{{item.url}}">
+                <li data-name="{{item.name}}" data-url="{{item.url}}" data-id="{{item.resourceId}}">
                     <a>
                         <i class="iconfont left-nav-li" lay-tips="{{item.name}}">&#xe6b8;</i>
                         <cite>{{item.name}}</cite>
@@ -107,14 +107,13 @@
                             })  
                         }}
                         {{# layui.each(list2, function(index, item2){ }}
-                        <li data-name="{{item2.name}}" data-url="{{item2.url}}">
+                        <li data-name="{{item2.name}}" data-url="{{item2.url}}" data-id="{{item2.resourceId}}">
                             <a>
                                 <i class="iconfont">&#xe6a7;</i>
                                 <cite>{{item2.name}}</cite>
                             </a>
                         </li>
                         {{#  }); }}
-                        
                     </ul>
                 </li>
             {{#  }); }}
@@ -159,15 +158,8 @@
         $('#nav').on('click', 'li', function(event) {
             var data = $(this).data();
 
-            if(data.url == '#'){
-                
-            }else{
-                
-            }
-            
-
             if(data.url != '#'){
-               xadmin.add_tab(data.name,data.url) 
+               xadmin.add_tab(data.name,data.url + '?perssionId='+ data.id) 
             }
 
             if ($('.left-nav').css('width') == '60px') {

@@ -155,7 +155,8 @@
     layui.use(['table', 'layer', 'laytpl'], function(table, layer, laytpl) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao,
-            CONFIG_CACHE = {};
+            CONFIG_CACHE = {},
+            permissionList = edipao.getMyPermission(); 
         edipao.request({
             type: 'get',
             url: '/admin/approval/module/list'
@@ -205,6 +206,7 @@
         }
 
         $('#approvalFlowList').on('click', '.node-add', function() {
+            if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
             var index = $(this).data('index'),
                 code = $(this).data('code');
             CONFIG_CACHE[code].nodeDTOList.splice(index, 0, { approvalStaffDTOList:[] });
@@ -214,6 +216,7 @@
         })
 
         $('#approvalFlowList').on('click', '.node-delete', function() {
+            if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
             var index = $(this).data('index'),
                 code = $(this).data('code');
             CONFIG_CACHE[code].nodeDTOList.splice(index-1, 1);
@@ -226,11 +229,13 @@
         })
 
         $('#approvalFlowList').on('click', '.node-staff', function() {
+            if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
             var index = $(this).data('index') -1,
                 code = $(this).data('code'); 
             xadmin.open('选择员工', './staff.html?code=' + code + '&index=' + index)
         })
         $('#approvalFlowList').on('click', '.node-staff-save', function() {
+            if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
             var index = $(this).data('index') - 1,
                 code = $(this).data('code'); 
             var saveNodeStaffReq = CONFIG_CACHE[code].nodeDTOList[index];
@@ -245,11 +250,11 @@
                     getApprovalModuleList(CONFIG_CACHE_KEY)
                 }
             }) 
-            console.log()
         })
 
         
         $('#approvalFlowList').on('click','.flowCodeCommit',function(){
+            if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
             var saveFlowReq = CONFIG_CACHE[$(this).data('code')]
             saveFlowReq.loginStaffId = edipao.getLoginStaffId();
             
@@ -264,8 +269,6 @@
                     getApprovalModuleList(CONFIG_CACHE_KEY)
                 }
             })
-
-
         })
 
         approvalManager.selectStaff = function(code,index,list){
@@ -281,100 +284,6 @@
                 document.getElementById(code).innerHTML = html;
             })
         }
-
-
-        table.render({
-            elem: '#staffList',
-            url: edipao.API_HOST + '/admin/staff/list',
-            request: {
-                pageName: 'pageNo',
-                limitName: 'pageSize'
-            },
-            where: {
-                loginStaffId: edipao.getLoginStaffId()
-            },
-            parseData: function(res) { //res 即为原始返回的数据
-                return {
-                    code: res.code, //解析接口状态
-                    msg: res.message, //解析提示文本
-                    count: res.data.totalSize, //解析数据长度
-                    data: res.data.staffDtoList //解析数据列表
-                };
-            },
-            page: true,
-            cols: [
-                [ //表头
-                    { checkbox: true },
-                    { field: 'name', title: '员工姓名' },
-                    { field: 'phone', title: '员工手机' },
-                    { field: 'idCard', title: '身份证号码' },
-                    { field: 'dept', title: '所属部门' },
-                    { field: 'cardNo', title: '员工工号' },
-                    { field: 'positions', title: '员工职位' },
-                    { field: 'roleNames', title: '拥有权限' },
-                    { field: 'status', title: '状态' },
-                    { title: '操作', toolbar: '#rowBtns', width: 350 }
-                ]
-            ],
-            toolbar: '#headerBtns',
-            defaultToolbar: []
-        });
-
-        table.on('tool(staffList)', function(obj) {
-            let data = obj.data
-            switch (obj.event) {
-                case 'permission':
-                    xadmin.open('授权', './add-role.html?id=' + data.staffId, 600, 600)
-                    break;
-                case 'edit':
-                    xadmin.open('修改员工', './edit.html?id=' + data.staffId, 600, 600)
-                    break;
-                case 'preview':
-                    xadmin.open('员工信息', './preview.html?id=' + data.staffId, 600, 600)
-                    break;
-                case 'delete':
-                    layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
-
-                        edipao.request({
-                            url: '/admin/staff/delete',
-                            data: {
-                                staffId: data.staffId
-                            }
-                        }).then(function(res) {
-                            if (res.code == 0) {
-                                layer.msg('删除成功')
-                                location.reload();
-                            } else {
-                                layer.msg(res.message)
-                            }
-                        })
-
-                    });
-                    break;
-                case 'log':
-                    xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.staffId + '&type=5');
-                    break;
-            };
-        });
-
-        table.on('toolbar(staffList)', function(obj) {
-            switch (obj.event) {
-                case 'add':
-                    xadmin.open('添加员工', './add.html', 600, 600)
-                    break;
-                case 'export':
-                    layer.msg('删除');
-                    break;
-                case 'tableSet':
-                    layer.msg('编辑');
-                    break;
-            };
-        });
-
-        table.on('checkbox(staffList)', function(obj) {
-            console.log(obj)
-        });
-
     })
     </script>
 </body>
