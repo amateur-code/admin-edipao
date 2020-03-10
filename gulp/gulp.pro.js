@@ -3,6 +3,7 @@ let uglify = require('gulp-uglify');
 let zip = require('gulp-zip');
 let gulp = require('gulp');
 let del = require('del');
+let replace = require('gulp-replace');
 let gulpsync = require('gulp-sync')(gulp);
 var config = require('../package.json');
 
@@ -23,6 +24,12 @@ gulp.task('minifycss', function() {
     .pipe(gulp.dest('../build'))
 });
 
+gulp.task('replace', function() {
+  return gulp.src(['../build/**/*.html'])
+    .pipe(replace('VERSION', new Date().getTime()))
+    .pipe(gulp.dest('../build'));
+});
+
 gulp.task('uglify', function() {
   return gulp.src('../build/**/*.js')
   	.pipe(uglify())
@@ -36,4 +43,4 @@ gulp.task('zip', function() {
 });
 
 
-gulp.task('build',gulp.series(gulpsync.async(['clean','copy','minifycss','zip'])));
+gulp.task('build',gulp.series(gulpsync.async(['clean','copy','minifycss','replace','zip'])));
