@@ -34,6 +34,7 @@ layui.define([], function(exports) {
     }
 
     Common.prototype.tokenExpired = function() {
+      layui.sessionData('user',null);
       var list = window.top.location.pathname.split('/')
       list[list.length -1] = 'Login/login.html';
       window.top.location.href = list.join('/')
@@ -65,7 +66,7 @@ layui.define([], function(exports) {
      * @param  {[object]} after  [修改之后的json]
      * @param  {[object]} desc   [对应的中文名]
      * @param  {[array]} del    [不需要处理的参数名]
-     * @return {[object]}       
+     * @return {[object]}
               modifyBeforeJson:[{"name":"driverType","value":"2","desc":"司机类型"}]
               modifyAfterJson:[{"name":"driverType","value":"9","desc":"司机类型"}]
        @example
@@ -85,7 +86,7 @@ layui.define([], function(exports) {
         }
       })
       return {
-        modifyBeforeJson: JSON.stringify(modifyBeforeJson), 
+        modifyBeforeJson: JSON.stringify(modifyBeforeJson),
         modifyAfterJson: JSON.stringify(modifyAfterJson)
       };
     }

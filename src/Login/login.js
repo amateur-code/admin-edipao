@@ -3,6 +3,9 @@ $(function  () {
         var form = layui.form,
         $ = layui.$,
         edipao = layui.edipao;
+        if (edipao.getLoginStaffId()) {
+            layui.sessionData('user',null);
+        }
         //自定义验证规则
         form.verify({
             phoneVerify: function(value) {
@@ -39,6 +42,7 @@ $(function  () {
                     layer.msg(res.message, {icon: 5,anim: 6});
                 }
             })
+            return false;
         });
     });
 })
