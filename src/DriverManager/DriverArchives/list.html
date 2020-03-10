@@ -56,10 +56,29 @@
 </body>
 <script type="text/html" id="headerBtns">
     <div class="layui-btn-container">
+        {{# if(permissionList.indexOf('新增') != -1){ }}
         <button class="layui-btn  layui-btn-sm"  lay-event="add">新增</button>
+        {{# } }}
+        {{# if(permissionList.indexOf('预警设置') != -1){ }}
         <button class="layui-btn  layui-btn-sm"  lay-event="warn">预警设置</button>
+        {{# } }}
+        {{# if(permissionList.indexOf('导出') != -1){ }}
         <button class="layui-btn  layui-btn-sm"  lay-event="export">导出</button>
+        {{# } }}
         <button class="layui-btn  layui-btn-sm"  lay-event="tableSet" >表格设置</button>
     </div>
+</script>
+<script type="text/html" id="rowBtns">
+    {{# if(permissionList.indexOf('修改') != -1){ }}
+    <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>
+    {{# } }}
+    {{# if(d.approvalDisplay){ }}
+    <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="audit">审核</a>
+    {{# } }}
+    <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="info">查看</a>
+    {{# if(permissionList.indexOf('删除') != -1){ }}
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{# } }}
+    <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="log">日志</a>
 </script>
 </html>
