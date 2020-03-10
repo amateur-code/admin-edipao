@@ -1,4 +1,6 @@
-﻿$.fn.xcity = function(pName,cName,aName){
+﻿var provinceList = provinceList|| parent.provinceList;
+
+$.fn.xcity = function(pName,cName,aName){
 
     this.p = $(this).find('select[lay-filter=province]');
 
@@ -86,6 +88,7 @@
 
     return this;
 }
+/*
 var provinceList = [
 {name:'请选择省份', cityList:[
 {name:'请选择市级', areaList:[]},
@@ -502,3 +505,4 @@ var provinceList = [
 {name:'澳门', areaList:['澳门']}
 ]}
 ];
+*/
