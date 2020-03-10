@@ -55,16 +55,26 @@
     </div>
     <script type="text/html" id="headerBtns">
         <div class="layui-btn-container">
+        {{# if(permissionList.indexOf('新增') != -1){ }} 
         <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+        {{# } }}
+        {{# if(permissionList.indexOf('导出') != -1){ }}
         <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
+        {{# } }}
         <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
       </div>
     </script>
     <script type="text/html" id="rowBtns">
+        {{# if(permissionList.indexOf('授权') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="permission">授权</a>
+        {{# } }}
+        {{# if(permissionList.indexOf('修改') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">修改</a>
+        {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="preview">查看</a>
+        {{# if(permissionList.indexOf('删除') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
+        {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
     </script>
     <script type="text/javascript">
@@ -85,12 +95,12 @@
                 { field: 'positions', title: '员工职位', width: 200 },
                 { field: 'roleNames', title: '拥有权限', width: 200 },
                 { field: 'status', title: '状态',width: 200, align: 'center'},
-                { title: '操作', toolbar: '#rowBtns', 'width': 350, fixed: 'right', align: 'center' }
+                { title: '操作', toolbar: '#rowBtns', 'width': 350 }
             ],
             tableIns,
             tableFilterIns,
             permissionList = edipao.getMyPermission(); 
- 
+        window.permissionList = permissionList;
 
         edipao.request({
             type: 'GET',
@@ -155,6 +165,8 @@
                             { "key":"1", "value":"有效"},
                             { "key":"0", "value":"失效"}
                         ]
+                    }else if(el.field == 'roleNames'){
+                        return
                     }
 
                     filtersHeader.push(item)

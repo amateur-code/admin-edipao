@@ -166,7 +166,7 @@
         }).then(function(res) {
             if (res.code == 0) {
                 detail = res.data;
-                if (detail.status == 0) {
+                if (detail.needApproval) {
                     waitCheck();
                 } else {
                     render()

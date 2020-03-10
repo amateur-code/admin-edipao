@@ -170,7 +170,7 @@
                 if (res.code == 0) {
                 	res.data.supplierTypeName = SupplierTypeConfig[res.data.supplierType]
                 	detail = res.data;
-                	if(detail.status == 0){
+                	if(detail.needApproval){
 						waitCheck();
                 	}else{
                 		render()

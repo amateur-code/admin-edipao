@@ -198,7 +198,13 @@
                             laytpl(approvalFlowTpl.innerHTML).render(item, function(html) {
                                 document.getElementById(item.flowCode).innerHTML = html;
                             })
-                            
+                            if(permissionList.indexOf('修改') == -1){
+                              $('#approvalFlowList').find('.node-add').hide()
+                              $('#approvalFlowList').find('.node-delete').hide()
+                              $('#approvalFlowList').find('.node-staff').hide()
+                              $('#approvalFlowList').find('.node-staff-save').hide()
+                              $('#approvalFlowList').find('.flowCodeCommit').hide()
+                            }
                         })
                     })
                 }
