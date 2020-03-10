@@ -5,7 +5,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     tableHeaderList = [
         { field: 'name', title: '司机姓名' },
         { field: 'phone', title: '司机手机' },
-        { field: 'idNum', title: '司机身份证号' },
+        { field: 'idNum', title: '身份证号' },
         { field: 'driverType', title: '司机类型' },
         { field: 'driveLicenceType', title: '驾照类型' },
         { field: 'drivingAge', title: '驾龄' },
@@ -13,6 +13,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
         { field: 'oftenJourney', title: '常跑线路' },
         { field: 'location', title: '位置' },
         { field: 'deposit', title: '押金' },
+        { field: 'depositStatus', title: '押金状态' },
         { field: 'licenceWarn', title: '证件预警' },
         { field: 'status', title: '司机状态' },
         { field: 'approvalFlag', title: '审核状态' }

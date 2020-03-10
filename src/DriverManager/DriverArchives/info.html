@@ -559,7 +559,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">始发地：</label>
                             <div class="layui-input-block">
-                                <span class="name-color">{{item.start}}</span>
+                                <span class="name-color">{{item.start.province}}{{item.start.city}}</span>
                             </div>
                         </div>
                     </div>
@@ -567,7 +567,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">目的地：</label>
                             <div class="layui-input-block">
-                                <span class="name-color">{{item.end}}</span>
+                                <span class="name-color">{{item.end.province}}{{item.end.city}}</span>
                             </div>
                         </div>
                     </div>
@@ -587,7 +587,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">始发地：</label>
                         <div class="layui-input-block">
-                            <span>{{item.start}}</span>
+                            <span>{{item.start.province}}{{item.start.city}}</span>
                         </div>
                     </div>
                 </div>
@@ -595,7 +595,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">目的地：</label>
                         <div class="layui-input-block">
-                            <span>{{item.end}}</span>
+                            <span>{{item.end.province}}{{item.end.city}}</span>
                         </div>
                     </div>
                 </div>

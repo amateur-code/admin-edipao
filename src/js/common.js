@@ -34,6 +34,7 @@ layui.define([], function(exports) {
     }
 
     Common.prototype.tokenExpired = function() {
+      layui.sessionData('user',null);
       var list = window.top.location.pathname.split('/')
       list[list.length -1] = 'Login/login.html';
       window.top.location.href = list.join('/')
@@ -59,6 +60,51 @@ layui.define([], function(exports) {
       return args;
     }
 
+    /**
+     * [getUpdateJSON description]
+     * @param  {[object]} before [修改之前的json]
+     * @param  {[object]} after  [修改之后的json]
+     * @param  {[object]} desc   [对应的中文名]
+     * @param  {[array]} del    [不需要处理的参数名]
+     * @return {[object]}
+              modifyBeforeJson:[{"name":"driverType","value":"2","desc":"司机类型"}]
+              modifyAfterJson:[{"name":"driverType","value":"9","desc":"司机类型"}]
+       @example
+         getUpdateJSON(
+         {a:1,b:[1,2,3],b2:[1,2,3],c:{a:1,b:1},c2:{a:1,b:1},d:2,e:3},
+         {a:1,b:[2,2,3],b2:[1,2,3],c:{a:2,b:1},c2:{a:1,b:1},d:3,e:4},
+         {a:'参数a',b:'参数b',b:'参数b2',c:'参数c',c2:'参数c2',d:'参数d',e:'参数d'},
+         ['e'])
+     */
+    Common.prototype.getUpdateJSON = function(before,after,desc,del) {
+      if(!del) del = [];
+      var modifyBeforeJson = [], modifyAfterJson = [];
+      layui.each(after,function(key,value){
+        if(JSON.stringify(value) != JSON.stringify(before[key]) && del.indexOf(key) == -1){
+          modifyBeforeJson.push({name:key, value: before[key],desc: desc[key] || key })
+          modifyAfterJson.push({name:key, value: value,desc: desc[key] || key })
+        }
+      })
+      return {
+        modifyBeforeJson: JSON.stringify(modifyBeforeJson),
+        modifyAfterJson: JSON.stringify(modifyAfterJson)
+      };
+    }
+
+    Common.prototype.getMyPermission = function() {
+      var pid = this.urlGet().perssionId,
+          user = layui.sessionData('user'),
+          permissionList = [];
+      if (user) {
+        layui.each(user.funcPermissionDTOList ,function(key,value){
+          if(value.pid == pid){
+            permissionList.push(value.name)
+          }
+        })
+      }
+      return permissionList
+    }
+
     exports('edipao', new Common());
 });
 
@@ -77,7 +123,7 @@ layui.define(['layer','element'], function(exports) {
         for (var i in tab_list) {
             this.add_lay_tab(tab_list[i].title, tab_list[i].url, i);
         }
-        if(current) element.tabChange('xbs_tab', current);
+        if(current) element.tabChange('xbs_tab', current || i);
     };
     /**
      * [end 执行结束要做的]
@@ -254,6 +300,12 @@ layui.define(['layer','element'], function(exports) {
             key: id,
             value: tab_list[id]
         });
+    };
+
+    Xadmin.prototype.clear_tab_data = function(id) {
+        layui.data('tab_list', null);
+        layui.data('cate', null);
+        localStorage.setItem('current_tab',null)
     };
     var xadmin = new Xadmin()
     window.xadmin = xadmin

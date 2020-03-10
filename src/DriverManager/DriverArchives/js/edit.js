@@ -40,7 +40,7 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         }
     })
 
-
+    var depositStatusRecord = ''
     function initData(data){
         data.depositStatus = depositStatusVal[data.depositStatus];
         data.driverType = driverTypesVal[data.driverType];
@@ -54,10 +54,13 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             $('#accountCity').xcity(province,city);
         }
         // 显示押金支付流水
-        if(data.depositStatus=='1'||data.depositStatus=='已支付'){
+        depositStatusRecord =data.depositStatus;
+        if(depositStatusRecord=='1'||depositStatusRecord=='已支付'){
             $('#depositTradeNumberDiv').removeClass('layui-hide');
             $('#deposit').attr("disabled","disabled");
+            $('#deposit').addClass(" layui-bg-gray");
             $('#depositTradeNumber').attr("disabled","disabled");
+            $('#depositTradeNumber').addClass(" layui-bg-gray");
         }
 
 
@@ -135,11 +138,11 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
                 <diav class="remove-btn" onclick="removeWishJourney(this)">-移除</diav>
             </div>`
                 $('#wishJourney').append(wishJourneyHtml);
-                var start1 = wishJourney[i]['start'].split('-')[0];
-                var start2 = wishJourney[i]['start'].split('-')[1];
+                var start1 = wishJourney[i]['start']['province'];
+                var start2 = wishJourney[i]['start']['city'];
                 $('#'+startId).xcity(start1,start2);
-                var end1 = wishJourney[i]['end'].split('-')[0];
-                var end2 = wishJourney[i]['end'].split('-')[1];
+                var end1 = wishJourney[i]['end']['province'];
+                var end2 = wishJourney[i]['end']['city'];
                 $('#'+endId).xcity(end1,end2);
             }
         }
@@ -155,7 +158,18 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
                 var endVal1 = $(this).find('.end select[name="province"]').val();
                 var endVal2 = $(this).find('.end select[name="city"]').val();
                 if(startVal2!=''&&startVal2!='请选择市级'&&endVal2!=''&&endVal2!='请选择市级'){
-                    wishJourneyVal.push({'start':startVal1+'-'+startVal2,'end':endVal1+'-'+endVal2})
+                    wishJourneyVal.push({
+                        'start': {
+                            "code": cityCode[startVal2],
+                            "province": startVal1,
+                            "city": startVal2
+                        },
+                        'end': {
+                            "code": cityCode[endVal2],
+                            "province": endVal1,
+                            "city": endVal2
+                        }
+                    })
                 }
             })
             // 开户省市
@@ -170,6 +184,9 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
                 $('#depositTradeNumber').focus();
                 layer.msg('请输入押金支付流水号', {icon: 5,anim: 6});
                 return false
+            }
+            if(data.field.depositStatus=='0'){
+                data.field.depositTradeNumber = '';
             }
             var param ={
                 'id': params.id,
@@ -223,4 +240,34 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             });
             return false;
         });
+
+
+    // 押金状态控制支付流水显示隐藏
+    form.on('select(depositStatusFilter)', function(data){
+        if(depositStatusRecord=='1'||depositStatusRecord=='已支付'){
+            if(data.value =='0'||data.value ==''){
+                $("#deposit").removeClass('layui-bg-gray');
+                $("#depositTradeNumberDiv").addClass('layui-hide');
+                $('#deposit').attr("disabled",false);
+            }else{
+                $("#depositTradeNumberDiv").removeClass('layui-hide');
+                $("#deposit").addClass('layui-bg-gray');
+                $('#depositTradeNumber').addClass('layui-bg-gray');
+                $('#deposit').attr("disabled",'disabled');
+                $('#depositTradeNumber').attr("disabled",'disabled');
+            }
+        }else{
+            if(data.value =='0'||data.value ==''){
+                $("#deposit").removeClass('layui-bg-gray');
+                $("#depositTradeNumberDiv").addClass('layui-hide');
+                $('#deposit').attr("disabled",false);
+            }else{
+                $("#depositTradeNumberDiv").removeClass('layui-hide');
+                $("#deposit").removeClass('layui-bg-gray');
+                $('#depositTradeNumber').removeClass('layui-bg-gray');
+                $('#deposit').attr("disabled",false);
+                $('#depositTradeNumber').attr("disabled",false);
+            }
+        }
+    });
 });

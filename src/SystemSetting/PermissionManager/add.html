@@ -15,7 +15,7 @@
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js"></script>
-    <script type="text/javascript" src="../../js/common.js"></script>
+    <script type="text/javascript" src="../../js/common.js?VERSION"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
           <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -81,7 +81,7 @@
     		{{#  layui.each(list1, function(index, item){ }}
     			<div class="layui-colla-item">
 	                <h2 class="layui-colla-title">
-	                    <input name="resourceIdList[]" lay-skin="primary" type="checkbox" lay-filter="father" title="{{item.name}}" value="{{item.resourceId}}">
+	                    <input class="menu" name="resourceIdList[]" lay-skin="primary" type="checkbox" lay-filter="father" title="{{item.name}}" value="{{item.resourceId}}">
 	                </h2>
 	                <div class="layui-colla-content layui-show">
 	                    <table class="layui-table">
@@ -97,7 +97,7 @@
 					    		{{# layui.each(list2, function(index, item2){ }}
 					    		<tr>
 	                                <td>
-	                                    <input type="checkbox" name="resourceIdList[]" lay-skin="primary" lay-filter="second" title="{{item2.name}}" value="{{item2.resourceId}}">
+	                                    <input class="page" type="checkbox" name="resourceIdList[]" lay-skin="primary" lay-filter="second" title="{{item2.name}}" value="{{item2.resourceId}}">
 	                                </td>
 	                                <td>
 	                                    <div class="layui-input-block">
@@ -110,7 +110,7 @@
 												})	
 								    		}}
 								    		{{# layui.each(list3, function(index, item3){ }}
-								    		<input name="resourceIdList[]" lay-skin="primary" type="checkbox" title="{{item3.name}}" value="{{item3.resourceId}}">
+								    		<input class="item" name="resourceIdList[]" lay-skin="primary" type="checkbox" lay-filter="third" title="{{item3.name}}" value="{{item3.resourceId}}">
 								    		{{#  }); }}
 	                                    </div>
 	                                </td>
@@ -168,6 +168,7 @@
         form.on('checkbox(second)', function(data,e){
             if(data.elem.checked){
                 $(data.elem).closest('tr').find('input').prop("checked", true);
+                $(data.elem).closest('.layui-colla-item').find('.menu').prop("checked", true);
                 form.render(); 
             }else{
                $(data.elem).closest('tr').find('input').prop("checked", false);
@@ -175,6 +176,13 @@
             }
         });
 
+        form.on('checkbox(third)', function(data,e){
+            if(data.elem.checked){
+                $(data.elem).closest('.layui-colla-item').find('.menu').prop("checked", true);
+                $(data.elem).closest('tr').find('.page').prop("checked", true);
+                form.render(); 
+            }
+        });
 
         form.on('submit(add)', function(data) {
 			var saveRoleReq = {

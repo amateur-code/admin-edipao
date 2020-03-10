@@ -12,10 +12,12 @@
     <meta http-equiv="Pragma" CONTENT="no-cache">
     <link rel="stylesheet" href="../../css/font.css">
     <link rel="stylesheet" href="../../css/xadmin.css">
+    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js"></script>
-    <script type="text/javascript" src="../../js/common.js"></script>
+    <script type="text/javascript" src="../../lib/TableFilter/tableFilter.js"></script>
+    <script type="text/javascript" src="../../js/common.js?VERSION"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
           <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -52,21 +54,30 @@
     </div>
     <script type="text/html" id="headerBtns">
         <div class="layui-btn-container">
+        {{# if(permissionList.indexOf('新增') != -1){ }}    
         <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+        {{# } }}
+        {{# if(permissionList.indexOf('导出') != -1){ }}
         <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
+        {{# } }}
         <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
       </div>
     </script>
     <script type="text/html" id="rowBtns">
-
+        {{# if(permissionList.indexOf('修改') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">修改</a>
+        {{# } }}
         {{# if(d.needApproval){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="check">审核</a>
         {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="preview">查看</a>
+        {{# if(permissionList.indexOf('删除') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
+        {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
+        {{# if(permissionList.indexOf('交易记录') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="trade-record">交易记录</a>
+        {{# } }}
     </script>
     <script type="text/html" id="productList">
         <a lay-event="productList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.productCount}}</a>
@@ -77,6 +88,7 @@
     }).use(['table', 'layer', 'excel'], function(table, layer,excel) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao,
+            tableFilter = layui.tableFilter,
             SupplierTypeConfig = {},
             tableKey = 'BackService-BusinessManager-list',
             tableCols = [ //表头
@@ -87,11 +99,16 @@
                 { field: 'supplierType', title: '类型',width: 200,templet:function(d){
                     return SupplierTypeConfig[d.supplierType]
                 }},
-                { field: 'productCount', title: '合作产品/网点',width: 200, templet:'#productList'  },
-                { field: 'statusDesc', title: '状态',width: 100 },
+                { field: 'productCount', title: '合作产品/网点',width: 200, templet:'#productList' },
+                { field: 'status', title: '状态',width: 100,templet:function(d){
+                    return d.statusDesc
+                } },
                 { title: '操作', toolbar: '#rowBtns', width: 400 }
-            ];
-
+            ],
+            tableIns,
+            tableFilterIns,
+            permissionList = edipao.getMyPermission(); 
+        window.permissionList = permissionList
         edipao.request({
             type: 'get',
             url: '/admin/supplier/getSupplierType'
@@ -130,7 +147,7 @@
         }
 
         function renderTable(){
-            table.render({
+            tableIns = table.render({
                 elem: '#list',
                 url: edipao.API_HOST + '/admin/supplier/list',
                 request: {
@@ -152,13 +169,74 @@
                 page: true,
                 cols: [ tableCols ],
                 toolbar: '#headerBtns',
-                defaultToolbar: []
+                defaultToolbar: [],
+                done: function(res,curr,count){
+                    tableFilterIns && tableFilterIns.reload()
+                }
             });
+
+            var filtersHeader = [];
+            layui.each(tableCols,function(index, el) {
+               if(el.field) {
+                    var item = {field: el.field};
+                    if(el.field == 'supplierType'){
+                        item.type = 'checkbox';
+                        item.data = [];
+                        layui.each(SupplierTypeConfig,function(key, value) {
+                            item.data.push({key:key, value:value})
+                        });
+                    }else if(el.field == 'status'){
+                        item.type = 'checkbox'
+                        item.data  = [
+                            { "key":"1", "value":"有效"},
+                            { "key":"2", "value":"失效"}
+                        ]
+                    }else if(el.field == 'productCount'){
+                        item.type = 'numberslot'
+                    }
+
+                    filtersHeader.push(item)
+               }
+            });
+
+            tableFilterIns = tableFilter.render({
+                elem: '#list',
+                mode: 'self',
+                filters: filtersHeader,//过滤项配置
+                done: function(filters){
+                    var index = 0,  
+                        where = {
+                            loginStaffId: edipao.getLoginStaffId()
+                        };
+                    layui.each(filters,function(key, value){
+                        where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                        if(key == 'supplierType' || key == 'status'){
+                            where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+                        }else if(key == 'productCount'){
+                            where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+                            where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+                        }else{
+                            where['searchFieldDTOList['+ index +'].fieldValue'] = value;
+                        }
+                        index++;
+                    })
+                    tableIns.reload({where: where, page: { curr: 1 }});
+                }
+            })
         }
 
-        table.on('tool(list)', function(obj) {
-            let data = obj.data
+        function handleEvent(obj){
+            var data = obj.data
+            // console.log(obj,permissionList)
+            obj.event == 'trade-record' && permissionList.indexOf('交易记录') == -1 && (obj.event = 'reject');
+            obj.event == 'edit' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
+            obj.event == 'delete' && permissionList.indexOf('删除') == -1 && (obj.event = 'reject');
+            obj.event == 'add' && permissionList.indexOf('新增') == -1 && (obj.event = 'reject');
+            obj.event == 'export' && permissionList.indexOf('导出') == -1 && (obj.event = 'reject');
             switch (obj.event) {
+                case 'reject':
+                    layer.alert('你没有访问权限', {icon: 2});
+                    break;
                 case 'productList':
                     xadmin.open('合作产品/网点列表', './product-list.html?id=' + data.supplierNo)
                     break;
@@ -195,8 +273,17 @@
                 case 'trade-record':
                     xadmin.open('交易记录', './trade-record.html?id=' + data.supplierNo)
                     break;
-            };
-        });
+                case 'add':
+                    xadmin.open('新增供应商', './add.html')
+                    break;
+                case 'export':
+                    exportData()
+                    break;
+                case 'tableSet':
+                    xadmin.open('表格设置', './table-set.html', 600, 600)
+                    break;
+            }; 
+        }
 
         function exportData() {
             edipao.request({
@@ -233,23 +320,9 @@
             })
         }
 
-        table.on('toolbar(list)', function(obj) {
-            switch (obj.event) {
-                case 'add':
-                    xadmin.open('新增供应商', './add.html')
-                    break;
-                case 'export':
-                    exportData()
-                    break;
-                case 'tableSet':
-                    xadmin.open('表格设置', './table-set.html', 600, 600)
-                    break;
-            };
-        });
-
-        table.on('checkbox(staffList)', function(obj) {
-            console.log(obj)
-        });
+        table.on('tool(list)', handleEvent);
+        table.on('toolbar(list)', handleEvent);
+        table.on('checkbox(staffList)', handleEvent);
 
     })
     </script>

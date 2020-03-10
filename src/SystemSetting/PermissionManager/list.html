@@ -12,13 +12,13 @@
     <meta http-equiv="Pragma" CONTENT="no-cache">
     <link rel="stylesheet" href="../../css/font.css">
     <link rel="stylesheet" href="../../css/xadmin.css">
-    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
+    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css?VERSION">
 
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js"></script>
-    <script type="text/javascript" src="../../lib/TableFilter/tableFilter.js"></script>
-    <script type="text/javascript" src="../../js/common.js"></script>
+    <script type="text/javascript" src="../../lib/TableFilter/tableFilter.js?VERSION"></script>
+    <script type="text/javascript" src="../../js/common.js?VERSION"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
           <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -55,15 +55,23 @@
     </div>
     <script type="text/html" id="headerBtns">
         <div class="layui-btn-container">
+        {{# if(permissionList.indexOf('新增') != -1){ }}
         <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+        {{# } }}
+        {{# if(permissionList.indexOf('导出') != -1){ }}
         <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
+        {{# } }}
         <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
       </div>
     </script>
     <script type="text/html" id="rowBtns">
+        {{# if(permissionList.indexOf('修改') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="update">修改</a>
+        {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="preview">查看</a>
+        {{# if(permissionList.indexOf('删除') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="delete">删除</a>
+        {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
     </script>
     <script type="text/html" id="stffList">
@@ -86,8 +94,9 @@
                 { title: '操作', toolbar: '#rowBtns', width: 350 }
             ],
             tableIns,
-            tableFilterIns; 
-
+            tableFilterIns,
+            permissionList = edipao.getMyPermission(); 
+        window.permissionList = permissionList;
         edipao.request({
             type: 'GET',
             url: '/admin/table/show-field/get',
@@ -140,7 +149,7 @@
                 toolbar: '#headerBtns',
                 defaultToolbar: [],
                 done: function(res,curr,count){
-                    tableFilterIns.reload()
+                    tableFilterIns && tableFilterIns.reload()
                 }
             });
 
@@ -148,12 +157,10 @@
             layui.each(tableCols,function(index, el) {
                if(el.field) {
                     var item = {field: el.field};
-                    if(el.field == 'status'){
-                        item.type = 'radio'
-                        item.data  = [
-                            { "key":"1", "value":"有效"},
-                            { "key":"0", "value":"失效"}
-                        ]
+                    if(el.field == 'createTime'){
+                        item.type = 'timeslot'
+                    }else if(el.field == 'staffNumber'){
+                        item.type = 'numberslot'
                     }
 
                     filtersHeader.push(item)
@@ -172,19 +179,35 @@
                         };
                     layui.each(filters,function(key, value){
                         where['searchFieldDTOList['+ index +'].fieldName'] = key;
-                        where['searchFieldDTOList['+ index +'].fieldValue'] = value;
+                        if(key == 'createTime'){
+                            var timeslot = value.split('至');
+                            where['searchFieldDTOList['+ index +'].fieldMinValue'] = timeslot[0];
+                            where['searchFieldDTOList['+ index +'].fieldMaxValue'] = timeslot[1];
+                        }else if(key == 'staffNumber'){
+                            where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+                            where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+                        }else{
+                            where['searchFieldDTOList['+ index +'].fieldValue'] = value;
+                        }
                         index++;
                     })
-                    tableIns.reload({where: where});
+                    tableIns.reload({where: where, page: { curr: 1 }});
                     //结果回调
                 }
             })
         }
 
-
-        table.on('tool(roleList)', function(obj) {
-            let data = obj.data
+        function handleEvent(obj){
+            var data = obj.data
+            // console.log(obj,permissionList)
+            obj.event == 'update' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
+            obj.event == 'delete' && permissionList.indexOf('删除') == -1 && (obj.event = 'reject');
+            obj.event == 'add' && permissionList.indexOf('新增') == -1 && (obj.event = 'reject');
+            obj.event == 'export' && permissionList.indexOf('导出') == -1 && (obj.event = 'reject');
             switch (obj.event) {
+                case 'reject':
+                    layer.alert('你没有访问权限', {icon: 2});
+                    break;
                 case 'update':
                     xadmin.open('修改角色', './edit.html?id=' + data.roleId)
                     break;
@@ -214,8 +237,17 @@
                 case 'log':
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.roleId + '&type=7');
                     break;
-            };
-        });
+                case 'add':
+                    xadmin.open('添加角色', './add.html')
+                    break;
+                case 'export':
+                    exportData();
+                    break;
+                case 'tableSet':
+                    xadmin.open('表格设置', './table-set.html', 600, 600)
+                    break;
+            }; 
+        }
 
         function exportData() {
             edipao.request({
@@ -247,24 +279,9 @@
             })
         }
 
-        table.on('toolbar(roleList)', function(obj) {
-            switch (obj.event) {
-                case 'add':
-                    xadmin.open('添加角色', './add.html')
-                    break;
-                case 'export':
-                    exportData();
-                    break;
-                case 'tableSet':
-                    xadmin.open('表格设置', './table-set.html', 600, 600)
-                    break;
-            };
-        });
-
-        table.on('checkbox(roleList)', function(obj) {
-            console.log(obj)
-        });
-
+        table.on('tool(roleList)', handleEvent);
+        table.on('toolbar(roleList)', handleEvent);
+        table.on('checkbox(roleList)', handleEvent);
     })
     </script>
 </body>

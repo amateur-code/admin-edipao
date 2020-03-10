@@ -17,7 +17,7 @@
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js"></script>
-    <script type="text/javascript" src="../../lib/TableFilter/tableFilter.js"></script>
+    <script type="text/javascript" src="../../lib/TableFilter/tableFilter.js?VERSION"></script>
     <script type="text/javascript" src="../../js/common.js?VERSION"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
@@ -55,16 +55,26 @@
     </div>
     <script type="text/html" id="headerBtns">
         <div class="layui-btn-container">
+        {{# if(permissionList.indexOf('新增') != -1){ }} 
         <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+        {{# } }}
+        {{# if(permissionList.indexOf('导出') != -1){ }}
         <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
+        {{# } }}
         <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
       </div>
     </script>
     <script type="text/html" id="rowBtns">
+        {{# if(permissionList.indexOf('授权') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="permission">授权</a>
+        {{# } }}
+        {{# if(permissionList.indexOf('修改') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">修改</a>
+        {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="preview">查看</a>
+        {{# if(permissionList.indexOf('删除') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
+        {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
     </script>
     <script type="text/javascript">
@@ -85,11 +95,12 @@
                 { field: 'positions', title: '员工职位', width: 200 },
                 { field: 'roleNames', title: '拥有权限', width: 200 },
                 { field: 'status', title: '状态',width: 200, align: 'center'},
-                { title: '操作', toolbar: '#rowBtns', 'width': 350, fixed: 'right', align: 'center' }
+                { title: '操作', toolbar: '#rowBtns', 'width': 350 }
             ],
             tableIns,
-            tableFilterIns; 
- 
+            tableFilterIns,
+            permissionList = edipao.getMyPermission(); 
+        window.permissionList = permissionList;
 
         edipao.request({
             type: 'GET',
@@ -140,7 +151,7 @@
                 toolbar: '#headerBtns',
                 defaultToolbar: [],
                 done: function(res,curr,count){
-                    tableFilterIns.reload()
+                    tableFilterIns && tableFilterIns.reload()
                 }
             });
 
@@ -149,11 +160,13 @@
                if(el.field) {
                     var item = {field: el.field};
                     if(el.field == 'status'){
-                        item.type = 'radio'
+                        item.type = 'checkbox'
                         item.data  = [
                             { "key":"1", "value":"有效"},
                             { "key":"0", "value":"失效"}
                         ]
+                    }else if(el.field == 'roleNames'){
+                        return
                     }
 
                     filtersHeader.push(item)
@@ -172,27 +185,31 @@
                     layui.each(filters,function(key, value){
                         where['searchFieldDTOList['+ index +'].fieldName'] = key;
                         if(key == 'status'){
-                            // layui.each(value,function(key1, value2){
-                            //     where['searchFieldDTOList['+ index +'].fieldListValue[' + key1 + ']'] = value2;
-                            // })
+                            where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                         }else{
-                            
+                            where['searchFieldDTOList['+ index +'].fieldValue'] = value;
                         }
-                        where['searchFieldDTOList['+ index +'].fieldValue'] = value;
                         index++;
                     })
-                    tableIns.reload({ where: where });
+                    tableIns.reload({where: where, page: { curr: 1 }});
                 }
             })
 
         }
         
-        
-
-
-        table.on('tool(staffList)', function(obj) {
-            let data = obj.data
+        function handleEvent(obj){
+            var data = obj.data;
+            // console.log(obj,permissionList)
+            obj.event == 'permission' && permissionList.indexOf('授权') == -1 && (obj.event = 'reject');
+            obj.event == 'edit' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
+            obj.event == 'delete' && permissionList.indexOf('删除') == -1 && (obj.event = 'reject');
+            obj.event == 'add' && permissionList.indexOf('新增') == -1 && (obj.event = 'reject');
+            obj.event == 'export' && permissionList.indexOf('导出') == -1 && (obj.event = 'reject');
+            
             switch (obj.event) {
+                case 'reject':
+                    layer.alert('你没有访问权限', {icon: 2});
+                    break;
                 case 'permission':
                     xadmin.open('授权', './add-role.html?id=' + data.staffId, 600, 600)
                     break;
@@ -217,14 +234,23 @@
                                 layer.msg(res.message)
                             }
                         })
-
                     });
                     break;
                 case 'log':
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.staffId + '&type=5');    
                     break;
+                case 'add':
+                    xadmin.open('添加员工', './add.html', 600, 600)
+                    break;
+                case 'export':
+                    exportData();
+                    break;
+                case 'tableSet':
+                    xadmin.open('表格设置', './table-set.html', 600, 600)
+                    break;
             };
-        });
+        }
+
         function exportData() {
             edipao.request({
                 type: 'get',
@@ -256,24 +282,10 @@
             })
         }
 
-        table.on('toolbar(staffList)', function(obj) {
-            switch (obj.event) {
-                case 'add':
-                    xadmin.open('添加员工', './add.html', 600, 600)
-                    break;
-                case 'export':
-                    exportData();
-                    break;
-                case 'tableSet':
-                    xadmin.open('表格设置', './table-set.html', 600, 600)
-                    break;
-            };
-        });
-
-        table.on('checkbox(staffList)', function(obj) {
-            console.log(obj)
-        });
-
+        table.on('toolbar(staffList)', handleEvent);
+        table.on('tool(staffList)', handleEvent);
+        table.on('checkbox(staffList)', handleEvent);
+        
     })
     </script>
 </body>

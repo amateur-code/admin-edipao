@@ -40,6 +40,9 @@ layui.use(['jquery','form','laytpl'], function() {
                    if(editData.newMap&&editData.newMap.wishJourney!=null){
                        editData.newMap.wishJourney = JSON.parse(editData.newMap.wishJourney)
                    }
+                    if(editData.newMap&&editData.newMap.accountCity!=null){
+                        editData.newMap.accountCity = (editData.newMap.accountCity).replace(/\-/g,'')
+                    }
                     check = editData.newMap
                 }
                 render()
@@ -58,6 +61,10 @@ layui.use(['jquery','form','laytpl'], function() {
     }).done(function(res) {
         if (res.code == 0) {
             res.data.wishJourney = JSON.parse(res.data.wishJourney);
+            if(res.data.accountCity!=null&&res.data.accountCity!=''){
+                res.data.accountCity = (res.data.accountCity).replace(/\-/g,'')
+            }
+
             detail = res.data;
             if(detail.approvalFlag == 0){
                 waitCheck();
@@ -74,18 +81,5 @@ layui.use(['jquery','form','laytpl'], function() {
             document.getElementById('info').innerHTML = html;
             zoomImg ()
         })
-    }
-
-    showImg =function(t) {
-        var src = $(t).attr('data-src');
-        //页面层
-        layer.open({
-            type: 1,
-            title: false,
-            closeBtn: 0,
-            area: ['216px', '156px'], //宽高
-            shadeClose: true,
-            content: '<div style="overflow: hidden;background: url(' + src +' ) no-repeat center;width:216px;height: 156px;background-size: 216px 200px;"></div>'
-        });
     }
 })
