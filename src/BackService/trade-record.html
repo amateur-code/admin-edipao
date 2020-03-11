@@ -12,12 +12,12 @@
     <meta http-equiv="Pragma" CONTENT="no-cache">
     <link rel="stylesheet" href="../css/font.css">
     <link rel="stylesheet" href="../css/xadmin.css">
-    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css?VERSION">
+    <link rel="stylesheet" href="../lib/TableFilter/tableFilter.css?VERSION">
 
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
     <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript" src="../lib/layui/layui.js"></script>
-    <script type="text/javascript" src="../../lib/TableFilter/tableFilter.js?VERSION"></script>
+    <script type="text/javascript" src="../lib/TableFilter/tableFilter.js?VERSION"></script>
     <script type="text/javascript" src="../js/common.js?VERSION"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
@@ -63,8 +63,12 @@
                 { field: 'tradeNumber', title: '消费数量',minWidth: 100},
                 { field: 'unitPrice', title: '单价',minWidth: 100 },
                 { field: 'tradeTotalPrice', title: '消费金额',minWidth:100  },
-                { field: 'tradeDriverName', title: '消费人',width: 200 },
-                { field: 'tradeConfirmTime', title: '消费确认时间', width: 200 },
+                { field: 'tradeDriverName', title: '消费人',width: 200, templet:function(d){
+                    return d.tradeDriverName || '--'
+                }},
+                { field: 'tradeConfirmTime', title: '消费确认时间', width: 200,templet:function(d){
+                    return d.tradeConfirmTime || '--'
+                } },
                 { field: 'detailAddress', title: '消费地址',width: 200 },
                 { field: 'tradeStatus', title: '状态',width: 100 ,templet:function(d){
                 	return d.tradeStatusDesc
@@ -218,7 +222,6 @@
                                 }else{
                                     dataItem[item.field] = item2[item.field] || '--'
                                 }
-                                
                             } 
                         })
                         data.push(dataItem)
