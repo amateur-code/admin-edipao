@@ -10,12 +10,12 @@
     <meta http-equiv="Expires" CONTENT="-1">
     <meta http-equiv="Cache-Control" CONTENT="no-cache">
     <meta http-equiv="Pragma" CONTENT="no-cache">
-    <link rel="stylesheet" href="../../css/font.css">
-    <link rel="stylesheet" href="../../css/xadmin.css">
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
-    <script type="text/javascript" src="../../js/jquery.min.js"></script>
-    <script type="text/javascript" src="../../lib/layui/layui.js"></script>
-    <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js"></script>
+    <script type="text/javascript" src="../js/common.js?VERSION"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
           <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -33,7 +33,7 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-header">
-                        员工管理表格设置
+                        后服产品表格设置
                     </div>
                     <div class="layui-card-body">
 						<form class="layui-form layui-form-pane" lay-filter="editRole">
@@ -76,17 +76,22 @@
     layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, form) {
         var xadmin = layui.xadmin,
         	edipao = layui.edipao,
-        	tableKey = 'SystemSetting-StaffManager-list'
         	tableHeaderList = [
-	        	{ field: 'name', title: '员工姓名' },
-	            { field: 'phone', title: '员工手机' },
-	            { field: 'idCard', title: '身份证号码' },
-	            { field: 'dept', title: '所属部门' },
-	            { field: 'cardNo', title: '员工工号' },
-	            { field: 'positions', title: '员工职位' },
-	            { field: 'roleNames', title: '拥有权限' },
-	            { field: 'status', title: '状态' }
+	        	{ field: 'tradeNo', title: '交易流水号', width: 200 },
+                { field: 'tradeTime', title: '交易时间',width: 200 },
+                { field: 'productName', title: '定点服务',width: 200 },
+                { field: 'tradeNumber', title: '消费数量',minWidth: 100},
+                { field: 'unitPrice', title: '单价',minWidth: 100 },
+                { field: 'tradeTotalPrice', title: '消费金额',minWidth:100  },
+                { field: 'tradeDriverName', title: '消费人',width: 200 },
+                { field: 'tradeConfirmTime', title: '消费确认时间', width: 200 },
+                { field: 'detailAddress', title: '消费地址',width: 200 },
+                { field: 'tradeStatus', title: '状态',width: 100 ,templet:function(d){
+                	return d.tradeStatusDesc
+                }},
 	        ];
+	   	var params = edipao.urlGet();
+	    var tableKey = params.tableKey;
 	    laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
 		  document.getElementById('itemList').innerHTML = html;
 		  form.render(); 

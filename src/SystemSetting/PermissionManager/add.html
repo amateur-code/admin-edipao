@@ -55,8 +55,8 @@
                     <div class="layui-card-header">数据权限</div>
                     <div class="layui-card-body">
                         <div class="layui-form-item">
-                            <input name="canViewSubDept" lay-skin="primary" type="checkbox" title="本部门及下级部门数据" value="Y">
-                            <input name="canViewAll" lay-skin="primary" type="checkbox" title="所有数据" value="Y">
+                            <!-- <input name="canViewSubDept" lay-skin="primary" type="checkbox" title="本部门及下级部门数据" value="Y">
+                            <input name="canViewAll" lay-skin="primary" type="checkbox" title="所有数据" value="Y"> -->
                             <input name="canViewOrderIncome" lay-skin="primary" type="checkbox" title="订单收入" value="Y">
                             <input name="canViewOrderCost" lay-skin="primary" type="checkbox" title="订单成本" value="Y">
                         </div>
@@ -205,9 +205,11 @@
         		data: JSON.stringify(saveRoleReq)
         	}).then(function(res){
         		if(res.code == 0){
-        			layer.alert("添加角色成功", { icon: 6 }, function() {
-                        xadmin.close();
-                        xadmin.father_reload();
+        			layer.alert("添加角色成功", { icon: 6 ,
+                        end: function(){
+                            xadmin.close();
+                            xadmin.father_reload();
+                        }
                     });
         		}else {
                     layer.msg(res.message)

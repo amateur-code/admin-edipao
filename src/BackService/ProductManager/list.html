@@ -72,13 +72,13 @@
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="check">审核</a>
         {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="preview">查看</a>
-        {{# if(permissionList.indexOf('交易记录') != -1){ }}
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="trade-record">交易记录</a>
-        {{# } }}
         {{# if(permissionList.indexOf('删除') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
         {{# } }}
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
+        {{# if(permissionList.indexOf('交易记录') != -1){ }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="trade-record">交易记录</a>
+        {{# } }}
     </script>
     <script type="text/javascript">
     layui.config({
@@ -92,16 +92,26 @@
             tableCols = [ //表头
                 { checkbox: true },
                 { field: 'productName', title: '网点名称',width:200 },
-                { field: 'contractPeople', title: '联系人',width:200  },
+                { field: 'contractPeople', title: '联系人',width:200,templet:function(d){
+                    return  d.contractPeople =='（）' ? '--' : d.contractPeople
+                }  },
                 { field: 'detailAddress', title: '详细地址',width:200  },
                 { field: 'supplierName', title: '归属供应商',width:200  },
                 { field: 'supplierType', title: '供应商类型', templet:function(d){
                     return d.supplierTypeDesc
                 },width:200 },
-                { field: 'unitPrice', title: '单价',width:200  },
+                { field: 'unitPrice', title: '单价',width:200,templet:function(d){
+                    var after = ''
+                    after += d.supplierType == 'oilSupply'? '元/升':''
+                    after += d.supplierType == 'unloadCar'? '元/次':''
+                    return d.unitPrice + after
+                }  },
                 { field: 'status', title: '状态',templet:function(d){
                     return d.statusDesc
                 },width:200   },
+                { field: 'remark', title: '备注',width:200,templet:function(d){
+                    return d.remark || '--'
+                }   },
                 { title: '操作', toolbar: '#rowBtns', width: 400 }
             ],
             tableIns,
@@ -266,7 +276,7 @@
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.productNo + '&type=2');
                     break;
                 case 'trade-record':
-                    xadmin.open('交易记录', './trade-record.html?id=' + data.productNo)
+                    xadmin.open('交易记录', '../trade-record.html?key=productNo&id=' + data.productNo)
                     break;
                 case 'add':
                     xadmin.open('新增网点', './add.html')
@@ -300,6 +310,11 @@
                             if(item.field && item.hide != true){
                                 if(index2 == 0){
                                     dataItem[item.field] = item.title; 
+                                }else if(item.field == 'unitPrice'){
+                                    var after = ''
+                                    after += item2.supplierType == 'oilSupply'? '元/升':''
+                                    after += item2.supplierType == 'unloadCar'? '元/次':''
+                                    dataItem[item.field] = item2.unitPrice + after
                                 }else{
                                     dataItem[item.field] = item2[item.field] || '--'
                                 }
