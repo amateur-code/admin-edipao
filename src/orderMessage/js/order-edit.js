@@ -8,7 +8,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
   var table = layui.table;
   function Edit(){
     var qs = edipao.urlGet();
-    this.orderId = qs.orderId;
+    this.orderNo = qs.orderNo;
     this.action = qs.action;
     this.user = JSON.parse(sessionStorage.user);
     this.carFormList = [];
@@ -20,6 +20,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     this.carsToAdd = [];
     this.carsToDel = [];
     this.cars = [];
+    this.driverInfoListDto = [];
     this.formList = [
       "form_ascription",
       "form_dispatch",
@@ -131,7 +132,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
       method: "GET",
       data: {
         loginStaffId: _this.user.staffId,
-        orderNo: _this.orderId
+        orderNo: _this.orderNo
       }
     });
   }
@@ -319,10 +320,28 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
       },1500);
       return;
     }else{
-      _this.carsToAdd.push({
-        id: data.id,
-        filter: filter
+      edipao.request({
+        url: "/admin/truck/addTruck",
+        method: "post",
+        data: {
+          loginStaffId: _this.user.staffId,
+          truckId: data.id,
+          orderNo: _this.orderNo
+        }
+      }).done(function (res) {
+        if(res.code == '0'){
+          _this.carsToAdd.push({
+            id: data.id,
+            filter: filter
+          });
+          $(".layui-table-view[lay-id=cars_table]").remove();
+          layer.closeAll();
+          form.val(filter, data);
+        }else{
+          layer.msg(res.message, {icon: 5,anim: 6});
+        }
       });
+      return;
     }
     $(".layui-table-view[lay-id=cars_table]").remove();
     layer.closeAll();
@@ -331,9 +350,16 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
   Edit.prototype.handleDeleteCar = function (e) {
     var _this= this;
     var filter = e.target.dataset.filter;
-    console.log(_this, filter)
     var idTodel = "";
     var carFormListIndex;
+    var id;
+    var carData = form.val(filter);
+    _this.cars.forEach(function (item) {
+      if(item.filter == filter) id = item.id;
+    });
+    if(carData.id){
+      id = carData.id;
+    }
     _this.carFormList.forEach(function (item, index) {
       if(item == filter) carFormListIndex = index;
     });
@@ -358,6 +384,24 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
         _this.carsToAdd.splice(indexTodel, 1);
       }
     }
+    if(id != undefined){
+      edipao.request({
+        url: "/admin/truck/delTruck",
+        method: "post",
+        data: {
+          loginStaffId: _this.user.staffId,
+          truckId: id,
+          orderNo: _this.orderNo
+        }
+      }).done(function (res) {
+        if(res.code == 0){
+          $("." + filter).remove();
+        }else{
+          layer.msg(res.message, {icon: 5,anim: 6});
+        }
+      });
+      return;
+    }
     $("." + filter).remove();
   }
   Edit.prototype.preSubmit = function () {
@@ -369,14 +413,23 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     delete orderData.truckDTOList;
     var ascriptionData = form.val("form_ascription");
     var dispatchData = form.val("form_dispatch");
-    var carsLength = _this.cars.length + _this.carsToAdd.lenght - _this.carsToDel.length;
+    this.prePay.forEach(function (item, index) {
+      item.val = dispatchData["prePay_" + index];
+    });
+    this.arrivePay.forEach(function (item, index) {
+      item.val = dispatchData["arrivePay_" + index];
+    });
+    this.tailPay.forEach(function (item, index) {
+      item.val = dispatchData["tailPay_" + index];
+    });
+    var carsLength = _this.cars.length + _this.carsToAdd.length - _this.carsToDel.length;
     _this.carFormList.forEach(function (item, index) {
       if(index > (truckDTOList.length - 1)) return;
       var itemData = form.val(item);
       truckUpdateReqList.push({
-        truckId: truckDTOList[index].id||"",
+        truckId: itemData.id||"",
         masterFlag: itemData.masterFlag == "on" ? "否" : "是",
-        vinCode: truckDTOList[index].vinCode||"",
+        vinCode: itemData.vinCode||"",
         productCode: itemData.productCode||"",
         gpsDeviceCode: itemData.gpsDeviceCode||"",
         customerFullName: itemData.customerFullName||"",
@@ -419,6 +472,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     data.followOperator = ascriptionData.followOperator||"";
     data.followOperatorPhone = ascriptionData.followOperatorPhone||"";
     data.department = ascriptionData.department||"";
+    data.driverId = dispatchData.driverId||"";
     data.driverName = dispatchData.driverName||"";
     data.driverPhone = dispatchData.driverPhone||"";
     data.driverIdCard = dispatchData.driverIdCard||"";
@@ -446,50 +500,21 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
           arr.push(item + "=" + data[item]);
         }
       });
-      console.log(arr)
       return encodeURI(arr.join("&"));
     }
   }
   Edit.prototype.submitAll = function(req1){
     var _this = this;
-    _this.carsToAdd.forEach(function (item, index) {
-      var data = {
-        loginStaffId: _this.user.staffId,
-        orderNo: _this.orderData.orderNo,
-        truckId: item.id
-      }
-      if(index == 0){
-        $.when(req1, edipao.request({
-          url: "/admin/truck/addTruck",
-          data: data,
-        })).done(function (res1, res2) {
-          var res1 = res1[0];
-          var res2 = res2[0];
-          if(res1.code == "0" && res2.code == "0"){
-            layer.msg("修改成功");
-            setTimeout(function () {  
-              location.reload();
-            }, 1500);
-          }
-        });
+    req1.done(function (res) {
+      if(res.code == "0"){
+        layer.msg("修改成功");
+        setTimeout(function () {
+          location.reload();
+        }, 1000);
       }else{
-        edipao.request({
-          url: "/admin/truck/addTruck",
-          data: data
-        });
+        layer.msg(res.message, {icon: 5,anim: 6});
       }
     });
-    _this.carsToDel.forEach(function (item) {
-      var data = {
-        loginStaffId: _this.user.staffId,
-        orderNo: _this.orderData.orderNo,
-        truckId: item.id
-      }
-      edipao.request({
-        url: "/admin/truck/delTruck",
-        data: data
-      });
-    })
   }
   Edit.prototype.openSelectDriver = function () {
     //选择司机
@@ -500,19 +525,26 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
       method: "GET",
       data: {
         loginStaffId: _this.user.staffId,
-        orderNo: _this.orderId,
+        orderNo: _this.orderNo,
       }
     }).done(function (res) {
       if(res.code == "0"){
         if(!res.data) return;
         if(res.data.lenght < 1) return;
-        _this.driverInfoListDto = res.data.driverInfoListDto;
-        laytpl($("#driver_list_tpl").html()).render(res.data.driverInfoListDto, function (html) {
+        _this.driverInfoListDto = res.data;
+        laytpl($("#driver_list_tpl").html()).render({list: res.data}, function (html) {
           $("#driver_name_select").append(html);
           $(".driver_item").unbind().on("click", function (e) {
             var index = e.target.dataset.index;
             var data = _this.driverInfoListDto[index*1];
-            form.val("form_dispatch", data);
+            var driverData = {
+              driverId: data.id,
+              driverName: data.name,
+              driverPhone: data.phone,
+              driverIdCard: data.idNum,
+              driverCertificate: data.driveLicenceType,
+            }
+            form.val("form_dispatch", driverData);
             $('#match_driver_list').remove();
           });
         });
@@ -529,6 +561,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     });
     $(".del_car_btn").unbind().on("click", function(e){
       _this.handleDeleteCar(e);
+    });
+    $("#btn_cancel").unbind().on("click", function (e) {
+      top.xadmin.del_tab(localStorage.current_tab);
     });
     $("#add_car").unbind().on("click", function(e){
       var carFormHtml = $("#car_info_tpl").html();
@@ -554,5 +589,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     });
   }
   var edit = new Edit();
+  top.edit = edit;
   edit.init();
 });

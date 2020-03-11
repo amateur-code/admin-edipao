@@ -257,12 +257,10 @@
                 </div>
             </div>
             <div class="layui-form-item layui-row">
+                <div class="layui-form-span text_left form_span">提车图片：</div>
                 {{#  layui.each(d.fetchImages, function(index, item){ }}
-                <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                    <span class="layui-form-span text_left form_span">提车图片：</span>
-                    <div>
-                        <img width="100%" class="car_image" src="{{item}}">
-                    </div>
+                <div style="margin-right:20px" class="layui-col-md3">
+                    <img width="100%" class="car_image" src="{{item}}">
                 </div>
                 {{#  }); }}
             </div>
@@ -401,7 +399,7 @@
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.prePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
-                        <span class="layui-form-span text_left form_span">{{item.key}}：：</span>
+                        <span class="layui-form-span text_left form_span">{{item.key}}({{item.unit}})：</span>
                             <input disabled value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                     </div>
                     {{#  }); }}
@@ -416,7 +414,7 @@
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.arrivePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
-                        <span class="layui-form-span text_left form_span">{{item.key}}：：</span>
+                        <span class="layui-form-span text_left form_span">{{item.key}}({{item.unit}})：</span>
                             <input disabled value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                     </div>
                     {{#  }); }}
@@ -431,7 +429,7 @@
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.tailPay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
-                        <span class="layui-form-span text_left form_span">{{item.key}}：：</span>
+                        <span class="layui-form-span text_left form_span">{{item.key}}({{item.unit}})：</span>
                             <input disabled value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                     </div>
                     {{#  }); }}

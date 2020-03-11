@@ -7,7 +7,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 
   function View() {
     var qs = edipao.urlGet();
-    this.orderId = qs.orderId;
+    this.orderNo = qs.orderNo;
     this.action = qs.action || "";
     this.user = JSON.parse(sessionStorage.user);
     this.prePay = [];
@@ -94,7 +94,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         method: "GET",
         data: {
           loginStaffId: _this.user.staffId,
-          orderNo: _this.orderId
+          orderNo: _this.orderNo
         }
       });
     }
