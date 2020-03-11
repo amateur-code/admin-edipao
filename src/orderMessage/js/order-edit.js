@@ -551,10 +551,96 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
       }
     });
   }
+  Edit.prototype.openSelectDriverTable = function () {
+    var _this = this;
+    var index = layer.open({
+      type:1,
+      title: "选择司机",
+      area: ["800px", "400px"],
+      content: $("#drivers_table"),
+      success: function () {
+        table.render({
+          elem: '#drivers_table'
+          , url: layui.edipao.API_HOST+'/admin/driver/info/list'
+          // , url: "js/cars.json"
+          , title: '选择司机'
+          , method: "get" // 请求方式  默认get
+          , page: true //开启分页
+          , limit: 10  //每页显示条数
+          , limits: [10, 20] //每页显示条数可选择
+          , id: "drivers_table"
+          , request: {
+              pageName: 'pageNumber' //页码的参数名称，默认：page
+              , limitName: 'pageSize' //每页数据量的参数名，默认：limit
+          }
+          , where: {loginStaffId: _this.user.staffId}
+          , parseData: function (res) {
+            return {
+                "code": res.code, //解析接口状态
+                "msg": res.message, //解析提示文本
+                "count": res.data.totalSize, //解析数据长度
+                "data": res.data.driverInfoListDtoList //解析数据列表
+            }
+        }
+        , done: function () {
+          table.on('row(drivers_table)', function(obj){
+            var data = obj.data;
+            var driverData = {
+              driverId: data.id,
+              driverName: data.name,
+              driverPhone: data.phone,
+              driverIdCard: data.idNum,
+              driverCertificate: data.driveLicenceType,
+            }
+            form.val("form_dispatch", driverData);
+            layer.close(index);
+            $(".layui-table-view[lay-id=drivers_table]").remove();
+          });
+        }
+          , height: 'full'
+          , autoSort: true
+          , text: {
+              none: "暂无数据"
+          }
+          , cols: [[
+              {field: 'name', title: '司机姓名', sort: false,},
+              {field: 'phone', title: '司机手机', sort: false,},
+              {field: 'driverType', title: '司机类型', sort: false,},
+              {field: 'driveLicenceType', title: '驾照类型', sort: false},
+              {field: 'drivingAge', title: '驾龄', sort: false},
+              {field: 'wishJourney', title: '意向路线', sort: false, templet: function (d) {
+                var data = d.wishJourney;
+                var arr = [];
+                try {
+                  data = JSON.parse(data);
+                } catch (error) {return "";}
+                if(data.length){
+                  data.forEach(function (item) {
+                    arr.push(data[0].start.province + data[0].start.city + "-" + data[0].end.province + data[0].end.city)
+                  });
+                  return arr.join("，");
+                }else{
+                  return "";
+                }
+              }},
+              {field: 'oftenJourney', title: '熟手', sort: false},
+              {field: 'status', title: '状态', sort: false,width:150,},
+              {field: 'location', title: '当前位置', sort: false},
+          ]]
+        });
+      },
+      cancel: function () {
+        $(".layui-table-view[lay-id=drivers_table]").remove();
+      }
+    });
+  }
   Edit.prototype.bindEvents = function(){
     var _this = this;
     $("#driver_name").unbind().on("click", function(){
       _this.openSelectDriver();
+    });
+    $("#select_driver_btn").unbind().on("click", function () {
+      _this.openSelectDriverTable();
     });
     $("#btn_confirm").unbind().on("click", function (e){
       _this.preSubmit();
