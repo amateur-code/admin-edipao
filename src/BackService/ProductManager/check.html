@@ -153,7 +153,8 @@
             edipao = layui.edipao,
             SupplierTypeConfig = {},
             detail = {},
-            check = {};
+            check = {},
+            StatusDescConfig = {"1":"有效","2":"失效"};
 
         var params = edipao.urlGet();
 
@@ -187,6 +188,7 @@
                     if (res.data) {
                         var editData = JSON.parse(res.data.modifyAfterJson)
                         check = editData.newMap
+                        check.statusDesc = StatusDescConfig[check.status]
                     }
                     render()
                 }

@@ -125,7 +125,8 @@
             edipao = layui.edipao,
             SupplierTypeConfig = {},
             detail = {},
-            check = {};
+            check = {},
+            StatusDescConfig = {"1":"有效","2":"失效"};
         edipao.request({
             type: 'get',
             url: '/admin/supplier/getSupplierType'
@@ -153,6 +154,7 @@
                         var editData = JSON.parse(res.data.modifyAfterJson)
                         check = editData.newMap
                         check.supplierTypeName = SupplierTypeConfig[check.supplierType]
+                        check.statusDesc = StatusDescConfig[check.status]
                     }
                     render()
 	        	}
