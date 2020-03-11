@@ -185,9 +185,11 @@
                 data: compare,
             }).done(function(res) {
                 if (res.code == 0) {
-                    layer.alert("更新员工成功", { icon: 6 }, function() {
-                        xadmin.close();
-                        xadmin.father_reload();
+                    layer.alert("更新员工成功", { icon: 6 ,
+                        end: function(){
+                            xadmin.close();
+                            xadmin.father_reload();
+                        }
                     });
                 } else {
                     layer.msg(res.message)

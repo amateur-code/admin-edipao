@@ -85,6 +85,7 @@
                 { field: 'supplierType', title: '供应商类型' },
                 { field: 'unitPrice', title: '单价' },
                 { field: 'status', title: '状态' },
+                { field: 'remark', title: '备注',width:200   },
 	        ];
 	    laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
 		  document.getElementById('itemList').innerHTML = html;
@@ -138,9 +139,11 @@
         		}
         	}).then(function(res){
         		if(res.code == 0){
-        			layer.alert("修改表格成功", { icon: 6 }, function() {
-                        xadmin.close();
-                        xadmin.father_reload();
+        			layer.alert("修改表格成功", { icon: 6 ,
+                        end: function(){
+                            xadmin.close();
+                            xadmin.father_reload();
+                        }
                     });
         		}
         	})

@@ -200,22 +200,6 @@
           });
 
         var params = edipao.urlGet();
-        edipao.request({
-            type: 'get',
-            url: '/admin/product/detail',
-            data: {
-                productNo: params.id
-            }
-        }).then(function(res) {
-            if (res.code == 0) {
-                detailAddress = {
-                    address: res.data.detailAddress,
-                    lng: res.data.lng,
-                    lat: res.data.lat
-                }
-                form.val("edit", res.data);
-            }
-        })
 
         edipao.request({
             type: 'get',
@@ -226,8 +210,30 @@
                     document.getElementById('supplierNo').innerHTML = html;
                 })
                 form.render();
+                getDetail();
             }
         })
+        function getDetail(){
+            edipao.request({
+                type: 'get',
+                url: '/admin/product/detail',
+                data: {
+                    productNo: params.id
+                }
+            }).then(function(res) {
+                if (res.code == 0) {
+                    detailAddress = {
+                        address: res.data.detailAddress,
+                        lng: res.data.lng,
+                        lat: res.data.lat
+                    }
+                    form.val("edit", res.data);
+                }
+            })
+        }
+        
+
+        
         //自定义验证规则
         form.verify({
             productName: function(value) {
@@ -266,9 +272,11 @@
                 data: data.field,
             }).done(function(res) {
                 if (res.code == 0) {
-                    layer.alert("网点修改成功", { icon: 6 }, function() {
-                        xadmin.close();
-                        xadmin.father_reload();
+                    layer.alert("网点修改成功", { icon: 6 ,
+                        end: function(){
+                            xadmin.close();
+                            xadmin.father_reload();
+                        }
                     });
                 } else {
                     layer.msg(res.message)
