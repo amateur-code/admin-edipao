@@ -138,7 +138,7 @@
     layui.use(['form', 'layer', 'element','laytpl'], function(form, layer, element, laytpl) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao;
-        
+
         edipao.request({
             type: 'get',
             url:'/admin/supplier/getSupplierType'
@@ -186,9 +186,11 @@
                 data: data.field,
             }).done(function(res) {
                 if (res.code == 0) {
-                    layer.alert("服务商添加成功", { icon: 6 }, function() {
-                        xadmin.close();
-                        xadmin.father_reload();
+                    layer.alert("服务商添加成功", { icon: 6 ,
+                        end: function(){
+                            xadmin.close();
+                            xadmin.father_reload();
+                        }
                     });
                 } else {
                     layer.msg(res.message)

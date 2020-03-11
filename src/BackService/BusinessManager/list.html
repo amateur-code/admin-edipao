@@ -95,7 +95,10 @@
                 { checkbox: true },
                 { field: 'supplierName', title: '供应商名称',width: 200 },
                 { field: 'loginPhone', title: '登录手机号',width: 200 },
-                { field: 'contractName', title: '联系人',width: 200 },
+                { field: 'contractName', title: '联系人',width: 200 ,templet:function(d){
+                    var str = d.contractName + '(' + d.contractPhone + ')'
+                    return str == "()" ? '--' : str
+                }},
                 { field: 'supplierType', title: '类型',width: 200,templet:function(d){
                     return SupplierTypeConfig[d.supplierType]
                 }},
@@ -103,6 +106,9 @@
                 { field: 'status', title: '状态',width: 100,templet:function(d){
                     return d.statusDesc
                 } },
+                { field: 'remark', title: '备注',width:200,templet:function(d){
+                    return d.remark || '--'
+                }   },
                 { title: '操作', toolbar: '#rowBtns', width: 400 }
             ],
             tableIns,
@@ -271,7 +277,7 @@
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.supplierNo + '&type=1');
                     break;
                 case 'trade-record':
-                    xadmin.open('交易记录', './trade-record.html?id=' + data.supplierNo)
+                    xadmin.open('交易记录', '../trade-record.html?key=supplierNo&id=' + data.supplierNo)
                     break;
                 case 'add':
                     xadmin.open('新增供应商', './add.html')
@@ -306,6 +312,9 @@
                                 }else{
                                     if(item.field == 'supplierType'){
                                         dataItem[item.field] = SupplierTypeConfig[item2[item.field]] || '--'
+                                    }else if(item.field == 'contractName'){
+                                        var str = item2.contractName + '(' + item2.contractPhone + ')'
+                                        dataItem[item.field] =  str == "()" ? '--' : str
                                     }else{
                                         dataItem[item.field] = item2[item.field] || '--'
                                     }

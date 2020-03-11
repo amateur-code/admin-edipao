@@ -261,7 +261,16 @@
         
         $('#approvalFlowList').on('click','.flowCodeCommit',function(){
             if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
+
             var saveFlowReq = CONFIG_CACHE[$(this).data('code')]
+            if(saveFlowReq.nodeDTOList.length > 0){
+                for( var i = 0; i< saveFlowReq.nodeDTOList.length ; i++){
+                    if(saveFlowReq.nodeDTOList[i].approvalStaffDTOList.length == 0){
+                        return layer.alert('审批节点不可以没有员工', {icon: 2});
+                    }
+                }
+            }
+            
             saveFlowReq.loginStaffId = edipao.getLoginStaffId();
             
             edipao.request({
