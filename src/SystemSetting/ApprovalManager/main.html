@@ -237,8 +237,13 @@
         $('#approvalFlowList').on('click', '.node-staff', function() {
             if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
             var index = $(this).data('index') -1,
-                code = $(this).data('code'); 
-            xadmin.open('选择员工', './staff.html?code=' + code + '&index=' + index)
+                code = $(this).data('code'),
+                staffIds = []; 
+            layui.each(CONFIG_CACHE[code].nodeDTOList[index].approvalStaffDTOList,function(index, el) {
+                staffIds.push(el.staffId)
+            });
+            console.log(CONFIG_CACHE[code].nodeDTOList[index].approvalStaffDTOList)
+            xadmin.open('选择员工', './staff.html?code=' + code + '&index=' + index + '&ids=' + staffIds.join(','), 600, 600)
         })
         $('#approvalFlowList').on('click', '.node-staff-save', function() {
             if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
@@ -288,7 +293,7 @@
 
         approvalManager.selectStaff = function(code,index,list){
             let selectResult = [];
-            layui.each(list.data, function(index, item){ 
+            layui.each(list, function(index, item){ 
                 selectResult.push({
                     staffId: item.staffId,
                     staffName: item.name

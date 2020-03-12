@@ -90,10 +90,18 @@
                 { field: 'name', title: '员工姓名', width: 200 },
                 { field: 'phone', title: '员工手机', width: 200 },
                 { field: 'idCard', title: '身份证号码', width: 200 },
-                { field: 'dept', title: '所属部门', width: 200 },
-                { field: 'cardNo', title: '员工工号', width: 200 },
-                { field: 'positions', title: '员工职位', width: 200 },
-                { field: 'roleNames', title: '拥有权限', width: 200 },
+                { field: 'dept', title: '所属部门', width: 200, templet: function(d){
+                    return d.dept || '--'
+                } },
+                { field: 'cardNo', title: '员工工号', width: 200, templet: function(d){
+                    return d.cardNo || '--'
+                }  },
+                { field: 'positions', title: '员工职位', width: 200, templet: function(d){
+                    return d.positions || '--'
+                } },
+                { field: 'roleNames', title: '拥有权限', width: 200,templet: function(d){
+                    return d.roleNames || '--'
+                } },
                 { field: 'status', title: '状态',width: 200, align: 'center'},
                 { title: '操作', toolbar: '#rowBtns', 'width': 350 }
             ],
