@@ -3,6 +3,18 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         edipao = layui.edipao;
         form = layui.form;
     var params = edipao.urlGet();
+    //自定义验证规则
+    form.verify({
+        auditRemark: function (value) {
+            var result = $("input[name=approvalResult]:checked").val();
+            if(result == '1' && value == ''){
+                return '审核结果为驳回时，审核备注必填';
+            }
+            if(value.length > 300){
+                return '审核备注不能超过300个字符'
+            }
+        }
+    });
     // 监听提交
     form.on('submit(add)',
         function(data) {
