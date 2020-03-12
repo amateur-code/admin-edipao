@@ -32,7 +32,8 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: "settleWay", title: "结算方式" },
     { field: "fetchStatus", title: "提车照片" },
     { field: "startAuditStatus", title: "发车单审核状态" },
-    { field: "returnAuditStatus", title: "交车单审核状态" }
+    { field: "returnAuditStatus", title: "交车单审核状态" },
+    { field: "orderStatus", title: "状态" },
   ];
   laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
       document.getElementById('itemList').innerHTML = html;

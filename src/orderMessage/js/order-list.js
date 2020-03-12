@@ -236,7 +236,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                                     method: "post",
                                     data: {
                                         loginStaffId: user.staffId,
-                                        id: orderId,
+                                        orderId: orderId,
                                         type: type,
                                         approvalResult: data.result * 1,
                                         approvalRemark: data.remark
@@ -310,8 +310,9 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                                     url: "/admin/order/approval/pay",
                                     data: {
                                         loginStaffId: user.staffId,
-                                        id: orderId,
-                                        type: type
+                                        orderId: orderId,
+                                        type: type,
+                                        approvalResult: 0
                                     }
                                 }).done(function (res) {
                                     if(res.code == "0"){
@@ -383,8 +384,9 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                                     url: "/admin/order/approval/pay",
                                     data: {
                                         loginStaffId: user.staffId,
-                                        id: orderId,
-                                        type: type
+                                        orderId: orderId,
+                                        type: type,
+                                        approvalResult: 0
                                     }
                                 }).done(function (res) {
                                     if(res.code == "0"){
@@ -440,7 +442,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                                         data: {
                                             loginStaffId: user.staffId,
                                             type: type,
-                                            id: orderId,
+                                            orderId: orderId,
                                             approvalResult: data.result * 1,
                                             approvalRemark: data.remark
                                         }
@@ -814,6 +816,25 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             }
             return status;
         }},
+        {
+            field: 'orderStatus', title: '订单状态', sort: false,minWidth:100, templet: function (d) {
+                if (d.orderStatus == 1) {
+                    return "待调度";
+                } else if (d.orderStatus == 2) {
+                    return "待发车";
+                } else if (d.orderStatus == 3) {
+                    return "运输中";
+                } else if (d.orderStatus == 4) {
+                    return "已收车";
+                } else if (d.orderStatus == 5) {
+                    return "已完结";
+                } else if (d.orderStatus == 6) {
+                    return "已取消";
+                } else {
+                    return "非法状态";
+                }
+            }
+          },
     ];
     var showList = [
         "orderNo",
@@ -845,7 +866,8 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         "settleWay",
         "fetchStatus",
         "startAuditStatus",
-        "returnAuditStatus"
+        "returnAuditStatus",
+        "orderStatus"
     ];
     var exportHead={};// 导出头部
     var toolField = {title: '操作', toolbar: '#barDemo', align: 'center', fixed: 'right', width: 350};
