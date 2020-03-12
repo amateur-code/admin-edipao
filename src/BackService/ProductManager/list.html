@@ -179,6 +179,7 @@
                 toolbar: '#headerBtns',
                 defaultToolbar: [],
                 done: function(res,curr,count){
+                    console.log()
                     tableFilterIns && tableFilterIns.reload()
                 }
             });
@@ -210,7 +211,7 @@
                 'mode' : 'self',//过滤模式
                 'filters' : filtersHeader,//过滤项配置
                 'done': function(filters){
-                    console.log(filters)
+                    
                     var index = 0,  
                         where = {
                             loginStaffId: edipao.getLoginStaffId()
@@ -227,7 +228,9 @@
                         }
                         index++;
                     })
-                    tableIns.reload({where: where, page: { curr: 1 }});
+                    console.log(filters,where)
+                    // tableIns.reload({where: where, page: { curr: 1 }});
+                    table.reload('list',{where: where, page: { curr: 1 }});
                     //结果回调
                 }
             })
