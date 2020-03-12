@@ -26,6 +26,10 @@
     // var is_remember = false;
     </script>
     <style type="text/css">
+        #staffList{
+            width:475px;
+            margin: 0 auto;
+        }
         .btn-ok{
             display: block;
             width: 100px;
@@ -41,7 +45,7 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-body" id="doc-content">
-                        <table id="staffList" lay-filter="staffList"></table>
+                        <div id="staffList"></div>
                         <button type="button" class="layui-btn layui-btn-lg btn-ok" id="commit">确认</button>
                     </div>
                 </div>
@@ -50,50 +54,40 @@
     </div>
     
     <script type="text/javascript">
-    layui.use(['table', 'layer'], function(table, layer) {
+    layui.use(['layer', 'transfer'], function( layer, transfer) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao;
 
         var params = edipao.urlGet();
-        table.render({
-            elem: '#staffList',
-            url: edipao.API_HOST + '/admin/staff/list',
-            request: {
-                pageName: 'pageNo',
-                limitName: 'pageSize'
-            },
-            where: {
-                loginStaffId: edipao.getLoginStaffId()
-            },
-            parseData: function(res) { //res 即为原始返回的数据
-                return {
-                    code: res.code, //解析接口状态
-                    msg: res.message, //解析提示文本
-                    count: res.data.totalSize, //解析数据长度
-                    data: res.data.staffDtoList //解析数据列表
-                };
-            },
-            page: true,
-            cols: [
-                [ //表头
-                    { checkbox: true },
-                    { field: 'name', title: '员工姓名' },
-                    { field: 'phone', title: '员工手机' },
-                    { field: 'idCard', title: '身份证号码' },
-                    { field: 'cardNo', title: '员工工号' },
-                    { field: 'positions', title: '员工职位' },
-                    { field: 'status', title: '状态' }
-                ]
-            ]
-        });
 
-        table.on('checkbox(staffList)', function(obj) {
-            
-
- 
-        });
+        edipao.request({
+            type: 'get',
+            url: '/admin/staff/list',
+            data: {
+                pageNo: 1,
+                pageSize: 1000000,
+            }
+        }).done(function(res){
+            if(res.code == 0){
+                var ids = params.ids.split(',')
+                transfer.render({
+                    id: 'staffList',
+                    elem: '#staffList',
+                    height: 430,
+                    title: ['全部员工','已选择'],
+                    showSearch: true,
+                    data: res.data.staffDtoList,
+                    value: ids,
+                    parseData: function(item){
+                        item.value = item.staffId;
+                        item.title = item.name + '(' + item.phone + ')';
+                        return item
+                    }
+                });
+            }
+        })
         $('#commit').on('click',function(){
-            var list = table.checkStatus('staffList');
+            var list = transfer.getData('staffList');
             window.parent.approvalManager.selectStaff(params.code,params.index,list)
             xadmin.close();
         })
