@@ -8,6 +8,9 @@
 .layui-tab .layui-tab-item {
   padding: 20px 0;
 }
+.layui-tab .layui-tab-item .slelected {
+  padding-top: 20px;
+}
 .layui-tab .layui-tab-item .upload-handler {
   font-size: 0;
 }
