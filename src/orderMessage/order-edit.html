@@ -9,16 +9,16 @@
     <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
     <link rel="stylesheet" href="../css/font.css">
     <link rel="stylesheet" href="../css/xadmin.css">
-    <link rel="stylesheet" href="../lib/TableFilter/tableFilter.css">
-    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="../lib/TableFilter/tableFilter.css?VERSION">
+    <link rel="stylesheet" href="./css/common.css?VERSION">
     <link rel="stylesheet" href="./css/order-list.css">
     <link rel="stylesheet" href="./css/order-edit.css">
-    <script src="./js/polyfill.js"></script>
+    <script src="./js/polyfill.js?VERSION"></script>
     <script src="../js/jquery.min.js"></script>
     <script src="../lib/layui/layui.js" charset="utf-8"></script>
     
-    <script src="../lib/TableFilter/tableFilter.js"></script>
-    <script src="../js/common.js"></script>
+    <script src="../lib/TableFilter/tableFilter.js?VERSION"></script>
+    <script src="../js/common.js?VERSION"></script>
     <script src="./js/qs.js"></script>
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -506,14 +506,16 @@
             <div class="form_item_inner">
                 <div>
                     预付款
+                    {{#  if(!d.prePayDisabled){ }}
                     <span data-type="prePay" class="add_fee blue pointer">+增加费用</span>
+                    {{#  } }}
                 </div>
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.prePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
                         <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
                         <div class="layui-input-inline">
-                            <input value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input {{d.prePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     {{#  }); }}
@@ -524,14 +526,16 @@
             <div class="form_item_inner">
                 <div>
                     到付款
+                    {{#  if(!d.arrivePayDisabled){ }}
                     <span data-type="arrivePay" class="add_fee blue pointer">+增加费用</span>
+                    {{# } }}
                 </div>
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.arrivePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
                         <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
                         <div class="layui-input-inline">
-                            <input value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input {{d.arrivePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     {{#  }); }}
@@ -542,14 +546,16 @@
             <div class="form_item_inner">
                 <div>
                     尾款
+                    {{#  if(!d.tailPayDisabled){ }}
                     <span data-type="tailPay" class="add_fee blue pointer">+增加费用</span>
+                    {{# } }}
                 </div>
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.tailPay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
                         <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
                         <div class="layui-input-inline">
-                            <input value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input {{d.tailPayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     {{#  }); }}
@@ -590,6 +596,6 @@
         <div lay-filter="drivers_table" id="drivers_table"></div>
     </div>
 </body>
-<script src="./js/order-edit.js"></script>
+<script src="./js/order-edit.js?VERSION"></script>
 
 </html>

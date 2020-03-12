@@ -9,14 +9,14 @@
     <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
     <link rel="stylesheet" href="../css/font.css">
     <link rel="stylesheet" href="../css/xadmin.css">
-    <link rel="stylesheet" href="../lib/TableFilter/tableFilter.css">
-    <link rel="stylesheet" href="./css/common.css">
-    <link rel="stylesheet" href="./css/order-list.css">
+    <link rel="stylesheet" href="../lib/TableFilter/tableFilter.css?VERSION">
+    <link rel="stylesheet" href="./css/common.css?VERSION">
+    <link rel="stylesheet" href="./css/order-list.css?VERSION">
     <script src="../js/jquery.min.js"></script>
     <script src="../lib/layui/layui.js" charset="utf-8"></script>
     
-    <script src="../lib/TableFilter/tableFilter.js"></script>
-    <script src="../js/common.js"></script>
+    <script src="../lib/TableFilter/tableFilter.js?VERSION"></script>
+    <script src="../js/common.js?VERSION"></script>
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
@@ -97,6 +97,41 @@
         </div>
     </div>
 </script>
+<script id="pic_verify_tpl" type="text/html">
+    <div style="padding: 10px;">
+        <form lay-filter="verifyPic" class="layui-form">
+            {{#  layui.each(d.list, function(index, item){ }}
+            <div style="margin-bottom:20px;" class="blue">{{item.masterFlag == '否'?'上车':'下车'}}vin码(车架号)：<span>{{item.vinCode}}</span></div>
+            <div class="layui-row">
+                {{#  layui.each(item[d.key], function(index2, item2){ }}
+                <div style="margin-bottom:10px;" class="layui-col-md3">
+                    <img width="100%" src="{{item2}}">
+                </div>
+                {{#  }); }}
+            </div>
+            {{#  }); }}
+            <div style="margin-top: 20px;">
+                <div class="layui-row">
+                    <div class="layui-form-item">
+                        <div style="line-height:34px;" class="layui-col-md3">
+                            审核结果：
+                        </div>
+                        <div class="layui-col-md3">
+                            <input type="radio" name="result" value="1" title="通过" checked>
+                        </div>
+                        <div class="layui-col-md3">
+                            <input type="radio" name="result" value="0" title="驳回">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div>审核备注：</div>
+                    <textarea name="remark" placeholder="请输入" class="layui-textarea"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
 <script id="pic_view_tpl" type="text/html">
     <div style="padding:10px 0;">
         <form lay-filter="uploadPic" class="layui-form">
@@ -129,16 +164,16 @@
                         审核结果：
                     </div>
                     <div class="layui-col-md3">
-                        <input type="radio" name="arrive_verify_result" value="yes" title="通过" checked>
+                        <input type="radio" name="result" value="1" title="通过" checked>
                     </div>
                     <div class="layui-col-md3">
-                        <input type="radio" name="arrive_verify_result" value="no" title="驳回">
+                        <input type="radio" name="result" value="0" title="驳回">
                     </div>
                 </div>
             </div>
             <div class="layui-form-item">
                 <div>审核备注：</div>
-                <textarea name="arrive_verify_remark" placeholder="请输入" class="layui-textarea"></textarea>
+                <textarea name="remark" placeholder="请输入" class="layui-textarea"></textarea>
             </div>
         </form>
     </div>
@@ -229,6 +264,6 @@
     <a class="layui-btn layui-bg-cyan layui-btn-xs" lay-event="log">日志</a>
 </script>
 
-<script src="./js/order-list.js"></script>
+<script src="./js/order-list.js?VERSION"></script>
 
 </html>

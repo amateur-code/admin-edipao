@@ -58,9 +58,12 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
         if(depositStatusRecord=='1'||depositStatusRecord=='已支付'){
             $('#depositTradeNumberDiv').removeClass('layui-hide');
             $('#deposit').attr("disabled","disabled");
-            $('#deposit').addClass(" layui-bg-gray");
+            $('#deposit').addClass("layui-disabled");
             $('#depositTradeNumber').attr("disabled","disabled");
-            $('#depositTradeNumber').addClass(" layui-bg-gray");
+            $('#depositTradeNumber').addClass("layui-disabled");
+            $('#depositStatus').attr("disabled","disabled");
+            $('#depositStatus').addClass("layui-disabled");
+            form.render();
         }
 
 
@@ -246,25 +249,25 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
     form.on('select(depositStatusFilter)', function(data){
         if(depositStatusRecord=='1'||depositStatusRecord=='已支付'){
             if(data.value =='0'||data.value ==''){
-                $("#deposit").removeClass('layui-bg-gray');
+                $("#deposit").removeClass('layui-disabled');
                 $("#depositTradeNumberDiv").addClass('layui-hide');
                 $('#deposit').attr("disabled",false);
             }else{
                 $("#depositTradeNumberDiv").removeClass('layui-hide');
-                $("#deposit").addClass('layui-bg-gray');
-                $('#depositTradeNumber').addClass('layui-bg-gray');
+                $("#deposit").addClass('layui-disabled');
+                $('#depositTradeNumber').addClass('layui-disabled');
                 $('#deposit').attr("disabled",'disabled');
                 $('#depositTradeNumber').attr("disabled",'disabled');
             }
         }else{
             if(data.value =='0'||data.value ==''){
-                $("#deposit").removeClass('layui-bg-gray');
+                $("#deposit").removeClass('layui-disabled');
                 $("#depositTradeNumberDiv").addClass('layui-hide');
                 $('#deposit').attr("disabled",false);
             }else{
                 $("#depositTradeNumberDiv").removeClass('layui-hide');
-                $("#deposit").removeClass('layui-bg-gray');
-                $('#depositTradeNumber').removeClass('layui-bg-gray');
+                $("#deposit").removeClass('layui-disabled');
+                $('#depositTradeNumber').removeClass('layui-disabled');
                 $('#deposit').attr("disabled",false);
                 $('#depositTradeNumber').attr("disabled",false);
             }

@@ -84,8 +84,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     //保存费用项
     var _this = this;
     laytpl($("#fee_list_tpl").html()).render({
+      prePayDisabled: _this.orderData.prePayAmount == "*",
       prePay: _this.prePay,
+      tailPayDisabled: _this.orderData.tailPayAmount == "*",
       tailPay: _this.tailPay,
+      arrivePayDisabled: _this.orderData.arrivePayAmount == "*",
       arrivePay: _this.arrivePay,
     }, function (html) {
       $("#fee_list_container").html(html);
@@ -638,6 +641,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     var _this = this;
     $("#driver_name").unbind().on("click", function(){
       _this.openSelectDriver();
+    });
+    $("#driver_name").on("blur", function(){
+      $('#match_driver_list').remove();
     });
     $("#select_driver_btn").unbind().on("click", function () {
       _this.openSelectDriverTable();
