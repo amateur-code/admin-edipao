@@ -143,6 +143,36 @@ layui.config({
             }
         }
     });
+    // 获取所有驾照类型
+    var driveLicenceTypeData = parent.driveLicenceTypeData;
+    var optionLicence = "<option value=''>请选择驾照类型</option>";
+    for(var i in driveLicenceTypeData){
+        optionLicence+="<option value='"+driveLicenceTypeData[i]+"'>"+driveLicenceTypeData[i]+"</option>";
+    }
+    $("#driveLicenceType").html(optionLicence);
+    // 获取所有司机状态
+    var driverStatusData = parent.driverStatusData;
+    var optionStatus = "<option value=''>请选择状态</option>";
+    for(var i in driverStatusData){
+        if(driverStatusData[i] =='待命中'){
+            optionStatus+="<option value='"+i+"' selected='''>"+driverStatusData[i]+"</option>";
+        }else{
+            optionStatus+="<option value='"+i+"'>"+driverStatusData[i]+"</option>";
+        }
+    }
+    $("#status").html(optionStatus);
+    // 	获取所有司机类型
+    var driverTypesData = parent.driverTypesData;
+    var optionType = "<option value=''>请选择司机类型</option>";
+    for(var i in driverTypesData){
+        if(driverTypesData[i] =='外调'){
+            optionType+="<option value='"+i+"' selected='''>"+driverTypesData[i]+"</option>";
+        }else{
+            optionType+="<option value='"+i+"'>"+driverTypesData[i]+"</option>";
+        }
+    }
+    $("#driverType").html(optionType);
+    form.render('select');
     // 身份证-正
     uploadImg('idLicenceFrontImg',{'imgType':1,'side':'face'},function (data) {
         var val = data.data.ocrData;
@@ -231,41 +261,6 @@ layui.config({
             elem: '#'+id
         });
     };
-    // 获取所有司机状态
-    var driverStatusData = parent.driverStatusData;
-    var optionStatus = "<option value=''>请选择状态</option>";
-    for(var i in driverStatusData){
-        if(driverStatusData[i] =='待命中'){
-            optionStatus+="<option value='"+i+"' selected='''>"+driverStatusData[i]+"</option>";
-        }else{
-            optionStatus+="<option value='"+i+"'>"+driverStatusData[i]+"</option>";
-        }
-    }
-    $("#status").html(optionStatus);
-    form.render('select');
-    // 	获取所有司机类型
-    var driverTypesData = parent.driverTypesData;
-
-    var optionType = "<option value=''>请选择司机类型</option>";
-    for(var i in driverTypesData){
-        if(driverTypesData[i] =='外调'){
-            optionType+="<option value='"+i+"' selected='''>"+driverTypesData[i]+"</option>";
-        }else{
-            optionType+="<option value='"+i+"'>"+driverTypesData[i]+"</option>";
-        }
-    }
-    $("#driverType").html(optionType);
-    form.render('select');
-
-    // 获取所有驾照类型
-     var driveLicenceTypeData = parent.driveLicenceTypeData;
-    var optionLicence = "<option value=''>请选择驾照类型</option>";
-    for(var i in driveLicenceTypeData){
-        optionLicence+="<option value='"+driveLicenceTypeData[i]+"'>"+driveLicenceTypeData[i]+"</option>";
-    }
-    $("#driveLicenceType").html(optionLicence);
-    form.render('select');
-
 
     // 添加心愿路线
     $('#addWishJourney').click(function () {
