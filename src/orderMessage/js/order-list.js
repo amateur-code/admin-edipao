@@ -188,6 +188,8 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         bindVerify: function(){
             $(".list_arrive_verify").unbind().on("click", function(e){
                 var field = e.target.dataset.field;
+                var orderId = e.target.dataset.orderid;
+
                 var orderNo = e.target.dataset.order;
                 var type = e.target.dataset.type*1;
                 var key = "prePayFeeItems";
@@ -234,7 +236,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                                     method: "post",
                                     data: {
                                         loginStaffId: user.staffId,
-                                        orderNo: orderNo,
+                                        id: orderId,
                                         type: type,
                                         approvalResult: data.result * 1,
                                         approvalRemark: data.remark
@@ -262,6 +264,8 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         bindPrePay: function () {
             $(".list_arrive_prepay").unbind().on("click", function (e) {
                 var field = e.target.dataset.field;
+                var orderId = e.target.dataset.orderid;
+
                 var orderNo = e.target.dataset.order;
                 var type = e.target.dataset.type*1;
                 var key = "prePayFeeItems";
@@ -306,7 +310,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                                     url: "/admin/order/approval/pay",
                                     data: {
                                         loginStaffId: user.staffId,
-                                        orderNo: orderNo,
+                                        id: orderId,
                                         type: type
                                     }
                                 }).done(function (res) {
@@ -332,6 +336,8 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         bindPay: function () {
             $(".list_arrive_pay").unbind().on("click", function (e) {
                 var field = e.target.dataset.field;
+                var orderId = e.target.dataset.orderid;
+
                 var orderNo = e.target.dataset.order;
                 var type = e.target.dataset.type * 1;
                 var key = "prePayFeeItems";
@@ -377,7 +383,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                                     url: "/admin/order/approval/pay",
                                     data: {
                                         loginStaffId: user.staffId,
-                                        orderNo: orderNo,
+                                        id: orderId,
                                         type: type
                                     }
                                 }).done(function (res) {
@@ -404,6 +410,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             var _this = this;
             $(".list_picture_verify").unbind().on("click", function (e) {
                 var orderNo = e.target.dataset.order;
+                var orderId = e.target.dataset.orderid;
                 var key = e.target.dataset.key;
                 var type = e.target.dataset.type*1;
                 method.getOrder(orderNo).done(function (res) {
@@ -431,9 +438,9 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                                         url: "/admin/order/approval/image",
                                         method: "post",
                                         data: {
-                                            loginStaffId: _this.user.staffId,
+                                            loginStaffId: user.staffId,
                                             type: type,
-                                            orderNo: orderNo,
+                                            id: orderId,
                                             approvalResult: data.result * 1,
                                             approvalRemark: data.remark
                                         }
@@ -607,7 +614,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                         }
                     });
                 } else if (layEvent === 'log') {//日志
-                    top.xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.orderNo + '&type=4');
+                    top.xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=4');
                 }
             });
         },
@@ -653,9 +660,9 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         {field: 'driverIdCard', title: '司机身份证', sort: false,minWidth:100, hide: false},
         {
             field: 'prePayAmount', title: '预付款金额', sort: false,minWidth:130, hide: false, templet: function (d) {
-                var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='1' data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
-                var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='1' data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
-                var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
+                var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
+                var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
+                var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var payStatus = "";
                 if (d.prePayApprovalBtn == 1) {
                     payStatus = verifyStr3.replace("{{}}", "-申请支付");
@@ -676,9 +683,9 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         },
         {
             field: 'arrivePayAmount', title: '到付款金额', sort: false,minWidth:120, hide: false, templet: function (d) {
-                var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='2' data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
-                var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='2' data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
-                var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='2' data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
+                var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
+                var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
+                var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var payStatus = "";
                 if (d.arrivePayApprovalBtn == 1) {
                     payStatus = verifyStr3.replace("{{}}", " - 申请支付");
@@ -699,9 +706,9 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         },
         {
             field: 'tailPayAmount', title: '尾款金额', sort: false,minWidth:120, hide: false, templet: function (d) {
-                var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='3' data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
-                var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='3' data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
-                var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='3' data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
+                var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
+                var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
+                var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var payStatus = "";
                 if (d.tailPayApprovalBtn == 1) {
                     payStatus = verifyStr3.replace("{{}}", " - 申请支付");
@@ -730,9 +737,9 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             }
         },
         {field: 'fetchStatus', title: '提车照片', sort: false,minWidth:100, hide: false, templet: function(d){
-            var str = "<a class='list_picture pointer blue list_picture_view' data-order="+ d.orderNo +"  data-number='5' data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str2 = "<a class='list_picture pointer blue list_picture_upload' data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
+            var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='5' data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
+            var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
+            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
             switch(d.fetchStatus*1){
                 case 0: 
@@ -754,9 +761,9 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             return status;
         }},
         {field: 'startAuditStatus', title: '发车单审核状态', sort: false,minWidth:100, hide: false, templet: function(d){
-            var str = "<a class='list_picture pointer blue list_picture_view' data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + " data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str2 = "<a class='list_picture pointer blue list_picture_upload' data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + "  data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-number='6' data-order="+ d.orderNo +"  data-type='1' data-key='startImages' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
+            var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + " data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
+            var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + "  data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
+            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='6' data-order="+ d.orderNo +"  data-type='1' data-key='startImages' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
             switch(d.startAuditStatus*1){
                 case 0:
@@ -781,9 +788,9 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             return status;
         }},
         {field: 'returnAuditStatus', title: '交车单审核状态', sort: false,minWidth:100, hide: false, templet: function(d){
-            var str = "<a class='list_picture pointer blue list_picture_view' data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str2 = "<a class='list_picture pointer blue list_picture_upload' data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-number='3' data-order="+ d.orderNo +" data-type='2' data-key='returnImages' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
+            var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
+            var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
+            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='3' data-order="+ d.orderNo +" data-type='2' data-key='returnImages' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
             switch(d.returnAuditStatus * 1){
                 case 0:
