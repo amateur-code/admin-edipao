@@ -643,7 +643,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
       _this.openSelectDriver();
     });
     $("#driver_name").on("blur", function(){
-      $('#match_driver_list').remove();
+      setTimeout(function(){
+        $('#match_driver_list').hide();
+        $('#match_driver_list').remove();
+      }, 1000);
     });
     $("#select_driver_btn").unbind().on("click", function () {
       _this.openSelectDriverTable();

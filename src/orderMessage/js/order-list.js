@@ -524,7 +524,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 , limit: 20  //每页显示条数
                 , limits: [20, 40] //每页显示条数可选择
                 , request: {
-                    pageName: 'pageNumber' //页码的参数名称，默认：page
+                    pageName: 'pageNo' //页码的参数名称，默认：page
                     , limitName: 'pageSize' //每页数据量的参数名，默认：limit
                 }
                 , where: { loginStaffId: user.staffId }
@@ -680,15 +680,15 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='2' data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='2' data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var payStatus = "";
-                if (d.prePayApprovalBtn == 1) {
+                if (d.arrivePayApprovalBtn == 1) {
                     payStatus = verifyStr3.replace("{{}}", " - 申请支付");
-                } else if (d.prePayApprovalBtn == 2) {
+                } else if (d.arrivePayApprovalBtn == 2) {
                     payStatus = verifyStr.replace("{{}}", " - 审核");
-                } else if (d.prePayApprovalBtn == 3) {
+                } else if (d.arrivePayApprovalBtn == 3) {
                     payStatus = verifyStr2.replace("{{}}", " - 支付");
-                } else if (d.prePayApprovalBtn == 4) {
+                } else if (d.arrivePayApprovalBtn == 4) {
                     payStatus = " - 已支付";
-                }else if(d.prePayApprovalBtn == 0){
+                }else if(d.arrivePayApprovalBtn == 0){
                     payStatus = "";
                 } else {
                     payStatus = " - 非法状态";
