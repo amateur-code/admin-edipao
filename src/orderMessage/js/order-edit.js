@@ -642,6 +642,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     $("#driver_name").unbind().on("click", function(){
       _this.openSelectDriver();
     });
+    $("#driver_name").on("blur", function(){
+      $('#match_driver_list').remove();
+    });
     $("#select_driver_btn").unbind().on("click", function () {
       _this.openSelectDriverTable();
     });
