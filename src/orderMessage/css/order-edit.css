@@ -44,6 +44,9 @@
   padding-top: 10px;
   border-top: 1px solid #EFEEF0;
 }
+.select_driver_btn {
+  display: inline-block;
+}
 #driver_name_select {
   position: relative;
 }
@@ -52,6 +55,8 @@
   width: 100%;
   top: 30px;
   border: 1px solid #e6e6e6;
+  background-color: #fff;
+  z-index: 99;
 }
 #driver_name_select .match_driver_list .driver_item {
   position: relative;

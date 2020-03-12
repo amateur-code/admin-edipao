@@ -73,85 +73,9 @@
                     <div class="driver-report">
                         <div class="title">
                             <text class="desc">司机上报</text>
-                            <text class="add-report">+添加上报</text>
+                            <text class="add-report" id="add-report">+添加上报</text>
                         </div>
-                        <div class="report-list">
-                            <div class="layui-row item">
-                                <div class="layui-col-xs1 tc location-icon">
-                                    <i class="layui-icon layui-icon-location"></i>
-                                </div>
-                                <div class="layui-col-xs9">
-                                    <div class="item-title">
-                                        <text class="it-txt">收费：30元</text>
-                                        <text class="it-del">删除</text>
-                                    </div>
-                                    <div class="location-name">广州市天河区中山大道黄村收费站</div>
-                                </div>
-                                <div class="layui-col-xs2">
-                                    <button class="layui-btn">采纳</button>
-                                </div>
-                            </div>
-                            <div class="layui-row item">
-                                <div class="layui-col-xs1 tc location-icon">
-                                    <i class="layui-icon layui-icon-location"></i>
-                                </div>
-                                <div class="layui-col-xs9">
-                                    <div class="item-title">
-                                        <text class="it-txt">收费：30元</text>
-                                        <text class="it-del">删除</text>
-                                    </div>
-                                    <div class="location-name">广州市天河区中山大道黄村收费站</div>
-                                </div>
-                                <div class="layui-col-xs2">
-                                    <button class="layui-btn layui-btn-danger">取消采纳</button>
-                                </div>
-                            </div>
-                            <div class="layui-row item">
-                                <div class="layui-col-xs1 tc location-icon">
-                                    <i class="layui-icon layui-icon-location"></i>
-                                </div>
-                                <div class="layui-col-xs9">
-                                    <div class="item-title">
-                                        <text class="it-txt">收费：30元</text>
-                                        <text class="it-del">删除</text>
-                                    </div>
-                                    <div class="location-name">广州市天河区中山大道黄村收费站</div>
-                                </div>
-                                <div class="layui-col-xs2">
-                                    <button class="layui-btn layui-btn-danger">取消采纳</button>
-                                </div>
-                            </div>
-                            <div class="layui-row item">
-                                <div class="layui-col-xs1 tc location-icon">
-                                    <i class="layui-icon layui-icon-location"></i>
-                                </div>
-                                <div class="layui-col-xs9">
-                                    <div class="item-title">
-                                        <text class="it-txt">收费：30元</text>
-                                        <text class="it-del">删除</text>
-                                    </div>
-                                    <div class="location-name">广州市天河区中山大道黄村收费站</div>
-                                </div>
-                                <div class="layui-col-xs2">
-                                    <button class="layui-btn layui-btn-danger">取消采纳</button>
-                                </div>
-                            </div>
-                            <div class="layui-row item">
-                                <div class="layui-col-xs1 tc location-icon">
-                                    <i class="layui-icon layui-icon-location"></i>
-                                </div>
-                                <div class="layui-col-xs9">
-                                    <div class="item-title">
-                                        <text class="it-txt">收费：30元</text>
-                                        <text class="it-del">删除</text>
-                                    </div>
-                                    <div class="location-name">广州市天河区中山大道黄村收费站</div>
-                                </div>
-                                <div class="layui-col-xs2">
-                                    <button class="layui-btn layui-btn-danger">取消采纳</button>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="report-list" id="report-list"></div>
                         <div class="footer-laypage" id="footer-laypage"></div>
                     </div>
                 </div>
@@ -163,121 +87,196 @@
     </div>
 
     <!-- 司机上传弹窗 -->
-    <form class="layui-form report-form" id="driver-report-dialog" action="">
+    <form class="layui-form report-form" id="driver-report-dialog" lay-filter="report-form" action="">
         <div class="report-type-txt">上报类型</div>
         <div class="layui-form-item">
             <div class="layui-input-inline">
-                <select name="interest" lay-filter="aihao">
-                    <option value=""></option>
-                    <option value="0">限高</option>
-                    <option value="1" selected="">限行</option>
-                    <option value="2">收费</option>
-                    <option value="3">拆车</option>
+                <select name="driverReportType" lay-filter="driverReportType">
+                    <option value="">请选择类型</option>
+                    <option value="1">限高</option>
+                    <option value="2">限行</option>
+                    <option value="3">收费</option>
+                    <option value="4">拆车</option>
                 </select>
             </div>
         </div>
-        <div class="report-detail">
-            <div class="limit-height">
-                <!-- <div class="rd-item">
-                    <div class="report-type-txt">上限高度</div>
-                    <div class="layui-form-item">
-                        <div class="layui-input-inline">
-                            <select name="interest" lay-filter="aihao">
-                                <option value=""></option>
-                                <option value="0">1米</option>
-                                <option value="1" selected="">2米</option>
-                                <option value="2">3米</option>
-                                <option value="3">4米</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="rd-item">
-                    <div class="report-type-txt">限高时间</div>
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="startTime" placeholder="请选择时间范围">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="rd-item">
-                    <div class="report-type-txt">限高位置</div>
-                    <div class="select-location">
-                        <text class="location-name">请选择位置</text>
-                        <button type="button" class="layui-btn layui-btn-sm select-btn" id="btn_select_document">选择</button>
-                    </div>
-                </div> -->
-                <!-- <div class="rd-item">
-                    <div class="report-type-txt">金额</div>
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <div class="layui-input-inline">
-                                <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="0.00" class="layui-input">
-                            </div>
-                            <text class="unit">元</text>
-                        </div>
-                    </div>
-                </div>
-                <div class="rd-item">
-                    <div class="report-type-txt">收费位置</div>
-                    <div class="select-location">
-                        <text class="location-name">请选择位置</text>
-                        <button type="button" class="layui-btn layui-btn-sm select-btn" id="btn_select_document">选择</button>
-                    </div>
-                </div> -->
-                <div class="rd-item">
-                    <div class="report-type-txt">金额</div>
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <div class="layui-input-inline">
-                                <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="0.00" class="layui-input">
-                            </div>
-                            <text class="unit">元</text>
-                        </div>
-                    </div>
-                </div>
-                <div class="rd-item">
-                    <div class="report-type-txt">拆车位置</div>
-                    <div class="select-location">
-                        <text class="location-name">请选择位置</text>
-                        <button type="button" class="layui-btn layui-btn-sm select-btn" id="btn-break-car-location">选择</button>
-                    </div>
-                </div>
-                <div class="rd-item">
-                    <div class="report-type-txt">联系人姓名</div>
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <div class="layui-input-inline">
-                                <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入联系人姓名" class="layui-input">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="rd-item">
-                    <div class="report-type-txt">联系电话</div>
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <div class="layui-input-inline">
-                                <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入联系电话" class="layui-input">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="report-detail" id="add-report-detail">
+            
         </div>
     </form>
     <div class="select-map-dialog" id="select-map-dialog">
         <div id="select-map"></div>
         <div class="select-location">
-            <input class="location-name" name="keyword" id="seachLocation" placeholder="请输入位置" value=""/>
-            <button type="button" class="layui-btn layui-btn-sm select-btn" id="btn-break-car-location">搜索</button>
+            <input class="location-name" name="keyword" id="seachLocation" autocomplete="off" placeholder="请输入位置" value=""/>
+            <button type="button" class="layui-btn layui-btn-sm select-btn" id="regionMapPoint">搜索</button>
         </div>
     </div>
 </body>
-<script type="text/html" id="edit">
+<!-- 编辑按钮模板 -->
+<script id="edit" type="text/html">
     <a class="edit" lay-event="edit">修改</a>
+</script>
+<!-- 司机上报列表模板 -->
+<script id="driverReportTpl" type="text/html">
+    {{#  layui.each(d.reports, function(index, item){ }}
+    <div class="layui-row item">
+        <div class="layui-col-xs1 tc location-icon">
+            <i class="layui-icon layui-icon-location"></i>
+        </div>
+        <div class="layui-col-xs9">
+            <div class="item-title">
+                {{#  if(item.type == 1){ }}
+                    <text class="it-txt">限高：{{item.height}}米</text>
+                {{# } else if(item.type == 2){ }}
+                    <text class="it-txt">限行：{{item.startTime}} - {{item.endTime}}</text>
+                {{# } else if(item.type == 3) { }}
+                    <text class="it-txt">收费：{{item.price}}远</text>
+                {{# } else { }}
+                    <text class="it-txt">拆车：{{item.price}}元</text>
+                {{# } }}
+                {{#  if(item.status != 4){ }}
+                    <text class="it-del" data-id="{{item.id}}">删除</text>
+                {{# } }}
+            </div>
+            <div class="location-name">{{item.address}}</div>
+        </div>
+        <div class="layui-col-xs2">
+            {{#  if(item.status && item.status == 1){ }}
+                <button class="layui-btn take-report" data-id="{{item.id}}">采纳</button>
+            {{# } else if(item.status && item.status == 2){ }}
+                <button class="layui-btn layui-btn-danger cancel-take-report" data-id="{{item.id}}">取消采纳</button>
+            {{# } else if(item.status && item.status == 3){ }}
+                <button class="layui-btn take-report" data-id="{{item.id}}">采纳</button>
+            {{# } else { }}
+                <button class="layui-btn take-report layui-btn-disabled" data-id="{{item.id}}">已删除</button>
+            {{# } }}
+            
+        </div>
+    </div>
+    {{#  }); }}
+    {{#  if(d.reports.length === 0){ }}
+        <div class="no-report">无数据</div>
+    {{#  } }}
+</script>
+<!-- 添加上报模板 -->
+<script id="addReportTpl" type="text/html">
+    <div class="limit-height">
+        {{#  if(d.type == 1){ }}
+            <div class="rd-item">
+                <div class="report-type-txt">上限高度</div>
+                <div class="layui-form-item">
+                    <div class="layui-input-inline">
+                        <select name="height" lay-filter="height">
+                            <option value="" selected=""></option>
+                            <option value="2">2米</option>
+                            <option value="2.4">2.4米</option>
+                            <option value="2.8">2.8米</option>
+                            <option value="3">3米</option>
+                            <option value="3.5">3.5米</option>
+                            <option value="4">4米</option>
+                            <option value="4.2">4.2米</option>
+                            <option value="4.5">4.5米</option>
+                            <option value="5">6米</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="rd-item">
+                <div class="report-type-txt">限高时间</div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="startTime" name="time" placeholder="请选择时间范围">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rd-item">
+                <div class="report-type-txt">限高位置</div>
+                <div class="select-location">
+                    <text class="location-name">请选择位置</text>
+                    <button type="button" class="layui-btn layui-btn-sm select-btn" id="selectMapLocation">选择</button>
+                </div>
+            </div>
+        {{# } else if(d.type == 2){ }}
+            <div class="rd-item">
+                <div class="report-type-txt">限行时间</div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="startTime" name="time" placeholder="请选择时间范围">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rd-item">
+                <div class="report-type-txt">限行位置</div>
+                <div class="select-location">
+                    <text class="location-name">请选择位置</text>
+                    <button type="button" class="layui-btn layui-btn-sm select-btn" id="selectMapLocation">选择</button>
+                </div>
+            </div>
+        {{# } else if(d.type == 3) { }}
+            <div class="rd-item">
+                <div class="report-type-txt">金额</div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" name="price" lay-verify="title" autocomplete="off" placeholder="0.00" class="layui-input">
+                        </div>
+                        <text class="unit">元</text>
+                    </div>
+                </div>
+            </div>
+            <div class="rd-item">
+                <div class="report-type-txt">收费位置</div>
+                <div class="select-location">
+                    <text class="location-name">请选择位置</text>
+                    <button type="button" class="layui-btn layui-btn-sm select-btn" id="selectMapLocation">选择</button>
+                </div>
+            </div>
+        {{# } else { }}
+            <div class="rd-item">
+                <div class="report-type-txt">金额</div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" name="price" lay-verify="title" autocomplete="off" placeholder="0.00" class="layui-input">
+                        </div>
+                        <text class="unit">元</text>
+                    </div>
+                </div>
+            </div>
+            <div class="rd-item">
+                <div class="report-type-txt">拆车位置</div>
+                <div class="select-location">
+                    <text class="location-name">请选择位置</text>
+                    <button type="button" class="layui-btn layui-btn-sm select-btn" id="selectMapLocation">选择</button>
+                </div>
+            </div>
+            <div class="rd-item">
+                <div class="report-type-txt">联系人姓名</div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" name="contactName" lay-verify="title" autocomplete="off" placeholder="请输入联系人姓名" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rd-item">
+                <div class="report-type-txt">联系电话</div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" name="contactPhone" lay-verify="title" autocomplete="off" placeholder="请输入联系电话" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{# } }}
+        
+    </div>
 </script>
 
 <script src="https://mapapi.careland.com.cn/api/?key=6012dcd6278a2d4db3840604&v=1.3"></script>

@@ -7,7 +7,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 
   function View() {
     var qs = edipao.urlGet();
-    this.orderId = qs.orderId;
+    this.orderNo = qs.orderNo;
     this.action = qs.action || "";
     this.user = JSON.parse(sessionStorage.user);
     this.prePay = [];
@@ -52,9 +52,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     setData: function (data) {
        //渲染订单数据
       var _this =this;
-      _this.prePay = data.prePayFeeItems || [];
-      _this.tailPay = data.tailPayFeeItems || [];
-      _this.arrivePay = data.arrivePayFeeItems || [];
+      _this.prePay = JSON.parse(data.prePayFeeItems) || [];
+      _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
+      _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
       _this.setFeeList();
       laytpl($("#base_info_tpl").html()).render(data, function(html){
         $("#base_info").html(html);
@@ -69,7 +69,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       var imageStr = $("#image_tpl").html();
       data.truckDTOList.forEach(function (item, index) {
         if(!item.fetchImages) item.fetchImages = "";
-        item.fetchImages = item.fetchImages.slice(",");
+        item.fetchImages = item.fetchImages.split(",");
         laytpl(imageStr).render(item, function (imageHtml) {
           var filterStr = "form_car_" + index;
           _this.carFormList.push(filterStr);
@@ -94,7 +94,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         method: "GET",
         data: {
           loginStaffId: _this.user.staffId,
-          orderNo: _this.orderId
+          orderNo: _this.orderNo
         }
       });
     }

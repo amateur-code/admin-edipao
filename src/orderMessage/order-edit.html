@@ -114,6 +114,7 @@
                 </div>
                 <div class="form_item_container">
                     <div class="layui-form-item layui-row">
+                        <input class="hide" name="id" type="text">
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">车辆vin码</label><br>
                             <div class="layui-input-inline">
@@ -436,12 +437,17 @@
                     </div>
                 </div>
                 <div id="form_fee_list" class="form_item_container">
+                    <input class="hide" name="driverId" type="text">
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">司机姓名</label><br>
-                            <div id="driver_name_select" class="layui-input-inline">
-                                <input id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
-                                
+                            <div id="driver_name_select" class="layui-input-inline layui-row">
+                                <div class="layui-inline layui-col-md9">
+                                    <input id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
+                                </div>
+                                <div class="layui-inline layui-col-md2">
+                                    <button id="select_driver_btn" type="button" class="layui-btn layui-btn-sm layui-btn-fluid">选择</button>
+                                </div>
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -489,8 +495,8 @@
     <script id="driver_list_tpl" type="text/html">
         <div id="match_driver_list" class="match_driver_list">
             {{#  layui.each(d.list, function(index, item){ }}
-            <div class="driver_item">
-                <span data-index="{{index}}" class="driver_name">{{item.name}}</span>
+            <div data-index="{{index}}" class="driver_item">
+                <span class="driver_name">{{item.name}}</span>
             </div>
             {{#  }); }}
         </div>
@@ -505,7 +511,7 @@
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.prePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
-                        <label class="layui-form-label text_left form_label">{{item.key}}：</label>
+                        <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
                         <div class="layui-input-inline">
                             <input value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
@@ -523,7 +529,7 @@
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.arrivePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
-                        <label class="layui-form-label text_left form_label">{{item.key}}：</label>
+                        <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
                         <div class="layui-input-inline">
                             <input value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
@@ -541,7 +547,7 @@
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.tailPay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
-                        <label class="layui-form-label text_left form_label">{{item.key}}：</label>
+                        <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
                         <div class="layui-input-inline">
                             <input value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
@@ -579,8 +585,10 @@
             </form>
         </div>
     </script>
-    <div lay-filter="cars_table" id="cars_table"></div>
-    <div lay-filter="drivers_table" id="drivers_table"></div>
+    <div class="">
+        <div lay-filter="cars_table" id="cars_table"></div>
+        <div lay-filter="drivers_table" id="drivers_table"></div>
+    </div>
 </body>
 <script src="./js/order-edit.js"></script>
 
