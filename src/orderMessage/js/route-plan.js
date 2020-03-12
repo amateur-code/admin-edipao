@@ -21,33 +21,102 @@ tableFilter: 'TableFilter/tableFilter'
         this.guideLineId =  edipao.urlGet().guideLineId;
         this.driverReportPoint = [];
         this.pageNumber = 1;
-        this.pageSize = 10;
+        this.pageSize = 5;
         this.address = '';
         this.loc = {};
+        this.line = '';
+        this.map = null;
         console.log(this.guideLineId) 
     }
 
     _routePlan.prototype = {
         // 初始化
         init: function(){
-            this.getlineOrderData();
-            this.getDriverReportList();
             this.renderPageMap();
+            this.getDriverReportList();
+        },
+        // 渲染地图
+        renderPageMap: function(){
+            //凯立德地图API功能
+            var point = new Careland.Point(419364916, 143908009);	//创建坐标点
+            var map = new Careland.Map('map', point, 15); 			//实例化地图对象
+            map.enableAutoResize();                                 //启用自动适应容器尺寸变化
+            map.load();
+            this.map = map;
+
+            this.getlineOrderData();
         },
         // 获取线路数据
         getlineOrderData(){
             var _t = this;
             edipao.request({
                 type: 'GET',
-                url: '/api/guideline/get',
+                url: '/admin/line/detail',
                 data: $.extend({}, _t.request, {
-                    lineIds: this.guideLineId
+                    guideLineId: this.guideLineId
                 })
             }).done(function(res) {
                 if (res.code == 0) {
-                    
+                    console.log(res);
+                    // res.data.lineSource = 1;
+                    var getTabConentTpl = tabConentTpl.innerHTML,
+                        tabConent = document.getElementById('tabConent');
+                    laytpl(getTabConentTpl).render(res.data, function(html){
+                        tabConent.innerHTML = html;
+                    });
+                    _t.line = JSON.parse(res.data.line);
+                    _t.bindLineEvents();
                 }
             })
+        },
+        // 地图规划
+        updateLine: function(){
+            var _t = this;
+            if(!_t.map) return;
+            $.getJSON("http://api.careland.com.cn/api/v1/navi/routeplan?origin=410817199,81362500&destination=419364916,143908009&prefer=1-2-16&evade=32&avoid=2&callback=&ak=6012dcd6278a2d4db3840604",function(json){          
+                // 提交保存json
+                if(json.errorCode != 0 ){
+                    layer.msg(json.errorMessage, {
+                        time: 1500,
+                    });
+                    return;
+                }
+                _t.paintLine(_t.map, json.routeInfo[0].partPoints);
+            });
+            
+        },
+        // 根据路径规划划线 起始位置图标展示
+        paintLine: function(ctx, partPoints){
+            var points = [];
+            var pointsString = partPoints.join(';');
+            var newCoords = pointsString.split(';');
+            newCoords.pop()
+            layui.each(newCoords, function(i, v){
+                var lng_lat = v.split(',');
+                points.push(new Careland.Point(lng_lat[0], lng_lat[1]));
+            })
+
+            var point = new Careland.Point(419369516, 143908009);
+            console.log(points[0])
+            var layerPoint = new Careland.Layer('point', 'layer');		    //创建点图层
+            ctx.addLayer(layerPoint);
+            var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'../../images/start.png',fontColor:'#FFF'});
+            var marker = new Careland.Marker('image');
+            marker.setStyle(style);	
+            marker.setPoint(points[0]);	
+            marker.setText('转')
+            layerPoint.add(marker);
+
+            var layer = new Careland.Layer('polyline', 'layer');		           //创建折线图层
+            ctx.addLayer(layer);										           //将图层添加到地图上
+            var polyline = new Careland.Polyline();  							   //创建折线
+            polyline.setPoints(points);					//设置折线经过的点
+            ctx.setViewport(points, [100, 100, 100, 100])
+            polyline.setStyle(new Careland.LineStyle({color:'#ff0000',size:8,opacity:100}));		//设置折线的样式
+            layer.add(polyline);
+
+            
+            
         },
         // 获取司机上报数据
         // status 1上报待审2已采纳3取消采纳4已删除
@@ -63,7 +132,9 @@ tableFilter: 'TableFilter/tableFilter'
                 })
             }).done(function(res) {
                 if (res.code == 0) {
-                    _t.setLayPage(res.data.count);
+                    if(_t.pageNumber == 1){
+                        _t.setLayPage(res.data.count);
+                    }
                     var getDriverReportTpl = driverReportTpl.innerHTML,
                     reportList = document.getElementById('report-list');
                     laytpl(getDriverReportTpl).render(res.data, function(html){
@@ -83,27 +154,20 @@ tableFilter: 'TableFilter/tableFilter'
                 layout: ['count', 'prev', 'page', 'next'],
                 limit: _t.pageSize,
                 jump: function(obj, first){
-                    if(first) return;
                     _t.pageNumber = obj.curr;
+                    if(first) return;
                     _t.getDriverReportList();
                 }
             });
         },
-        // 渲染地图
-        renderPageMap: function(){
-            //凯立德地图API功能
-            var point = new Careland.Point(419364916, 143908009);	//创建坐标点
-            var map = new Careland.Map('map', point, 15); 			//实例化地图对象
-            map.enableAutoResize();                                 //启用自动适应容器尺寸变化
-            map.load(); 
-        },
+        
         // 监听司机上报类型的选择 和表单提交
         bindDriverReportType(){
             var _t = this;
             form.on('select(driverReportType)', function(data){
                 _t.driverReportType =  data.value;
                 var getAddReportTpl = addReportTpl.innerHTML,
-                addReportDetail = document.getElementById('add-report-detail');
+                    addReportDetail = document.getElementById('add-report-detail');
                 laytpl(getAddReportTpl).render({
                     type: data.value
                 }, function(html){
@@ -168,11 +232,44 @@ tableFilter: 'TableFilter/tableFilter'
                 })
             }).done(function(res) {
                 if(res.code == 0){
+                    var txt = '已删除';
+                    switch(status){
+                        case 4:
+                            txt = '已删除';
+                            break;
+                        case 2:
+                            txt = '已采纳';
+                            break; 
+                        case 3:
+                            txt = '取消采纳';
+                            break;  
+                    }
+                    layer.msg(txt, {
+                        time: 1500,
+                    });
                     _t.getDriverReportList();
                 }
             })
         },
-        // 绑定页面事件
+         // 绑定tab事件
+         bindLineEvents: function(){
+            var _t = this;
+            $('.limit-choose').off('click').on('click', function(e){
+                layer.msg('该功能未开放', {
+                    time: 1500,
+                });
+            })
+
+            $('.choose-map-line').off('click').on('click', function(e){
+                _t.updateLine();
+            })
+
+            $('.playLine').off('click').on('click', function(e){
+                if(!_t.line) return;
+                _t.paintLine(_t.map, _t.line.routeInfo[0].partPoints);
+            })
+        },
+        // 绑定司机上报页面事件
         bindEvents: function(){
             var _t = this;
             $('#add-report').off('click').on('click', function(){
@@ -212,6 +309,7 @@ tableFilter: 'TableFilter/tableFilter'
             $('.cancel-take-report').off('click').on('click', function(e){
                 _t.updateDriverReportStatus($(this).data('id'), 3);
             })
+
         },
         // 选择上报点地址
         selectReportAddress: function(){
@@ -248,7 +346,7 @@ tableFilter: 'TableFilter/tableFilter'
                         ac.setLocation(map);
                         ac.setInputForm('seachLocation');
                         ac.addEventListener("onConfirm",function(e){
-                            console.log(e.item.poi.pointGb)
+                            console.log(e.item)
                             _t.address = e.item.poi.name;
                             _t.loc = {
                                 name: e.item.poi.name,
@@ -257,10 +355,11 @@ tableFilter: 'TableFilter/tableFilter'
                                 lng: e.item.poi.pointGb.lng,
                                 GbPoint: e.item.poi.pointGb
                             }
+                            map.setCenter(e.item.poi.pointGb);
                             ac.hide();
                         });
 
-                        _t.regionMapView(map);
+                        // _t.regionMapView(map);
                     }
                 })
             })
