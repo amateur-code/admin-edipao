@@ -9,8 +9,3 @@
     color: white*/
     background: #f2f2f2;
 }
-
-.layui-input:disabled {
-    background: #eee;
-    cursor: not-allowed;
-}
