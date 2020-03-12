@@ -587,20 +587,20 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 var verifyStr2 = "<a class='table_a list_arrive_pay' data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a list_arrive_prepay' data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var payStatus = "";
-                if (d.prePayStatus == 1) {
-                    payStatus = verifyStr3.replace("{{}}", "申请支付");
-                } else if (d.prePayStatus == 2) {
-                    payStatus = verifyStr.replace("{{}}", "审核");
-                } else if (d.prePayStatus == 3) {
-                    payStatus = verifyStr2.replace("{{}}", "支付");
-                } else if (d.prePayStatus == 4) {
-                    payStatus = "已支付";
-                }else if(d.prePayStatus == 0){
+                if (d.prePayApprovalBtn == 1) {
+                    payStatus = verifyStr3.replace("{{}}", "-申请支付");
+                } else if (d.prePayApprovalBtn == 2) {
+                    payStatus = verifyStr.replace("{{}}", "-审核");
+                } else if (d.prePayApprovalBtn == 3) {
+                    payStatus = verifyStr2.replace("{{}}", "-支付");
+                } else if (d.prePayApprovalBtn == 4) {
+                    payStatus = "-已支付";
+                }else if(d.prePayApprovalBtn == 0){
                     payStatus = "";
                 } else {
-                    payStatus = "非法状态";
+                    payStatus = "-非法状态";
                 }
-                return d.prePayAmount + "元" + "/" + d.prePayOil + "升-" + payStatus;
+                return d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus;
             }
         },
         {
@@ -609,21 +609,21 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 var verifyStr2 = "<a class='table_a list_arrive_pay' data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a list_arrive_prepay' data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var payStatus = "";
-                if (d.arrivePayStatus == 1) {
-                    payStatus = verifyStr3.replace("{{}}", "申请支付");
-                } else if (d.arrivePayStatus == 2) {
-                    payStatus = verifyStr.replace("{{}}", "审核");
-                } else if (d.arrivePayStatus == 3) {
-                    payStatus = verifyStr2.replace("{{}}", "支付");
-                } else if (d.arrivePayStatus == 4) {
-                    payStatus = "已支付";
-                }else if(d.arrivePayStatus == 0){
+                if (d.prePayApprovalBtn == 1) {
+                    payStatus = verifyStr3.replace("{{}}", " - 申请支付");
+                } else if (d.prePayApprovalBtn == 2) {
+                    payStatus = verifyStr.replace("{{}}", " - 审核");
+                } else if (d.prePayApprovalBtn == 3) {
+                    payStatus = verifyStr2.replace("{{}}", " - 支付");
+                } else if (d.prePayApprovalBtn == 4) {
+                    payStatus = " - 已支付";
+                }else if(d.prePayApprovalBtn == 0){
                     payStatus = "";
                 } else {
-                    payStatus = "非法状态";
+                    payStatus = " - 非法状态";
 
                 }
-                return d.arrivePayAmount + "元-" + payStatus;
+                return d.arrivePayAmount + "元" + payStatus;
             }
         },
         {
@@ -632,23 +632,22 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 var verifyStr2 = "<a class='table_a list_arrive_pay' data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a list_arrive_prepay' data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var payStatus = "";
-                if (d.tailPayStatus == 1) {
-                    payStatus = verifyStr3.replace("{{}}", "申请支付");
-                } else if (d.tailPayStatus == 2) {
-                    payStatus = verifyStr.replace("{{}}", "审核");
-                } else if (d.tailPayStatus == 3) {
-                    payStatus = verifyStr2.replace("{{}}", "支付");
-                } else if (d.tailPayStatus == 4) {
-                    payStatus = "已支付";
-                }else if(d.tailPayStatus == 0){
+                if (d.tailPayApprovalBtn == 1) {
+                    payStatus = verifyStr3.replace("{{}}", " - 申请支付");
+                } else if (d.tailPayApprovalBtn == 2) {
+                    payStatus = verifyStr.replace("{{}}", " - 审核");
+                } else if (d.tailPayApprovalBtn == 3) {
+                    payStatus = verifyStr2.replace("{{}}", " - 支付");
+                } else if (d.tailPayApprovalBtn == 4) {
+                    payStatus = " - 已支付";
+                }else if(d.tailPayApprovalBtn == 0){
                     payStatus = "";
                 } else {
-                    payStatus = "非法状态";
+                    payStatus = " - 非法状态";
                 }
-                return d.tailPayAmount + "元-" + payStatus;
+                return d.tailPayAmount + "元" + payStatus;
             }
         },
-
         {
             field: 'settleWay', title: '结算方式', sort: false,minWidth:100, hide: true, templet: function (d) {
                 if (d.settleWay == 1) {
@@ -664,14 +663,14 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             var str3 = "<a class='list_picture list_picture_verify' data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
             switch(d.fetchStatus*1){
-                case 0:
+                case 0: 
                     status = "未上传" + str2.replace("{{}}"," 上传");
                     break;
                 case 1:
                     status = "未上传" + str2.replace("{{}}"," 上传");
                     break;
                 case 2:
-                    status = str.replace("{{}}","查看")+str3.replace("{{}}","审核");
+                    status = str.replace("{{}}","查看")+str3.replace("{{}}"," 审核");
                     break;
                 case 3:
                     status = str.replace("{{}}","查看");
@@ -695,7 +694,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                     status = "未上传" + str2.replace("{{}}"," 上传");
                     break;
                 case 2:
-                    status = str.replace("{{}}","查看")+str3.replace("{{}}","审核");
+                    status = str.replace("{{}}","查看");
                     break;
                 case 3:
                     status = str.replace("{{}}","查看");
@@ -704,6 +703,9 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                     status = "已驳回";
                     break;
             }
+            if(d.startApprovalBtn * 1 == 1){
+                status += str3.replace("{{}}"," 审核");
+            }
             return status;
         }},
         {field: 'returnAuditStatus', title: '交车单审核状态', sort: false,minWidth:100, hide: false, templet: function(d){
@@ -711,7 +713,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             var str2 = "<a class='list_picture' data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture list_picture_verify' data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
-            switch(d.returnAuditStatus*1){
+            switch(d.returnAuditStatus * 1){
                 case 0:
                     status = "未上传" + str2.replace("{{}}"," 上传");
                     break;
@@ -719,7 +721,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                     status = "未上传" + str2.replace("{{}}"," 上传");
                     break;
                 case 2:
-                    status = str.replace("{{}}","查看")+str3.replace("{{}}","审核");
+                    status = str.replace("{{}}","查看");
                     break;
                 case 3:
                     status = str.replace("{{}}","查看");
@@ -727,6 +729,9 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 case 4:
                     status = "已驳回";
                     break;
+            }
+            if(d.returnAuditStatus * 1 == 1){
+                status += str3.replace("{{}}"," 审核");
             }
             return status;
         }},
