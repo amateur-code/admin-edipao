@@ -125,8 +125,14 @@
                     if(res.data){
                         var editData = JSON.parse(res.data.modifyAfterJson)
                         check = editData.newMap
-                        check.supplierTypeName = SupplierTypeConfig[check.supplierType]
-                        check.statusDesc = StatusDescConfig[check.status]
+                        layui.each(check,function(key, value) {
+                            if(key == 'supplierType'){
+                                check.supplierTypeName = SupplierTypeConfig[check.supplierType]
+                            }else if(key == 'status'){
+                                check.statusDesc = StatusDescConfig[check.status]
+                            }
+                            check[key] = value || '--'
+                        });
                     }
                     render()
                 }
@@ -144,7 +150,7 @@
                 if (res.code == 0) {
                 	res.data.supplierTypeName = SupplierTypeConfig[res.data.supplierType]
                 	detail = res.data;
-                	if(detail.status == 0){
+                	if(detail.needApproval){
 						waitCheck();
                 	}else{
                 		render()
