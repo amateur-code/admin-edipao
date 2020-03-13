@@ -105,10 +105,13 @@ layui.config({
         },
         accountNumberVerify: function(value) {
             if(value!=''){
-                var reg = /^[+]{0,1}(\d+)$/;
+                var reg = /^[1-9]\d*$/;
                 var flag = reg.test(value);
                 if(!flag){
-                    return '请输入正整数';
+                    return '请输入正确的银行卡账号';
+                }
+                if(value.length>20){
+                    return '银行卡账号不能超过20个字符';
                 }
             }
         },
