@@ -15,8 +15,8 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
         { field: 'deposit', title: '押金' },
         { field: 'depositStatus', title: '押金状态' },
         { field: 'licenceWarn', title: '证件预警' },
-        { field: 'status', title: '司机状态' },
-        { field: 'approvalFlag', title: '审核状态' }
+        { field: 'status', title: '司机状态' }
+        // { field: 'approvalFlag', title: '审核状态' }
     ];
     laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
         document.getElementById('itemList').innerHTML = html;
