@@ -1,4 +1,4 @@
-layui.use(['jquery', 'upload','form','laydate'], function(){
+layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
     var $ = layui.jquery,
         edipao = layui.edipao;
     form = layui.form;
@@ -25,7 +25,6 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
     }
     // 获取详情
     var params = edipao.urlGet();
-
     edipao.request({
         type: 'GET',
         url: '/admin/driver/info/getDriver',

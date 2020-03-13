@@ -42,32 +42,11 @@
                     <!-- tabs切换 -->
                     <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
                         <ul class="layui-tab-title">
-                            <li class="layui-this">订单轨迹</li>
+                            <li>订单轨迹</li>
                             <li>导入轨迹</li>
-                            <li>地图规划</li>
+                            <li class="layui-this">地图规划</li>
                         </ul>
-                        <div class="layui-tab-content" style="height: 150px;">
-                            <div class="layui-tab-item layui-show">
-                                <div class="upload-handler">
-                                    <text class="label">订单号：</text>
-                                    <text class="upload-name">请选择订单号</text>
-                                    <button type="button" class="layui-btn layui-btn-lg upload-btn" id="btn_select_document">选择</button>
-                                </div>
-                                <button class="layui-btn layui-btn-lg choose-btn">使用该方式</button>
-                            </div>
-                            <div class="layui-tab-item">
-                                <div class="upload-handler">
-                                    <text class="label">轨迹数据：</text>
-                                    <text class="upload-name">请选择文件</text>
-                                    <button type="button" class="layui-btn layui-btn-lg upload-btn" id="btn_select_document">选择</button>
-                                </div>
-                                <button class="layui-btn layui-btn-lg choose-btn">使用该方式</button>
-                            </div>
-                            <div class="layui-tab-item">
-                                <div class="desc">由地图自动生成一条规划线路。</div>
-                                <button class="layui-btn layui-btn-lg choose-btn">使用该方式</button>
-                            </div>
-                        </div>
+                        <div class="layui-tab-content" style="height: 150px;" id="tabConent"></div>
                     </div> 
                     <!-- 司机上报 -->
                     <div class="driver-report">
@@ -112,6 +91,54 @@
         </div>
     </div>
 </body>
+<!-- tab切换内容模板 -->
+<script id="tabConentTpl" type="text/html">
+    <div class="layui-tab-item">
+        {{# if(d.lineSource && d.lineSource == 1){ }}
+            <div class="desc">轨迹数据来源订单OR00000001</div>
+            <div class="slelected">
+                <button class="layui-btn layui-btn-disabled">正在使用该方式</button>
+                <button class="layui-btn layui-btn-normal">播放轨迹</button>
+                <button class="layui-btn layui-btn-primary">重新规划</button>
+            </div>
+        {{# } else { }}
+            <div class="upload-handler">
+                <text class="label">订单号：</text>
+                <text class="upload-name">请选择订单号</text>
+                <button type="button" class="layui-btn layui-btn-lg upload-btn limit-choose">选择</button>
+            </div>
+            <button class="layui-btn layui-btn-lg choose-btn limit-choose">使用该方式</button>
+        {{# } }}
+    </div>
+    <div class="layui-tab-item">
+        {{# if(d.lineSource && d.lineSource == 2){ }}
+            <div class="desc">数据来源于导入经纬度数据，下载数据</div>
+            <div class="slelected">
+                <button class="layui-btn layui-btn-disabled">正在使用该方式</button>
+                <button class="layui-btn layui-btn-normal">播放轨迹</button>
+                <button class="layui-btn layui-btn-primary">重新规划</button>
+            </div>
+        {{# } else { }}
+            <div class="upload-handler">
+                <text class="label">轨迹数据：</text>
+                <text class="upload-name">请选择文件</text>
+                <button type="button" class="layui-btn layui-btn-lg upload-btn limit-choose">选择</button>
+            </div>
+            <button class="layui-btn layui-btn-lg choose-btn limit-choose">使用该方式</button>
+        {{# } }}
+    </div>
+    <div class="layui-tab-item layui-show">
+        <div class="desc">由地图自动生成一条规划线路。</div>
+        {{# if(d.lineSource && d.lineSource == 3){ }}
+            <div class="slelected">
+                <button class="layui-btn layui-btn-disabled">正在使用该方式</button>
+                <button class="layui-btn layui-btn-normal playLine">播放轨迹</button>
+            </div>
+        {{# } else { }}
+            <button class="layui-btn layui-btn-lg choose-btn choose-map-line">使用该方式</button>
+        {{# } }}
+    </div>
+</script>
 <!-- 编辑按钮模板 -->
 <script id="edit" type="text/html">
     <a class="edit" lay-event="edit">修改</a>
@@ -148,7 +175,7 @@
             {{# } else if(item.status && item.status == 3){ }}
                 <button class="layui-btn take-report" data-id="{{item.id}}">采纳</button>
             {{# } else { }}
-                <button class="layui-btn take-report layui-btn-disabled" data-id="{{item.id}}">已删除</button>
+                <button class="layui-btn layui-btn-disabled" data-id="{{item.id}}">已删除</button>
             {{# } }}
             
         </div>

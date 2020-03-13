@@ -44,7 +44,16 @@ layui.config({
                     }
                 }},
                 {field: 'reportToAudit', title: '上报待审', sort: false,width:80},
-                {field: 'lineSource', title: '线路规划', sort: false,width:80},
+                {field: 'lineSource', title: '线路规划', sort: false,width:80, templet:function(d){
+                    switch(d.lineSource){
+                        case 1:
+                            return '订单轨迹';
+                        case 2:
+                            return '导入轨迹';
+                        case 3:
+                            return '地图规划';
+                    }
+                }},
                 {field: 'updateTime', title: '更新时间', sort: false,width:200},
                 {title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 300}
             ]
@@ -122,6 +131,19 @@ layui.config({
                                         case 'orderType':
                                             value = value == 1 ? '单车单' : '背车单';
                                             break
+                                        case 'lineSource':
+                                            switch(item[i]){
+                                                case 1:
+                                                    value = '订单轨迹';
+                                                    break;
+                                                case 2:
+                                                    value = '导入轨迹';
+                                                    break;
+                                                case 3:
+                                                    value = '地图规划';
+                                                    break;
+                                            }
+                                            break;
                                         default:
                                             value = item[i]
                                             break;
