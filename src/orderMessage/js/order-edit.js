@@ -107,8 +107,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
     laytpl($("#income_info_tpl").html()).render(data, function(html){
       $("#income_info").html(html);
     });
+    if(data.driverId) form.val("form_dispatch", data);
     form.val("form_ascription", data);
-    form.val("form_dispatch", data);
     var carFormStr = "";
     var carFormHtml = $("#car_info_tpl").html();
     data.truckDTOList.forEach(function (item, index) {

@@ -7,6 +7,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: "warehouseNo", title: "仓库单号" },
     { field: "vinCode", title: "VIN码" },
     { field: "tempLicense", title: "临牌号" },
+    { field: "orderStatus", title: "状态" },
     { field: "orderType", title: "订单类型" },
     { field: "customerFullName", title: "客户全称" },
     { field: "startWarehouse", title: "发车仓库" },
@@ -33,7 +34,6 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: "fetchStatus", title: "提车照片" },
     { field: "startAuditStatus", title: "发车单审核状态" },
     { field: "returnAuditStatus", title: "交车单审核状态" },
-    { field: "orderStatus", title: "状态" },
   ];
   laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
       document.getElementById('itemList').innerHTML = html;

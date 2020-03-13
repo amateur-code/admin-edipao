@@ -638,6 +638,25 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 }
             }
         },
+        {
+            field: 'orderStatus', title: '订单状态', sort: false,minWidth:100, templet: function (d) {
+                if (d.orderStatus == 1) {
+                    return "待调度";
+                } else if (d.orderStatus == 2) {
+                    return "待发车";
+                } else if (d.orderStatus == 3) {
+                    return "运输中";
+                } else if (d.orderStatus == 4) {
+                    return "已收车";
+                } else if (d.orderStatus == 5) {
+                    return "已完结";
+                } else if (d.orderStatus == 6) {
+                    return "已取消";
+                } else {
+                    return "非法状态";
+                }
+            }
+        },
         {field: 'customerFullName', title: '客户全称', sort: true},
         {field: 'startWarehouse', title: '发车仓库', sort: false,minWidth:100},
         {field: 'startPark', title: '发车停车场', sort: false,minWidth:100},
@@ -816,31 +835,14 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             }
             return status;
         }},
-        {
-            field: 'orderStatus', title: '订单状态', sort: false,minWidth:100, templet: function (d) {
-                if (d.orderStatus == 1) {
-                    return "待调度";
-                } else if (d.orderStatus == 2) {
-                    return "待发车";
-                } else if (d.orderStatus == 3) {
-                    return "运输中";
-                } else if (d.orderStatus == 4) {
-                    return "已收车";
-                } else if (d.orderStatus == 5) {
-                    return "已完结";
-                } else if (d.orderStatus == 6) {
-                    return "已取消";
-                } else {
-                    return "非法状态";
-                }
-            }
-          },
+        
     ];
     var showList = [
         "orderNo",
         "warehouseNo",
         "vinCode",
         "tempLicense",
+        "orderStatus",
         "orderType",
         "customerFullName",
         "startWarehouse",
@@ -867,7 +869,6 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         "fetchStatus",
         "startAuditStatus",
         "returnAuditStatus",
-        "orderStatus"
     ];
     var exportHead={};// 导出头部
     var toolField = {title: '操作', toolbar: '#barDemo', align: 'center', fixed: 'right', width: 350};
