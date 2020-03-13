@@ -17,7 +17,6 @@
     <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js"></script>
-    <script type="text/javascript" src="../../lib/TableFilter/tableFilter.js?VERSION"></script>
     <script type="text/javascript" src="../../js/common.js?VERSION"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
@@ -79,11 +78,13 @@
     </script>
     <script type="text/javascript">
     layui.config({
-        base: '../../lib/layui_exts/'
-    }).use(['table', 'layer', 'excel'], function(table, layer, excel) {
+        base: '../../lib/'
+    }).extend({
+        excel: 'layui_exts/excel',
+        tableFilter: 'TableFilter/tableFilter'
+    }).use(['table', 'layer', 'excel','tableFilter'], function(table, layer, excel, tableFilter) {
         var xadmin = layui.xadmin,
             edipao = layui.edipao,
-            tableFilter = layui.tableFilter,
             tableKey = 'SystemSetting-StaffManager-list',
             tableCols = [ //表头
                 { checkbox: true },
