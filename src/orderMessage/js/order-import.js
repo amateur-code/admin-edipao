@@ -16,7 +16,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         , limit: 20  //每页显示条数
         , limits: [20, 40] //每页显示条数可选择
         , request: {
-            pageName: 'pageNumber' //页码的参数名称，默认：page
+            pageName: 'pageNo' //页码的参数名称，默认：page
             , limitName: 'pageSize' //每页数据量的参数名，默认：limit
         }
         , where:{ loginStaffId: 17718571615 }
@@ -46,12 +46,16 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                             type: 1, 
                             content: $("#uploadPic").html(), //这里content是一个普通的String,
                             btn: ["取消", "确定"],
-                            success: function () {
+                            success: function (res) {
+                                console.log(res)
                                 var uploadInst = upload.render({
                                     elem: '#uploadPicBtn' //绑定元素
                                     ,url: '/upload/' //上传接口
                                     ,done: function(res){
-                                        //上传完毕回调
+                                        
+                                    }
+                                    ,success: function (res) {
+                                        
                                     }
                                     ,error: function(){
                                         //请求异常回调
@@ -103,8 +107,28 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
     , accept: 'file'
     , field: 'file'
     , done: function (res) {
+        console.log(res)
         //上传完毕回调
         if (res) {
+            res.data.forEach(function (item, index) {
+                var obj = [];
+                Object.keys(item).forEach(function (item2) {
+                    var data = {};
+                    data.key = item2;
+                    data.value = item[item2];
+                    obj.push(data);
+                });
+                res.data[index] = obj;
+            });
+            laytpl($("#import_result").html()).render({list: res.data}, function (html) {
+                layer.open({
+                    type: 1,
+                    title: "导入结果",
+                    area: "600px",
+                    content: html,
+                    success: function () {  }
+                });
+            });
             //展示已知数据
             renderTable();
         }

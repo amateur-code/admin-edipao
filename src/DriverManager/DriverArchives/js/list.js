@@ -384,7 +384,7 @@ layui.config({
             })
             tableIns.reload( { where: where, page: { curr: 1 }});
         }
-    })
+    });
     function DataNull (data) {
         if(data == null||data == ''){
             return '--'

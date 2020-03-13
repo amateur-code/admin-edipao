@@ -251,6 +251,22 @@
         </div>
     </form>
 </div>
+<script id="import_result" type="text/html">
+    {{# layui.each(d.list, function(index, item){ }}
+    <div class="layui-row layui-col-space15">
+    {{# layui.each(item, function(index2, item2){ }}
+        <div class="layui-col-6">
+            <div class="layui-card">
+                <div class="">{{item2.key}}: </div>
+                <div class="layui-card-body">
+                    {{item2.value}}
+                </div>
+              </div>
+        </div>
+    {{# }); }}
+    </div>
+    {{# }); }}
+</script>
 <script type="text/html" id="download">
     <a class="handlerDown" lay-event="downLoad">下载</a>
 </script>

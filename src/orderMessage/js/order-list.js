@@ -1,4 +1,9 @@
-layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
+layui.config({
+    base: '../../lib/'
+}).extend({
+    excel: 'layui_exts/excel',
+    tableFilter: 'TableFilter/tableFilter'
+}).use(['form', 'table', 'jquery','layer', 'upload', 'laytpl', 'tableFilter', 'excel'], function () {
     var tableName = "orderMessage-order-list";
     var mainTable;
     var table = layui.table;
@@ -7,17 +12,101 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
     var layer = layui.layer;
     var upload = layui.upload;
     var laytpl = layui.laytpl;
+    var tableFilter = layui.tableFilter;
+    var excel = layui.excel;
     var edipao = layui.edipao;
     var user = JSON.parse(sessionStorage.user);
     var orderDTOList = [];
     var orderData = {};
     var uploadTruckId = "";
+    var permissionList = edipao.getMyPermission();
+    var exportHead = {};
+    var where = {
+        loginStaffId: user.staffId,
+    };
     var uploadObj = {
         startImagesList: [],
         fetchImagesList: [],
         returnImagesList: []
     }
     var uploadData = {}
+
+
+    var filters = [
+        { field: 'orderNo', type: 'input' },
+        { field: 'warehouseNo', type: 'input' },
+        { field: 'vinCode', type: 'input' },
+        { field: 'tempLicense', type: 'radio' },
+        { field: 'orderStatus', type: 'radio' },
+        { field: 'orderType', type: 'input' },
+        { field: 'customerFullName', type: 'city' },
+        { field: 'startWarehouse', type: 'city' },
+        { field: 'startPark', type: 'input' },
+        { field: 'startCity', type: 'input' },
+        { field: 'startAddress', type: 'input' },
+        { field: 'endPark', type: 'input' },
+        { field: 'endCity', type: 'input' },
+        { field: 'endAddress', type: 'input' },
+        { field: 'transportAssignTime', type: 'input' },
+        { field: 'dispatchTime', type: 'input' },
+        { field: 'openOperator', type: 'input' },
+        { field: 'dispatchOperator', type: 'input' },
+        { field: 'fetchOperator', type: 'input' },
+        { field: 'deliveryOperator', type: 'input' },
+        { field: 'driverName', type: 'input' },
+        { field: 'driverPhone', type: 'input' },
+        { field: 'driverIdCard', type: 'input' },
+        { field: 'prePayAmount', type: 'input' },
+        { field: 'arrivePayAmount', type: 'input' },
+        { field: 'tailPayAmount', type: 'input' },
+    ]
+    tableFilterIns = tableFilter.render({
+        'elem' : '#orderList',//table的选择器
+        'mode' : 'self',//过滤模式
+        'filters' : filters,//过滤项配置
+        'done': function(filters){
+            var index = 0;
+            where = {
+                    loginStaffId: edipao.getLoginStaffId()
+                };
+
+            layui.each(filters,function(key, value){
+                if(key=='licenceWarn'){
+                    // 证件预警 比如预警是30天, 今天是3月8号, 传值4月8日。
+                    where['searchFieldDTOList['+ index +'].fieldName'] = validityData[value];
+                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = getDay(warnDataVal[value]);
+                }else if(key=='wishJourney'||key=='oftenJourney'){
+                    // 意向线路、常跑线路
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    var fieldValue = {
+                        'start': {
+                            "code": cityCode[value[key+'Start-city']],
+                            "province": value[key+'Start-province'],
+                            "city": value[key+'Start-city']
+                        },
+                        'end': {
+                            "code": cityCode[value[key+'End-city']],
+                            "province": value[key+'End-province'],
+                            "city": value[key+'End-city']
+                        }
+                    };
+                    where['searchFieldDTOList['+ index +'].fieldValue'] = JSON.stringify(fieldValue);
+                }else if(key == 'drivingAge'||key == 'deposit'){
+                    // 驾龄、押金
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+                }else{
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    where['searchFieldDTOList['+ index +'].fieldValue'] = value;
+                }
+                index++;
+            })
+            tableIns.reload( { where: where, page: { curr: 1 }});
+        }
+    });
+
+
     var method = {
         getOrder: function (orderNo) {
             return edipao.request({
@@ -38,6 +127,14 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                 var type = e.target.dataset.type * 1;
                 var number = e.target.dataset.number * 1;
                 var orderNo = e.target.dataset.order;
+                var event = "ok";
+                type == 2 && permissionList.indexOf('提车照片上传') == -1 && (event = 'reject');
+                type == 3 && permissionList.indexOf('发车单-上传') == -1 && (event = 'reject');
+                type == 5 && permissionList.indexOf('交接单回收-上传') == -1 && (event = 'reject');
+                if(event == "reject"){
+                    layer.alert('你没有访问权限', {icon: 2});
+                    return;
+                }
                 elem = $("#uploadStartPic").html();
                 method.getOrder(orderNo).done(function (res) {
                     if(res.code == "0"){
@@ -519,8 +616,63 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             });
         },
         bindEvents: function(){
-            $("#export_data").unbind().on("click", function (e) {
-                table.exportFile(mainTable.config.id);
+            $(".top_tool_bar").unbind().on("click", function (e) {
+                var event = e.target.dataset.event;
+                event == 'import_order' && permissionList.indexOf('订单录入') == -1 && (event = 'reject');
+                event == 'export_data' && permissionList.indexOf('导出') == -1 && (event = 'reject');
+                event == 'merge_order' && permissionList.indexOf('合并') == -1 && (event = 'reject');
+                switch(event){
+                    case "reject":
+                        layer.alert('你没有访问权限', {icon: 2});
+                        break;
+                    case "import_order":
+                        xadmin.open('订单录入','./order-import.html',1200,600);
+                        break;
+                    case "export_data":
+                        method.exportData();
+                        break;
+                    case "table_set":
+                        xadmin.open('表格设置', './table-set.html', 600, 600);
+                        break;
+                }
+            });
+        },
+        exportData: function exportExcel() {
+            var param = where;
+            param['pageNo']= 1;
+            param['pageSize'] =10000;
+            edipao.request({
+                type: 'GET',
+                url: '/admin/order/list',
+                data: param
+            }).done(function(res) {
+                if (res.code == 0) {
+                    if(res.data){
+                        var data = res.data.orderDTOList;
+                        var exportData = [];
+                        // 添加头部
+                        exportData.push(exportHead);
+                        // 过滤处理数据
+                        layui.each(data, function(k, v){
+                            var exportObj={};
+                            layui.each(v,function (index,item) {
+                                exportObj[index] = DataNull(item);
+                            });
+                            exportData.push(exportObj)
+                        });
+                        // 导出
+                        excel.exportExcel({
+                            sheet1: exportData
+                        }, '订单.xlsx', 'xlsx');
+                    }
+                }
+                function DataNull (data) {
+                    if(data == null||data == ''){
+                        return '--'
+                    }else{
+                        return  data
+                    }
+                }
             });
         },
         renderTable: function(){
@@ -557,6 +709,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                     method.bindPay();
                     method.bindPrePay();
                     method.bindEvents();
+                    tableFilterIns && tableFilterIns.reload();
                 },
                 text: {none: "暂无数据"}
                 , cols: [tableCols]
@@ -585,8 +738,15 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             table.on('tool(orderList)', function (obj) {
                 var data = obj.data; //获得当前行数据
                 var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-                var tr = obj.tr; //获得当前行 tr 的DOM对象
-                if (layEvent === 'edit') { //编辑
+                
+                layEvent == 'edit' && permissionList.indexOf('修改') == -1 && (layEvent = 'reject');
+                // layEvent == 'verify' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
+                layEvent == 'cancel' && permissionList.indexOf('取消') == -1 && (layEvent = 'reject');
+
+                if(layEvent === 'reject'){
+                    layer.alert('你没有访问权限', {icon: 2});
+                    return;
+                }else if (layEvent === 'edit') { //编辑
                     top.xadmin.add_tab('修改订单', 'orderMessage/order-edit.html?action=edit&orderNo=' + data.orderNo);
                 } else if (layEvent === 'verify') { //审核
                     top.xadmin.add_tab('审核', 'orderMessage/order-view.html?action=verify&orderNo=' + data.orderNo);
@@ -674,8 +834,13 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         {field: 'fetchOperator', title: '提车员', sort: false,minWidth:100},
         {field: 'deliveryOperator', title: '发运员', sort: false,minWidth:100},
         {
-            field: 'driverName', title: '司机信息', sort: false,minWidth:100, templet: function (d) {
-                return d.driverName + "(" + d.driverPhone + ")";
+            field: 'driverName', title: '司机姓名', sort: false,minWidth:100, templet: function (d) {
+                return d.driverName;
+            }
+        },
+        {
+            field: 'driverName', title: '司机手机', sort: false,minWidth:100, templet: function (d) {
+                return d.driverPhone;
             }
         },
         {field: 'driverIdCard', title: '司机身份证', sort: false,minWidth:100, hide: false},
