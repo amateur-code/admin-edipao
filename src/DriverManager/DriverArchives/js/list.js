@@ -196,32 +196,20 @@ layui.config({
                 return  val || '--'
             }
         },
-        {
+       /* {
             field: 'approvalFlag', title: '审核状态',
             templet: function (data) {
                 var val = data.approvalFlag;
                 return approvalFlagData[val] || '--'
             }
-        },
+        },*/
         {
-            title: '操作', width: 320, fixed: '',toolbar: '#rowBtns',
-            // templet: function (data) {
-            //     var val = data.approvalDisplay;
-            //     var html = '';
-            //     html += '<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>';
-            //     if (val) {
-            //         html += '<a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="audit">审核</a>';
-            //     }
-            //     html += '<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="info">查看</a>';
-            //     html += '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
-            //     html += '<a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="log">日志</a>';
-            //     return html
-            // }
+            title: '操作', width: 320, fixed: '',toolbar: '#rowBtns'
         }
     ];
 
 
-    var showList = [ "name", "phone","idNum","driverType","driveLicenceType", "drivingAge","wishJourney","oftenJourney","location","deposit","depositStatus","licenceWarn","status","approvalFlag"];
+    var showList = [ "name", "phone","idNum","driverType","driveLicenceType", "drivingAge","wishJourney","oftenJourney","location","deposit","depositStatus","licenceWarn","status"];
     var exportHead={};// 导出头部
     edipao.request({
         type: 'GET',
