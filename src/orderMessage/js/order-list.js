@@ -632,7 +632,7 @@ layui.config({
                         method.exportData();
                         break;
                     case "table_set":
-                        xadmin.open('表格设置', './table-set.html', 600, 600);
+                        xadmin.open('表格设置', './table-set.html?tableKey=orderMessage-order-list', 600, 600);
                         break;
                 }
             });

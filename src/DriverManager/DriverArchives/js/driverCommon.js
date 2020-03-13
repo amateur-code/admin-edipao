@@ -48,7 +48,10 @@ layui.config({
                 var reg = /^(?!0+(?:\.0+)?$)(?:[1-9]\d*|0)(?:\.\d{1,2})?$/;
                 var flag = reg.test(value);
                 if(!flag){
-                    return '请输入正数可以保留2位小数';
+                    return '驾龄请输入正数最多保留2位小数';
+                }
+                if(value>100){
+                    return '驾龄不能超过100年';
                 }
             }
         },
@@ -80,6 +83,10 @@ layui.config({
         addressVerify: function(value) {
             if(value==''){
                 return '请输入司机当前住址';
+            }else{
+                if(value.length>300){
+                    return '当前住址不能超过300个字符';
+                }
             }
         },
         statusVerify: function(value) {
@@ -113,6 +120,11 @@ layui.config({
                 if(value.length>20){
                     return '银行卡账号不能超过20个字符';
                 }
+            }
+        },
+        accountBankAddressVerify: function(value) {
+            if(value.length>300){
+                return '开户行地址不能超过300个字符';
             }
         },
         idLicenceFrontImgVerify:function(value) {
