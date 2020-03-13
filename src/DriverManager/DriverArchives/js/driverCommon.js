@@ -48,7 +48,10 @@ layui.config({
                 var reg = /^(?!0+(?:\.0+)?$)(?:[1-9]\d*|0)(?:\.\d{1,2})?$/;
                 var flag = reg.test(value);
                 if(!flag){
-                    return '请输入正数可以保留2位小数';
+                    return '驾龄请输入正数最多保留2位小数';
+                }
+                if(value>100){
+                    return '驾龄不能超过100年';
                 }
             }
         },
