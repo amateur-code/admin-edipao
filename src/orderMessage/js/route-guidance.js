@@ -3,26 +3,52 @@ layui.config({
 }).extend({
     excel: 'layui_exts/excel',
     tableFilter: 'TableFilter/tableFilter'
-}).use(['jquery', 'table','layer','excel','tableFilter','form', 'upload', 'laytpl'], function () {
-    var table = layui.table;
-    var $ = layui.jquery;
-    var form = layui.form;
-    var layer = layui.layer;
-    var upload = layui.upload;
-    var laytpl = layui.laytpl;
-    var edipao = layui.edipao;
-    var excel = layui.excel;
+}).use(['jquery', 'table','layer','excel','tableFilter'], function () {
+    var table = layui.table,
+        $ = layui.jquery,
+        layer = layui.layer,
+        edipao = layui.edipao,
+        excel = layui.excel,
+        tableFilter = layui.tableFilter;
 
     function _tableClass(){
         this.user = JSON.parse(sessionStorage.user);
         this.request = { loginStaffId: this.user.staffId };
+        this.permissionList = edipao.getMyPermission();
         this.pageNumber = 1,
-        this.pageSize = 20;
+        this.pageSize = 10;
         this.exportSize = 100000;
-        this.cols = {};
         this.exportHead = [];
-        this.showEngList = ['startAddress', 'endAddress','orderType', 'reportToAudit','lineSource', 'updateTime'];
+        this.showList = ['startAddress', 'endAddress','orderType', 'reportToAudit','lineSource', 'updateTime'];
+        // 接口
+        this.cols = [
+            {field: 'startAddress', title: '出发地', sort: false, hide: false, minWidth:200},
+            {field: 'endAddress', title: '目的地', sort: false, hide: false, minWidth:200},
+            {field: 'orderType', title: '适用类型', sort: false, hide: false, width:120, templet:function(d){
+                switch(d.orderType){
+                    case 1:
+                        return '单车单';
+                    case 2:
+                        return '背车单';
+                }
+            }},
+            {field: 'reportToAudit', title: '上报待审', sort: false, hide: false, width:120},
+            {field: 'lineSource', title: '线路规划', sort: false ,hide: false, width:120, templet:function(d){
+                switch(d.lineSource){
+                    case 1:
+                        return '订单轨迹';
+                    case 2:
+                        return '导入轨迹';
+                    case 3:
+                        return '地图规划';
+                }
+            }},
+            {field: 'updateTime', title: '更新时间', sort: false, hide: false,width:200}
+        ];
+        this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 300}
     }
+
+    
 
     _tableClass.prototype = {
         // 初始化
@@ -31,40 +57,47 @@ layui.config({
         },
         // 表格设置
         tableColsSetting: function(){
-            // 接口
-            this.cols = [
-                {field: 'startAddress', title: '出发地', sort: false,width:300},
-                {field: 'endAddress', title: '目的地', sort: false,minWwidth:200},
-                {field: 'orderType', title: '适用类型', sort: false,width:80, templet:function(d){
-                    switch(d.orderType){
-                        case 1:
-                            return '单车单';
-                        case 2:
-                            return '背车单';
+            var _t = this;
+            var exportHead={};// 导出头部
+            edipao.request({
+                type: 'GET',
+                url: '/admin/table/show-field/get',
+                data: {
+                    tableName: 'route-guidance-list'
+                }
+            }).done(function(res) {
+                if (res.code == 0) {
+                    if(res.data){
+                        _t.showList = [];
+                        try{
+                            _t.showList = JSON.parse(res.data);
+                        }catch(e){}
+                        layui.each(_t.cols, function(index, item){
+                            if(item.field && _t.showList.indexOf(item.field) < 0){
+                                item.hide = true;
+                            }else{
+                                if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
+                                    exportHead[item.field] = item.title;
+                                }
+                            }
+                        })
+                    }else{
+                        layui.each(_t.cols, function(index, item){
+                            if(item.field && _t.showList.indexOf(item.field) != -1){
+                                if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
+                                    exportHead[item.field] = item.title;
+                                }
+                            }
+                        })
                     }
-                }},
-                {field: 'reportToAudit', title: '上报待审', sort: false,width:80},
-                {field: 'lineSource', title: '线路规划', sort: false,width:80, templet:function(d){
-                    switch(d.lineSource){
-                        case 1:
-                            return '订单轨迹';
-                        case 2:
-                            return '导入轨迹';
-                        case 3:
-                            return '地图规划';
-                    }
-                }},
-                {field: 'updateTime', title: '更新时间', sort: false,width:200},
-                {title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 300}
-            ]
+                    _t.cols.push(_t.toolField);
+                }
 
-            var exportHead = {};
-            // 设置导出表头
-            layui.each(this.cols, function(i, v){
-                exportHead[v.field] = v.title;
-            })
-            this.exportHead = exportHead;
-            this.tableRender();
+                _t.exportHead = exportHead;
+                _t.tableRender();
+            });
+            
+            
         },
         // 渲染数据
         tableRender: function(){
@@ -79,31 +112,87 @@ layui.config({
                 limit: this.pageSize,  //每页显示条数
                 limits: [20, 40], //每页显示条数可选择
                 request: {
-                pageName: 'pageNumber', //页码的参数名称，默认：page
-                limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                    pageName: 'pageNo', //页码的参数名称，默认：page
+                    limitName: 'pageSize' //每页数据量的参数名，默认：limit
                 },
                 where: this.request,
                 height: 'full',
                 autoSort: true,
                 id: 'routeList',
                 parseData: function (res) {
-                return {
-                    "code": res.code, //解析接口状态
-                    "msg": res.message, //解析提示文本
-                    "count": res.data.totalSize, //解析数据长度
-                    "data": res.data.dataList //解析数据列表
-                }
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.message, //解析提示文本
+                        "count": res.data.totalSize, //解析数据长度
+                        "data": res.data.dataList //解析数据列表
+                    }
+                },
+                response: {
+                    countName: 'count',
+                    dataName: 'data'
                 },
                 done: function () {//表格渲染完成的回调
                     _t.bindEvents();
+                    _t.bindToolEvent();
+                    _t.filterData();
                 },
                 text: {
                     none: "暂无数据"
                 },
-                cols: [this.cols]
+                cols: [_t.cols]
             });
+            
+        },
+        // 过滤
+        filterData: function(){
+            var tableFilterIns = tableFilter.render({
+                'elem' : '#routeList',//table的选择器
+                'mode' : 'api',//过滤模式
+                'filters' : [
+                    {
+                        field: 'startAddress',
+                        name: 'startAddress',
+                        type: 'input'
+                    },
+                    {
+                        field: 'endAddress',
+                        name: 'endAddress',
+                        type: 'input'
+                    },
+                    {
+                        field: 'orderType',
+                        name: 'orderType',
+                        type: 'checkbox',
+                        data: [
+                            { "key":"0", "value":"全部"},
+                            { "key":"1", "value":"单车单"},
+                            { "key":"2", "value":"背车单"}
+                        ]
+                    },
+                    {
+                        field: 'reportToAudit',
+                        name: 'reportToAudit',
+                        type: 'numberslot'
+                    },
+                    {
+                        field: 'lineSource',
+                        name: 'lineSource',
+                        type: 'checkbox',
+                        data: [
+                            { "key":"0", "value":"全部"},
+                            { "key":"1", "value":"订单轨迹"},
+                            { "key":"2", "value":"导入轨迹"},
+                            { "key":"3", "value":"地图规划"}
+                        ]
+                    }
 
-            this.bindToolEvent();
+                ],//过滤项配置
+                'done': function(filters){
+                    //结果回调
+                }
+            })
+
+
         },
         // 导出
         exportData(){
@@ -112,7 +201,7 @@ layui.config({
                 type: 'GET',
                 url: '/admin/line/list',
                 data: $.extend({}, _t.request, {
-                    pageNumber: _t.pageNumber,
+                    pageNo: _t.pageNumber,
                     pageSize: _t.exportSize
                 })
             }).done(function(res) {
@@ -125,7 +214,7 @@ layui.config({
                         layui.each(data, function(index, item){
                             let newObj = {};
                             for(var i in item){
-                                if(_t.showEngList.indexOf(i) > -1){
+                                if(_t.showList.indexOf(i) > -1){
                                     var value = item[i];
                                     switch(i){
                                         case 'orderType':
@@ -164,12 +253,18 @@ layui.config({
         },
         // 绑定工具栏事件
         bindToolEvent: function(){
+            var _t = this;
             //监听行工具事件
             table.on('tool(routeList)', function (obj) {
                 var data = obj.data; //获得当前行数据
                 var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
                 if (layEvent === 'edit') { //下载
-                    top.xadmin.add_tab('线路规划', 'orderMessage/route-plan.html?guideLineId=' + data.guideLineId);
+                    // top.xadmin.add_tab('线路规划', 'orderMessage/route-plan.html?guideLineId=' + data.guideLineId, true);
+                    if(_t.permissionList.indexOf('修改') < 0){
+                        layer.alert('你没有访问权限', {icon: 2});
+                        return;
+                    }
+                    xadmin.open('线路规划', './route-plan.html?guideLineId=' + data.guideLineId, 1400, 700)
                 }
             });
         },

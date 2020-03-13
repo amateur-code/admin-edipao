@@ -1,8 +1,8 @@
 layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, form) {
   var xadmin = layui.xadmin,
       edipao = layui.edipao,
-      tableKey = 'orderMessage-order-list';
-  tableHeaderList = [
+      tableKey = edipao.urlGet().tableKey;
+  orderTableHeaderList = [
     { field: "orderNo", title: "业务单号" },
     { field: "warehouseNo", title: "仓库单号" },
     { field: "vinCode", title: "VIN码" },
@@ -35,6 +35,23 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: "returnAuditStatus", title: "交车单审核状态" },
     { field: "orderStatus", title: "状态" },
   ];
+  routeTableHeaderList = [
+    {field: 'startAddress', title: '出发地'},
+    {field: 'endAddress', title: '目的地'},
+    {field: 'orderType', title: '适用类型'},
+    {field: 'reportToAudit', title: '上报待审'},
+    {field: 'lineSource', title: '线路规划'},
+    {field: 'updateTime', title: '更新时间'}
+  ]
+  var tableHeaderList = orderTableHeaderList;
+  switch(tableKey){
+    case 'orderMessage-order-list':
+        tableHeaderList = orderTableHeaderList;
+        break;
+    case 'route-guidance-list':
+        tableHeaderList = routeTableHeaderList;
+        break;
+  }
   laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
       document.getElementById('itemList').innerHTML = html;
       form.render();
