@@ -1,9 +1,10 @@
-layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function () {
+layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function () {
   console.log(location.href)
   var $ = layui.jquery;
   var form = layui.form;
   var layer = layui.layer;
   var laydate = layui.laydate;
+  var upload = layui.upload;
   var laytpl = layui.laytpl;
   var edipao = layui.edipao;
   var table = layui.table;
@@ -14,6 +15,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
     this.user = JSON.parse(sessionStorage.user);
     this.carFormList = [];
     this.feeItemList = [];
+    this.feeUnitItemList = ["%", "元", "升"];
     this.prePay = [];
     this.arrivePay = [];
     this.tailPay = [];
@@ -21,6 +23,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
     this.carsToAdd = [];
     this.carsToDel = [];
     this.cars = [];
+    this.tempLicenseBackImage = [];
     this.driverInfoListDto = [];
     this.formList = [
       "form_ascription",
@@ -47,24 +50,30 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
       }
     });
   }
-  Edit.prototype.addFeeItem = function (feeName) {
+  Edit.prototype.addFeeItem = function (data) {
     //后台增加费用项
     var _this = this;
     return edipao.request({
       url: "/admin/feeItem/add",
       data: {
         loginStaffId: _this.user.staffId,
-        name: feeName
+        name: data.addFeeName,
+        unit: data.addFeeUnit
       }
     })
   }
   Edit.prototype.getFeeItemUnitList = function () {
+    var _this = this;
     //获取费用单位
     return edipao.request({
       url: "/admin/feeItem/unit/list",
       method: "GET",
-      data: {}
-    })
+      data: { loginStaffId: _this.user.staffId }
+    }).done(function (res) {
+      if(res.code == 0){
+        _this.feeUnitItemList = res.data;
+      }
+    });
   }
   Edit.prototype.getFeeItemList = function () {
     //费用项列表
@@ -91,8 +100,24 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
       tailPay: _this.tailPay,
       arrivePayDisabled: _this.orderData.arrivePayAmount == "*",
       arrivePay: _this.arrivePay,
+      unitList: _this.feeUnitItemList
     }, function (html) {
       $("#fee_list_container").html(html);
+      form.render("select");
+      _this.bindFeeUnitSelect();
+    });
+  }
+  Edit.prototype.bindFeeUnitSelect = function () {
+    var _this = this;
+    form.on("select", function (obj) {
+      console.log(obj)
+      var elem = obj.elem;
+      if(elem.name == "unit"){
+        var type = elem.dataset.type;
+        var index = elem.dataset.index * 1;
+        var value = elem.value;
+        _this[type][index].unit = value;
+      }
     });
   }
   Edit.prototype.setData = function(data){
@@ -118,13 +143,31 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
       carFormStr += carFormHtml.replace(/CARFORM/g,filterStr);
     });
     $("#car_form_container").html(carFormStr);
-
     form.render();
     _this.carFormList.forEach(function (item, index) {
+      _this.tempLicenseBackImage.push(data.truckDTOList[index].tempLicenseBackImage);
       laydate.render({
-        elem: $(".latestArriveTime")[0], //指定元素
+        elem: $(".latestArriveTime")[index], //指定元素
         type: "datetime",
         trigger: "click"
+      });
+      upload.render({
+        elem: $('.tempLicenseBackImage')[index],
+        url: edipao.API_HOST + '/admin/truck/upload/image',
+        data: {
+          loginStaffId: _this.user.staffId,
+          truckId: data.truckDTOList[index].id,
+          type: 1,
+          index: 1
+        },
+        done: function (res) {
+          if(res.code == 0){
+            _this.tempLicenseBackImage[index] = res.data;
+            layer.msg("上传成功");
+          }else{
+            layer.msg(res.message, {icon: 5,anim: 6});
+          }
+        }
       });
       _this.cars.push({
         id: data.truckDTOList[index].id,
@@ -246,7 +289,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
               _this[type].push({
                 key: item,
                 val: 0,
-                unit: "元"
+                unit: _this.feeUnitItemList[0],
+                new: true
               });
             }
             _this.setFeeList();
@@ -259,20 +303,30 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
         success:function () {
           form.render("checkbox");
           $("#add_fee_item").unbind().on("click", function(e){
-            laytpl($("#fee_item_tpl").html()).render({}, function(html){
+            laytpl($("#fee_item_tpl").html()).render({list: _this.feeUnitItemList}, function(html){
               var layerIndex2 = layer.open({
                 title: "增加费用项",
                 type: 1,
                 area: '400px',
                 content: html,
                 btn:["确认", "取消"],
+                success: function () { form.render("select") },
                 yes: function (e) {
-                  var $addFeeName = $("#addFeeName");
-                  if(!$addFeeName.val()){
+                  var data = form.val("add_fee_item_form");
+                  if(!data.addFeeName){
                     layer.msg("请输入费用名称", {icon: 5,anim: 6});
                     return;
                   }
-                  _this.addFeeItem($addFeeName.val()).done(function (res) {
+                  if(data.addFeeName.length > 16){
+                    layer.msg("费用项名称不能超过16个字符", {icon: 5,anim: 6});
+                    return;
+                  }
+                  if(_this.feeItemList.indexOf(data.addFeeName) > -1){
+                    layer.msg("新增费用项名称不能与系统一致", {icon: 5,anim: 6});
+                    return;
+                  }
+                  
+                  _this.addFeeItem(data).done(function (res) {
                     if(res.code == "0"){
                       $addFeeName.val("");
                       layer.closeAll();
@@ -359,7 +413,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
     form.val(filter, data);
   }
   Edit.prototype.handleDeleteCar = function (e) {
-    var _this= this;
+    var _this = this;
     var filter = e.target.dataset.filter;
     var idTodel = "";
     var carFormListIndex;
@@ -375,6 +429,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
       if(item == filter) carFormListIndex = index;
     });
     _this.carFormList.splice(carFormListIndex, 1);
+    _this.tempLicenseBackImage.splice(carFormListIndex, 1);
     var carsFlag = _this.cars.some(function (item, index) {
       if(item.filter == filter) {idTodel = item.id; indexTodel = index;}
       return item.filter == filter;
@@ -407,6 +462,20 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
       }).done(function (res) {
         if(res.code == 0){
           $("." + filter).remove();
+          if(_this.orderData.truckDTOList.length == 1){
+            edipao.request({
+              url: "/admin/order/cancelOrder",
+              method: "post",
+              data: {loginStaffId: _this.user.staffId, orderNo: _this.orderNo}
+            }).done(function(res){
+              if(res.code == 0){
+                layer.alert("订单已取消", { icon: 6 }, function() {
+                  var lay_id = localStorage.current_tab;
+                  top.$('.layui-tab-title li[lay-id=' + lay_id + ']').find('.layui-tab-close').click();
+              });
+              }
+            });
+          }
         }else{
           layer.msg(res.message, {icon: 5,anim: 6});
         }
@@ -424,19 +493,25 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
     delete orderData.truckDTOList;
     var ascriptionData = form.val("form_ascription");
     var dispatchData = form.val("form_dispatch");
-    this.prePay.forEach(function (item, index) {
+    _this.prePay = _this.prePay.map(function (item, index) {
+      delete item.new;
       item.val = dispatchData["prePay_" + index];
+      return item;
     });
-    this.arrivePay.forEach(function (item, index) {
+    _this.arrivePay = _this.arrivePay.map(function (item, index) {
+      delete item.new;
       item.val = dispatchData["arrivePay_" + index];
+      return item;
     });
-    this.tailPay.forEach(function (item, index) {
+    _this.tailPay = _this.tailPay.map(function (item, index) {
+      delete item.new;
       item.val = dispatchData["tailPay_" + index];
+      return item;
     });
     var carsLength = _this.cars.length + _this.carsToAdd.length - _this.carsToDel.length;
     _this.carFormList.forEach(function (item, index) {
-      if(index > (truckDTOList.length - 1)) return;
       var itemData = form.val(item);
+      if(!itemData.id && itemData.id != 0) return;
       truckUpdateReqList.push({
         truckId: itemData.id||"",
         masterFlag: itemData.masterFlag == "on" ? "否" : "是",
@@ -461,7 +536,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
         income: itemData.income||"",
         manageFee: itemData.manageFee||"",
         tempLicense: itemData.tempLicense,
-        tempLicenseBackImage: itemData.tempLicenseBackImage||"",
+        tempLicenseBackImage: _this.tempLicenseBackImage[index]||"",
         saleRemark: itemData.saleRemark||"",
         storageAndDeliverRemark: itemData.storageAndDeliverRemark||"",
         dealerRemark: itemData.dealerRemark||"",
@@ -667,7 +742,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
       _this.handleDeleteCar(e);
     });
     $("#btn_cancel").unbind().on("click", function (e) {
-      top.xadmin.del_tab(localStorage.current_tab);
+      var lay_id = localStorage.current_tab;
+      top.$('.layui-tab-title li[lay-id=' + lay_id + ']').find('.layui-tab-close').click();
     });
     $("#add_car").unbind().on("click", function(e){
       var carFormHtml = $("#car_info_tpl").html();
@@ -677,12 +753,40 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function ()
       $("#car_form_container").append(html);
       form.render();
       $(".del_car_btn").unbind().on("click", function(e){
-        $(".del_car_btn").unbind().on("click", function(e){
-          _this.handleDeleteCar(e);
-        });
+        _this.handleDeleteCar(e);
       });
       $(".select_vin").unbind().on("click", function (e) {
         _this.openSelectVin(e);
+      });
+      var index = _this.carFormList.length - 1;
+      laydate.render({
+        elem: $(".latestArriveTime")[index], //指定元素
+        type: "datetime",
+        trigger: "click"
+      });
+      upload.render({
+        elem: $('.tempLicenseBackImage')[index],
+        url: edipao.API_HOST + '/admin/truck/upload/image',
+        data: {
+          loginStaffId: _this.user.staffId,
+          truckId: form.val(filterStr).id,
+          type: 1,
+          index: 1
+        },
+        before: function () {
+          if(!form.val(filterStr).id){
+            layer.msg('请先选择车辆', {icon: 5,anim: 6});
+            return false;
+          }
+        },
+        done: function (res) {
+          if(res.code == 0){
+            _this.tempLicenseBackImage[index] = res.data;
+            layer.msg("上传成功");
+          }else{
+            layer.msg(res.message, {icon: 5,anim: 6});
+          }
+        }
       });
     });
     $(".add_fee").unbind().on("click", function (e) {

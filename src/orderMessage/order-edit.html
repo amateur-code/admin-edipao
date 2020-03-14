@@ -104,8 +104,8 @@
                         <div style="line-height: 32px;" class="layui-col-md1 blue pointer btn_btn">
                             <span class="select_vin" data-filter="CARFORM">选择vin码</span>
                         </div>
-                        <div style="line-height: 32px;" class="layui-col-md1 layui-col-md-offset8 btn_btn">
-                            <input type="checkbox" name="masterFlag" lay-text="上车|下车"  lay-skin="switch">
+                        <div style="line-height: 32px;visibility: hidden;" class="layui-col-md1 layui-col-md-offset8 btn_btn switch_updown">
+                            <input disabled type="checkbox" name="masterFlag" lay-text="上车|下车"  lay-skin="switch">
                         </div>
                         <div style="line-height: 32px;" class="layui-col-md1 btn_btn">
                             <span data-filter="CARFORM" class="del_car_btn blue pointer">删除车辆</span>
@@ -150,7 +150,7 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">GPS设备编号</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="gpsDeviceCode" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input type="text" name="gpsDeviceCode" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
@@ -182,7 +182,7 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">仓库单号</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="warehouseNo" autocomplete="off" class="layui-input">
+                                <input type="text" name="warehouseNo" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
@@ -244,13 +244,13 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">收车城市</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="endCity" autocomplete="off" class="layui-input">
+                                <input type="text" name="endCity" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">收车地址</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="endAddress" autocomplete="off" class="layui-input">
+                                <input type="text" name="endAddress" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
@@ -262,29 +262,29 @@
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <label class="layui-form-label text_left form_label">客户里程</label><br>
+                            <label class="layui-form-label text_left form_label">客户里程(公里)</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="customerMileage" autocomplete="off" class="layui-input">
+                                <input type="text" name="customerMileage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <label class="layui-form-label text_left form_label">收入单价</label><br>
+                            <label class="layui-form-label text_left form_label">收入单价(元)</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="pricePerMeliage" autocomplete="off" class="layui-input">
+                                <input type="text" name="pricePerMeliage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
-                            <label class="layui-form-label text_left form_label">收入金额</label><br>
+                            <label class="layui-form-label text_left form_label">收入金额(元)</label><br>
                             <div class="layui-input-inline">
                                 <input disabled type="text" name="income" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <label class="layui-form-label text_left form_label">管理费</label><br>
+                            <label class="layui-form-label text_left form_label">管理费(元)</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="manageFee" autocomplete="off" class="layui-input">
+                                <input type="text" name="manageFee" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -310,7 +310,7 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">行驶证</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="tempLicenseBackImage" autocomplete="off" class="layui-input">
+                                <input readonly type="text" name="tempLicenseBackImage" autocomplete="off" class="layui-input tempLicenseBackImage">
                             </div>
                         </div>
                     </div>
@@ -401,7 +401,7 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">跟单员</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="followOperator" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input disabled type="text" name="followOperator" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -437,7 +437,7 @@
                             <label class="layui-form-label text_left form_label">司机姓名</label><br>
                             <div id="driver_name_select" class="layui-input-inline layui-row">
                                 <div class="layui-inline layui-col-md9">
-                                    <input id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
+                                    <input readonly id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
                                 </div>
                                 <div class="layui-inline layui-col-md2">
                                     <button id="select_driver_btn" type="button" class="layui-btn layui-btn-sm layui-btn-fluid">选择</button>
@@ -447,7 +447,7 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">司机手机</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="driverPhone" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input disabled type="text" name="driverPhone" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -513,8 +513,19 @@
                     {{#  layui.each(d.prePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
                         <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
-                        <div class="layui-input-inline">
-                            <input {{d.prePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                        <div class="layui-row">
+                            <div class="layui-col-md7">
+                                <input {{d.prePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            {{# if(item.new){ }}
+                            <div class="layui-col-md3">
+                                <select data-type="prePay" data-index="{{index}}" class="fee_unit_select" name="unit">
+                                    {{#  layui.each(d.unitList, function(index2, item2){ }}
+                                    <option value="{{item2}}" {{index2 == 0 ? 'selected':''}}>{{item2}}</option>
+                                    {{#  }); }}
+                                </select>
+                            </div>
+                            {{# } }}
                         </div>
                     </div>
                     {{#  }); }}
@@ -533,8 +544,19 @@
                     {{#  layui.each(d.arrivePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
                         <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
-                        <div class="layui-input-inline">
-                            <input {{d.arrivePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                        <div class="layui-row">
+                            <div class="layui-col-md7">
+                                <input {{d.arrivePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            {{# if(item.new){ }}
+                            <div class="layui-col-md3">
+                                <select data-type="arrivePay" data-index="{{index}}" class="fee_unit_select" name="unit">
+                                    {{#  layui.each(d.unitList, function(index2, item2){ }}
+                                    <option value="{{item2}}" {{index2 == 0 ? 'selected':''}}>{{item2}}</option>
+                                    {{#  }); }}
+                                </select>
+                            </div>
+                            {{# } }}
                         </div>
                     </div>
                     {{#  }); }}
@@ -553,8 +575,19 @@
                     {{#  layui.each(d.tailPay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
                         <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
-                        <div class="layui-input-inline">
-                            <input {{d.tailPayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                        <div class="layui-row">
+                            <div class="layui-col-md7">
+                                <input {{d.tailPayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            {{# if(item.new){ }}
+                            <div class="layui-col-md3">
+                                <select data-type="tailPay" data-index="{{index}}" class="fee_unit_select" name="unit">
+                                    {{#  layui.each(d.unitList, function(index2, item2){ }}
+                                    <option value="{{item2}}" {{index2 == 0 ? 'selected':''}}>{{item2}}</option>
+                                    {{#  }); }}
+                                </select>
+                            </div>
+                            {{# } }}
                         </div>
                     </div>
                     {{#  }); }}
@@ -580,7 +613,7 @@
     </script>
     <script type="text/html" id="fee_item_tpl">
         <div class="fee_container">
-            <form class="fee_list layui-form">
+            <form class="fee_list layui-form" lay-filter="add_fee_item_form">
                 <div style="width:100%" class="layui-inline">
                     <label class="layui-form-label text_left form_label">费用项名称</label><br>
                     <div style="width:100%" class="layui-input-inline">

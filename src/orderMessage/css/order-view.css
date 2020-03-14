@@ -3,6 +3,7 @@
   width: auto !important;
 }
 .layui-input {
+  overflow-y: visible;
   border: none !important;
   color: #3490E9 !important;
 }

@@ -30,8 +30,6 @@ layui.config({
         returnImagesList: []
     }
     var uploadData = {}
-
-
     var filters = [
         { field: 'orderNo', type: 'input' },
         { field: 'warehouseNo', type: 'input' },
@@ -67,9 +65,8 @@ layui.config({
         'done': function(filters){
             var index = 0;
             where = {
-                    loginStaffId: edipao.getLoginStaffId()
-                };
-
+                loginStaffId: edipao.getLoginStaffId()
+            };
             layui.each(filters,function(key, value){
                 if(key=='licenceWarn'){
                     // 证件预警 比如预警是30天, 今天是3月8号, 传值4月8日。
@@ -105,7 +102,6 @@ layui.config({
             tableIns.reload( { where: where, page: { curr: 1 }});
         }
     });
-
 
     var method = {
         getOrder: function (orderNo) {
@@ -307,7 +303,6 @@ layui.config({
                     , where: { loginStaffId: user.staffId, orderNo: orderNo }
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
-                        orderDTOList = res.data.orderDTOList;
                         return {
                             "code": res.code, //解析接口状态
                             "msg": res.message, //解析提示文本
@@ -385,7 +380,6 @@ layui.config({
                     , where: { loginStaffId: user.staffId, orderNo: orderNo }
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
-                        orderDTOList = res.data.orderDTOList;
                         return {
                             "code": res.code, //解析接口状态
                             "msg": res.message, //解析提示文本
@@ -461,7 +455,6 @@ layui.config({
                     , where: { loginStaffId: user.staffId, orderNo: orderNo }
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
-                        orderDTOList = res.data.orderDTOList;
                         return {
                             "code": res.code, //解析接口状态
                             "msg": res.message, //解析提示文本
@@ -699,12 +692,24 @@ layui.config({
                 , autoSort: true
                 , id: 'orderList'
                 , parseData: function (res) {
+                    var data = [];
                     orderDTOList = res.data.orderDTOList;
+                    orderDTOList.forEach(function(item){
+                        if(item.orderType == 1){
+                            data.push(item);
+                        }else if(item.orderType == 2){
+                            if(item.masterFlag == "是"){
+                                data.push(item);
+                            }
+                        }else{
+                            data.push(item);
+                        }
+                    });
                     return {
                         "code": res.code, //解析接口状态
                         "msg": res.message, //解析提示文本
                         "count": res.data.totalSize, //解析数据长度
-                        "data": res.data.orderDTOList //解析数据列表
+                        "data": data //解析数据列表
                     }
                 }
                 , done: function () {//表格渲染完成的回调
@@ -789,10 +794,18 @@ layui.config({
     }
     var tableCols = [
         {type: 'checkbox'},
-        {field: 'orderNo', title: '业务单号', sort: false,minWidth:100},
-        {field: 'warehouseNo', title: '仓库单号', sort: false,minWidth:100},
-        {field: 'vinCode', title: 'VIN码', sort: false,minWidth:100},
-        {field: 'tempLicense', title: '临牌号', sort: false,minWidth:100},
+        {field: 'orderNo', title: '业务单号', sort: false,minWidth:100, templet: function(d){
+            return d.orderNo ? d.orderNo : '- -';
+        }},
+        {field: 'warehouseNo', title: '仓库单号', sort: false,minWidth:100,minWidth:100, templet: function(d){
+            return d.warehouseNo ? d.warehouseNo : '- -';
+        }},
+        {field: 'vinCode', title: 'VIN码', sort: false,minWidth:100,minWidth:100, templet: function(d){
+            return d.vinCode ? d.vinCode : '- -';
+        }},
+        {field: 'tempLicense', title: '临牌号', sort: false,minWidth:100,minWidth:100, templet: function(d){
+            return d.tempLicense ? d.tempLicense : '- -';
+        }},
         {
             field: 'orderType', title: '订单类型', sort: false,minWidth:100, templet: function (d) {
                 if (d.orderType == 1) {
@@ -823,33 +836,66 @@ layui.config({
                 }
             }
         },
-        {field: 'customerFullName', title: '客户全称', sort: true},
-        {field: 'startWarehouse', title: '发车仓库', sort: false,minWidth:100},
-        {field: 'startPark', title: '发车停车场', sort: false,minWidth:100},
-        {field: 'startCity', title: '发车城市', sort: false,minWidth:100},
-        {field: 'startAddress', title: '发车地址', sort: false,minWidth:100},
-        {field: 'startProvince', title: '发车省', sort: false,minWidth:100},
-        {field: 'endPark', title: '收车网点', sort: false,minWidth:100},
-        {field: 'endProvince', title: '收车省', sort: false,minWidth:100},
-        {field: 'endCity', title: '收车城市', sort: false,minWidth:100},
-        {field: 'endAddress', title: '收车地址', sort: false,minWidth:100},
-        {field: 'transportAssignTime', title: '运输商指派时间', sort: false,minWidth:100},
-        {field: 'dispatchTime', title: '调度时间', sort: false,minWidth:100},
-        {field: 'openOperator', title: '开单员', sort: false,minWidth:100},
-        {field: 'dispatchOperator', title: '调度员', sort: false,minWidth:100,},
-        {field: 'fetchOperator', title: '提车员', sort: false,minWidth:100},
-        {field: 'deliveryOperator', title: '发运员', sort: false,minWidth:100},
+        {field: 'customerFullName', title: '客户全称', sort: true, templet: function(d){
+            return d.customerFullName ? d.customerFullName : '- -';
+        }},
+        {field: 'startWarehouse', title: '发车仓库', sort: false,minWidth:100, templet: function(d){
+            return d.startWarehouse ? d.startWarehouse : '- -';
+        }},
+        {field: 'startPark', title: '发车停车场', sort: false,minWidth:100, templet: function(d){
+            return d.startPark ? d.startPark : '- -';
+        }},
+        {field: 'startCity', title: '发车城市', sort: false,minWidth:100, templet: function(d){
+            return d.startCity ? d.startCity : '- -';
+        }},
+        {field: 'startAddress', title: '发车地址', sort: false,minWidth:100, templet: function(d){
+            return d.startAddress ? d.startAddress : '- -';
+        }},
+        {field: 'startProvince', title: '发车省', sort: false,minWidth:100, templet: function(d){
+            return d.startProvince ? d.startProvince : '- -';
+        }},
+        {field: 'endPark', title: '收车网点', sort: false,minWidth:100, templet: function(d){
+            return d.endPark ? d.endPark : '- -';
+        }},
+        {field: 'endProvince', title: '收车省', sort: false,minWidth:100, templet: function(d){
+            return d.endProvince ? d.endProvince : '- -';
+        }},
+        {field: 'endCity', title: '收车城市', sort: false,minWidth:100, templet: function(d){
+            return d.endCity ? d.endCity : '- -';
+        }},
+        {field: 'endAddress', title: '收车地址', sort: false,minWidth:100, templet: function(d){
+            return d.endAddress ? d.endAddress : '- -';
+        }},
+        {field: 'transportAssignTime', title: '运输商指派时间', sort: false,minWidth:100, templet: function(d){
+            return d.transportAssignTime ? d.transportAssignTime : '- -';
+        }},
+        {field: 'dispatchTime', title: '调度时间', sort: false,minWidth:100, templet: function(d){
+            return d.dispatchTime ? d.dispatchTime : '- -';
+        }},
+        {field: 'openOperator', title: '开单员', sort: false,minWidth:100, templet: function(d){
+            return d.openOperator ? d.openOperator : '- -';
+        }},
+        {field: 'dispatchOperator', title: '调度员', sort: false,minWidth:100, templet: function(d){
+            return d.dispatchOperator ? d.dispatchOperator : '- -';
+        }},
+        {field: 'fetchOperator', title: '提车员', sort: false,minWidth:100, templet: function(d){
+            return d.fetchOperator ? d.fetchOperator : '- -';
+        }},
+        {field: 'deliveryOperator', title: '发运员', sort: false,minWidth:100, templet: function(d){
+            return d.deliveryOperator ? d.deliveryOperator : '- -';
+        }},
         {
-            field: 'driverName', title: '司机姓名', sort: false,minWidth:100, templet: function (d) {
-                return d.driverName;
-            }
-        },
+        field: 'driverName', title: '司机姓名', sort: false,minWidth:100, templet: function (d) {
+            return d.driverName ? d.driverName : '- -';
+        }},
         {
             field: 'driverName', title: '司机手机', sort: false,minWidth:100, templet: function (d) {
                 return d.driverPhone;
             }
         },
-        {field: 'driverIdCard', title: '司机身份证', sort: false,minWidth:100, hide: false},
+        {field: 'driverIdCard', title: '司机身份证', sort: false,minWidth:100, hide: false, templet: function(d){
+            return d.driverIdCard ? d.driverIdCard : '- -';
+        }},
         {
             field: 'prePayAmount', title: '预付款金额', sort: false,minWidth:130, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
@@ -931,7 +977,7 @@ layui.config({
         {field: 'fetchStatus', title: '提车照片', sort: false,minWidth:100, hide: false, templet: function(d){
             var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='5' data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
+            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='3' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
             switch(d.fetchStatus*1){
                 case 0: 
