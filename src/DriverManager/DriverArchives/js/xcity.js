@@ -35,12 +35,14 @@ $.fn.xcity = function(pName,cName,aName){
     }
 
     this.showC = function (cityList) {
-
         this.c.html('');
 
         is_cName = false;
 
         for (var i in cityList) {
+            if($(this).attr('id')=='accountCity'&&cityList[i].name=='全部'){
+                continue
+            }
             if(cName==cityList[i].name){
                 is_cName = true;
                 this.areaList = cityList[i].areaList;
