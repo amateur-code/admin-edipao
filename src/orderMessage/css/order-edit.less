@@ -36,12 +36,19 @@
     }
   }
 }
+// 增加费用项的弹窗
 .fee_container{
   padding: 10px;
   overflow: hidden;
   .fee_list{
     overflow: hidden;
     padding-bottom: 10px;
+    .fee_list_item{
+      margin-bottom: 5px;
+      .layui-form-checkbox span{
+        display: inline-block;
+      }
+    }
   }
   .fee_footer{
     padding-top: 10px;
@@ -51,6 +58,7 @@
 .select_driver_btn{
   display: inline-block;
 }
+//司机推荐
 #driver_name_select{
   position: relative;
   .match_driver_list{
@@ -75,6 +83,7 @@
     }
   }
 }
+
 .btn_container{
   margin-bottom: 20px;
 }

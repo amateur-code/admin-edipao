@@ -600,8 +600,8 @@
             <form lay-filter="add_fee_form" class="fee_list layui-form">
                 <div class="layui-row">
                     {{#  layui.each(d.feeList, function(index, item){ }}
-                        <div class="layui-col-md4">
-                        <input type="checkbox" {{item.checked?'checked':''}} name="{{item.key}}" title="{{item.key}}" lay-skin="primary">
+                        <div class="layui-col-md4 fee_list_item">
+                            <input type="checkbox" {{item.checked?'checked':''}} name="{{item.key}}" title="{{item.key}}" lay-skin="primary">
                         </div>
                     {{#  }); }}
                 </div>

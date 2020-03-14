@@ -41,6 +41,12 @@
   overflow: hidden;
   padding-bottom: 10px;
 }
+.fee_container .fee_list .fee_list_item {
+  margin-bottom: 5px;
+}
+.fee_container .fee_list .fee_list_item .layui-form-checkbox span {
+  display: inline-block;
+}
 .fee_container .fee_footer {
   padding-top: 10px;
   border-top: 1px solid #EFEEF0;

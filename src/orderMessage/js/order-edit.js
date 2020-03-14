@@ -275,7 +275,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       var layerIndex1 = layer.open({
         title: "增加费用",
         type: 1,
-        area: '400px',
+        area: ['600px', '400px'],
         content: html,
         btn:["确认", "取消"],
         yes: function (e) {

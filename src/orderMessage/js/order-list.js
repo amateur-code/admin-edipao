@@ -339,7 +339,7 @@ layui.config({
                                         table.reload("orderList");
                                         layer.close(index);
                                     }else{
-                                        layer.alert(res.message, {icon: 5,anim: 6});
+                                        //layer.alert(res.message);
                                     }
                                 });
                             }
@@ -413,7 +413,7 @@ layui.config({
                                         table.reload("orderList");
                                         layer.close(index);
                                     }else{
-                                        layer.alert(res.message, {icon: 5,anim: 6});
+                                        //layer.alert(res.message);
                                     }
                                 });
                             }
@@ -488,7 +488,7 @@ layui.config({
                                         table.reload("orderList");
                                         layer.close(index);
                                     }else{
-                                        layer.alert(res.message, {icon: 5,anim: 6});
+                                        //layer.alert(res.message);
                                     }
                                 });
                             }
@@ -531,7 +531,6 @@ layui.config({
                                 },
                                 yes: function () {
                                     var data = form.val("verifyPic");
-                                    console.log(data)
                                     edipao.request({
                                         url: "/admin/order/approval/image",
                                         method: "post",
@@ -544,17 +543,17 @@ layui.config({
                                         }
                                     }).done(function(res){
                                         if(res.code == "0"){
-                                            layer.message("提交成功");
+                                            layer.msg("提交成功");
                                             layer.close(index);
                                         }else{
-                                            layer.msg(data.message, {icon: 5,anim: 6});
+                                            //layer.alert(res.message);
                                         }
                                     });
                                 }
                             })
                         });
                     }else{
-                        layer.msg(data.message, {icon: 5,anim: 6});
+                        layer.msg(res.message, {icon: 5,anim: 6});
                     }
                 });
             });
@@ -609,7 +608,7 @@ layui.config({
                             })
                         });
                     }else{
-                        layer.msg(data.message, {icon: 5,anim: 6});
+                       // layer.alert(res.message);
                     }
                 });
             });
@@ -987,7 +986,7 @@ layui.config({
                     status = "未上传" + str2.replace("{{}}"," 上传");
                     break;
                 case 2:
-                    status = str.replace("{{}}","查看")+str3.replace("{{}}"," 审核");
+                    status = str.replace("{{}}","查看");
                     break;
                 case 3:
                     status = str.replace("{{}}","查看");
@@ -995,6 +994,9 @@ layui.config({
                 case 4:
                     status = "已驳回";
                     break;
+            }
+            if(d.fetchApprovalBtn * 1 == 1){
+                status += str3.replace("{{}}"," 审核");
             }
             return status;
         }},
