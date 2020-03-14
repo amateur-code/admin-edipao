@@ -1,8 +1,9 @@
-layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
+layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate'], function () {
   console.log(location.href)
   var $ = layui.jquery;
   var form = layui.form;
   var layer = layui.layer;
+  var laydate = layui.laydate;
   var laytpl = layui.laytpl;
   var edipao = layui.edipao;
   var table = layui.table;
@@ -117,8 +118,14 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
       carFormStr += carFormHtml.replace(/CARFORM/g,filterStr);
     });
     $("#car_form_container").html(carFormStr);
+
     form.render();
     _this.carFormList.forEach(function (item, index) {
+      laydate.render({
+        elem: $(".latestArriveTime")[0], //指定元素
+        type: "datetime",
+        trigger: "click"
+      });
       _this.cars.push({
         id: data.truckDTOList[index].id,
         filter: item
@@ -155,6 +162,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
           pageName: 'pageNo' //页码的参数名称，默认：page
           , limitName: 'pageSize' //每页数据量的参数名，默认：limit
       }
+      , where: { loginStaffId: _this.user.staffId }
       , parseData: function (res) {
         return {
             "code": res.code, //解析接口状态
@@ -532,22 +540,23 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table'], function () {
       }
     }).done(function (res) {
       if(res.code == "0"){
-        if(!res.data) return;
-        if(res.data.lenght < 1) return;
+        if(!res.data) res.data = [];
         _this.driverInfoListDto = res.data;
         laytpl($("#driver_list_tpl").html()).render({list: res.data}, function (html) {
           $("#driver_name_select").append(html);
           $(".driver_item").unbind().on("click", function (e) {
             var index = e.target.dataset.index;
-            var data = _this.driverInfoListDto[index*1];
-            var driverData = {
-              driverId: data.id,
-              driverName: data.name,
-              driverPhone: data.phone,
-              driverIdCard: data.idNum,
-              driverCertificate: data.driveLicenceType,
+            if(index == "none") {
+              var data = _this.driverInfoListDto[index*1];
+              var driverData = {
+                driverId: data.id,
+                driverName: data.name,
+                driverPhone: data.phone,
+                driverIdCard: data.idNum,
+                driverCertificate: data.driveLicenceType,
+              }
+              form.val("form_dispatch", driverData);
             }
-            form.val("form_dispatch", driverData);
             $('#match_driver_list').remove();
           });
         });

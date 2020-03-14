@@ -258,13 +258,7 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">最迟送达时间</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="latestArriveTime" lay-verify="required" autocomplete="off" class="layui-input">
-
-                                <!-- <select name="city" lay-verify="">
-                                    <option value="010">北京</option>
-                                    <option value="021" disabled>上海（禁用效果）</option>
-                                    <option value="0571" selected>杭州</option>
-                                </select> -->
+                                <input id="" type="text" name="latestArriveTime" lay-verify="required" autocomplete="off" class="layui-input latestArriveTime">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -310,13 +304,13 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset4">
                             <label class="layui-form-label text_left form_label">临牌号</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="tempLicense" autocomplete="off" class="layui-input">
+                                <input type="text" name="tempLicense" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">行驶证</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="tempLicenseBackImage" autocomplete="off" class="layui-input">
+                                <input type="text" name="tempLicenseBackImage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
@@ -499,6 +493,11 @@
                 <span class="driver_name">{{item.name}}</span>
             </div>
             {{#  }); }}
+            {{# if(d.list.lenght < 1){ }}
+            <div data-index="none" class="driver_item">
+                <span class="driver_name">{{暂无数据}}</span>
+            </div>
+            {{# } }}
         </div>
     </script>
     <script id="fee_list_tpl" type="text/html">

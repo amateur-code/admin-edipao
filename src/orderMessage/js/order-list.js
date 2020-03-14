@@ -1,5 +1,5 @@
 layui.config({
-    base: '../../lib/'
+    base: '../lib/'
 }).extend({
     excel: 'layui_exts/excel',
     tableFilter: 'TableFilter/tableFilter'
@@ -344,7 +344,7 @@ layui.config({
                                         table.reload("orderList");
                                         layer.close(index);
                                     }else{
-                                        layer.msg(res.message, {icon: 5,anim: 6});
+                                        layer.alert(res.message, {icon: 5,anim: 6});
                                     }
                                 });
                             }
@@ -353,7 +353,9 @@ layui.config({
                     text: {none: "暂无数据"},
                     cols: [[
                         {field: 'key', title: '费用项', sort: false,width: "100px"},
-                        {field: 'val', title: '金额', sort: false,width: "100px"},
+                        {field: 'val', title: '金额', sort: false,width: "100px", templet: function (d) {
+                            return d.val + " (" + d.unit + ")"
+                        }},
                     ]]
                 });
             });
@@ -417,7 +419,7 @@ layui.config({
                                         table.reload("orderList");
                                         layer.close(index);
                                     }else{
-                                        layer.msg(res.message, {icon: 5,anim: 6});
+                                        layer.alert(res.message, {icon: 5,anim: 6});
                                     }
                                 });
                             }
@@ -426,7 +428,9 @@ layui.config({
                     text: {none: "暂无数据"},
                     cols: [[
                         {field: 'key', title: '费用项', sort: false,width: "100px"},
-                        {field: 'val', title: '金额', sort: false,width: "100px"},
+                        {field: 'val', title: '金额', sort: false,width: "100px", templet: function (d) { 
+                            return d.val + ' (' + d.unit + ')'
+                        }},
                     ]]
                 });
             });
@@ -491,7 +495,7 @@ layui.config({
                                         table.reload("orderList");
                                         layer.close(index);
                                     }else{
-                                        layer.msg(res.message, {icon: 5,anim: 6});
+                                        layer.alert(res.message, {icon: 5,anim: 6});
                                     }
                                 });
                             }
@@ -500,7 +504,9 @@ layui.config({
                     text: {none: "暂无数据"},
                     cols: [[
                         {field: 'key', title: '费用项', sort: false,width: "100px"},
-                        {field: 'val', title: '金额', sort: false,width: "100px"},
+                        {field: 'val', title: '金额', sort: false,width: "100px", templet: function (d) {
+                            return d.val + ' (' + d.unit + ')'
+                        }},
                     ]]
                 });
             });
@@ -683,7 +689,7 @@ layui.config({
                 , method: "get" // 请求方式  默认get
                 , page: true //开启分页
                 , limit: 20  //每页显示条数
-                , limits: [20, 40] //每页显示条数可选择
+                , limits: [20, 50, 100] //每页显示条数可选择
                 , request: {
                     pageName: 'pageNo' //页码的参数名称，默认：page
                     , limitName: 'pageSize' //每页数据量的参数名，默认：limit
