@@ -358,14 +358,28 @@ layui.config({
                 }else if(key=='wishJourney'||key=='oftenJourney'){
                     // 意向线路、常跑线路
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    var startCode = '';
+                    if(value[key+'Start-city']=='全部'){
+                        startCode = cityCode[value[key+'Start-province']];
+                    }else{
+                        startCode = cityCode[value[key+'Start-city']];
+                    };
+
+                    var endCode = '';
+                    if(value[key+'End-city']=='全部'){
+                        endCode = cityCode[value[key+'End-province']];
+                    }else{
+                        endCode = cityCode[value[key+'End-city']];
+                    };
+
                     var fieldValue = {
                         'start': {
-                            "code": cityCode[value[key+'Start-city']],
+                            "code": startCode,
                             "province": value[key+'Start-province'],
                             "city": value[key+'Start-city']
                         },
                         'end': {
-                            "code": cityCode[value[key+'End-city']],
+                            "code": endCode,
                             "province": value[key+'End-province'],
                             "city": value[key+'End-city']
                         }
@@ -609,18 +623,23 @@ layui.config({
          var val = [
                  {
                      name: '请选择省份',
+                     code:'',
                      cityList: [
-                         { name: '请选择市级', areaList: [] },
+                         { name: '请选择市级', areaList: [],code:'', },
                      ]
                  }
              ];
         var level2 = [];
         layui.each(data,function (index,item) {
             if(item.level == 1){
+                var cityList = []
+                if(item.province.indexOf('北京')=='-1'&&item.province.indexOf('天津')=='-1'&&item.province.indexOf('上海')=='-1'&&item.province.indexOf('重庆')=='-1'){
+                    cityList = [{ name: '全部', areaList: []}]
+                }
                 val.push({
                     name: item.province,
                     code:item.code,
-                    cityList:[]
+                    cityList:cityList
                 })
             }else{
                 level2.push(item)
@@ -638,6 +657,7 @@ layui.config({
                     cityCode[n.city] = n.code;
                 }
             })
+            cityCode[v.name] = v.code;
         });
         return val;
     }
