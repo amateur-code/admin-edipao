@@ -249,11 +249,47 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         _this.renderCarsTable(filter);
       }
     })
+  } 
+  Edit.prototype.openUpdateFee = function (e) {
+    var _this = this;
+    var index = e.target.dataset.index*1;
+    laytpl($("#update_fee_tpl").html()).render({oldName: _this.feeItemList[index]}, function (html) {
+      var index = layer.open({
+        title: "修改费用项",
+        type: 1,
+        area: "400px",
+        content: html,
+        btn: ['确定', '取消'],
+        yes: function () {
+          var data = form.val("update_fee_item_form");
+          if(!data.newName){
+            layer.msg("请输入新名称");
+            return;
+          }
+          data.loginStaffId = _this.user.staffId;
+          edipao.request({
+            url: "/admin/feeItem/edit",
+            method: "post",
+            data: data
+          }).done(function (res) {
+            if(res.code == "0"){
+              _this.getFeeItemList().done(function (res2) {
+                layer.msg("修改成功");
+                layer.closeAll();
+                console.log(e)
+                _this.openAddFee(e);
+              });
+            }
+          });
+        }
+      })
+    });
   }
   Edit.prototype.openAddFee = function (e) {
     //打开增加费用项弹窗
     var _this = this;
     var type = e.target.dataset.type;
+    console.log(type)
     var list = _this[type].map(function (item) {
       return item.key;
     });
@@ -295,58 +331,66 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             }
             _this.setFeeList();
             layer.closeAll();
-            $(".add_fee").unbind().on("click", function (e) {
-              _this.openAddFee(e);
-            });
           });
+          $(".add_fee").unbind().on("click", function (e) {
+            _this.openAddFee(e);
+          });
+          
         },
         success:function () {
           form.render("checkbox");
+          $(".edit_icon").unbind().on("click", function (e) {
+            e.target.dataset.type = type;
+            _this.openUpdateFee(e);
+          });
           $("#add_fee_item").unbind().on("click", function(e){
-            laytpl($("#fee_item_tpl").html()).render({list: _this.feeUnitItemList}, function(html){
-              var layerIndex2 = layer.open({
-                title: "增加费用项",
-                type: 1,
-                area: '400px',
-                content: html,
-                btn:["确认", "取消"],
-                success: function () { form.render("select") },
-                yes: function (e) {
-                  var data = form.val("add_fee_item_form");
-                  if(!data.addFeeName){
-                    layer.msg("请输入费用名称", {icon: 5,anim: 6});
-                    return;
-                  }
-                  if(data.addFeeName.length > 16){
-                    layer.msg("费用项名称不能超过16个字符", {icon: 5,anim: 6});
-                    return;
-                  }
-                  if(_this.feeItemList.indexOf(data.addFeeName) > -1){
-                    layer.msg("新增费用项名称不能与系统一致", {icon: 5,anim: 6});
-                    return;
-                  }
-                  
-                  _this.addFeeItem(data).done(function (res) {
-                    if(res.code == "0"){
-                      $addFeeName.val("");
-                      layer.closeAll();
-                      _this.getFeeItemList().done(function (res) {
-                        if(res.code == "0"){
-                          _this.feeItemList = res.data;
-                          _this.openAddFee();
-                        }else{
-                          layer.msg(res.message, {icon: 5,anim: 6});
-                        }
-                      });
-                    }else{
-                      layer.msg(res.message, {icon: 5,anim: 6});
-                    }
-                  });
-                },
-              });
-            })
+            _this.openAddFeeItem(e);
           });
         }
+      });
+    });
+  }
+  Edit.prototype.openAddFeeItem = function (e) {
+    laytpl($("#fee_item_tpl").html()).render({list: _this.feeUnitItemList}, function(html){
+      var layerIndex2 = layer.open({
+        title: "增加费用项",
+        type: 1,
+        area: '400px',
+        content: html,
+        btn:["确认", "取消"],
+        success: function () { form.render("select") },
+        yes: function (e) {
+          var data = form.val("add_fee_item_form");
+          if(!data.addFeeName){
+            layer.msg("请输入费用名称", {icon: 5,anim: 6});
+            return;
+          }
+          if(data.addFeeName.length > 16){
+            layer.msg("费用项名称不能超过16个字符", {icon: 5,anim: 6});
+            return;
+          }
+          if(_this.feeItemList.indexOf(data.addFeeName) > -1){
+            layer.msg("新增费用项名称不能与系统一致", {icon: 5,anim: 6});
+            return;
+          }
+          
+          _this.addFeeItem(data).done(function (res) {
+            if(res.code == "0"){
+              $addFeeName.val("");
+              layer.closeAll();
+              _this.getFeeItemList().done(function (res) {
+                if(res.code == "0"){
+                  _this.feeItemList = res.data;
+                  _this.openAddFee();
+                }else{
+                  layer.msg(res.message, {icon: 5,anim: 6});
+                }
+              });
+            }else{
+              layer.msg(res.message, {icon: 5,anim: 6});
+            }
+          });
+        },
       });
     });
   }
@@ -493,19 +537,20 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     delete orderData.truckDTOList;
     var ascriptionData = form.val("form_ascription");
     var dispatchData = form.val("form_dispatch");
+    console.log(dispatchData)
     _this.prePay = _this.prePay.map(function (item, index) {
       delete item.new;
-      item.val = dispatchData["prePay_" + index];
+      item.val = dispatchData["prePay_" + index] || 0;
       return item;
     });
     _this.arrivePay = _this.arrivePay.map(function (item, index) {
       delete item.new;
-      item.val = dispatchData["arrivePay_" + index];
+      item.val = dispatchData["arrivePay_" + index] || 0;
       return item;
     });
     _this.tailPay = _this.tailPay.map(function (item, index) {
       delete item.new;
-      item.val = dispatchData["tailPay_" + index];
+      item.val = dispatchData["tailPay_" + index] || 0;
       return item;
     });
     var carsLength = _this.cars.length + _this.carsToAdd.length - _this.carsToDel.length;
@@ -540,7 +585,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         saleRemark: itemData.saleRemark||"",
         storageAndDeliverRemark: itemData.storageAndDeliverRemark||"",
         dealerRemark: itemData.dealerRemark||"",
-        deliverResourceRemark: itemData.deliverResourceRemarkv,
+        deliverResourceRemark: itemData.deliverResourceRemark,
         transportRemark: itemData.transportRemark||"",
       });
     });

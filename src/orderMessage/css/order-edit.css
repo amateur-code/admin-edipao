@@ -45,7 +45,12 @@
   margin-bottom: 5px;
 }
 .fee_container .fee_list .fee_list_item .layui-form-checkbox span {
+  padding: 0;
   display: inline-block;
+  max-width: 120px;
+}
+.fee_container .fee_list .fee_list_item .edit_icon {
+  cursor: pointer;
 }
 .fee_container .fee_footer {
   padding-top: 10px;

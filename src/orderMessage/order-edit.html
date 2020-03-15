@@ -546,7 +546,7 @@
                         <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
                         <div class="layui-row">
                             <div class="layui-col-md7">
-                                <input {{d.arrivePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input {{d.arrivePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             {{# if(item.new){ }}
                             <div class="layui-col-md3">
@@ -577,7 +577,7 @@
                         <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
                         <div class="layui-row">
                             <div class="layui-col-md7">
-                                <input {{d.tailPayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input {{d.tailPayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             {{# if(item.new){ }}
                             <div class="layui-col-md3">
@@ -595,6 +595,24 @@
             </div>
         </div>
     </script>
+    <script id="update_fee_tpl" type="text/html">
+        <div class="fee_container">
+            <form class="fee_list layui-form" lay-filter="update_fee_item_form">
+                <div style="width:100%" class="layui-inline">
+                    <label class="layui-form-label text_left form_label">旧名称</label><br>
+                    <div style="width:100%" class="layui-input-inline">
+                        <input disabled value="{{d.oldName}}" type="tel" name="oldName" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div style="width:100%" class="layui-inline">
+                    <label class="layui-form-label text_left form_label">新名称</label><br>
+                    <div style="width:100%" class="layui-input-inline">
+                        <input type="tel" name="newName" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </script>
     <script type="text/html" id="fee_tpl">
         <div class="fee_container">
             <form lay-filter="add_fee_form" class="fee_list layui-form">
@@ -602,6 +620,7 @@
                     {{#  layui.each(d.feeList, function(index, item){ }}
                         <div class="layui-col-md4 fee_list_item">
                             <input type="checkbox" {{item.checked?'checked':''}} name="{{item.key}}" title="{{item.key}}" lay-skin="primary">
+                            <i data-index="{{index}}" class="blue edit_icon layui-icon">&#xe642;</i>  
                         </div>
                     {{#  }); }}
                 </div>

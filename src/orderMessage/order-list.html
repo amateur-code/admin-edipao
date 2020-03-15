@@ -75,24 +75,31 @@
 </script>
 <script id="pic_view_list_tpl" type="text/html">
     <div style="margin-top:20px;" class="view_pic_container">
+        {{# console.log(d)}}
+        {{#  if(d.field == 'fetchStatus'){ }}
         <div style="margin-bottom: 20px;">提车图片</div>
         <div class="layui-row">
             {{#  layui.each(d.fetchImages, function(index, item){ }}
             <img class="pic_view_image" src="{{item}}">
             {{#  }); }}
         </div>
+        {{#  } }} 
+        {{#  if(d.field == 'startAuditStatus'){ }}
         <div style="margin-bottom: 20px;">发车单</div>
         <div class="layui-row">
             {{#  layui.each(d.startBillImage, function(index, item){ }}
             <img class="pic_view_image" src="{{item}}">
             {{#  }); }}
         </div>
+        {{#  } }} 
+        {{#  if(d.field == 'returnAuditStatus'){ }}
         <div style="margin-bottom: 20px;">交车单</div>
         <div class="layui-row">
             {{#  layui.each(d.returnImages, function(index, item){ }}
             <img class="pic_view_image" src="{{item}}">
             {{#  }); }}
         </div>
+        {{#  } }} 
     </div>
 </script>
 <script id="pic_verify_tpl" type="text/html">
@@ -130,7 +137,7 @@
         </form>
     </div>
 </script>
-<script id="pic_view_tpl" type="text/html">
+<script id="pic_upload_view_tpl" type="text/html">
     <div style="padding:10px 0;">
         <form lay-filter="uploadPic" class="layui-form">
             <div>车辆vin码</div>

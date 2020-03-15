@@ -30,6 +30,8 @@ layui.config({
         returnImagesList: []
     }
     var uploadData = {}
+    top.window.uploadData = uploadData;
+    top.window.uploadObj = uploadObj;
     var filters = [
         { field: 'orderNo', type: 'input' },
         { field: 'warehouseNo', type: 'input' },
@@ -116,6 +118,11 @@ layui.config({
         },
         bindUpload: function () {
             $(".list_picture_upload").unbind().on("click", function(e){
+                uploadObj = {
+                    startImagesList: [],
+                    fetchImagesList: [],
+                    returnImagesList: []
+                };
                 uploadData = {};
                 var elem;
                 var field = e.target.dataset.field;
@@ -200,6 +207,14 @@ layui.config({
                     //多图片上传
                     form.on("select", function (data) {
                         if(data.elem.name == "vinCode"){
+                            if(uploadTruckId != data.value){
+                                uploadObj = {
+                                    startImagesList: [],
+                                    fetchImagesList: [],
+                                    returnImagesList: []
+                                }
+                                uploadData = {}
+                            }
                             uploadTruckId = data.value;
                         }
                     });
@@ -211,9 +226,7 @@ layui.config({
                                 ,multiple: true
                                 ,url: layui.edipao.API_HOST+'/admin/truck/upload/image' //上传接口
                                 ,before: function(obj){
-                                    //预读本地文件示例，不支持ie8
                                     obj.preview(function(idx, file, result){
-                                        console.log(item.pre + index)
                                         $(item.pre + index + "").append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img pre_img">')
                                     });
                                 }
@@ -221,16 +234,15 @@ layui.config({
                                     loginStaffId: user.staffId,
                                     type: item.type,
                                     truckId: truckId,
+                                    index: uploadData[uploadTruckId+""][item.key].length + 1,
                                 }
                                 ,done: function(res){
                                     if(res.code == "0"){
                                         uploadData[uploadTruckId+""][item.key].push(res.data);
-                                        //layer.msg("上传成功", {icon: 1});
                                     }else{
                                         layer.msg(res.message, {icon: 5,anim: 6});
                                     }
                                 }
-                                ,error: function(){}
                             });
                         });
                     });
@@ -238,46 +250,64 @@ layui.config({
             });
         },
         uploadPics: function (options, cb) {
-            var data = {
-                loginStaffId: user.staffId,
-                orderNo: options.orderNo,
-                orderType: orderData.orderType
-            };
-            var truckUpdateReqList = [];
-            Object.keys(uploadData).forEach(function (item) {
-                var uploadObj = uploadData[item];
-                var truckData = { truckId: item*1 }
-                truckData.returnImages = uploadObj["returnImagesList"].join(",");
-                truckData.startImages = uploadObj["startImagesList"].join(",");
-                truckData.fetchImages = uploadObj["fetchImagesList"].join(",");
-                truckUpdateReqList.push(truckData);
-            });
-            data.truckUpdateReqList = truckUpdateReqList;
-            edipao.request({
-                url: "/admin/order/updateOrder",
-                method: "POST",
-                data: getParams(data),
-            }).done(function (res) {
-                cb(res);
-            });
-            function getParams(data){
-                var arr = [];
-                Object.keys(data).forEach(function(item){
-                  if(data[item] instanceof Array){
-                    data[item].forEach(function (item2, index) {
-                      Object.keys(item2).forEach(function (item3) {
-                        arr.push(item+"["+index+"]"+"."+item3 + "=" + item2[item3]);
-                      });
-                    })
-                  }else{
-                    arr.push(item + "=" + data[item]);
-                  }
+            var data1, data2, data3;
+            var promise;
+            var flag = [data1, data2, data3];
+            var uploadObj = uploadData[uploadTruckId + ''];
+            var getReq = function (data) {
+                return edipao.request({
+                    url: "/admin/truck/submit/image",
+                    method: "post",
+                    data: data
                 });
-                console.log(arr)
-                return encodeURI(arr.join("&"));
             }
+            console.log(uploadObj)
+            if(uploadObj["returnImagesList"].length > 0){
+                data1 = {
+                    loginStaffId: user.staffId,
+                    truckId: uploadTruckId,
+                    type: 5,
+                    images: uploadObj["returnImagesList"].join(",")
+                }
+                flag[0] = data1;
+            }
+            if(uploadObj["startImagesList"].length > 0){
+                data2 = {
+                    loginStaffId: user.staffId,
+                    truckId: uploadTruckId,
+                    type: 3,
+                    images: uploadObj["startImagesList"].join(",")
+                }
+                flag[1] = data2;
+            }
+            if(uploadObj["fetchImagesList"].length > 0){
+                data3 = {
+                    loginStaffId: user.staffId,
+                    truckId: uploadTruckId,
+                    type: 2,
+                    images: uploadObj["fetchImagesList"].join(",")
+                }
+                flag[2] = data3;
+            }
+            flag = flag.filter(function (item) {
+                return !!item;
+            });
+            flag = flag.map(function (item) {
+                return getReq(item);
+            });
+            if(flag.length == 0){
+                layer.msg("请先选择图片");
+            }else if(flag.length == 1){
+                promise = $.when(flag[0]);
+            }else if(flag.length == 2){
+                promise = $.when(flag[0], flag[1]);
+            }else if(flag.length == 3){
+                promise = $.when(flag[0], flag[1], flag[2]);
+            }
+            promise.done(function () {
+                cb({code:0})
+            });
         },
-       
         bindVerify: function(){
             $(".list_arrive_verify").unbind().on("click", function(e){
                 var field = e.target.dataset.field;
@@ -583,13 +613,15 @@ layui.config({
                             }
                         });
                         laytpl($("#pic_view_tpl").html()).render({
-                            list: res.data.truckDTOList
+                            list: res.data.truckDTOList,
+                            field: field
                         }, function (html) {
                             layer.open({
                                 type: 1,
                                 content: html,
                                 area: ["600px", "400px"],
                                 success: function () {
+                                    res.data.truckDTOList[startIndex].field = field;
                                     laytpl($("#pic_view_list_tpl").html()).render(res.data.truckDTOList[startIndex], function (html) {
                                         $("#pic_view_list_container").html(html);
                                         form.render("select");
@@ -624,7 +656,7 @@ layui.config({
                         layer.alert('你没有访问权限', {icon: 2});
                         break;
                     case "import_order":
-                        xadmin.open('订单录入','./order-import.html',1200,600);
+                        xadmin.open('订单录入','./order-import.html',1100,500);
                         break;
                     case "export_data":
                         method.exportData();
@@ -748,11 +780,9 @@ layui.config({
             table.on('tool(orderList)', function (obj) {
                 var data = obj.data; //获得当前行数据
                 var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-                
                 layEvent == 'edit' && permissionList.indexOf('修改') == -1 && (layEvent = 'reject');
                 // layEvent == 'verify' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
                 layEvent == 'cancel' && permissionList.indexOf('取消') == -1 && (layEvent = 'reject');
-
                 if(layEvent === 'reject'){
                     layer.alert('你没有访问权限', {icon: 2});
                     return;
