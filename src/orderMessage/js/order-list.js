@@ -106,13 +106,13 @@ layui.config({
     });
 
     var method = {
-        getOrder: function (orderNo) {
+        getOrder: function (orderId) {
             return edipao.request({
                 method: "GET",
                 url: "/admin/order/detail",
                 data: {
                     loginStaffId: user.staffId,
-                    orderNo: orderNo
+                    id: orderId  //ORDERNO
                 }
             })
         },
@@ -130,6 +130,7 @@ layui.config({
                 var type = e.target.dataset.type * 1;
                 var number = e.target.dataset.number * 1;
                 var orderNo = e.target.dataset.order;
+                var orderId = e.target.dataset.orderid;
                 var event = "ok";
                 type == 2 && permissionList.indexOf('提车照片上传') == -1 && (event = 'reject');
                 type == 3 && permissionList.indexOf('发车单-上传') == -1 && (event = 'reject');
@@ -139,7 +140,7 @@ layui.config({
                     return;
                 }
                 elem = $("#uploadStartPic").html();
-                method.getOrder(orderNo).done(function (res) {
+                method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
                         orderData = res.data;
                         uploadTruckId = res.data.truckDTOList[0].id;
@@ -153,7 +154,7 @@ layui.config({
                             three: [1,1,1],
                         };
                         laytpl(elem).render(renderData, function (html) {
-                            method.openUpload(html, renderData, type, truckId, orderNo);
+                            method.openUpload(html, renderData, type, truckId, orderId);
                         });
                     }else{
                         layer.msg(res.message, {icon: 5,anim: 6});
@@ -162,7 +163,7 @@ layui.config({
                     
             });
         },
-        openUpload: function (html, renderData, type, truckId, orderNo) {
+        openUpload: function (html, renderData, type, truckId, orderId) {
             var renderObj = [
                 {
                     num: renderData.six,
@@ -192,7 +193,7 @@ layui.config({
                 area: ["600px", "400px"],
                 btn: ["确定", "取消"],
                 yes: function () {
-                    method.uploadPics({orderNo: orderNo}, function (res) {
+                    method.uploadPics({id: orderId}, function (res) {
                         if(res.code == "0"){
                             layer.msg("上传成功", {icon: 1});
                             table.reload("orderList");
@@ -330,7 +331,7 @@ layui.config({
                     , page: false //开启分页
                     , url: layui.edipao.API_HOST + "/admin/order/detail"
                     // , url: "js/order.json"
-                    , where: { loginStaffId: user.staffId, orderNo: orderNo }
+                    , where: { loginStaffId: user.staffId, id: orderId } //ORDERNO
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
                         return {
@@ -407,7 +408,7 @@ layui.config({
                     , page: false //开启分页
                     , url: layui.edipao.API_HOST + "/admin/order/detail"
                     // , url: "js/order.json"
-                    , where: { loginStaffId: user.staffId, orderNo: orderNo }
+                    , where: { loginStaffId: user.staffId, id: orderId } //ORDERNO
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
                         return {
@@ -482,7 +483,7 @@ layui.config({
                     // , url: "js/order.json"
                     , page: false
 
-                    , where: { loginStaffId: user.staffId, orderNo: orderNo }
+                    , where: { loginStaffId: user.staffId, id: orderId } //ORDERNO
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
                         return {
@@ -541,7 +542,7 @@ layui.config({
                 var orderId = e.target.dataset.orderid;
                 var key = e.target.dataset.key;
                 var type = e.target.dataset.type*1;
-                method.getOrder(orderNo).done(function (res) {
+                method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
                         res.data.truckDTOList.forEach(function (item) {
                             if(!item[key]){
@@ -591,9 +592,10 @@ layui.config({
         bindViewPic: function () {
             $(".list_picture_view").unbind().on("click", function (e) {
                 var orderNo = e.target.dataset.order;
+                var orderId = e.target.dataset.orderid;
                 var field = e.target.dataset.field;
                 var startIndex = 0;
-                method.getOrder(orderNo).done(function (res) {
+                method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
                         res.data.truckDTOList.forEach(function (item) {
                             if(!item.startImages){
@@ -779,22 +781,22 @@ layui.config({
                     layer.alert('你没有访问权限', {icon: 2});
                     return;
                 }else if (layEvent === 'edit') { //编辑
-                    top.xadmin.add_tab('修改订单', 'orderMessage/order-edit.html?action=edit&orderNo=' + data.orderNo);
+                    top.xadmin.add_tab('修改订单', 'orderMessage/order-edit.html?action=edit&orderNo=' + data.orderNo + "&orderId=" + data.id);
                 } else if (layEvent === 'verify') { //审核
                     xadmin.open('审核', './order-view.html?action=verify&orderNo=' + data.orderNo + "&orderId=" + data.id, 1100, 500);
                 } else if (layEvent === 'view') { //查看
-                    top.xadmin.add_tab('查看订单', 'orderMessage/order-view.html?orderNo=' + data.orderNo);
+                    top.xadmin.add_tab('查看订单', 'orderMessage/order-view.html?orderNo=' + data.orderNo + "&orderId=" + data.id);
                 } else if (layEvent === 'cancel') { //取消
                     var index = layer.open({
                         title: "取消确认",
                         content: "取消后订单将作废，确认继续取消订单？",
                         btn: ["确认", "取消"],
                         yes: function(){
-                            edipao.request({
+                            edipao.request({ //ORDERNO
                                 url: "/admin/order/cancelOrder",
                                 data: {
                                     loginStaffId: user.staffId,
-                                    orderNo: data.orderNo
+                                    id: data.id
                                 }
                             }).done(function (res) {
                                 if(res.code == "0"){
@@ -1071,7 +1073,8 @@ layui.config({
                     status = "已驳回";
                     break;
             }
-            if(d.returnAuditStatus * 1 == 1){
+            console.log(d.returnAuditStatus)
+            if(d.returnApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
             }
             return status;

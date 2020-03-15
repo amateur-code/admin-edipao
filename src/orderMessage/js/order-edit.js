@@ -11,6 +11,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
   function Edit(){
     var qs = edipao.urlGet();
     this.orderNo = qs.orderNo;
+    this.orderId = qs.orderId;
     this.action = qs.action;
     this.user = JSON.parse(sessionStorage.user);
     this.carFormList = [];
@@ -188,7 +189,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       method: "GET",
       data: {
         loginStaffId: _this.user.staffId,
-        orderNo: _this.orderNo
+        id: _this.orderId
       }
     });
   }
@@ -438,7 +439,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         data: {
           loginStaffId: _this.user.staffId,
           truckId: data.id,
-          orderNo: _this.orderNo
+          orderId: _this.orderId
         }
       }).done(function (res) {
         if(res.code == '0'){
@@ -504,7 +505,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         data: {
           loginStaffId: _this.user.staffId,
           truckId: id,
-          orderNo: _this.orderNo
+          orderId: _this.orderId
         }
       }).done(function (res) {
         if(res.code == 0){
@@ -513,7 +514,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             edipao.request({
               url: "/admin/order/cancelOrder",
               method: "post",
-              data: {loginStaffId: _this.user.staffId, orderNo: _this.orderNo}
+              data: {loginStaffId: _this.user.staffId, id: _this.orderId}
             }).done(function(res){
               if(res.code == 0){
                 layer.alert("订单已取消", { icon: 6 }, function() {
@@ -592,6 +593,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         transportRemark: itemData.transportRemark||"",
       });
     });
+    data.id = orderData.id;
     data.loginStaffId = _this.user.staffId||"";
     data.orderNo = orderData.orderNo||"";
     data.orderType = carsLength > 1 ? 2 : 1;
@@ -660,7 +662,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       method: "GET",
       data: {
         loginStaffId: _this.user.staffId,
-        orderNo: _this.orderNo,
+        id: _this.orderId,
       }
     }).done(function (res) {
       if(res.code == "0"){

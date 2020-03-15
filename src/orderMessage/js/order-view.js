@@ -117,7 +117,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         method: "GET",
         data: {
           loginStaffId: _this.user.staffId,
-          orderNo: _this.orderNo
+          id: _this.orderId
         }
       });
     }
