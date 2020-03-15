@@ -726,15 +726,7 @@ layui.config({
                     var data = [];
                     orderDTOList = res.data.orderDTOList;
                     orderDTOList.forEach(function(item){
-                        if(item.orderType == 1){
-                            data.push(item);
-                        }else if(item.orderType == 2){
-                            if(item.masterFlag == "是"){
-                                data.push(item);
-                            }
-                        }else{
-                            data.push(item);
-                        }
+                        data.push(item);
                     });
                     return {
                         "code": res.code, //解析接口状态
@@ -789,7 +781,7 @@ layui.config({
                 }else if (layEvent === 'edit') { //编辑
                     top.xadmin.add_tab('修改订单', 'orderMessage/order-edit.html?action=edit&orderNo=' + data.orderNo);
                 } else if (layEvent === 'verify') { //审核
-                    top.xadmin.add_tab('审核', 'orderMessage/order-view.html?action=verify&orderNo=' + data.orderNo);
+                    xadmin.open('审核', './order-view.html?action=verify&orderNo=' + data.orderNo + "&orderId=" + data.id, 1100, 500);
                 } else if (layEvent === 'view') { //查看
                     top.xadmin.add_tab('查看订单', 'orderMessage/order-view.html?orderNo=' + data.orderNo);
                 } else if (layEvent === 'cancel') { //取消
@@ -1084,7 +1076,6 @@ layui.config({
             }
             return status;
         }},
-        
     ];
     var showList = [
         "orderNo",
@@ -1120,7 +1111,7 @@ layui.config({
         "returnAuditStatus",
     ];
     var exportHead={};// 导出头部
-    var toolField = {title: '操作', toolbar: '#barDemo', align: 'center', fixed: 'right', width: 350};
+    var toolField = {title: '操作', toolbar: '#barDemo', align: 'center', fixed: 'right', width: 350,};
 
     edipao.request({
         type: 'GET',

@@ -162,7 +162,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         },
         done: function (res) {
           if(res.code == 0){
-            _this.tempLicenseBackImage[index] = res.data;
+            _this.tempLicenseBackImage[index] = {
+              image: res.data,
+              id: data.truckDTOList[index].id
+            };
             layer.msg("上传成功");
           }else{
             layer.msg(res.message, {icon: 5,anim: 6});
@@ -581,7 +584,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         income: itemData.income||"",
         manageFee: itemData.manageFee||"",
         tempLicense: itemData.tempLicense,
-        tempLicenseBackImage: _this.tempLicenseBackImage[index]||"",
+        tempLicenseBackImage: _this.tempLicenseBackImage[index].image || "",
         saleRemark: itemData.saleRemark||"",
         storageAndDeliverRemark: itemData.storageAndDeliverRemark||"",
         dealerRemark: itemData.dealerRemark||"",
@@ -636,6 +639,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
   }
   Edit.prototype.submitAll = function(req1){
     var _this = this;
+    var reqs = [];
     req1.done(function (res) {
       if(res.code == "0"){
         layer.msg("修改成功");

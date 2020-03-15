@@ -8,6 +8,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
   function View() {
     var qs = edipao.urlGet();
     this.orderNo = qs.orderNo;
+    this.orderId = qs.orderId;
     this.action = qs.action || "";
     this.user = JSON.parse(sessionStorage.user);
     this.prePay = [];
@@ -33,9 +34,31 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       });
     },
     bindEvents: function () {
+      var _this = this;
       $("#verify_submit").unbind().on("click", function (e) {
         var data = form.val("verify_form");
-
+        console.log(data)
+        edipao.request({
+          url: "/admin/order/approval/order",
+          method: "POST",
+          data: {
+            loginStaffId: _this.user.staffId,
+            orderId: _this.orderId,
+            approvalRemark: data.approvalRemark,
+            approvalResult: data.approvalResult * 1
+          }
+        }).done(function (res) {
+          if(res.code == "0"){
+            layer.alert("提交成功", { icon: 6 }, function () { 
+              xadmin.close();
+              xadmin.father_reload();
+            });
+          }
+        });
+      });
+      $("#btn_cancel").unbind().on("click", function (e) {
+        var lay_id = localStorage.current_tab;
+        top.$('.layui-tab-title li[lay-id=' + lay_id + ']').find('.layui-tab-close').click();
       });
     },
     setFeeList: function () {

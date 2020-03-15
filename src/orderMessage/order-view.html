@@ -386,21 +386,21 @@
                 <div class="layui-form-item layui-row">
                     <div style="line-height:34px;" class="layui-col-md1">审核结果：</div>
                     <div class="layui-col-md1">
-                        <input type="radio" name="verify_result" value="yes" title="通过" checked>
+                        <input type="radio" name="approvalResult" value="0" title="通过" checked>
                     </div>
                     <div class="layui-col-md1">
-                        <input type="radio" name="verify_result" value="no" title="驳回">
+                        <input type="radio" name="approvalResult" value="1" title="驳回">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row">
                     <div style="line-height:34px;" class="layui-col-md1">审核备注：</div>
                     <div class="layui-col-md10">
-                        <textarea name="verify_text" lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+                        <textarea name="approvalRemark" lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
                     </div>
                 </div>
                 <div class="layui-form-item layui-row">
                     <div class="layui-col-md1 layui-col-md-offset5">
-                        <div class="layui-btn layui-btn-primary">取消</div>
+                        <div id="btn_cancel" class="layui-btn layui-btn-primary">取消</div>
                     </div>
                     <div class="layui-col-md1">
                         <div id="verify_submit" class="layui-btn layui-btn-normal">确认</div>
