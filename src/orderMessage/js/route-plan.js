@@ -1,5 +1,5 @@
 layui.config({
-base: '../../lib/'
+base: '../lib/'
 }).extend({
 excel: 'layui_exts/excel',
 tableFilter: 'TableFilter/tableFilter'
