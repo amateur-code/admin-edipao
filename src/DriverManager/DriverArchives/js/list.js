@@ -138,13 +138,13 @@ layui.config({
             field: 'wishJourney', title: '意向线路',width: 100,
             templet: function (data) {
                 var val = data.wishJourney;
-                return wishJourneyNull(val)
+                return wishJourneyNullHtml(val)
             }
         },
         { field: 'oftenJourney', title: '常跑线路',width: 100,
             templet: function (data) {
                 var val = data.oftenJourney;
-                return wishJourneyNull(val)
+                return oftenJourneyNullHtml(val)
             }
         },
         { field: 'location', title: '位置',width: 100,
@@ -408,6 +408,42 @@ layui.config({
         }
     }
     // 意向线路-常跑线路
+    function wishJourneyNullHtml(val){
+        if(val!=null&&val!=''&&val!='null'){
+            var newVal = JSON.parse(val);
+            if(newVal){
+                var len = newVal.length
+                if(len>0){
+                var html='<a lay-event="wishJourneyList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;width: 100%;display: block">'+len+'</a>'
+                 return html;
+                }else{
+                    return '--';
+                }
+            }else{
+                return '--';
+            }
+        }else{
+            return '--';
+        }
+    }
+    function oftenJourneyNullHtml(val){
+        if(val!=null&&val!=''&&val!='null'){
+            var newVal = JSON.parse(val);
+            if(newVal){
+                var len = newVal.length
+                if(len>0){
+                    var html='<a lay-event="oftenJourneyList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;width: 100%;display: block">'+len+'</a>'
+                    return html;
+                }else{
+                    return '--';
+                }
+            }else{
+                return '--';
+            }
+        }else{
+            return '--';
+        }
+    }
     function wishJourneyNull(val){
         if(val!=null&&val!=''&&val!='null'){
             var newVal = JSON.parse(val);
@@ -486,6 +522,12 @@ layui.config({
                 break;
             case 'info':
                 xadmin.open('查看司机', './info.html?id=' + data.id)
+                break;
+            case 'wishJourneyList':
+                xadmin.open('查看线路', './wishJourney-list.html?wishJourney=' + (data.wishJourney).replace(/\"/g,"'"))
+                break;
+            case 'oftenJourneyList':
+                xadmin.open('查看线路', './wishJourney-list.html?wishJourney=' + (data.oftenJourney).replace(/\"/g,"'"))
                 break;
             case 'del':
                 layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
