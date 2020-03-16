@@ -27,6 +27,14 @@
         // 是否开启刷新记忆tab功能
     // var is_remember = false;
     </script>
+    <style type="text/css">
+        .layui-table-tool-temp{
+            padding-right: 0;
+        }
+        .layui-btn-container{
+            text-align: right;
+        }
+    </style>
 </head>
 
 <body>
@@ -43,7 +51,9 @@
     </div>
     <script type="text/html" id="headerBtns">
         <div class="layui-btn-container">
+            {{# if(permissionList.indexOf('交易记录导出') != -1){ }}    
             <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
+            {{# } }}
             <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
         </div>
     </script>
@@ -56,6 +66,7 @@
         tableFilter: 'TableFilter/tableFilter'
     }).use(['table', 'layer', 'excel', 'tableFilter'], function(table, layer,excel, tableFilter) {
         var xadmin = layui.xadmin,
+            edipao = layui.edipao,
             tableCols = [ //表头
                 { checkbox: true },
                 { field: 'tradeNo', title: '交易流水号', width: 200 },
@@ -77,7 +88,8 @@
             ],
             tableIns,
             tableFilterIns,
-            edipao = layui.edipao;
+            permissionList = edipao.getMyPermission(); 
+        window.permissionList = permissionList;    
         var params = edipao.urlGet();
         var tableKey ='BackService-' + params.key + '-trade-record';
 
@@ -192,7 +204,11 @@
             })
         }
         function handleEvent(obj){
+            obj.event == 'export' && permissionList.indexOf('交易记录导出') == -1 && (obj.event = 'reject');
         	switch (obj.event) {
+                case 'reject':
+                    layer.alert('你没有访问权限', {icon: 2});
+                    break;
                 case 'export':
                 	exportData()
                     break;

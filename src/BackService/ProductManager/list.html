@@ -27,6 +27,14 @@
         // 是否开启刷新记忆tab功能
     // var is_remember = false;
     </script>
+    <style type="text/css">
+        .layui-table-tool-temp{
+            padding-right: 0;
+        }
+        .layui-btn-container{
+            text-align: right;
+        }
+    </style>
 </head>
 
 <body>
@@ -65,19 +73,19 @@
     </script>
     <script type="text/html" id="rowBtns">
         {{# if(permissionList.indexOf('修改') != -1){ }}
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">修改</a>
+        <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
         {{# } }}
         {{# if(d.needApproval){ }}
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="check">审核</a>
+        <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="check">审核</a>
         {{# } }}
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="preview">查看</a>
+        <a class="layui-btn layui-btn-xs" lay-event="preview">查看</a>
         {{# if(permissionList.indexOf('删除') != -1){ }}
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
         {{# } }}
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="log">日志</a>
         {{# if(permissionList.indexOf('交易记录') != -1){ }}
-        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="trade-record">交易记录</a>
+        <a class="layui-btn layui-btn-xs" lay-event="trade-record">交易记录</a>
         {{# } }}
+        <a class="layui-btn layui-btn-xs" lay-event="log">日志</a>
     </script>
     <script type="text/javascript">
     layui.config({
@@ -113,12 +121,13 @@
                 { field: 'remark', title: '备注',width:200,templet:function(d){
                     return d.remark || '--'
                 }   },
-                { title: '操作', toolbar: '#rowBtns', width: 400 }
+                { title: '操作', toolbar: '#rowBtns',fixed:'right', width: 400 }
             ],
             tableIns,
             tableFilterIns,
             permissionList = edipao.getMyPermission();
-        window.permissionList = permissionList
+        window.permissionList = permissionList;
+        var params = edipao.urlGet();
         edipao.request({
             type: 'get',
             url: '/admin/supplier/getSupplierType'
@@ -280,7 +289,7 @@
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.productNo + '&type=2');
                     break;
                 case 'trade-record':
-                    xadmin.open('交易记录', '../trade-record.html?key=productNo&id=' + data.productNo)
+                    xadmin.open('交易记录', '../trade-record.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
                     break;
                 case 'add':
                     xadmin.open('新增网点', './add.html')
