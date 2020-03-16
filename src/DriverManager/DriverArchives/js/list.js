@@ -116,13 +116,13 @@ layui.config({
             }
         },
         {
-            field: 'driverType', title: '司机类型',width: 80,
+            field: 'driverType', title: '司机类型',width: 100,
             templet: function (data) {
                 var val = data.driverType;
                 return val || '--'
             }
         },
-        { field: 'driveLicenceType', title: '驾照类型',width: 80,
+        { field: 'driveLicenceType', title: '驾照类型',width: 100,
             templet: function (data) {
                 var val = data.driveLicenceType;
                 return DataNull(val)
@@ -135,19 +135,19 @@ layui.config({
             }
         },
         {
-            field: 'wishJourney', title: '意向线路',
+            field: 'wishJourney', title: '意向线路',width: 100,
             templet: function (data) {
                 var val = data.wishJourney;
                 return wishJourneyNull(val)
             }
         },
-        { field: 'oftenJourney', title: '常跑线路',
+        { field: 'oftenJourney', title: '常跑线路',width: 100,
             templet: function (data) {
                 var val = data.oftenJourney;
                 return wishJourneyNull(val)
             }
         },
-        { field: 'location', title: '位置',
+        { field: 'location', title: '位置',width: 100,
             templet: function (data) {
                 var val = data.location;
                 return DataNull(val);
@@ -159,7 +159,7 @@ layui.config({
                return depositNull(val)
             }
         },
-        { field: 'depositStatus', title: '押金状态',width: 80,
+        { field: 'depositStatus', title: '押金状态',width: 100,
             templet: function (data) {
                 var val = data.depositStatus;
                 if(val == null||val == ''){
@@ -191,7 +191,7 @@ layui.config({
             }
         },
         {
-            field: 'status', title: '司机状态',
+            field: 'status', title: '司机状态',width: 100,
             templet: function (data) {
                 var val = data.status;
                 return  val || '--'

@@ -65,55 +65,96 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             if(data.field.depositStatus=='0'){
                 data.field.depositTradeNumber = '';
             }
-            var param ={
-                'name':data.field.name,
-                'phone':data.field.phone,
-                'idNum':data.field.idNum,
-                'drivingAge':data.field.drivingAge,
-                'driverType':data.field.driverType,
-                'driveLicenceType':data.field.driveLicenceType,
-                'idLicenceValidity':data.field.idLicenceValidity,
-                'driveLicenceValidity':data.field.driveLicenceValidity,
-                'qualificationsValidity':data.field.qualificationsValidity,
-                'status':data.field.status,
-                'address':data.field.address,
-                'avatarImg':data.field.avatarImg,
-                'idLicenceFrontImg':data.field.idLicenceFrontImg,
-                'idLicenceBackImg':data.field.idLicenceBackImg,
-                'driveLicenceFrontImg':data.field.driveLicenceFrontImg,
-                'driveLicenceBackImg':data.field.driveLicenceBackImg,
-                'qualificationsFrontImg':data.field.qualificationsFrontImg,
-                'qualificationsBackImg':data.field.qualificationsBackImg,
-                'transportProtocolImg1':data.field.transportProtocolImg1,
-                'transportProtocolImg2':data.field.transportProtocolImg2,
-                'wishJourney':JSON.stringify(wishJourneyVal).trim(),
-                'deposit':data.field.deposit,
-                'depositStatus':data.field.depositStatus,
-                'depositTradeNumber':data.field.depositTradeNumber,
-                'accountBank':data.field.accountBank,
-                'accountBankAddress':data.field.accountBankAddress,
-                'accountNumber':data.field.accountNumber,
-                'accountName':data.field.accountName,
-                'accountCity':accountCity,
-                'loginStaffId':edipao.getLoginStaffId()
+            var tipsHtml = '';
+            if(idLicenceFrontImgFlag&&driverNameVal!=data.field.name){
+                tipsHtml+='司机姓名、'
             }
-            edipao.request({
-                type: 'POST',
-                url: '/admin/driver/info/save',
-                data:param,
-            }).done(res=>{
-                if(res.code == 0){
-                    layer.alert("增加成功", {icon: 6},
-                        function() {
-                            //关闭当前frame
-                            xadmin.close();
-                            // 可以对父窗口进行刷新
-                            xadmin.father_reload();
-                        });
-                }else{
-                    layer.msg(res.message, {icon: 5,anim: 6});
-                }
-            });
+
+            if(idLicenceFrontImgFlag&&idNumVal!=data.field.idNum){
+                tipsHtml+='身份证号、'
+            }
+            if(idLicenceFrontImgFlag&&addressVal!=data.field.address){
+                tipsHtml+='当前住址、'
+            }
+            if(idLicenceBackImgFlag&&idLicenceValidityVal!=data.field.idLicenceValidity){
+                tipsHtml+='身份证有效期、'
+            }
+            if(driveLicenceFrontImgFlag&&driveLicenceTypeVal!=data.field.driveLicenceType){
+                tipsHtml+='驾照类型、'
+            }
+            if(driveLicenceFrontImgFlag&&drivingAgeVal!=data.field.drivingAge){
+                tipsHtml+='驾龄、'
+            }
+            if(driveLicenceFrontImgFlag&&driveLicenceValidityVal!=data.field.driveLicenceValidity){
+                tipsHtml+='驾驶证有效期、'
+            }
+            if(tipsHtml!=''){
+                tipsHtml = tipsHtml.substring(0,tipsHtml.length-1);
+                layer.confirm(tipsHtml+'与识别信息不一致，确定提交？', {
+                    btn: ['确定','取消'] //按钮
+                }, function(index){
+                    layer.close(index)
+                    saveData ()
+                }, function(index){
+                    layer.close(index)
+                    return false;
+                });
+
+            }else{
+                saveData ()
+            }
+
+           function saveData () {
+               var param ={
+                   'name':data.field.name,
+                   'phone':data.field.phone,
+                   'idNum':data.field.idNum,
+                   'drivingAge':data.field.drivingAge,
+                   'driverType':data.field.driverType,
+                   'driveLicenceType':data.field.driveLicenceType,
+                   'idLicenceValidity':data.field.idLicenceValidity,
+                   'driveLicenceValidity':data.field.driveLicenceValidity,
+                   'qualificationsValidity':data.field.qualificationsValidity,
+                   'status':data.field.status,
+                   'address':data.field.address,
+                   'avatarImg':data.field.avatarImg,
+                   'idLicenceFrontImg':data.field.idLicenceFrontImg,
+                   'idLicenceBackImg':data.field.idLicenceBackImg,
+                   'driveLicenceFrontImg':data.field.driveLicenceFrontImg,
+                   'driveLicenceBackImg':data.field.driveLicenceBackImg,
+                   'qualificationsFrontImg':data.field.qualificationsFrontImg,
+                   'qualificationsBackImg':data.field.qualificationsBackImg,
+                   'transportProtocolImg1':data.field.transportProtocolImg1,
+                   'transportProtocolImg2':data.field.transportProtocolImg2,
+                   'wishJourney':JSON.stringify(wishJourneyVal).trim(),
+                   'deposit':data.field.deposit,
+                   'depositStatus':data.field.depositStatus,
+                   'depositTradeNumber':data.field.depositTradeNumber,
+                   'accountBank':data.field.accountBank,
+                   'accountBankAddress':data.field.accountBankAddress,
+                   'accountNumber':data.field.accountNumber,
+                   'accountName':data.field.accountName,
+                   'accountCity':accountCity,
+                   'loginStaffId':edipao.getLoginStaffId()
+               }
+               edipao.request({
+                   type: 'POST',
+                   url: '/admin/driver/info/save',
+                   data:param,
+               }).done(res=>{
+                   if(res.code == 0){
+                       layer.alert("增加成功", {icon: 6},
+                           function() {
+                               //关闭当前frame
+                               xadmin.close();
+                               // 可以对父窗口进行刷新
+                               xadmin.father_reload();
+                           });
+                   }else{
+                       layer.msg(res.message, {icon: 5,anim: 6});
+                   }
+               });
+           }
             return false;
         });
 });
