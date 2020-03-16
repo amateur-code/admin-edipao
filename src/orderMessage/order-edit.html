@@ -104,8 +104,8 @@
                         <div style="line-height: 32px;" class="layui-col-md1 blue pointer btn_btn">
                             <span class="select_vin" data-filter="CARFORM">选择vin码</span>
                         </div>
-                        <div style="line-height: 32px;visibility: hidden;" class="layui-col-md1 layui-col-md-offset8 btn_btn switch_updown">
-                            <input disabled type="checkbox" name="masterFlag" lay-text="上车|下车"  lay-skin="switch">
+                        <div style="line-height: 32px;" class="layui-col-md1 layui-col-md-offset8 btn_btn switch_updown">
+                            <input type="checkbox" name="masterFlag" lay-text="上车|下车" lay-skin="switch">
                         </div>
                         <div style="line-height: 32px;" class="layui-col-md1 btn_btn">
                             <span data-filter="CARFORM" class="del_car_btn blue pointer">删除车辆</span>
@@ -203,7 +203,6 @@
                             <label class="layui-form-label text_left form_label">发车城市</label><br>
                             <div class="layui-input-inline">
                                 <input type="text" name="startCity" lay-verify="required" autocomplete="off" class="layui-input">
-
                                 <!-- <div class="layui-row">
                                     <div class="layui-col-md6">
                                         <select name="startCity" lay-verify="">
@@ -304,7 +303,7 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset4">
                             <label class="layui-form-label text_left form_label">临牌号</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="tempLicense" autocomplete="off" class="layui-input">
+                                <input type="text" name="tempLicense" autocomplete="off" class="layui-input tempLicense">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">

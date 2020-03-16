@@ -25,6 +25,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     this.carsToDel = [];
     this.cars = [];
     this.tempLicenseBackImage = [];
+    this.tempLicense = [];
     this.driverInfoListDto = [];
     this.formList = [
       "form_ascription",
@@ -146,39 +147,72 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     $("#car_form_container").html(carFormStr);
     form.render();
     _this.carFormList.forEach(function (item, index) {
-      _this.tempLicenseBackImage.push(data.truckDTOList[index].tempLicenseBackImage);
+      _this.tempLicenseBackImage.push({
+        image: data.truckDTOList[index].tempLicenseBackImage,
+        id: data.truckDTOList[index].id
+      });
+      _this.tempLicense.push({
+        image: data.truckDTOList[index].tempLicense,
+        id: data.truckDTOList[index].id
+      });
       laydate.render({
         elem: $(".latestArriveTime")[index], //指定元素
         type: "datetime",
         trigger: "click"
       });
-      upload.render({
-        elem: $('.tempLicenseBackImage')[index],
-        url: edipao.API_HOST + '/admin/truck/upload/image',
-        data: {
-          loginStaffId: _this.user.staffId,
-          truckId: data.truckDTOList[index].id,
-          type: 1,
-          index: 1
-        },
-        done: function (res) {
-          if(res.code == 0){
-            _this.tempLicenseBackImage[index] = {
-              image: res.data,
-              id: data.truckDTOList[index].id
-            };
-            layer.msg("上传成功");
-          }else{
-            layer.msg(res.message, {icon: 5,anim: 6});
-          }
-        }
-      });
+      _this.renderUpload(index);
       _this.cars.push({
         id: data.truckDTOList[index].id,
         filter: item
       });
       form.val(item, data.truckDTOList[index]);
       $("[lay-filter=" + item + "] .select_vin").remove();
+    });
+  }
+  Edit.prototype.renderUpload = function(index){
+    var _this = this;
+    var data = _this.orderData;
+    // upload.render({
+    //   elem: $('.tempLicense')[index],
+    //   url: edipao.API_HOST + '/admin/truck/upload/image',
+    //   data: {
+    //     loginStaffId: _this.user.staffId,
+    //     truckId: data.truckDTOList[index].id,
+    //     type: 1,
+    //     index: 1
+    //   },
+    //   done: function (res) {
+    //     if(res.code == 0){
+    //       _this.tempLicense[index] = {
+    //         image: res.data,
+    //         id: data.truckDTOList[index].id
+    //       };
+    //       layer.msg("上传成功");
+    //     }else{
+    //       layer.msg(res.message, {icon: 5,anim: 6});
+    //     }
+    //   }
+    // });
+    upload.render({
+      elem: $('.tempLicenseBackImage')[index],
+      url: edipao.API_HOST + '/admin/truck/upload/image',
+      data: {
+        loginStaffId: _this.user.staffId,
+        truckId: data.truckDTOList[index].id,
+        type: 1,
+        index: 1
+      },
+      done: function (res) {
+        if(res.code == 0){
+          _this.tempLicenseBackImage[index] = {
+            image: res.data,
+            id: data.truckDTOList[index].id
+          };
+          layer.msg("上传成功");
+        }else{
+          layer.msg(res.message, {icon: 5,anim: 6});
+        }
+      }
     });
   }
   Edit.prototype.getOrder = function () {
@@ -405,6 +439,64 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var idToAdd = data.id;
     //待删除的车辆中已包含
     var indexTodel;
+    var index = _this.carFormList.length - 1;
+
+    // upload.render({
+    //   elem: $('.tempLicense')[index],
+    //   url: edipao.API_HOST + '/admin/truck/upload/image',
+    //   data: {
+    //     loginStaffId: _this.user.staffId,
+    //     truckId: idToAdd,
+    //     type: 1,
+    //     index: 1
+    //   },
+    //   before: function () {
+    //     if(!form.val(filter).id){
+    //       layer.msg('请先选择车辆', {icon: 5,anim: 6});
+    //       return false;
+    //     }
+    //   },
+    //   done: function (res) {
+    //     if(res.code == 0){
+    //       _this.tempLicense[index] = {
+    //         image: res.data,
+    //         id: idToAdd
+    //       };
+    //       layer.msg("上传成功");
+    //     }else{
+    //       layer.msg(res.message, {icon: 5,anim: 6});
+    //     }
+    //   }
+    // });
+    upload.render({
+      elem: $('.tempLicenseBackImage')[index],
+      url: edipao.API_HOST + '/admin/truck/upload/image',
+      data: {
+        loginStaffId: _this.user.staffId,
+        truckId: idToAdd,
+        type: 1,
+        index: 1
+      },
+      before: function () {
+        if(!idToAdd){
+          layer.msg('请先选择车辆', {icon: 5,anim: 6});
+          return false;
+        }
+      },
+      done: function (res) {
+        if(res.code == 0){
+          _this.tempLicenseBackImage[index] = {
+            image: res.data,
+            id: idToAdd
+          };
+          layer.msg("上传成功");
+        }else{
+          layer.msg(res.message, {icon: 5,anim: 6});
+        }
+      }
+    });
+
+
     var delCarsFlag = _this.carsToDel.some(function (item, index) {
       if(item.id == data.id) {idTodel = item.id; indexTodel = index;}
       return item.id == data.id;
@@ -478,6 +570,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     });
     _this.carFormList.splice(carFormListIndex, 1);
     _this.tempLicenseBackImage.splice(carFormListIndex, 1);
+    // _this.tempLicense.splice(carFormListIndex, 1);
     var carsFlag = _this.cars.some(function (item, index) {
       if(item.filter == filter) {idTodel = item.id; indexTodel = index;}
       return item.filter == filter;
@@ -584,8 +677,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         pricePerMeliage: itemData.pricePerMeliage||"",
         income: itemData.income||"",
         manageFee: itemData.manageFee||"",
-        tempLicense: itemData.tempLicense,
-        tempLicenseBackImage: _this.tempLicenseBackImage[index].image || "",
+        tempLicense: _this.tempLicense[index].image || itemData.tempLicense,
+        tempLicenseBackImage: _this.tempLicenseBackImage[index].image || itemData.tempLicenseBackImage,
         saleRemark: itemData.saleRemark||"",
         storageAndDeliverRemark: itemData.storageAndDeliverRemark||"",
         dealerRemark: itemData.dealerRemark||"",
@@ -593,9 +686,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         transportRemark: itemData.transportRemark||"",
       });
     });
-    data.id = orderData.id;
+    data.id = _this.orderId;
     data.loginStaffId = _this.user.staffId||"";
-    data.orderNo = orderData.orderNo||"";
+    data.orderNo = _this.orderNo || "";
     data.orderType = carsLength > 1 ? 2 : 1;
     data.totalIncome = orderData.totalIncome||"";
     data.totalManageFee = orderData.totalManageFee||"";
@@ -618,6 +711,21 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     data.arrivePay = JSON.stringify(_this.arrivePay);
     data.tailPay = JSON.stringify(_this.tailPay);
     data.truckUpdateReqList = truckUpdateReqList||"";
+    if(data.orderType == 1){
+      if(truckUpdateReqList[0].masterFlag == "否"){
+        layer.msg("缺少下车标识");
+        return;
+      }
+    }else if(data.orderType == 2){
+      var masterNum = 0;
+      truckUpdateReqList.forEach(function (item) {
+        if(item.masterFlag == "是") masterNum++;
+      });
+      if(masterNum != 1){
+        layer.msg("一个订单有且只能有一个下车标识");
+        return;
+      }
+    }
     _this.submitAll(edipao.request({
       url: "/admin/order/updateOrder",
       method: "POST",
@@ -814,30 +922,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         elem: $(".latestArriveTime")[index], //指定元素
         type: "datetime",
         trigger: "click"
-      });
-      upload.render({
-        elem: $('.tempLicenseBackImage')[index],
-        url: edipao.API_HOST + '/admin/truck/upload/image',
-        data: {
-          loginStaffId: _this.user.staffId,
-          truckId: form.val(filterStr).id,
-          type: 1,
-          index: 1
-        },
-        before: function () {
-          if(!form.val(filterStr).id){
-            layer.msg('请先选择车辆', {icon: 5,anim: 6});
-            return false;
-          }
-        },
-        done: function (res) {
-          if(res.code == 0){
-            _this.tempLicenseBackImage[index] = res.data;
-            layer.msg("上传成功");
-          }else{
-            layer.msg(res.message, {icon: 5,anim: 6});
-          }
-        }
       });
     });
     $(".add_fee").unbind().on("click", function (e) {

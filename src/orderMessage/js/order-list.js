@@ -728,6 +728,11 @@ layui.config({
                     var data = [];
                     orderDTOList = res.data.orderDTOList;
                     orderDTOList.forEach(function(item){
+                        if(item.orderType == 2 && item.masterFlag == "否"){
+                            item.showBtn = 0;
+                        }else{
+                            item.showBtn = 1;
+                        }
                         data.push(item);
                     });
                     return {
@@ -938,7 +943,9 @@ layui.config({
                 } else {
                     payStatus = "-非法状态";
                 }
-
+                if(d.orderType == 2 && d.masterFlag == "否"){
+                    return "";
+                }
                 return d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus;
             }
         },
@@ -962,6 +969,9 @@ layui.config({
                     payStatus = " - 非法状态";
 
                 }
+                if(d.orderType == 2 && d.masterFlag == "否"){
+                    return "";
+                }
                 return d.arrivePayAmount + "元" + payStatus;
             }
         },
@@ -984,7 +994,9 @@ layui.config({
                 } else {
                     payStatus = " - 非法状态";
                 }
-
+                if(d.orderType == 2 && d.masterFlag == "否"){
+                    return "";
+                }
                 return d.tailPayAmount + "元" + payStatus;
             }
         },
@@ -1022,6 +1034,9 @@ layui.config({
             if(d.fetchApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
             }
+            if(d.orderType == 2 && d.masterFlag == "否"){
+                status = "";
+            }
             return status;
         }},
         {field: 'startAuditStatus', title: '发车单审核状态', sort: false,minWidth:100, hide: false, templet: function(d){
@@ -1049,6 +1064,9 @@ layui.config({
             if(d.startApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
             }
+            if(d.orderType == 2 && d.masterFlag == "否"){
+                status = "";
+            }
             return status;
         }},
         {field: 'returnAuditStatus', title: '交车单审核状态', sort: false,minWidth:100, hide: false, templet: function(d){
@@ -1056,6 +1074,7 @@ layui.config({
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='3' data-order="+ d.orderNo +" data-type='2' data-key='returnImages' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
+            var status2 = "未上传";
             switch(d.returnAuditStatus * 1){
                 case 0:
                     status = "未上传";
@@ -1073,9 +1092,11 @@ layui.config({
                     status = "已驳回";
                     break;
             }
-            console.log(d.returnAuditStatus)
             if(d.returnApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
+            }
+            if(d.orderType == 2 && d.masterFlag == "否"){
+                status = "";
             }
             return status;
         }},
