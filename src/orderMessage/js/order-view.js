@@ -9,27 +9,57 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     var qs = edipao.urlGet();
     this.orderNo = qs.orderNo;
     this.orderId = qs.orderId;
-    this.action = qs.action || "";
+    this.action = qs.action || "verify";
     this.user = JSON.parse(sessionStorage.user);
     this.prePay = [];
     this.arrivePay = [];
     this.tailPay = [];
     this.orderData = null;
     this.carFormList = [];
+    this.updateData = {};
   }
   $.extend(View.prototype, {
     init: function () {
       var _this = this;
-      if(this.action != "verify"){
+      if(_this.action != "verify"){
         $("#verify_container").remove();
       }
-      this.getOrder().done(function (res) {
+      _this.getUpdate(function () {
+        _this.getOrder().done(function (res) {
+          if(res.code == "0"){
+            _this.orderData = res.data;
+            _this.setData(res.data);
+            _this.bindEvents();
+            if(_this.action == "verify"){
+              _this.getUpdate();
+            }
+          }else{
+            layer.msg(res.message, {icon: 5,anim: 6});
+          }
+        });
+      });
+    },
+    getUpdate: function (cb) {
+      var _this = this;
+      edipao.request({
+        url: "/admin/log/last-modify/get",
+        method: "GET",
+        data:{
+          loginStaffId: _this.user.staffId,
+          operationModule: 4,
+          dataPk: _this.orderId
+        }
+      }).done(function (res) {
         if(res.code == "0"){
-          _this.orderData = res.data;
-          _this.setData(res.data);
-          _this.bindEvents();
-        }else{
-          layer.msg(res.message, {icon: 5,anim: 6});
+          var updateData = JSON.parse(res.data.modifyAfterJson);
+          updateData.forEach(function (item) {
+            _this.updateData[item.name] = item.value;
+          });
+          console.log(_this.updateData)
+          laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
+            $("#form_income_container").after(html);
+          });
+          cb && cb();
         }
       });
     },
@@ -68,6 +98,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         prePay: _this.prePay,
         tailPay: _this.tailPay,
         arrivePay: _this.arrivePay,
+        updateData: _this.updateData
       }, function (html) {
         $("#fee_list_container").html(html);
       });
@@ -124,4 +155,5 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
   });
   var view = new View();
   view.init();
+  top.window.view = view;
 });

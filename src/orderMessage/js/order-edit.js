@@ -147,13 +147,18 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     $("#car_form_container").html(carFormStr);
     form.render();
     _this.carFormList.forEach(function (item, index) {
+      var truckData;
+      try {
+        data.truckDTOList[index] = data.truckDTOList[index] || "{}";
+        truckData = JSON.parse(JSON.stringify(data.truckDTOList[index]))
+      } catch (error) {}
       _this.tempLicenseBackImage.push({
-        image: data.truckDTOList[index].tempLicenseBackImage,
-        id: data.truckDTOList[index].id
+        image: truckData.tempLicenseBackImage,
+        id: truckData.id
       });
       _this.tempLicense.push({
-        image: data.truckDTOList[index].tempLicense,
-        id: data.truckDTOList[index].id
+        image: truckData.tempLicense,
+        id: truckData.id
       });
       laydate.render({
         elem: $(".latestArriveTime")[index], //指定元素
@@ -162,10 +167,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       });
       _this.renderUpload(index);
       _this.cars.push({
-        id: data.truckDTOList[index].id,
+        id: truckData.id,
         filter: item
       });
-      form.val(item, data.truckDTOList[index]);
+      truckData.masterFlag = truckData.masterFlag == "是"? '' : 'on';
+      form.val(item, truckData);
       $("[lay-filter=" + item + "] .select_vin").remove();
     });
   }
@@ -358,22 +364,25 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             return item.key;
           });
           var newList = Object.keys(data);
+          var newObj = [];
           newList.forEach(function(item){
             if(!oldList.includes(item)){
-              _this[type].push({
+              newObj.push({
                 key: item,
                 val: 0,
                 unit: _this.feeUnitItemList[0],
                 new: true
               });
+            }else{
+              newObj.push(_this[type][oldList.indexOf(item)])
             }
-            _this.setFeeList();
-            layer.closeAll();
           });
+          _this[type] = newObj;
+          _this.setFeeList();
           $(".add_fee").unbind().on("click", function (e) {
             _this.openAddFee(e);
           });
-          
+          layer.closeAll();
         },
         success:function () {
           form.render("checkbox");
@@ -653,6 +662,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var carsLength = _this.cars.length + _this.carsToAdd.length - _this.carsToDel.length;
     _this.carFormList.forEach(function (item, index) {
       var itemData = form.val(item);
+      console.log(itemData.masterFlag)
       if(!itemData.id && itemData.id != 0) return;
       truckUpdateReqList.push({
         truckId: itemData.id||"",
@@ -698,7 +708,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     data.dispatchOperatorPhone = ascriptionData.dispatchOperatorPhone||"";
     data.deliveryOperator = ascriptionData.deliveryOperator||"";
     data.deliveryOperatorPhone = ascriptionData.deliveryOperatorPhone||"";
-    data.followOperator = ascriptionData.followOperator||"";
+    // data.followOperator = ascriptionData.followOperator||"";
     data.followOperatorPhone = ascriptionData.followOperatorPhone||"";
     data.department = ascriptionData.department||"";
     data.driverId = dispatchData.driverId||"";

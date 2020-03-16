@@ -105,7 +105,7 @@
                             <span class="select_vin" data-filter="CARFORM">选择vin码</span>
                         </div>
                         <div style="line-height: 32px;" class="layui-col-md1 layui-col-md-offset8 btn_btn switch_updown">
-                            <input type="checkbox" name="masterFlag" lay-text="上车|下车" lay-skin="switch">
+                            <input type="checkbox" name="masterFlag" lay-text="上车|下车" lay-skin="switch" checked="checked">
                         </div>
                         <div style="line-height: 32px;" class="layui-col-md1 btn_btn">
                             <span data-filter="CARFORM" class="del_car_btn blue pointer">删除车辆</span>
@@ -277,7 +277,7 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">收入金额(元)</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="income" autocomplete="off" class="layui-input">
+                                <input type="text" name="income" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -404,6 +404,12 @@
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <label class="layui-form-label text_left form_label">跟单员手机号</label><br>
+                            <div class="layui-input-inline">
+                                <input type="text" name="followOperatorPhone" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">归属部门</label><br>
                             <div class="layui-input-inline">
                                 <input type="text" name="department" lay-verify="required" autocomplete="off" class="layui-input">
@@ -511,13 +517,13 @@
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.prePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
-                        <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
+                        <label class="layui-form-label text_left form_label">{{item.key}}({{item.new ? '' : item.unit}})：</label>
                         <div class="layui-row">
-                            <div class="layui-col-md7">
+                            <div class="layui-col-md6">
                                 <input {{d.prePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             {{# if(item.new){ }}
-                            <div class="layui-col-md3">
+                            <div class="layui-col-md4">
                                 <select data-type="prePay" data-index="{{index}}" class="fee_unit_select" name="unit">
                                     {{#  layui.each(d.unitList, function(index2, item2){ }}
                                     <option value="{{item2}}" {{index2 == 0 ? 'selected':''}}>{{item2}}</option>
@@ -542,13 +548,13 @@
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.arrivePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
-                        <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
+                        <label class="layui-form-label text_left form_label">{{item.key}}({{item.new ? '' : item.unit}})：</label>
                         <div class="layui-row">
-                            <div class="layui-col-md7">
+                            <div class="layui-col-md6">
                                 <input {{d.arrivePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             {{# if(item.new){ }}
-                            <div class="layui-col-md3">
+                            <div class="layui-col-md4">
                                 <select data-type="arrivePay" data-index="{{index}}" class="fee_unit_select" name="unit">
                                     {{#  layui.each(d.unitList, function(index2, item2){ }}
                                     <option value="{{item2}}" {{index2 == 0 ? 'selected':''}}>{{item2}}</option>
@@ -573,13 +579,13 @@
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.tailPay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
-                        <label class="layui-form-label text_left form_label">{{item.key}}({{item.unit}})：</label>
+                        <label class="layui-form-label text_left form_label">{{item.key}}({{item.new ? '' : item.unit}})：</label>
                         <div class="layui-row">
-                            <div class="layui-col-md7">
+                            <div class="layui-col-md6">
                                 <input {{d.tailPayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             {{# if(item.new){ }}
-                            <div class="layui-col-md3">
+                            <div class="layui-col-md4">
                                 <select data-type="tailPay" data-index="{{index}}" class="fee_unit_select" name="unit">
                                     {{#  layui.each(d.unitList, function(index2, item2){ }}
                                     <option value="{{item2}}" {{index2 == 0 ? 'selected':''}}>{{item2}}</option>

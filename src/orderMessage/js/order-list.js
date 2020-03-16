@@ -20,6 +20,7 @@ layui.config({
     var orderData = {};
     var uploadTruckId = "";
     var permissionList = edipao.getMyPermission();
+    window.permissionList = permissionList;
     var exportHead = {};
     var where = {
         loginStaffId: user.staffId,
@@ -60,6 +61,15 @@ layui.config({
         { field: 'arrivePayAmount', type: 'input' },
         { field: 'tailPayAmount', type: 'input' },
     ]
+    initPermission();
+    function initPermission() {
+        if(permissionList.indexOf('订单录入') < 0){
+            $("#import_order").remove();
+        }
+        if(permissionList.indexOf('导出') < 0){
+            $("#export_data").remove();
+        }
+    }
     tableFilterIns = tableFilter.render({
         'elem' : '#orderList',//table的选择器
         'mode' : 'self',//过滤模式
@@ -576,6 +586,7 @@ layui.config({
                                         if(res.code == "0"){
                                             layer.msg("提交成功");
                                             layer.close(index);
+                                            table.reload("orderList");
                                         }else{
                                             //layer.alert(res.message);
                                         }
@@ -901,16 +912,24 @@ layui.config({
             return d.dispatchTime ? d.dispatchTime : '- -';
         }},
         {field: 'openOperator', title: '开单员', sort: false,minWidth:100, templet: function(d){
-            return d.openOperator ? d.openOperator : '- -';
+            d.openOperator = d.openOperator || "";
+            d.openOperatorPhone = d.openOperatorPhone || "";
+            return (d.openOperator || d.openOperatorPhone) ? d.openOperator + d.openOperatorPhone : '- -';
         }},
         {field: 'dispatchOperator', title: '调度员', sort: false,minWidth:100, templet: function(d){
-            return d.dispatchOperator ? d.dispatchOperator : '- -';
+            d.dispatchOperator = d.dispatchOperator || "";
+            d.dispatchOperatorPhone = d.dispatchOperatorPhone || "";
+            return (d.dispatchOperator || d.dispatchOperatorPhone) ? d.dispatchOperator + d.dispatchOperatorPhone : '- -';
         }},
         {field: 'fetchOperator', title: '提车员', sort: false,minWidth:100, templet: function(d){
-            return d.fetchOperator ? d.fetchOperator : '- -';
+            d.fetchOperator = d.fetchOperator || "";
+            d.fetchOperatorPhone = d.fetchOperatorPhone || "";
+            return (d.fetchOperator || d.fetchOperatorPhone) ? d.fetchOperator + d.fetchOperatorPhone : '- -';
         }},
         {field: 'deliveryOperator', title: '发运员', sort: false,minWidth:100, templet: function(d){
-            return d.deliveryOperator ? d.deliveryOperator : '- -';
+            d.deliveryOperator = d.fetchOperator || "";
+            d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
+            return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
         }},
         {
         field: 'driverName', title: '司机姓名', sort: false,minWidth:100, templet: function (d) {
@@ -1014,6 +1033,9 @@ layui.config({
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='3' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
+            if(permissionList.indexOf("提车照片上传") < 0){
+                str2 = "";
+            }
             switch(d.fetchStatus*1){
                 case 0: 
                     status = "未上传";
@@ -1044,6 +1066,9 @@ layui.config({
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + "  data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='6' data-order="+ d.orderNo +"  data-type='1' data-key='startImages' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
+            if(permissionList.indexOf("发车单-上传") < 0){
+                str2 = "";
+            }
             switch(d.startAuditStatus*1){
                 case 0:
                     status = "未上传";
@@ -1074,7 +1099,9 @@ layui.config({
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='3' data-order="+ d.orderNo +" data-type='2' data-key='returnImages' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
-            var status2 = "未上传";
+            if(permissionList.indexOf("交接单回收-上传") < 0){
+                str2 = "";
+            }
             switch(d.returnAuditStatus * 1){
                 case 0:
                     status = "未上传";
@@ -1135,7 +1162,7 @@ layui.config({
         "returnAuditStatus",
     ];
     var exportHead={};// 导出头部
-    var toolField = {title: '操作', toolbar: '#barDemo', align: 'center', fixed: 'right', width: 350,};
+    var toolField = {title: '操作', toolbar: '#barDemo', align: 'left', fixed: 'right', width: 320,};
 
     edipao.request({
         type: 'GET',
