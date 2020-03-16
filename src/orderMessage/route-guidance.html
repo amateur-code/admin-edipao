@@ -43,9 +43,7 @@
                         <div class="layui-col-md6">
                             <div class="title">线路指引列表</div>
                         </div>
-                        <div class="layui-col-md6 tr">
-                            <button class="layui-btn layui-bg-blue produceOrders" id="exportExcel">导出</button>
-                            <button class="layui-btn layui-bg-black" onclick="xadmin.open('表格设置', './table-set.html?tableKey=route-guidance-list', 600, 600)">表格设置</button>
+                        <div class="layui-col-md6 tr" id="headerBtns">
                         </div>
                     </div>
                 </div>
@@ -56,6 +54,12 @@
 </body>
 <script type="text/html" id="edit">
     <a class="edit" lay-event="edit">修改</a>
+</script>
+<script type="text/html" id="exportBtn">
+    {{# if(d.permissionList.indexOf('导出') != -1){ }}
+    <button class="layui-btn layui-bg-blue produceOrders" id="exportExcel">导出</button>
+    {{# } }}
+    <button class="layui-btn layui-bg-black" onclick="xadmin.open('表格设置', './table-set.html?tableKey=route-guidance-list', 600, 600)">表格设置</button>
 </script>
 <script src="./js/route-guidance.js?VERSION"></script>
 

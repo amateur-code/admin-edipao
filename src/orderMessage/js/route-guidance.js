@@ -3,12 +3,13 @@ layui.config({
 }).extend({
     excel: 'layui_exts/excel',
     tableFilter: 'TableFilter/tableFilter'
-}).use(['jquery', 'table','layer','excel','tableFilter'], function () {
+}).use(['jquery', 'table','layer','excel','tableFilter', 'laytpl'], function () {
     var table = layui.table,
         $ = layui.jquery,
         layer = layui.layer,
         edipao = layui.edipao,
         excel = layui.excel,
+        laytpl = layui.laytpl;
         tableFilter = layui.tableFilter;
 
     function _tableClass(){
@@ -53,6 +54,12 @@ layui.config({
     _tableClass.prototype = {
         // 初始化
         init: function(){
+            var _t = this;
+            laytpl(exportBtn.innerHTML).render({
+                permissionList: _t.permissionList
+            }, function(html){
+                document.getElementById('headerBtns').innerHTML = html;
+            });
             this.tableColsSetting();
         },
         // 表格设置
@@ -135,6 +142,9 @@ layui.config({
                     _t.bindEvents();
                     _t.bindToolEvent();
                     _t.filterData();
+                    if(_t.permissionList.indexOf('修改') < 0){
+                        $('.edit').hide();
+                    }
                 },
                 text: {
                     none: "暂无数据"
@@ -260,10 +270,6 @@ layui.config({
                 var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
                 if (layEvent === 'edit') { //下载
                     // top.xadmin.add_tab('线路规划', 'orderMessage/route-plan.html?guideLineId=' + data.guideLineId, true);
-                    if(_t.permissionList.indexOf('修改') < 0){
-                        layer.alert('你没有访问权限', {icon: 2});
-                        return;
-                    }
                     xadmin.open('线路规划', './route-plan.html?guideLineId=' + data.guideLineId, 1400, 700)
                 }
             });
