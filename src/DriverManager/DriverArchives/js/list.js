@@ -97,19 +97,19 @@ layui.config({
     var tableCols = [
         { checkbox: true },
         {
-            field: 'name', title: '司机姓名',
+            field: 'name', title: '司机姓名',width: 100,
             templet: function (data) {
                 var val = data.name;
                 return DataNull(val)
             }
         },
-        { field: 'phone', title: '司机手机',
+        { field: 'phone', title: '司机手机',width: 120,
             templet: function (data) {
                 var val = data.phone;
                 return DataNull(val)
             }
         },
-        { field: 'idNum', title: '身份证号',
+        { field: 'idNum', title: '身份证号',width: 160,
             templet: function (data) {
                 var val = data.idNum;
                 return DataNull(val)
@@ -153,13 +153,13 @@ layui.config({
                 return DataNull(val);
             }
         },
-        { field: 'deposit', title: '押金',
+        { field: 'deposit', title: '押金',width: 100,
             templet: function (data) {
                 var val = data.deposit;
                return depositNull(val)
             }
         },
-        { field: 'depositStatus', title: '押金状态',
+        { field: 'depositStatus', title: '押金状态',width: 80,
             templet: function (data) {
                 var val = data.depositStatus;
                 if(val == null||val == ''){
@@ -181,8 +181,9 @@ layui.config({
                     var html='';
                     var val = JSON.parse(licenceWarn);
                     for(var i in val){
-                        html+='<p style="color: #EE5B22;">'+warnData[i]+(val[i]>0?''+val[i]+'天后到期':'已过期')+'</p>';
+                        html+='<span style="color: #EE5B22;">'+warnData[i]+(val[i]>0?''+val[i]+'天后到期':'已过期')+'</span>，';
                     }
+                    html = html.substring(0,html.length-1);
                     return html;
                 }else{
                     return '--'
@@ -204,7 +205,7 @@ layui.config({
             }
         },*/
         {
-            title: '操作', width: 320, fixed: '',toolbar: '#rowBtns'
+            title: '操作', width: 320, fixed: 'right',toolbar: '#rowBtns'
         }
     ];
 
