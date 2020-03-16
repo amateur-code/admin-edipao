@@ -18,6 +18,10 @@
   text-align: center !important;
 }
 .form_label {
+  overflow-y: visible;
+  white-space: nowrap;
+  width: 100px;
+  padding-right: 0 !important;
   padding-left: 0 !important;
 }
 .form_item_container {
@@ -25,9 +29,6 @@
 }
 .form_item_container .layui-input-inline {
   width: 100%;
-}
-.form_item_container .form_item_inner {
-  overflow: hidden;
 }
 .form_item_container .form_item_inner .add_fee {
   margin-left: 20px;
@@ -39,6 +40,17 @@
 .fee_container .fee_list {
   overflow: hidden;
   padding-bottom: 10px;
+}
+.fee_container .fee_list .fee_list_item {
+  margin-bottom: 5px;
+}
+.fee_container .fee_list .fee_list_item .layui-form-checkbox span {
+  padding: 0;
+  display: inline-block;
+  max-width: 120px;
+}
+.fee_container .fee_list .fee_list_item .edit_icon {
+  cursor: pointer;
 }
 .fee_container .fee_footer {
   padding-top: 10px;

@@ -149,12 +149,12 @@ layui.config({
         },
         qualificationsFrontImgVerify:function(value) {
             if (value == '') {
-                return '请上传机从业资格证正面图片';
+                return '请上传司机从业资格证正面图片';
             }
         },
         qualificationsBackImgVerify:function(value) {
             if (value == '') {
-                return '请上传机从业资格证背面图片';
+                return '请上传司机从业资格证背面图片';
             }
         }
     });

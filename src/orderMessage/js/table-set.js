@@ -7,6 +7,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: "warehouseNo", title: "仓库单号" },
     { field: "vinCode", title: "VIN码" },
     { field: "tempLicense", title: "临牌号" },
+    { field: "orderStatus", title: "状态" },
     { field: "orderType", title: "订单类型" },
     { field: "customerFullName", title: "客户全称" },
     { field: "startWarehouse", title: "发车仓库" },
@@ -24,7 +25,8 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: "dispatchOperator", title: "调度员" },
     { field: "fetchOperator", title: "提车员" },
     { field: "deliveryOperator", title: "发运员" },
-    { field: "driverName", title: "司机信息" },
+    { field: "driverName", title: "司机姓名" },
+    { field: "driverPhone", title: "司机手机" },
     { field: "driverIdCard", title: "司机身份证" },
     { field: "prePayAmount", title: "预付款金额" },
     { field: "arrivePayAmount", title: "到付款金额" },
@@ -33,7 +35,6 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: "fetchStatus", title: "提车照片" },
     { field: "startAuditStatus", title: "发车单审核状态" },
     { field: "returnAuditStatus", title: "交车单审核状态" },
-    { field: "orderStatus", title: "状态" },
   ];
   routeTableHeaderList = [
     {field: 'startAddress', title: '出发地'},

@@ -18,6 +18,10 @@
   text-align: center !important;
 }
 .form_label{
+  overflow-y: visible;
+  white-space: nowrap;
+  width: 100px;
+  padding-right: 0 !important;
   padding-left: 0 !important;
 }
 .form_item_container{
@@ -26,18 +30,30 @@
     width: 100%;
   }
   .form_item_inner{
-    overflow: hidden;
+    // overflow: hidden;
     .add_fee{
       margin-left: 20px;
     }
   }
 }
+// 增加费用项的弹窗
 .fee_container{
   padding: 10px;
   overflow: hidden;
   .fee_list{
     overflow: hidden;
     padding-bottom: 10px;
+    .fee_list_item{
+      margin-bottom: 5px;
+      .layui-form-checkbox span{
+        padding: 0;
+        display: inline-block;
+        max-width: 120px;
+      }
+      .edit_icon{
+        cursor: pointer;
+      }
+    }
   }
   .fee_footer{
     padding-top: 10px;
@@ -47,6 +63,7 @@
 .select_driver_btn{
   display: inline-block;
 }
+//司机推荐
 #driver_name_select{
   position: relative;
   .match_driver_list{
@@ -71,6 +88,7 @@
     }
   }
 }
+
 .btn_container{
   margin-bottom: 20px;
 }

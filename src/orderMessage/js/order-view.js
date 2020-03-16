@@ -63,7 +63,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         $("#income_info").html(html);
       });
       form.val("form_ascription", data);
-      form.val("form_dispatch", data);
+      if(data.driverId) form.val("form_dispatch", data);
       var carFormStr = "";
       var carFormHtml = $("#car_info_tpl").html();
       var imageStr = $("#image_tpl").html();
@@ -73,7 +73,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         laytpl(imageStr).render(item, function (imageHtml) {
           var filterStr = "form_car_" + index;
           _this.carFormList.push(filterStr);
-          carFormHtml = carFormHtml.replace(/CARFORM/g,filterStr);
+          carFormHtml = carFormHtml.replace(/CARFORM/g, filterStr);
           carFormHtml = carFormHtml.replace("IMAGESTR", imageHtml);
           carFormStr += carFormHtml;
           if(index == data.truckDTOList.length -1){

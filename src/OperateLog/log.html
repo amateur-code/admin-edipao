@@ -45,7 +45,7 @@
             <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
         </div>
     </script>
-    
+
     <script type="text/javascript">
     layui.use(['table', 'layer', 'util'], function(table, layer,util) {
         var xadmin = layui.xadmin,
@@ -84,8 +84,57 @@
                     } },
                     { field: 'operationStaffName', title: '操作人', width: 100 },
                     { field: 'operationType', title: '操作类型' , width: 200},
-                    { field: 'modifyBeforeJson', title: '修改前' , width: 200},
-                    { field: 'modifyAfterJson', title: '修改后' , width: 200},
+                    { field: 'modifyBeforeJson', title: '修改前' , width: 200,
+                        templet: function (res) {
+                        // 司机档案-意向路线
+                            var data = res.modifyBeforeJson;
+                            if(data.indexOf('意向路线')!='-1'){
+                                var val = data.split('意向路线json:[');
+                                var startVal=val[1].split('],')[0];
+                                var endVal =val[1].split('],')[1];
+                                var html = '意向路线:';
+                                if(startVal!=''&&startVal!=null){
+                                    startVal = '['+startVal+']';
+                                    var newVal = JSON.parse(startVal);
+                                    layui.each(newVal,function (index,item) {
+                                        html+='始发地:'+item['start']['province']+item['start']['city']+' '
+                                        html+='目的地:'+item['end']['province']+item['end']['city']+'、'
+                                    })
+                                    html = html.substring(0,html.length-1);
+                                }
+                                html += ',';
+                                var newData = html+endVal;
+                                return newData;
+                            }else{
+                                return data;
+                            }
+                        }
+                        },
+                    { field: 'modifyAfterJson', title: '修改后' , width: 200,
+                        templet: function (res) {
+                        // 司机档案-意向路线
+                            var data = res.modifyAfterJson;
+                            if(data.indexOf('意向路线')!='-1'){
+                                var val = data.split('意向路线json:[');
+                                var startVal=val[1].split('],')[0];
+                                var endVal =val[1].split('],')[1];
+                                var html = '意向路线:';
+                                if(startVal!=''&&startVal!=null){
+                                    startVal = '['+startVal+']';
+                                    var newVal = JSON.parse(startVal);
+                                    layui.each(newVal,function (index,item) {
+                                        html+='始发地:'+item['start']['province']+item['start']['city']+' '
+                                        html+='目的地:'+item['end']['province']+item['end']['city']+'、'
+                                    })
+                                    html = html.substring(0,html.length-1);
+                                }
+                                html += ',';
+                                var newData = html+endVal;
+                                return newData;
+                            }else{
+                                return data;
+                            }
+                        }},
                     { field: 'operationRemark', title: '说明' , width: 200}
                 ]
             ],

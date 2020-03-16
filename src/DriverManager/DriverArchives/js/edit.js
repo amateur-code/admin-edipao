@@ -160,14 +160,27 @@ layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
                 var endVal1 = $(this).find('.end select[name="province"]').val();
                 var endVal2 = $(this).find('.end select[name="city"]').val();
                 if(startVal2!=''&&startVal2!='请选择市级'&&endVal2!=''&&endVal2!='请选择市级'){
+                    var startCode='';
+                    if(startVal2=='全部'){
+                        startCode = cityCode[startVal1]
+                    }else{
+                        startCode = cityCode[startVal2]
+                    }
+
+                    var endCode='';
+                    if(endVal2=='全部'){
+                        endCode = cityCode[endVal1]
+                    }else{
+                        endCode = cityCode[endVal2]
+                    }
                     wishJourneyVal.push({
                         'start': {
-                            "code": cityCode[startVal2],
+                            "code": startCode,
                             "province": startVal1,
                             "city": startVal2
                         },
                         'end': {
-                            "code": cityCode[endVal2],
+                            "code": endCode,
                             "province": endVal1,
                             "city": endVal2
                         }

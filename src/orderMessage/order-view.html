@@ -80,14 +80,18 @@
         </script>
         <script id="income_info_tpl" type="text/html">
             <div class="layui-row">
-                <div class="layui-col-md6">
+                <div class="layui-col-md4">
                     <span class="content_name">收入总金额：</span>
                     <span class="content_name blue">{{d.totalIncome}} 元</span>
                 </div>
-                <div class="layui-col-md6">
+                <div class="layui-col-md4">
                     <span class="content_name">管理费总金额：</span>
                     <span class="content_name blue">{{d.totalManageFee}} 元</span>
                 </div>
+                <!-- <div class="layui-col-md4">
+                    <span class="content_name">结算账期</span>
+                    <span class="content_name blue">{{d.totalManageFee}} 元</span>
+                </div> -->
             </div>
         </script>
         <script id="car_info_tpl" type="text/html">
@@ -98,7 +102,7 @@
                             <div class="title">车辆信息</div>
                         </div>
                         <div style="line-height: 32px;" class="layui-col-md1 blue pointer btn_btn">
-                            <span class="select_vin" data-filter="CARFORM">选择vin码：</span>
+                            <!-- <span class="select_vin" data-filter="CARFORM">选择vin码：</span> -->
                         </div>
                     </div>
                 </div>
@@ -106,7 +110,7 @@
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
                             <span class="layui-form-span text_left form_span">车辆vin码：</span>
-                            <input disabled type="tel" name="vinCode" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input disabled type="tel" value="111111111111111111123123" name="vinCodee" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">产品代码：</span>
@@ -178,6 +182,7 @@
                             <span class="layui-form-span text_left form_span">最迟送达时间：</span>
                                 <input disabled type="text" name="latestArriveTime" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
+                    
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">客户里程：</span>
                                 <input disabled disabled type="text" name="customerMileage" autocomplete="off" class="layui-input">
@@ -202,7 +207,11 @@
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset4">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">运输商指派时间：</span>
+                                <input disabled type="text" name="createTime" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">临牌号：</span>
                                 <input disabled disabled type="text" name="tempLicense" autocomplete="off" class="layui-input">
                         </div>
@@ -259,7 +268,7 @@
             <div class="layui-form-item layui-row">
                 <div class="layui-form-span text_left form_span">提车图片：</div>
                 {{#  layui.each(d.fetchImages, function(index, item){ }}
-                <div style="margin-right:20px" class="layui-col-md3">
+                <div style="margin-right:20px;margin-bottom:20px" class="layui-col-md3">
                     <img width="100%" class="car_image" src="{{item}}">
                 </div>
                 {{#  }); }}
@@ -308,6 +317,10 @@
                             <span class="layui-form-span text_left form_span">跟单员：</span>
                                 <input disabled type="text" name="followOperator" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">跟单员：</span>
+                                <input disabled type="text" name="fetchOperatorPhone" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">归属部门：</span>
                                 <input disabled type="text" name="department" lay-verify="required" autocomplete="off" class="layui-input">
@@ -351,6 +364,12 @@
                                 <input disabled disabled type="tel" name="driverMileage" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
+                    <!-- <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">尾款账期：</span>
+                                <input disabled disabled type="tel" name="tailPayBillDate" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div> -->
                     <div id="fee_list_container"></div>
                 </div>
             </form>

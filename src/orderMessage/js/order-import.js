@@ -6,7 +6,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
     var upload = layui.upload;
     var laytpl = layui.laytpl;
 
-  function renderTable(){
+  function renderTable(data){
     table.render({
         elem: '#importOrderList'
         , url: layui.edipao.API_HOST+'/admin/order/list'
@@ -16,7 +16,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
         , limit: 20  //每页显示条数
         , limits: [20, 40] //每页显示条数可选择
         , request: {
-            pageName: 'pageNumber' //页码的参数名称，默认：page
+            pageName: 'pageNo' //页码的参数名称，默认：page
             , limitName: 'pageSize' //每页数据量的参数名，默认：limit
         }
         , where:{ loginStaffId: 17718571615 }
@@ -46,12 +46,16 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                             type: 1, 
                             content: $("#uploadPic").html(), //这里content是一个普通的String,
                             btn: ["取消", "确定"],
-                            success: function () {
+                            success: function (res) {
+                                console.log(res)
                                 var uploadInst = upload.render({
                                     elem: '#uploadPicBtn' //绑定元素
                                     ,url: '/upload/' //上传接口
                                     ,done: function(res){
-                                        //上传完毕回调
+                                        
+                                    }
+                                    ,success: function (res) {
+                                        
                                     }
                                     ,error: function(){
                                         //请求异常回调
@@ -69,20 +73,35 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
             none: "暂无数据"
         }
         , cols: [[
-            {field: 'updateTime', title: '导入时间', sort: false,width:200,templet:function(d){
-              return '2020.01.02 12:24:00'
+            {field: 'orderNo', title: '业务单号', sort: false,minWidth:100, templet: function(d){
+                return d.orderNo ? d.orderNo : '- -';
             }},
-            {field: 'updateTime', title: '操作人', sort: false,width:120, templet:function(d){
-              return '张三'
+            {field: 'createTime', title: '导入时间', sort: false,width:200,templet:function(d){
+              return d.createTime ? d.createTime : '- -';
             }},
-            {field: 'updateTime', title: '状态', sort: false,width:100, templet:function(d){
-              return '处理中'
+            {field: 'staff', title: '操作人', sort: false,width:120,templet:function(d){
+                return d.staff ? d.staff : '- -';
             }},
-            {field: 'updateTime', title: '备注', sort: false,minWidth:300, templet:function(d){
-              return '第1行，客户名称为空，导入失败；第5行，归属人员为空，导入失败；第129行，车辆vin码为空'
+            {field: 'orderStatus', title: '状态', sort: false,width:100, templet:function(d){
+                if (d.orderStatus == 1) {
+                    return "待调度";
+                } else if (d.orderStatus == 2) {
+                    return "待发车";
+                } else if (d.orderStatus == 3) {
+                    return "运输中";
+                } else if (d.orderStatus == 4) {
+                    return "已收车";
+                } else if (d.orderStatus == 5) {
+                    return "已完结";
+                } else if (d.orderStatus == 6) {
+                    return "已取消";
+                } else {
+                    return "非法状态";
+                }
             }},
-  
-            {title: '导入文件', toolbar: '#barDemo', align: 'center', fixed: 'right', width: 300}
+            {field: 'updateTime', title: '更新时间', sort: false,minWidth:300, templet:function(d){
+                return d.updateTime ? d.updateTime : '- -';
+            }},
         ]]
     });
   
@@ -105,6 +124,27 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
     , done: function (res) {
         //上传完毕回调
         if (res) {
+            if(res.message != "success"){
+                res.data.forEach(function (item, index) {
+                    var obj = [];
+                    Object.keys(item).forEach(function (item2) {
+                        var data = {};
+                        data.key = item2;
+                        data.value = item[item2];
+                        obj.push(data);
+                    });
+                    res.data[index] = obj;
+                });
+                laytpl($("#import_result").html()).render({list: res.data}, function (html) {
+                    layer.open({
+                        type: 1,
+                        title: "导入结果",
+                        area: "600px",
+                        content: html,
+                        success: function () {  }
+                    });
+                });
+            }
             //展示已知数据
             renderTable();
         }
