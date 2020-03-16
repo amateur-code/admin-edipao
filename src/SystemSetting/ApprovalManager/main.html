@@ -97,7 +97,9 @@
             <div class="layui-timeline-content layui-text">
                 <div class="layui-timeline-title">
                     <div class="title">开始审核</div>
+                    {{# if(permissionList.indexOf('保存审批流') != -1){ }}
                     <button type="button" class="layui-btn layui-btn-sm node-add" data-code="{{d.flowCode}}" data-index="0">添加节点</button>
+                    {{# } }}
                     <button type="button" class="layui-btn layui-btn-sm node-log" data-id="{{d.flowCode}}" data-index="0">查看日志</button>
                 </div>
             </div>
@@ -108,11 +110,15 @@
             <div class="layui-timeline-content layui-text">
                 <div class="layui-timeline-title">
                     <div class="title">{{item.nodeName || ('新的节点'+index)}}</div>
+                    {{# if(permissionList.indexOf('保存审批流') != -1){ }}
                     <button type="button" class="layui-btn layui-btn-sm node-add" data-code="{{d.flowCode}}" data-index="{{index+1}}">添加节点</button>
                     <button type="button" class="layui-btn layui-btn-sm node-delete" data-code="{{d.flowCode}}" data-index="{{index+1}}">删除节点</button>
+                    {{# } }}
+                    {{# if(permissionList.indexOf('保存节点成员') != -1){ }}
                     <button type="button" class="layui-btn layui-btn-sm node-staff" data-code="{{d.flowCode}}" data-index="{{index+1}}">成员选择</button>
                     {{# if(item.flowId){ }}
                     <button type="button" class="layui-btn layui-btn-sm node-staff-save" data-code="{{d.flowCode}}" data-index="{{index+1}}">保存成员</button>
+                    {{# } }}
                     {{# } }}
                 </div>
                 <p class="content">
@@ -140,7 +146,9 @@
             <div class="layui-card-header">{{item.flowName}}</div>
             <div class="layui-card-body" >
                 <ul class="layui-timeline" id="{{item.flowCode}}"></ul>
+                {{# if(permissionList.indexOf('保存审批流') != -1){ }}
                 <button type="button" class="layui-btn layui-btn-lg btn-ok flowCodeCommit" data-id="{{item.flowId}}" data-code="{{item.flowCode}}">保存</button>
+                {{# } }}
             </div>
         </div>
         {{# }) }}
@@ -157,6 +165,7 @@
             edipao = layui.edipao,
             CONFIG_CACHE = {},
             permissionList = edipao.getMyPermission(); 
+        window.permissionList = permissionList;
         edipao.request({
             type: 'get',
             url: '/admin/approval/module/list'
@@ -198,13 +207,6 @@
                             laytpl(approvalFlowTpl.innerHTML).render(item, function(html) {
                                 document.getElementById(item.flowCode).innerHTML = html;
                             })
-                            if(permissionList.indexOf('修改') == -1){
-                              $('#approvalFlowList').find('.node-add').hide()
-                              $('#approvalFlowList').find('.node-delete').hide()
-                              $('#approvalFlowList').find('.node-staff').hide()
-                              $('#approvalFlowList').find('.node-staff-save').hide()
-                              $('#approvalFlowList').find('.flowCodeCommit').hide()
-                            }
                         })
                     })
                 }
@@ -212,7 +214,6 @@
         }
 
         $('#approvalFlowList').on('click', '.node-add', function() {
-            if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
             var index = $(this).data('index'),
                 code = $(this).data('code');
             CONFIG_CACHE[code].nodeDTOList.splice(index, 0, { approvalStaffDTOList:[] });
@@ -222,7 +223,6 @@
         })
 
         $('#approvalFlowList').on('click', '.node-delete', function() {
-            if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
             var index = $(this).data('index'),
                 code = $(this).data('code');
             CONFIG_CACHE[code].nodeDTOList.splice(index-1, 1);
@@ -235,7 +235,6 @@
         })
 
         $('#approvalFlowList').on('click', '.node-staff', function() {
-            if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
             var index = $(this).data('index') -1,
                 code = $(this).data('code'),
                 staffIds = []; 
@@ -246,7 +245,6 @@
             xadmin.open('选择员工', './staff.html?code=' + code + '&index=' + index + '&ids=' + staffIds.join(','), 600, 600)
         })
         $('#approvalFlowList').on('click', '.node-staff-save', function() {
-            if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
             var index = $(this).data('index') - 1,
                 code = $(this).data('code'); 
             var saveNodeStaffReq = CONFIG_CACHE[code].nodeDTOList[index];
@@ -265,8 +263,6 @@
 
         
         $('#approvalFlowList').on('click','.flowCodeCommit',function(){
-            if(permissionList.indexOf('修改') == -1) return layer.alert('你没有访问权限', {icon: 2});
-
             var saveFlowReq = CONFIG_CACHE[$(this).data('code')]
             if(saveFlowReq.nodeDTOList.length > 0){
                 for( var i = 0; i< saveFlowReq.nodeDTOList.length ; i++){
