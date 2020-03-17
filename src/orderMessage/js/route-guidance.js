@@ -10,12 +10,12 @@ layui.config({
         edipao = layui.edipao,
         excel = layui.excel,
         laytpl = layui.laytpl;
-        tableFilter = layui.tableFilter;
+        tableFilter = layui.tableFilter,
+        permissionList = edipao.getMyPermission();
 
     function _tableClass(){
         this.user = JSON.parse(sessionStorage.user);
         this.request = { loginStaffId: this.user.staffId };
-        this.permissionList = edipao.getMyPermission();
         this.pageNumber = 1,
         this.pageSize = 10;
         this.exportSize = 100000;
@@ -46,7 +46,7 @@ layui.config({
             }},
             {field: 'updateTime', title: '更新时间', sort: false, hide: false,width:200}
         ];
-        this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 300}
+        this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 200}
     }
 
     
@@ -54,12 +54,12 @@ layui.config({
     _tableClass.prototype = {
         // 初始化
         init: function(){
-            var _t = this;
-            laytpl(exportBtn.innerHTML).render({
-                permissionList: _t.permissionList
-            }, function(html){
-                document.getElementById('headerBtns').innerHTML = html;
-            });
+            // var _t = this;
+            // laytpl(exportBtn.innerHTML).render({
+            //     permissionList: _t.permissionList
+            // }, function(html){
+            //     document.getElementById('headerBtns').innerHTML = html;
+            // });
             this.tableColsSetting();
         },
         // 表格设置
@@ -139,16 +139,14 @@ layui.config({
                     dataName: 'data'
                 },
                 done: function () {//表格渲染完成的回调
-                    _t.bindEvents();
                     _t.bindToolEvent();
                     _t.filterData();
-                    if(_t.permissionList.indexOf('修改') < 0){
-                        $('.edit').hide();
-                    }
                 },
                 text: {
                     none: "暂无数据"
                 },
+                toolbar: '#exportBtn',
+                defaultToolbar: [],
                 cols: [_t.cols]
             });
             
@@ -266,20 +264,20 @@ layui.config({
             var _t = this;
             //监听行工具事件
             table.on('tool(routeList)', function (obj) {
-                var data = obj.data; //获得当前行数据
-                var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-                if (layEvent === 'edit') { //下载
-                    // top.xadmin.add_tab('线路规划', 'orderMessage/route-plan.html?guideLineId=' + data.guideLineId, true);
+                var data = obj.data;
+                var layEvent = obj.event; 
+                if (layEvent === 'edit') { 
                     xadmin.open('线路规划', './route-plan.html?guideLineId=' + data.guideLineId, 1400, 700)
                 }
             });
-        },
-        // 绑定页面事件
-        bindEvents: function(){
-            var _t = this;
-            $('#exportExcel').off('click').on('click', function(){
-                _t.exportData();
-            })
+            table.on('toolbar(routeList)', function (obj) {
+                var data = obj.data;
+                var layEvent = obj.event; 
+                console.log(111)
+                if (layEvent === 'export') { 
+                    _t.exportData();
+                }
+            });
         }
      
     }

@@ -5,7 +5,7 @@ layui.define([], function(exports) {
         this.requestDefaultOption = {
             type: "POST",
             dataType: 'json',
-            timeout: 5000,
+            timeout: 20000,
         }
     }
 
