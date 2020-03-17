@@ -272,7 +272,6 @@ layui.config({
                     data: data
                 });
             }
-            console.log(uploadObj)
             if(uploadObj["returnImagesList"].length > 0){
                 data1 = {
                     loginStaffId: user.staffId,
@@ -679,6 +678,10 @@ layui.config({
                         break;
                 }
             });
+            $(".list_driver_name").unbind().on("click", function (e) {
+                var id = e.target.dataset.id;
+                xadmin.open('订单录入','../../DriverManager/DriverArchives/info.html?id=' + id, 1100, 500);
+            });
         },
         exportData: function exportExcel() {
             var param = where;
@@ -933,7 +936,13 @@ layui.config({
         }},
         {
         field: 'driverName', title: '司机姓名', sort: false,minWidth:100, templet: function (d) {
-            return d.driverName ? d.driverName : '- -';
+            var driverName = "<a class='table_a pointer blue list_driver_name' data-id="+ d.driverId +">{{}}</a>";
+            if(d.driverName){
+                driverName = driverName.replace("{{}}", d.driverName);
+            }else{
+                driverName = "- -";
+            }
+            return driverName;
         }},
         {
             field: 'driverName', title: '司机手机', sort: false,minWidth:100, templet: function (d) {

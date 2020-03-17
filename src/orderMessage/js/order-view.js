@@ -9,7 +9,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     var qs = edipao.urlGet();
     this.orderNo = qs.orderNo;
     this.orderId = qs.orderId;
-    this.action = qs.action || "verify";
+    this.action = qs.action || "";
     this.user = JSON.parse(sessionStorage.user);
     this.prePay = [];
     this.arrivePay = [];
@@ -23,21 +23,37 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       var _this = this;
       if(_this.action != "verify"){
         $("#verify_container").remove();
-      }
-      _this.getUpdate(function () {
-        _this.getOrder().done(function (res) {
-          if(res.code == "0"){
-            _this.orderData = res.data;
-            _this.setData(res.data);
-            _this.bindEvents();
-            if(_this.action == "verify"){
-              _this.getUpdate();
+        laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
+          $("#form_income_container").after(html);
+          _this.getOrder().done(function (res) {
+            if(res.code == "0"){
+              _this.orderData = res.data;
+              _this.setData(res.data);
+              _this.bindEvents();
+              if(_this.action == "verify"){
+                _this.getUpdate();
+              }
+            }else{
+              layer.msg(res.message, {icon: 5,anim: 6});
             }
-          }else{
-            layer.msg(res.message, {icon: 5,anim: 6});
-          }
+          });
         });
-      });
+      }else{
+        _this.getUpdate(function () {
+          _this.getOrder().done(function (res) {
+            if(res.code == "0"){
+              _this.orderData = res.data;
+              _this.setData(res.data);
+              _this.bindEvents();
+              if(_this.action == "verify"){
+                _this.getUpdate();
+              }
+            }else{
+              layer.msg(res.message, {icon: 5,anim: 6});
+            }
+          });
+        });
+      }
     },
     getUpdate: function (cb) {
       var _this = this;

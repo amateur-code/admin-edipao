@@ -86,11 +86,11 @@
             <div class="layui-row">
                 <div class="layui-col-md6">
                     <span class="content_name">收入总金额：</span>
-                    <span class="content_name blue">{{d.totalIncome}} 元</span>
+                    <span id="totalIncome" class="content_name blue">{{d.totalIncome}} 元</span>
                 </div>
                 <div class="layui-col-md6">
                     <span class="content_name">管理费总金额：</span>
-                    <span class="content_name blue">{{d.totalManageFee}} 元</span>
+                    <span id="totalManageFee" class="content_name blue">{{d.totalManageFee}} 元</span>
                 </div>
             </div>
         </script>
@@ -138,7 +138,7 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">轴数</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="tel" name="shaftNum" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input disabled type="number" name="shaftNum" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -263,13 +263,13 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">客户里程(公里)</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="customerMileage" autocomplete="off" class="layui-input">
+                                <input type="number" name="customerMileage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">收入单价(元)</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="pricePerMeliage" autocomplete="off" class="layui-input">
+                                <input type="number" name="pricePerMeliage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
@@ -277,13 +277,13 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">收入金额(元)</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="income" autocomplete="off" class="layui-input">
+                                <input data-filter="CARFORM" type="number" name="income" autocomplete="off" class="layui-input car_income">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">管理费(元)</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="manageFee" autocomplete="off" class="layui-input">
+                                <input data-filter="CARFORM" type="text" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -400,7 +400,7 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">跟单员</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="followOperator" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input type="text" name="followOperator" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">

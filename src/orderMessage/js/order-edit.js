@@ -573,6 +573,15 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     });
     if(carData.id){
       id = carData.id;
+      if(carData.income){
+        _this.orderData.totalIncome = _this.orderData.totalIncome * 1 - carData.income * 1;
+      }
+      if(carData.manageFee){
+        _this.orderData.totalManageFee = _this.orderData.totalManageFee * 1 - carData.manageFee * 1;
+      }
+      laytpl($("#income_info_tpl").html()).render(_this.orderData, function(html){
+        $("#income_info").html(html);
+      });
     }
     _this.carFormList.forEach(function (item, index) {
       if(item == filter) carFormListIndex = index;
@@ -622,7 +631,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
                 layer.alert("订单已取消", { icon: 6 }, function() {
                   var lay_id = localStorage.current_tab;
                   top.$('.layui-tab-title li[lay-id=' + lay_id + ']').find('.layui-tab-close').click();
-              });
+                });
               }
             });
           }
@@ -659,11 +668,15 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       item.val = dispatchData["tailPay_" + index] || 0;
       return item;
     });
+    var totalIncome = 0;
+    var totalManageFee = 0;
     var carsLength = _this.cars.length + _this.carsToAdd.length - _this.carsToDel.length;
     _this.carFormList.forEach(function (item, index) {
       var itemData = form.val(item);
       console.log(itemData.masterFlag)
       if(!itemData.id && itemData.id != 0) return;
+      totalIncome += itemData.income * 1;
+      totalManageFee += itemData.manageFee * 1;
       truckUpdateReqList.push({
         truckId: itemData.id||"",
         masterFlag: itemData.masterFlag == "on" ? "否" : "是",
@@ -697,30 +710,30 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       });
     });
     data.id = _this.orderId;
-    data.loginStaffId = _this.user.staffId||"";
+    data.loginStaffId = _this.user.staffId || "";
     data.orderNo = _this.orderNo || "";
     data.orderType = carsLength > 1 ? 2 : 1;
-    data.totalIncome = orderData.totalIncome||"";
-    data.totalManageFee = orderData.totalManageFee||"";
+    data.totalIncome = totalIncome || 0;
+    data.totalManageFee = totalManageFee || "";
     data.fetchOperator = ascriptionData.fetchOperator||"";
-    data.fetchOperatorPhone = ascriptionData.fetchOperatorPhone||"";
-    data.dispatchOperator = ascriptionData.dispatchOperator||"";
-    data.dispatchOperatorPhone = ascriptionData.dispatchOperatorPhone||"";
-    data.deliveryOperator = ascriptionData.deliveryOperator||"";
-    data.deliveryOperatorPhone = ascriptionData.deliveryOperatorPhone||"";
+    data.fetchOperatorPhone = ascriptionData.fetchOperatorPhone || "";
+    data.dispatchOperator = ascriptionData.dispatchOperator || "";
+    data.dispatchOperatorPhone = ascriptionData.dispatchOperatorPhone || "";
+    data.deliveryOperator = ascriptionData.deliveryOperator || "";
+    data.deliveryOperatorPhone = ascriptionData.deliveryOperatorPhone || "";
     // data.followOperator = ascriptionData.followOperator||"";
-    data.followOperatorPhone = ascriptionData.followOperatorPhone||"";
-    data.department = ascriptionData.department||"";
-    data.driverId = dispatchData.driverId||"";
-    data.driverName = dispatchData.driverName||"";
-    data.driverPhone = dispatchData.driverPhone||"";
-    data.driverIdCard = dispatchData.driverIdCard||"";
-    data.driverCertificate = dispatchData.driverCertificate||"";
-    data.driverMileage = dispatchData.driverMileage||"";
+    data.followOperatorPhone = ascriptionData.followOperatorPhone || "";
+    data.department = ascriptionData.department || "";
+    data.driverId = dispatchData.driverId || "";
+    data.driverName = dispatchData.driverName || "";
+    data.driverPhone = dispatchData.driverPhone || "";
+    data.driverIdCard = dispatchData.driverIdCard || "";
+    data.driverCertificate = dispatchData.driverCertificate || "";
+    data.driverMileage = dispatchData.driverMileage || "";
     data.prePay = JSON.stringify(_this.prePay);
     data.arrivePay = JSON.stringify(_this.arrivePay);
     data.tailPay = JSON.stringify(_this.tailPay);
-    data.truckUpdateReqList = truckUpdateReqList||"";
+    data.truckUpdateReqList = truckUpdateReqList || "";
     if(data.orderType == 1){
       if(truckUpdateReqList[0].masterFlag == "否"){
         layer.msg("缺少下车标识");
@@ -890,6 +903,22 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       }
     });
   }
+  Edit.prototype.handleIncomeInput = function (e) {
+    var filter = e.target.dataset.filter;
+    var total = 0;
+    $(".car_income").each(function (index, item) {
+      total += item.value * 1;
+    });
+    $("#totalIncome").text(total + "元");
+  }
+  Edit.prototype.handleManageFeeInput = function (e) {
+    var filter = e.target.dataset.filter;
+    var total = 0;
+    $(".car_manageFee").each(function (index, item) {
+      total += item.value * 1;
+    });
+    $("#totalManageFee").text(total + "元");
+  }
   Edit.prototype.bindEvents = function(){
     var _this = this;
     $("#driver_name").unbind().on("click", function(){
@@ -914,6 +943,12 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       var lay_id = localStorage.current_tab;
       top.$('.layui-tab-title li[lay-id=' + lay_id + ']').find('.layui-tab-close').click();
     });
+    $(".car_income").unbind().on("input", function (e) {
+      _this.handleIncomeInput(e);
+    });
+    $(".car_manageFee").unbind().on("input", function (e) {
+      _this.handleManageFeeInput(e);
+    });
     $("#add_car").unbind().on("click", function(e){
       var carFormHtml = $("#car_info_tpl").html();
       var filterStr = "form_car_" + _this.carFormList.length;
@@ -923,6 +958,12 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       form.render();
       $(".del_car_btn").unbind().on("click", function(e){
         _this.handleDeleteCar(e);
+      });
+      $(".car_income").unbind().on("input", function (e) {
+        _this.handleIncomeInput(e);
+      });
+      $(".car_manageFee").unbind().on("input", function (e) {
+        _this.handleManageFeeInput(e);
       });
       $(".select_vin").unbind().on("click", function (e) {
         _this.openSelectVin(e);
