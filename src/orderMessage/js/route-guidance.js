@@ -3,20 +3,21 @@ layui.config({
 }).extend({
     excel: 'layui_exts/excel',
     tableFilter: 'TableFilter/tableFilter'
-}).use(['jquery', 'table','layer','excel','tableFilter', 'laytpl'], function () {
+}).use(['jquery', 'table','layer','excel','tableFilter', 'laytpl', 'laypage'], function () {
     var table = layui.table,
         $ = layui.jquery,
         layer = layui.layer,
         edipao = layui.edipao,
         excel = layui.excel,
         laytpl = layui.laytpl;
+        laypage = layui.laypage;
         tableFilter = layui.tableFilter,
         permissionList = edipao.getMyPermission();
 
     function _tableClass(){
         this.user = JSON.parse(sessionStorage.user);
         this.request = { loginStaffId: this.user.staffId };
-        this.pageNumber = 1,
+        this.pageNo = 1,
         this.pageSize = 10;
         this.exportSize = 100000;
         this.exportHead = [];
@@ -54,12 +55,6 @@ layui.config({
     _tableClass.prototype = {
         // 初始化
         init: function(){
-            // var _t = this;
-            // laytpl(exportBtn.innerHTML).render({
-            //     permissionList: _t.permissionList
-            // }, function(html){
-            //     document.getElementById('headerBtns').innerHTML = html;
-            // });
             this.tableColsSetting();
         },
         // 表格设置
@@ -115,14 +110,17 @@ layui.config({
                 url: layui.edipao.API_HOST+'/admin/line/list',
                 title: '订单列表',
                 method: "get", // 请求方式  默认get
-                page: true, //开启分页
+                page: false, //开启分页
                 limit: this.pageSize,  //每页显示条数
                 limits: [20, 40], //每页显示条数可选择
                 request: {
                     pageName: 'pageNo', //页码的参数名称，默认：page
                     limitName: 'pageSize' //每页数据量的参数名，默认：limit
                 },
-                where: this.request,
+                where: Object.assign(this.request, {
+                    pageNo: _t.pageNo,
+                    pageSize: _t.pageSize
+                }),
                 height: 'full',
                 autoSort: true,
                 id: 'routeList',
@@ -130,7 +128,7 @@ layui.config({
                     return {
                         "code": res.code, //解析接口状态
                         "msg": res.message, //解析提示文本
-                        "count": res.data.totalSize, //解析数据长度
+                        "count": res.count, //解析数据长度
                         "data": res.data.dataList //解析数据列表
                     }
                 },
@@ -138,8 +136,11 @@ layui.config({
                     countName: 'count',
                     dataName: 'data'
                 },
-                done: function () {//表格渲染完成的回调
+                done: function (res) {//表格渲染完成的回调
                     _t.bindToolEvent();
+                    if(_t.pageNo == 1){
+                        _t.setLayPage(res.count);
+                    }
                     _t.filterData();
                 },
                 text: {
@@ -150,6 +151,21 @@ layui.config({
                 cols: [_t.cols]
             });
             
+        },
+        // 设置分页
+        setLayPage: function(total){
+            let _t = this;
+            laypage.render({
+                elem: 'footer-laypage',
+                count: total,
+                layout: ['count', 'prev', 'page', 'next'],
+                limit: _t.pageSize,
+                jump: function(obj, first){
+                    _t.pageNo = obj.curr;
+                    if(first) return;
+                    _t.tableRender();
+                }
+            });
         },
         // 过滤
         filterData: function(){
