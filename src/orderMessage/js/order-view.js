@@ -140,6 +140,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       data.truckDTOList.forEach(function (item, index) {
         if(!item.fetchImages) item.fetchImages = "";
         item.fetchImages = item.fetchImages.split(",");
+        if(!item.startBillImage) item.startBillImage = "";
+        item.startBillImage = item.startBillImage.split(",");
         laytpl(imageStr).render(item, function (imageHtml) {
           var filterStr = "form_car_" + index;
           _this.carFormList.push(filterStr);

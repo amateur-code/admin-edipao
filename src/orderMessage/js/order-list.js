@@ -153,6 +153,10 @@ layui.config({
                 method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
                         orderData = res.data;
+                        if(!res.data.truckDTOList || res.data.truckDTOList.length < 1){
+                            layer.msg("订单未包含车辆信息", {icon: 2});
+                            return;
+                        }
                         uploadTruckId = res.data.truckDTOList[0].id;
                         res.data.truckDTOList.forEach(function (item) {
                             uploadData[item.id + ""] = uploadObj;
@@ -608,10 +612,10 @@ layui.config({
                 method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
                         res.data.truckDTOList.forEach(function (item) {
-                            if(!item.startImages){
-                                item.startImages = [];
+                            if(!item.startBillImage){
+                                item.startBillImage = [];
                             }else{
-                                item.startImages = item.startImages.split(",");
+                                item.startBillImage = item.startBillImage.split(",");
                             }
                             if(!item.fetchImages){
                                 item.fetchImages = [];
@@ -624,6 +628,7 @@ layui.config({
                                 item.returnImages = item.returnImages.split(",");
                             }
                         });
+                        console.log(res.data.truckDTOList)
                         laytpl($("#pic_view_tpl").html()).render({
                             list: res.data.truckDTOList,
                             field: field
@@ -829,7 +834,7 @@ layui.config({
                         }
                     });
                 } else if (layEvent === 'log') {//日志
-                    top.xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=4');
+                    top.xadmin.open('操作日志', 'OperateLog/log.html?id=' + data.id + '&type=4');
                 }
             });
         },

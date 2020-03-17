@@ -247,9 +247,11 @@
             <div class="layui-form-item layui-row">
                 <div class="layui-inline layui-col-md5">
                     <span class="layui-form-span text_left form_span">发车单：</span>
-                    <div>
-                        <img width="100%" class="car_image" src="{{d.startBillImage}}">
+                    {{# layui.each(d.startBillImage, function(index, item){ }}
+                    <div style="margin-right:20px;margin-bottom:20px" class="layui-col-md3">
+                        <img width="100%" class="car_image" src="{{item}}">
                     </div>
+                    {{# }); }}
                 </div>
                 <div class="layui-inline layui-col-md5 layui-col-md-offset1">
                     <span class="layui-form-span text_left form_span">行驶证：</span>
@@ -260,11 +262,11 @@
             </div>
             <div class="layui-form-item layui-row">
                 <div class="layui-form-span text_left form_span">提车图片：</div>
-                {{#  layui.each(d.fetchImages, function(index, item){ }}
+                {{# layui.each(d.fetchImages, function(index, item){ }}
                 <div style="margin-right:20px;margin-bottom:20px" class="layui-col-md3">
                     <img width="100%" class="car_image" src="{{item}}">
                 </div>
-                {{#  }); }}
+                {{# }); }}
             </div>
         </script>
         <div id="form_income_container" class="layui-row layui-col-space15 page_block">
