@@ -125,6 +125,9 @@
             ],
             tableIns,
             tableFilterIns,
+            tableWhere = {
+                loginStaffId: edipao.getLoginStaffId()
+            },
             permissionList = edipao.getMyPermission();
         window.permissionList = permissionList;
         var params = edipao.urlGet();
@@ -172,9 +175,7 @@
                     pageName: 'pageNo',
                     limitName: 'pageSize'
                 },
-                where: {
-                    loginStaffId: edipao.getLoginStaffId()
-                },
+                where: tableWhere,
                 parseData: function(res) { //res 即为原始返回的数据
                     edipao.codeMiddleware(res);
                     return {
@@ -249,7 +250,7 @@
                         }
                         index++;
                     })
-                    console.log(filters,where)
+                    tableWhere = where;
                     tableIns.reload({where: where, page: { curr: 1 }});
                     //结果回调
                 }
@@ -321,13 +322,12 @@
                 exportXlsx(checkStatus.data)
                 return;
             }
+            tableWhere.pageNo = 1;
+            tableWhere.pageSize = 10000;
             edipao.request({
                 type: 'get',
                 url: '/admin/product/list',
-                data: {
-                    pageNo: 1,
-                    pageSize: 10000,
-                }
+                data: tableWhere
             }).then(function(res) {
                 if (res.code == 0) {
                     exportXlsx(res.data.productRespList);
