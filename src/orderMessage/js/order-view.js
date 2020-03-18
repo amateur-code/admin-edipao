@@ -67,15 +67,19 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         }
       }).done(function (res) {
         if(res.code == "0"){
-          var updateData = JSON.parse(res.data.modifyAfterJson);
-          updateData.forEach(function (item) {
-            _this.updateData[item.name] = item.value;
-          });
-          console.log(_this.updateData)
+          var updateData;
+          if(!res.data || !res.data.modifyAfterJson){
+            updateData = {};
+          }else{
+            updateData = JSON.parse(res.data.modifyAfterJson);
+            updateData.forEach(function (item) {
+              _this.updateData[item.name] = item.value;
+            });
+          }
           laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
             $("#form_income_container").after(html);
+            cb && cb();
           });
-          cb && cb();
         }
       });
     },

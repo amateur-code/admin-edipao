@@ -721,7 +721,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     data.dispatchOperatorPhone = ascriptionData.dispatchOperatorPhone || "";
     data.deliveryOperator = ascriptionData.deliveryOperator || "";
     data.deliveryOperatorPhone = ascriptionData.deliveryOperatorPhone || "";
-    // data.followOperator = ascriptionData.followOperator||"";
+    data.followOperator = ascriptionData.followOperator||"";
     data.followOperatorPhone = ascriptionData.followOperatorPhone || "";
     data.department = ascriptionData.department || "";
     data.driverId = dispatchData.driverId || "";

@@ -121,29 +121,35 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
     , url: layui.edipao.API_HOST + '/admin/page/order/fileUpload' //上传接口
     , accept: 'file'
     , field: 'file'
+    , data: {
+        loginStaffId: layui.edipao.getLoginStaffId()
+    }
     , done: function (res) {
         //上传完毕回调
         if (res) {
             if(res.message != "success"){
-                res.data.forEach(function (item, index) {
-                    var obj = [];
-                    Object.keys(item).forEach(function (item2) {
-                        var data = {};
-                        data.key = item2;
-                        data.value = item[item2];
-                        obj.push(data);
+                layer.msg(res.message, {icon: 2});
+                if(res.data && res.data.length){
+                    res.data.forEach(function (item, index) {
+                        var obj = [];
+                        Object.keys(item).forEach(function (item2) {
+                            var data = {};
+                            data.key = item2;
+                            data.value = item[item2];
+                            obj.push(data);
+                        });
+                        res.data[index] = obj;
                     });
-                    res.data[index] = obj;
-                });
-                laytpl($("#import_result").html()).render({list: res.data}, function (html) {
-                    layer.open({
-                        type: 1,
-                        title: "导入结果",
-                        area: "600px",
-                        content: html,
-                        success: function () {  }
+                    laytpl($("#import_result").html()).render({list: res.data}, function (html) {
+                        layer.open({
+                            type: 1,
+                            title: "导入结果",
+                            area: "600px",
+                            content: html,
+                            success: function () {  }
+                        });
                     });
-                });
+                }
             }
             //展示已知数据
             renderTable();
