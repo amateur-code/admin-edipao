@@ -25,6 +25,18 @@
         // 是否开启刷新记忆tab功能
     // var is_remember = false;
     </script>
+    <style type="text/css">
+        #roleList{
+            width:475px;
+            margin: 0 auto;
+        }
+        .btn-ok{
+            display: block;
+            width: 100px;
+            height: 40px;
+            margin: 30px auto 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -36,48 +48,15 @@
                         员工：<span style="color: #1E9FFF;" id="staffInfo">张三(137 xxxx xxxx)</span>
                     </div>
                     <div class="layui-card-body" id="doc-content">
-						<form class="layui-form layui-form-pane" lay-filter="editRole">
-                        <table class="layui-table">
-                        	<colgroup>
-							    <col width="88">
-							    <col>
-							 </colgroup>
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <input name="full" lay-skin="primary" type="checkbox" lay-filter="father">
-                                    </th>
-                                    <th>角色名称</th>
-                                </tr>
-                            </thead>
-                            <tbody id="view">
-                            </tbody>
-                        </table>
-                    	</form>
+						<div id="roleList"></div>
+                        <button class="layui-btn layui-btn-lg btn-ok" id="commit">提交</button>
                     </div>
-                    <div class="layui-card-header">
-                        已选：<span id="roleNames"></span>
-                    </div>
-                    <div class="layui-card-header" style="text-align: center; padding: 30px 40px">
-
-	                    <button class="layui-btn layui-btn-lg" lay-filter="update" lay-submit>提交</button>
-	                </div>
                 </div>
             </div>
         </div>
     </div>
-    <script id="demo" type="text/html">
-        {{#  layui.each(d.list, function(index, item){ }}
-        <tr>
-	      <td>
-	      	<input name="role[{{item.roleId}}]" lay-skin="primary" lay-filter="role" type="checkbox" value="{{item.roleId}}">
-	      </td>
-	      <td>{{ item.roleName }}</td>
-	    </tr>
-	    {{# }) }}
-	</script>
     <script type="text/javascript">
-    layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, form) {
+    layui.use(['layer', 'transfer'], function(layer, transfer) {
         var xadmin = layui.xadmin,
         	edipao = layui.edipao
         	roleAllList = [];
@@ -107,15 +86,9 @@
                 }
             }).done(function(res) {
                 if (res.code == 0) {
-                    let roleListName = [],editRole = {};
-                    layui.each(roleAllList, function(index, item) {
-                        if (res.data.indexOf(item.roleId) != -1) {
-                            roleListName.push(item.roleName)
-                            editRole['role[' + item.roleId + ']'] = item.roleId
-                        }
+                    transfer.reload('roleList', {
+                        value: res.data
                     });
-                    $('#roleNames').text(roleListName.join(','))
-                    form.val("editRole", editRole);
                 } else {
                     layer.msg(res.message)
                 }
@@ -130,88 +103,49 @@
 			}
 		}).then(function(res){
 			if(res.code == 0){
-				var getTpl = demo.innerHTML,
-                view = document.getElementById('view');
-				laytpl(getTpl).render({list:res.data.roleDTOList}, function(html){
-				  view.innerHTML = html;
-				});
-				form.render()
-				roleAllList = res.data.roleDTOList
+                transfer.render({
+                    id: 'roleList',
+                    elem: '#roleList',
+                    height: 430,
+                    title: ['全部角色','已拥有'],
+                    showSearch: true,
+                    data: res.data.roleDTOList,
+                    value: [],
+                    parseData: function(item){
+                        item.value = item.roleId;
+                        item.title = item.roleName;
+                        return item
+                    }
+                });
 				getStaffRole()
 			}
 		})
 
-
-
-       	form.on('checkbox(father)', function(data,e){
-            if(data.elem.checked){
-                $(data.elem).closest('.layui-form').find('input').prop("checked", true);
-                form.render(); 
-            }else{
-               $(data.elem).closest('.layui-form').find('input').prop("checked", false);
-                form.render();  
-            }
-            let roleListName = [], roleIds = [];
-            $(data.elem).closest('.layui-form').find('input').each(function(index, el) {
-            	if($(this).prop('checked')){
-            		roleIds.push($(this).val())
-            	}
-            	
+        $('#commit').on('click',function(){
+            let roleIdList = [];
+            var list = transfer.getData('roleList');
+            layui.each(list,function(index, el) {
+                roleIdList.push(el.value)
             });
-            layui.each(roleAllList, function(index, item) {
-                if (roleIds.indexOf(item.roleId + '') != -1) {
-                    roleListName.push(item.roleName)
+            edipao.request({
+                url: '/admin/permission/grant',
+                data: {
+                    roleIdList: roleIdList.join(','),
+                    staffId: params.id,
                 }
-            });
-            console.log(roleListName,roleIds)
-            $('#roleNames').text(roleListName.join(','))
-        });
-        form.on('checkbox(role)', function(data,e){
-            let roleListName = [], roleIds = [];
-            $(data.elem).closest('.layui-form').find('input').each(function(index, el) {
-            	if($(this).prop('checked')){
-            		roleIds.push($(this).val())
-            	}
-            	
-            });
-            layui.each(roleAllList, function(index, item) {
-                if (roleIds.indexOf(item.roleId + '') != -1) {
-                    roleListName.push(item.roleName)
-                }
-            });
-            console.log(roleListName,roleIds)
-            $('#roleNames').text(roleListName.join(','))
-        });
-
-
-        form.on('submit(update)', function(data) {
-        	let roleIdList = [];
-        	$('.layui-form').find('input').each(function(index, el) {
-            	if($(this).prop('checked') && $(this).val() != 'on'){
-            		roleIdList.push($(this).val())
-            	}
-            });
-
-        	edipao.request({
-        		url: '/admin/permission/grant',
-        		data: {
-        			roleIdList: roleIdList.join(','),
-					staffId: params.id,
-        		}
-        	}).then(function(res){
-        		if(res.code == 0){
-        			layer.alert("修改权限成功", { icon: 6 ,
+            }).then(function(res){
+                if(res.code == 0){
+                    layer.alert("修改权限成功", { icon: 6 ,
                         end: function(){
                             xadmin.close();
                             xadmin.father_reload();
                         }
                     });
-        		}else {
+                }else {
                     layer.msg(res.message)
                 }
-        	})
-           	return false
-        });
+            })
+        })
 
     })
     </script>

@@ -37,7 +37,7 @@ layui.define([], function(exports) {
       layui.sessionData('user',null);
       var list = window.top.location.pathname.split('/')
       list[list.length -1] = 'Login/login.html';
-      window.top.location.href = list.join('/')
+      window.top.location.replace(list.join('/'))
     }
 
     Common.prototype.getLoginStaffId = function() {
