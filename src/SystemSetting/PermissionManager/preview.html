@@ -93,23 +93,21 @@
 					    		}}
 					    		{{# layui.each(list2, function(index, item2){ }}
 					    		<tr>
-	                                <td>
+	                                <td width="150">
 	                                    <input type="checkbox" name="resourceIdList[{{item2.resourceId}}]" lay-skin="primary" lay-filter="second" title="{{item2.name}}" value="{{item2.resourceId}}">
 	                                </td>
-	                                <td>
-	                                    <div class="layui-input-block">
-	                                    	{{#
-								    			var list3 = [];
-												layui.each(d.list, function(index, item3){
-													if(item3.pid == item2.resourceId){
-														list3.push(item3)
-													}
-												})	
-								    		}}
-								    		{{# layui.each(list3, function(index, item3){ }}
-								    		<input name="resourceIdList[{{item3.resourceId}}]" lay-skin="primary" type="checkbox" title="{{item3.name}}" value="{{item3.resourceId}}">
-								    		{{#  }); }}
-	                                    </div>
+	                                <td align="left">
+                                    	{{#
+							    			var list3 = [];
+											layui.each(d.list, function(index, item3){
+												if(item3.pid == item2.resourceId){
+													list3.push(item3)
+												}
+											})	
+							    		}}
+							    		{{# layui.each(list3, function(index, item3){ }}
+							    		<input name="resourceIdList[{{item3.resourceId}}]" lay-skin="primary" type="checkbox" title="{{item3.name}}" value="{{item3.resourceId}}">
+							    		{{#  }); }}
 	                                </td>
 	                            </tr>
 					    		{{#  }); }}

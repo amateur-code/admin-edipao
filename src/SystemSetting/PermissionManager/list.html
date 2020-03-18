@@ -54,7 +54,7 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-body" id="doc-content">
-                        <table id="roleList" lay-filter="roleList"></table>
+                        <table id="list" lay-filter="list"></table>
                     </div>
                 </div>
             </div>
@@ -97,13 +97,16 @@
             tableCols = [ //表头
                 { checkbox: true },
                 { field: 'roleName', title: '角色名称', width: 200 },
-                { field: 'staffNumber', title: '关联员工数', templet: '#stffList', width: 200 },
+                { field: 'staffNumber', title: '关联员工数', templet: '#stffList', width: 160 },
                 { field: 'createUser', title: '创建人', width: 200 },
                 { field: 'createTime', title: '创建时间', width: 200 },
-                { title: '操作', toolbar: '#rowBtns', width: 350, fixed: 'right' }
+                { title: '操作', toolbar: '#rowBtns', width: 300 }
             ],
             tableIns,
             tableFilterIns,
+            tableWhere = {
+                loginStaffId: edipao.getLoginStaffId()
+            },
             permissionList = edipao.getMyPermission(); 
         window.permissionList = permissionList;
         edipao.request({
@@ -129,21 +132,16 @@
             }
         })
 
-        var roleList;
-
         function renderTable() {
             tableIns = table.render({
-                id: 'roleList',
-                elem: '#roleList',
+                elem: '#list',
                 url: edipao.API_HOST + '/admin/permission/role/list',
                 method: 'POST',
                 request: {
                     pageName: 'pageNo',
                     limitName: 'pageSize'
                 },
-                where: {
-                    loginStaffId: edipao.getLoginStaffId()
-                },
+                where: tableWhere,
                 parseData: function(res) { //res 即为原始返回的数据
                     edipao.codeMiddleware(res);
                     return {
@@ -158,6 +156,11 @@
                 toolbar: '#headerBtns',
                 defaultToolbar: [],
                 done: function(res,curr,count){
+                    if(res.data.length == 0){
+                        $('.layui-table-header').css('overflow-x','scroll')
+                    }else{
+                        $('.layui-table-header').css('overflow','hidden')
+                    }
                     tableFilterIns && tableFilterIns.reload()
                 }
             });
@@ -177,7 +180,7 @@
             });
 
             tableFilterIns = tableFilter.render({
-                'elem' : '#roleList',//table的选择器
+                'elem' : '#list',//table的选择器
                 'mode' : 'self',//过滤模式
                 'filters' : filtersHeader,//过滤项配置
                 'done': function(filters){
@@ -200,6 +203,7 @@
                         }
                         index++;
                     })
+                    tableWhere = where;
                     tableIns.reload({where: where, page: { curr: 1 }});
                     //结果回调
                 }
@@ -259,38 +263,46 @@
         }
 
         function exportData() {
+            var checkStatus = table.checkStatus('list');
+            if(checkStatus.data.length > 0){
+                exportXlsx(checkStatus.data)
+                return;
+            }
+
+            tableWhere.pageNo = 1;
+            tableWhere.pageSize = 10000;
             edipao.request({
                 url: '/admin/permission/role/list',
-                data: {
-                    pageNo: 1,
-                    pageSize: 10000,
-                }
+                data: tableWhere
             }).then(function(res) {
                 if (res.code == 0) {
-                    var data = [], list = res.data.roleDTOList;
-                    list = [{}].concat(list);
-                    layui.each(list, function(index2, item2) {
-                        var dataItem = {};
-                        layui.each(tableCols, function(index, item) {
-                            if(item.field && item.hide != true){
-                                if(index2 == 0){
-                                    dataItem[item.field] = item.title; 
-                                }else{
-                                    dataItem[item.field] = item2[item.field]
-                                }
-                                
-                            } 
-                        })
-                        data.push(dataItem)
-                    })
-                    excel.exportExcel({sheet1: data}, '权限管理.xlsx', 'xlsx');
+                    exportXlsx(res.data.roleDTOList)
                 }
             })
         }
 
-        table.on('tool(roleList)', handleEvent);
-        table.on('toolbar(roleList)', handleEvent);
-        table.on('checkbox(roleList)', handleEvent);
+        function exportXlsx(list){
+            var data = [], list = [{}].concat(list);
+            layui.each(list, function(index2, item2) {
+                var dataItem = {};
+                layui.each(tableCols, function(index, item) {
+                    if(item.field && item.hide != true){
+                        if(index2 == 0){
+                            dataItem[item.field] = item.title; 
+                        }else{
+                            dataItem[item.field] = item2[item.field]
+                        }
+                        
+                    } 
+                })
+                data.push(dataItem)
+            })
+            excel.exportExcel({sheet1: data}, '权限管理.xlsx', 'xlsx');
+        }
+
+        table.on('tool(list)', handleEvent);
+        table.on('toolbar(list)', handleEvent);
+        table.on('checkbox(list)', handleEvent);
     })
     </script>
 </body>

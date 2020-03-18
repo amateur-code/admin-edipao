@@ -62,8 +62,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <button class="layui-btn" lay-filter="update" lay-submit>修改</button>
+                <div class="layui-form-item" style="text-align: center;">
+                    <button class="layui-btn layui-btn-lg" lay-filter="update" lay-submit>修改</button>
                 </div>
             </form>
         </div>
@@ -96,23 +96,21 @@
 					    		}}
 					    		{{# layui.each(list2, function(index, item2){ }}
 					    		<tr>
-	                                <td>
+	                                <td width="150">
 	                                    <input class="page"  type="checkbox" name="resourceIdList[{{item2.resourceId}}]" lay-skin="primary" lay-filter="second" title="{{item2.name}}" value="{{item2.resourceId}}">
 	                                </td>
-	                                <td>
-	                                    <div class="layui-input-block">
-	                                    	{{#
-								    			var list3 = [];
-												layui.each(d.list, function(index, item3){
-													if(item3.pid == item2.resourceId){
-														list3.push(item3)
-													}
-												})	
-								    		}}
-								    		{{# layui.each(list3, function(index, item3){ }}
-								    		<input class="item" name="resourceIdList[{{item3.resourceId}}]" lay-skin="primary" type="checkbox" lay-filter="third" title="{{item3.name}}" value="{{item3.resourceId}}">
-								    		{{#  }); }}
-	                                    </div>
+	                                <td align="left">
+                                    	{{#
+							    			var list3 = [];
+											layui.each(d.list, function(index, item3){
+												if(item3.pid == item2.resourceId){
+													list3.push(item3)
+												}
+											})	
+							    		}}
+							    		{{# layui.each(list3, function(index, item3){ }}
+							    		<input class="item" name="resourceIdList[{{item3.resourceId}}]" lay-skin="primary" type="checkbox" lay-filter="third" title="{{item3.name}}" value="{{item3.resourceId}}">
+							    		{{#  }); }}
 	                                </td>
 	                            </tr>
 					    		{{#  }); }}

@@ -25,33 +25,66 @@
         // 是否开启刷新记忆tab功能
     // var is_remember = false;
     </script>
+    <style type="text/css">
+    .layui-col-xs4 {
+        padding: 20px;
+    }
+
+    .layui-col-xs4>span {
+        color: #1E9FFF;
+    }
+    </style>
 </head>
 
 <body>
     <div class="layui-fluid">
-        <div class="layui-row">
-            <table class="layui-table" lay-skin="nob" lay-size="lg">
-              <tbody id="view">
-                
-              </tbody>
-            </table>
+        <div class="layui-row" id="view">
         </div>
     </div>
     <script id="staffinfo" type="text/html">
-        <tr>
-          <td>员工姓名: {{d.name}}</td>
-          <td>员工手机: {{d.phone}}</td>
-          <td>登录密码: ****</td>
-        </tr>
-        <tr>
-          <td>身份证号: {{d.idCard}}</td>
-          <td>员工工号: {{d.cardNo}}</td>
-          <td>员工职位: {{d.positions}}</td>
-        </tr>
-        <tr>
-          <td>所属部门: {{d.dept}}</td>
-          <td>状态: {{d.status}}</td>
-        </tr>
+        <div class="layui-card">
+            <div class="layui-card-header">员工信息</div>
+            <div class="layui-card-body">
+                <div class="layui-fluid">
+                    <div class="layui-row">
+                        <div class="layui-col-xs4">
+                            员工姓名:  <span>{{d.name}}</span>
+                            
+                        </div>
+                        <div class="layui-col-xs4">
+                            员工手机 <span>{{d.phone}}</span>
+                            
+                        </div>
+                        <div class="layui-col-xs4">
+                            登录密码： <span>****</span>
+                            
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-xs4">
+                            身份证号： <span>{{d.idCard}}</span>
+                            
+                        </div>
+                        <div class="layui-col-xs4">
+                            员工工号： <span>{{d.cardNo || '--'}}</span>
+                            
+                        </div>
+                        <div class="layui-col-xs4">
+                            员工职位： <span>{{d.positions || '--'}}</span>
+                            
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-xs4">
+                            所属部门： <span>{{d.dept || '--'}}</span>
+                        </div>
+                        <div class="layui-col-xs4">
+                            状态： <span>{{d.status}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </script>
     <script type="text/javascript">
     layui.use(['layer', 'element','laytpl'], function(layer,element,laytpl) {

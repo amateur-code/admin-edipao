@@ -92,7 +92,10 @@
         window.permissionList = permissionList;    
         var params = edipao.urlGet();
         var tableKey ='BackService-' + params.key + '-trade-record';
-
+        var tableWhere  = {
+            [params.key]: params.id,
+            loginStaffId: edipao.getLoginStaffId()
+        }
         getTableHeader();
 
         function getTableHeader(){
@@ -128,10 +131,7 @@
 	                pageName: 'pageNo',
 	                limitName: 'pageSize'
 	            },
-	            where: {
-	            	[params.key]: params.id,
-	                loginStaffId: edipao.getLoginStaffId()
-	            },
+	            where: tableWhere,
 	            parseData: function(res) { //res 即为原始返回的数据
 	                layui.each(res.data.supplierRespList,function(index, el) {
 	                    el.supplierTypeName = SupplierTypeConfig[el.supplierType]
@@ -148,6 +148,11 @@
 	            toolbar: '#headerBtns',
 	            defaultToolbar: [],
 	            done: function(res,curr,count){
+                    if(res.data.length == 0){
+                        $('.layui-table-header').css('overflow-x','scroll')
+                    }else{
+                        $('.layui-table-header').css('overflow','hidden')
+                    }
                     tableFilterIns && tableFilterIns.reload()
                 }
 	        });
@@ -199,6 +204,7 @@
                         }
                         index++;
                     })
+                    tableWhere = where;
                     tableIns.reload({where: where, page: { curr: 1 }});
                 }
             })
@@ -217,17 +223,23 @@
                     break;
             };
         }
+
         function exportData() {
+            var checkStatus = table.checkStatus('list');
+            if(checkStatus.data.length > 0){
+                exportXlsx(checkStatus.data)
+                return;
+            }
+
+            tableWhere.pageNo = 1;
+            tableWhere.pageSize = 10000;
             edipao.request({
                 type: 'get',
                 url: '/admin/trade-record/list',
-                data: {
-                    pageNo: 1,
-                    pageSize: 10000,
-                    [params.key]: params.id,
-                }
+                data: tableWhere
             }).then(function(res) {
                 if (res.code == 0) {
+                    exportXlsx(res.data.tradeRecordRespList);
                     var data = [], list = res.data.tradeRecordRespList;
                     list = [{}].concat(list);
                     layui.each(list, function(index2, item2) {
@@ -246,6 +258,24 @@
                     excel.exportExcel({sheet1: data}, '交易记录.xlsx', 'xlsx');
                 }
             })
+        }
+
+        function exportXlsx(list){
+            var data = [], list = [{}].concat(list);
+            layui.each(list, function(index2, item2) {
+                var dataItem = {};
+                layui.each(tableCols, function(index, item) {
+                    if(item.field && item.hide != true){
+                        if(index2 == 0){
+                            dataItem[item.field] = item.title; 
+                        }else{
+                            dataItem[item.field] = item2[item.field] || '--'
+                        }
+                    } 
+                })
+                data.push(dataItem)
+            })
+            excel.exportExcel({sheet1: data}, '交易记录.xlsx', 'xlsx');
         }
 
         table.on('toolbar(list)', handleEvent);

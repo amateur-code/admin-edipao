@@ -60,7 +60,8 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 
 				//插入图标
 				var th = elem.next().find('.layui-table-header th[data-field="'+filterField+'"]');
-				var icon = filterType == 'input' ? 'layui-icon-search' : 'layui-icon-down';
+				// var icon = filterType == 'input' ? 'layui-icon-search' : 'layui-icon-down';
+				var icon = 'layui-icon-search';
 				var filterIcon = $('<span class="layui-table-filter layui-inline"><i class="layui-icon '+icon+'"></i></span>');
 				th.find('.layui-table-cell').append(filterIcon)
 
@@ -109,8 +110,13 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						filterBox.find('form').append('<input type="text" id="'+filterName+'-timeslot" name="'+filterName+'" lay-verify="required" lay-verType="tips" placeholder="请选择时间段" class="layui-input">');
 					}
 					if(filterType == 'numberslot'){
-						filterBox.find('form').append('<input type="search" name="'+filterName+'-min" lay-verify="required|number|numberslot" lay-verType="tips" placeholder="输入最小值" class="layui-input">');
-						filterBox.find('form').append('<input type="search" name="'+filterName+'-max" lay-verify="required|number|numberslot" lay-verType="tips" placeholder="输入最大值" class="layui-input">');
+						filterBox.find('form').append('<input type="search" name="'+filterName+'-min" lay-verify="numberslot" lay-verType="tips" placeholder="输入最小值" class="layui-input">');
+						filterBox.find('form').append('<input type="search" name="'+filterName+'-max" lay-verify="numberslot" lay-verType="tips" placeholder="输入最大值" class="layui-input">');
+					}
+
+					if(filterType == 'contract'){
+						filterBox.find('form').append('<input type="search" name="'+filterName+'-name" lay-verify="contract" lay-verType="tips" placeholder="输入姓名" class="layui-input">');
+						filterBox.find('form').append('<input type="search" name="'+filterName+'-phone" lay-verify="contract" lay-verType="tips" placeholder="输入手机号" class="layui-input">');
 					}
 
 					// 自定义-城市
@@ -204,12 +210,21 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 
 					form.verify({
 			            numberslot: function(value) {
-			            	var min = filterBox.find('[name="'+filterName+'-min"]').val() - 0,
-			            		max = filterBox.find('[name="'+filterName+'-max"]').val() - 0;
-			                if (min > max) {
+			            	var min = filterBox.find('[name="'+filterName+'-min"]').val().trim(),
+			            		max = filterBox.find('[name="'+filterName+'-max"]').val().trim();
+			            	if(!min && !max) return '至少输入一个值';
+			            	if(value && isNaN(value)){
+         						return '必须输入数字';
+         					}
+			                if (min != '' && max != '' && (min - 0 > max - 0)) {
 			                    return '最小值不能大于最大值';
 			                }
-			            }
+			            },
+			            contract: function(value) {
+			            	var name = filterBox.find('[name="'+filterName+'-name"]').val().trim(),
+			            		phone = filterBox.find('[name="'+filterName+'-phone"]').val().trim();
+			            	if(!name && !phone) return '至少输入姓名或手机号';
+			            },
 			        });
 
 					//点击确认开始过滤
@@ -226,6 +241,10 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						if(filterType == 'numberslot'){
 							data.field[filterName] = [data.field[filterName+'-min'],data.field[filterName+'-max']]
 						}
+						if(filterType == 'contract'){
+							data.field[filterName] = [data.field[filterName+'-name'],data.field[filterName+'-phone']]
+						}
+
 						// 如果城市
 						if(filterType == "city"){
 							var NEWfield = {};
@@ -411,10 +430,17 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 				form_val[filterName + "["+value+"]"] = true;
 			})
 			delete form_val[filterName];
-		}else if(filterType == "numberslot"){
-			if(form_val[filterName] && form_val[filterName].length ==2){
+		}
+		if(filterType == "numberslot"){
+			if(form_val[filterName] && form_val[filterName].length == 2){
 				form_val[filterName + "-min"] = form_val[filterName][0]
 				form_val[filterName + "-max"] = form_val[filterName][1]
+			}
+		}
+		if(filterType == "contract"){
+			if(form_val[filterName] && form_val[filterName].length == 2){
+				form_val[filterName + "-name"] = form_val[filterName][0]
+				form_val[filterName + "-phone"] = form_val[filterName][1]
 			}
 		}
 		if(filterType == "city"){
@@ -423,6 +449,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 			})
 			delete form_val[filterName];
 		}
+		console.log(form_val)
 		return form_val;
 	}
 

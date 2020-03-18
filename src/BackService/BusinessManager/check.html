@@ -112,7 +112,7 @@
         </div>
         <div class="layui-row">
             <div class="layui-col-xs4">
-                备注： <span>{{d.detail.remark}}</span>
+                备注： <span>{{d.detail.remark || '--'}}</span>
                 {{# if(d.check.remark){ }}
                 <div><span class="x-red">待审：</span>{{d.check.remark}} </div>
                 {{# } }}
@@ -216,7 +216,8 @@
                 data: data.field,
             }).done(function(res) {
                 if (res.code == 0) {
-                    layer.alert("服务商审核通过", { icon: 6 ,
+                    var str = data.field.checkResult == 'pass' ? '服务商已审核通过' : '服务商已被驳回'
+                    layer.alert(str, { icon: 6 ,
                         end: function(){
                             xadmin.close();
                             xadmin.father_reload();

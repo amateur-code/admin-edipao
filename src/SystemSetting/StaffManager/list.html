@@ -54,7 +54,7 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-body" id="doc-content">
-                        <table id="staffList" lay-filter="staffList"></table>
+                        <table id="list" lay-filter="list"></table>
                     </div>
                 </div>
             </div>
@@ -112,10 +112,13 @@
                     return d.roleNames || '--'
                 } },
                 { field: 'status', title: '状态',width: 200, align: 'center'},
-                { title: '操作', toolbar: '#rowBtns', 'width': 350, fixed:"right" }
+                { title: '操作', toolbar: '#rowBtns', width: 350, fixed:"right" }
             ],
             tableIns,
             tableFilterIns,
+            tableWhere = {
+                loginStaffId: edipao.getLoginStaffId()
+            },
             permissionList = edipao.getMyPermission(); 
         window.permissionList = permissionList;
 
@@ -144,16 +147,14 @@
 
         function renderTable(){
             tableIns = table.render({
-                id: 'staffList',
-                elem: '#staffList',
+                id: 'list',
+                elem: '#list',
                 url: edipao.API_HOST + '/admin/staff/list',
                 request: {
                     pageName: 'pageNo',
                     limitName: 'pageSize'
                 },
-                where: {
-                    loginStaffId: edipao.getLoginStaffId()
-                },
+                where: tableWhere,
                 parseData: function(res) { //res 即为原始返回的数据
                     edipao.codeMiddleware(res);
                     return {
@@ -168,6 +169,11 @@
                 toolbar: '#headerBtns',
                 defaultToolbar: [],
                 done: function(res,curr,count){
+                    if(res.data.length == 0){
+                        $('.layui-table-header').css('overflow-x','scroll')
+                    }else{
+                        $('.layui-table-header').css('overflow','hidden')
+                    }
                     tableFilterIns && tableFilterIns.reload()
                 }
             });
@@ -191,7 +197,7 @@
             });
 
             tableFilterIns = tableFilter.render({
-                elem: '#staffList',
+                elem: '#list',
                 mode: 'self',
                 filters: filtersHeader,//过滤项配置
                 done: function(filters){
@@ -208,6 +214,7 @@
                         }
                         index++;
                     })
+                    tableWhere = where;
                     tableIns.reload({where: where, page: { curr: 1 }});
                 }
             })
@@ -234,7 +241,7 @@
                     xadmin.open('修改员工', './edit.html?id=' + data.staffId, 600, 600)
                     break;
                 case 'preview':
-                    xadmin.open('员工信息', './preview.html?id=' + data.staffId, 600, 600)
+                    xadmin.open('员工信息', './preview.html?id=' + data.staffId)
                     break;
                 case 'delete':
                     layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
@@ -269,39 +276,48 @@
         }
 
         function exportData() {
+            var checkStatus = table.checkStatus('list');
+            if(checkStatus.data.length > 0){
+                exportXlsx(checkStatus.data)
+                return;
+            }
+            tableWhere.pageNo = 1;
+            tableWhere.pageSize = 10000;
             edipao.request({
                 type: 'get',
                 url: '/admin/staff/list',
-                data: {
-                    pageNo: 1,
-                    pageSize: 10000,
-                }
+                data: tableWhere
             }).then(function(res) {
                 if (res.code == 0) {
-                    var data = [], list = res.data.staffDtoList;
-                    list = [{}].concat(list);
-                    layui.each(list, function(index2, item2) {
-                        var dataItem = {};
-                        layui.each(tableCols, function(index, item) {
-                            if(item.field && item.hide != true){
-                                if(index2 == 0){
-                                    dataItem[item.field] = item.title; 
-                                }else{
-                                    dataItem[item.field] = item2[item.field] || '--'
-                                }
-                                
-                            } 
-                        })
-                        data.push(dataItem)
-                    })
-                    excel.exportExcel({sheet1: data}, '员工管理.xlsx', 'xlsx');
+                    exportXlsx(res.data.staffDtoList);
                 }
             })
         }
 
-        table.on('toolbar(staffList)', handleEvent);
-        table.on('tool(staffList)', handleEvent);
-        table.on('checkbox(staffList)', handleEvent);
+        function exportXlsx(list){
+            var data = [], list = [{}].concat(list);
+            layui.each(list, function(index2, item2) {
+                var dataItem = {};
+                layui.each(tableCols, function(index, item) {
+                    if(item.field && item.hide != true){
+                        if(index2 == 0){
+                            dataItem[item.field] = item.title; 
+                        }else{
+                            dataItem[item.field] = item2[item.field] || '--'
+                        }
+                        
+                    } 
+                })
+                data.push(dataItem)
+            })
+            excel.exportExcel({sheet1: data}, '员工管理.xlsx', 'xlsx');
+        }
+
+
+
+        table.on('toolbar(list)', handleEvent);
+        table.on('tool(list)', handleEvent);
+        table.on('checkbox(list)', handleEvent);
         
     })
     </script>
