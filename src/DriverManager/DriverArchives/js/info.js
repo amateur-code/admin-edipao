@@ -43,7 +43,10 @@ layui.use(['jquery','form','laytpl'], function() {
                     if(editData.newMap&&editData.newMap.accountCity!=null){
                         editData.newMap.accountCity = (editData.newMap.accountCity).replace(/\-/g,'')
                     }
-                    check = editData.newMap
+                    check = editData.newMap;
+                    layui.each(check,function(key, value) {
+                        check[key] = value || '--'
+                    });
                 }
                 render()
             } else {
