@@ -38,7 +38,7 @@
     <div class="layui-fluid">
         <div class="layui-row layui-col-space15">
             <div class="layui-row layui-col-space3 page-container">
-                <div class="layui-col-md4">
+                <div class="layui-col-md4 layui-col-sm4 layui-col-xs4">
                     <!-- tabs切换 -->
                     <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
                         <ul class="layui-tab-title">
@@ -58,7 +58,7 @@
                         <div class="footer-laypage" id="footer-laypage"></div>
                     </div>
                 </div>
-                <div class="layui-col-md8 map-container">
+                <div class="layui-col-md8 layui-col-sm8 layui-col-xs8 map-container">
                     <div id="map"></div>
                 </div>
             </div>
@@ -85,9 +85,10 @@
     </form>
     <div class="select-map-dialog" id="select-map-dialog">
         <div id="select-map"></div>
+        <div style="padding-top: 10px;text-align: center;">当前选择地址：<span id="select-address"></span></div>
         <div class="select-location">
             <input class="location-name" name="keyword" id="seachLocation" autocomplete="off" placeholder="请输入位置" value=""/>
-            <!-- <button type="button" class="layui-btn layui-btn-sm select-btn" id="regionMapPoint">搜索</button> -->
+            <button type="button" class="layui-btn layui-btn-sm select-btn" id="regionMapPoint">搜索</button>
         </div>
     </div>
 </body>
@@ -221,7 +222,7 @@
             <div class="rd-item">
                 <div class="report-type-txt">限高位置</div>
                 <div class="select-location">
-                    <text class="location-name">请选择位置</text>
+                    <input class="location-name" name="keyword" id="seach-location-input" autocomplete="off" placeholder="请输入位置" value=""/>
                     <button type="button" class="layui-btn layui-btn-sm select-btn" id="selectMapLocation">选择</button>
                 </div>
             </div>
@@ -239,7 +240,7 @@
             <div class="rd-item">
                 <div class="report-type-txt">限行位置</div>
                 <div class="select-location">
-                    <text class="location-name">请选择位置</text>
+                    <input class="location-name" name="keyword" id="seach-location-input" autocomplete="off" placeholder="请输入位置" value=""/>
                     <button type="button" class="layui-btn layui-btn-sm select-btn" id="selectMapLocation">选择</button>
                 </div>
             </div>
@@ -258,11 +259,11 @@
             <div class="rd-item">
                 <div class="report-type-txt">收费位置</div>
                 <div class="select-location">
-                    <text class="location-name">请选择位置</text>
+                    <input class="location-name" name="keyword" id="seach-location-input" autocomplete="off" placeholder="请输入位置" value=""/>
                     <button type="button" class="layui-btn layui-btn-sm select-btn" id="selectMapLocation">选择</button>
                 </div>
             </div>
-        {{# } else { }}
+        {{# } else if(d.type == 4) { }}
             <div class="rd-item">
                 <div class="report-type-txt">金额</div>
                 <div class="layui-form-item">
@@ -277,7 +278,7 @@
             <div class="rd-item">
                 <div class="report-type-txt">拆车位置</div>
                 <div class="select-location">
-                    <text class="location-name">请选择位置</text>
+                    <input class="location-name" name="keyword" id="seach-location-input" autocomplete="off" placeholder="请输入位置" value=""/>
                     <button type="button" class="layui-btn layui-btn-sm select-btn" id="selectMapLocation">选择</button>
                 </div>
             </div>

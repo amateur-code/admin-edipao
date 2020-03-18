@@ -47,7 +47,13 @@ layui.config({
             }},
             {field: 'updateTime', title: '更新时间', sort: false, hide: false,width:200}
         ];
-        this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 200}
+        this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 200};
+        this.tableFilterIns = null;
+        this.tableIns = null;
+        this.where = Object.assign(this.request, {
+            pageNo: this.pageNo,
+            pageSize: this.pageSize
+        });
     }
 
     
@@ -97,6 +103,8 @@ layui.config({
 
                 _t.exportHead = exportHead;
                 _t.tableRender();
+                _t.filterData();
+                _t.bindToolEvent();
             });
             
             
@@ -105,30 +113,25 @@ layui.config({
         tableRender: function(){
             var _t = this;
             // 批量导入
-            table.render({
+            _t.tableIns = table.render({
                 elem: '#routeList',
                 url: layui.edipao.API_HOST+'/admin/line/list',
                 title: '订单列表',
-                method: "get", // 请求方式  默认get
-                page: false, //开启分页
-                limit: this.pageSize,  //每页显示条数
-                limits: [20, 40], //每页显示条数可选择
+                method: "get",
+                page: false,
                 request: {
-                    pageName: 'pageNo', //页码的参数名称，默认：page
-                    limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                    pageName: 'pageNo',
+                    limitName: 'pageSize'
                 },
-                where: Object.assign(this.request, {
-                    pageNo: _t.pageNo,
-                    pageSize: _t.pageSize
-                }),
+                where: _t.where,
                 height: 'full',
-                autoSort: true,
+                autoSort: false,
                 id: 'routeList',
                 parseData: function (res) {
                     return {
                         "code": res.code, //解析接口状态
                         "msg": res.message, //解析提示文本
-                        "count": res.count, //解析数据长度
+                        "count": res.data.totalSize, //解析数据长度
                         "data": res.data.dataList //解析数据列表
                     }
                 },
@@ -137,11 +140,10 @@ layui.config({
                     dataName: 'data'
                 },
                 done: function (res) {//表格渲染完成的回调
-                    _t.bindToolEvent();
                     if(_t.pageNo == 1){
                         _t.setLayPage(res.count);
                     }
-                    _t.filterData();
+                    _t.tableFilterIns && _t.tableFilterIns.reload() // 搜索
                 },
                 text: {
                     none: "暂无数据"
@@ -154,7 +156,7 @@ layui.config({
         },
         // 设置分页
         setLayPage: function(total){
-            let _t = this;
+            var _t = this;
             laypage.render({
                 elem: 'footer-laypage',
                 count: total,
@@ -169,41 +171,35 @@ layui.config({
         },
         // 过滤
         filterData: function(){
-            var tableFilterIns = tableFilter.render({
+            var _t = this;
+            _t.tableFilterIns = tableFilter.render({
                 'elem' : '#routeList',//table的选择器
-                'mode' : 'api',//过滤模式
+                'mode' : 'self',//过滤模式
                 'filters' : [
                     {
                         field: 'startAddress',
-                        name: 'startAddress',
                         type: 'input'
                     },
                     {
                         field: 'endAddress',
-                        name: 'endAddress',
                         type: 'input'
                     },
                     {
                         field: 'orderType',
-                        name: 'orderType',
-                        type: 'checkbox',
+                        type: 'radio',
                         data: [
-                            { "key":"0", "value":"全部"},
                             { "key":"1", "value":"单车单"},
                             { "key":"2", "value":"背车单"}
                         ]
                     },
                     {
                         field: 'reportToAudit',
-                        name: 'reportToAudit',
                         type: 'numberslot'
                     },
                     {
                         field: 'lineSource',
-                        name: 'lineSource',
-                        type: 'checkbox',
+                        type: 'radio',
                         data: [
-                            { "key":"0", "value":"全部"},
                             { "key":"1", "value":"订单轨迹"},
                             { "key":"2", "value":"导入轨迹"},
                             { "key":"3", "value":"地图规划"}
@@ -212,7 +208,25 @@ layui.config({
 
                 ],//过滤项配置
                 'done': function(filters){
+                    console.log(filters)
                     //结果回调
+                    var where = {},
+                        index = 0;
+                    layui.each(filters, function(key, value){
+                        if(key != 'reportToAudit'){
+                            where['searchFieldDTOList[' + index + '].fieldName'] = key;
+                            where['searchFieldDTOList[' + index + '].fieldValue'] = value;
+                        } else {
+                            where['searchFieldDTOList[' + index + '].fieldName'] = key;
+                            where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
+                            where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+                        }
+                        index ++;
+                    })
+
+                    _t.where = $.extend({}, _t.request, where)
+                    
+                    _t.tableIns.reload( { where: _t.where});
                 }
             })
 
@@ -224,10 +238,7 @@ layui.config({
             edipao.request({
                 type: 'GET',
                 url: '/admin/line/list',
-                data: $.extend({}, _t.request, {
-                    pageNo: _t.pageNumber,
-                    pageSize: _t.exportSize
-                })
+                data: _t.where
             }).done(function(res) {
                 if (res.code == 0) {
                     if(res.data){
@@ -236,7 +247,7 @@ layui.config({
                         // 添加头部
                         exportData.push(_t.exportHead);
                         layui.each(data, function(index, item){
-                            let newObj = {};
+                            var newObj = {};
                             for(var i in item){
                                 if(_t.showList.indexOf(i) > -1){
                                     var value = item[i];
@@ -283,13 +294,12 @@ layui.config({
                 var data = obj.data;
                 var layEvent = obj.event; 
                 if (layEvent === 'edit') { 
-                    xadmin.open('线路规划', './route-plan.html?guideLineId=' + data.guideLineId, 1400, 700)
+                    xadmin.open('线路规划', './route-plan.html?guideLineId=' + data.guideLineId)
                 }
             });
             table.on('toolbar(routeList)', function (obj) {
                 var data = obj.data;
                 var layEvent = obj.event; 
-                console.log(111)
                 if (layEvent === 'export') { 
                     _t.exportData();
                 }

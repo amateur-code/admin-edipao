@@ -120,7 +120,6 @@
   font-size: 12px;
   text-align: left;
   padding-left: 10px;
-  color: #ccc;
 }
 .report-form .select-location .location-name.select {
   color: #000;
@@ -137,7 +136,7 @@
 }
 .select-map-dialog #select-map {
   width: 100%;
-  height: 100%;
+  height: 470px;
 }
 .select-map-dialog .select-location {
   width: 500px;
