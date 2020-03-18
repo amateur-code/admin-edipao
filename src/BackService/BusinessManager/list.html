@@ -187,6 +187,11 @@
                 toolbar: '#headerBtns',
                 defaultToolbar: [],
                 done: function(res,curr,count){
+                    if(res.data.length == 0){
+                        $('.layui-table-header').css('overflow-x','scroll')
+                    }else{
+                        $('.layui-table-header').css('overflow','hidden')
+                    }
                     tableFilterIns && tableFilterIns.reload()
                 }
             });
@@ -207,6 +212,8 @@
                             { "key":"1", "value":"有效"},
                             { "key":"2", "value":"失效"}
                         ]
+                    }else if(el.field == 'contractName'){
+                        item.type = 'contract'
                     }else if(el.field == 'productCount'){
                         item.type = 'numberslot'
                     }
@@ -220,6 +227,9 @@
                 mode: 'self',
                 filters: filtersHeader,//过滤项配置
                 done: function(filters){
+                    if(filters.contractName){
+                        filters.contractPhone =  filters.contractName[1];
+                    }
                     var index = 0,  
                         where = {
                             loginStaffId: edipao.getLoginStaffId()
@@ -231,6 +241,8 @@
                         }else if(key == 'productCount'){
                             where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
                             where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+                        }else if(key == 'contractName'){
+                            where['searchFieldDTOList['+ index +'].fieldValue'] = value[0];
                         }else{
                             where['searchFieldDTOList['+ index +'].fieldValue'] = value;
                         }
@@ -263,7 +275,7 @@
                     xadmin.open('审核供应商', './check.html?id=' + data.supplierNo)
                     break;
                 case 'preview':
-                    xadmin.open('员工信息', './preview.html?id=' + data.supplierNo)
+                    xadmin.open('供应商信息', './preview.html?id=' + data.supplierNo)
                     break;
                 case 'delete':
                     layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
@@ -302,6 +314,12 @@
         }
 
         function exportData() {
+            var checkStatus = table.checkStatus('list');
+            if(checkStatus.data.length > 0){
+                exportXlsx(checkStatus.data)
+                return;
+            }
+            
             edipao.request({
                 type: 'get',
                 url: '/admin/supplier/list',
@@ -311,32 +329,37 @@
                 }
             }).then(function(res) {
                 if (res.code == 0) {
-                    var data = [], list = res.data.supplierRespList;
-                    list = [{}].concat(list);
-                    layui.each(list, function(index2, item2) {
-                        var dataItem = {};
-                        layui.each(tableCols, function(index, item) {
-                            if(item.field && item.hide != true){
-                                if(index2 == 0){
-                                    dataItem[item.field] = item.title; 
-                                }else{
-                                    if(item.field == 'supplierType'){
-                                        dataItem[item.field] = SupplierTypeConfig[item2[item.field]] || '--'
-                                    }else if(item.field == 'contractName'){
-                                        var str = item2.contractName + '(' + item2.contractPhone + ')'
-                                        dataItem[item.field] =  str == "()" ? '--' : str
-                                    }else{
-                                        dataItem[item.field] = item2[item.field] || '--'
-                                    }
-                                }
-                                
-                            } 
-                        })
-                        data.push(dataItem)
-                    })
-                    excel.exportExcel({sheet1: data}, '供应商管理.xlsx', 'xlsx');
+                    exportXlsx(res.data.supplierRespList)
                 }
             })
+        }
+
+        function exportXlsx(list){
+            var data = [],list = [{}].concat(list);
+            layui.each(list, function(index2, item2) {
+                var dataItem = {};
+                layui.each(tableCols, function(index, item) {
+                    if(item.field && item.hide != true){
+                        if(index2 == 0){
+                            dataItem[item.field] = item.title; 
+                        }else{
+                            if(item.field == 'supplierType'){
+                                dataItem[item.field] = SupplierTypeConfig[item2[item.field]] || '--'
+                            }else if(item.field == 'contractName'){
+                                var str = item2.contractName + '(' + item2.contractPhone + ')'
+                                dataItem[item.field] =  str == "()" ? '--' : str
+                            }else if(item.field == 'status'){
+                                dataItem[item.field] = item2.statusDesc
+                            }else{
+                                dataItem[item.field] = item2[item.field] || '--'
+                            }
+                        }
+                        
+                    } 
+                })
+                data.push(dataItem)
+            })
+            excel.exportExcel({sheet1: data}, '供应商管理.xlsx', 'xlsx');
         }
 
         table.on('tool(list)', handleEvent);

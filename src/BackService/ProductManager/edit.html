@@ -40,6 +40,10 @@
             margin-left: 0;
             padding-right: 30px;
         }
+        #detailAddress{
+            display: inline-block;
+            width: calc(100% - 50px);
+        }
     </style>
 </head>
 
@@ -253,6 +257,9 @@
             unitPrice: function(value){
                 if(!/^\d+(?=\.{0,1}\d+$|$)/.test(value)){
                     return '单价格式不正确';
+                }
+                if(parseFloat(value) > 10000){
+                    return '单价不能超过10000';
                 }
             },
             remark: function(value){
