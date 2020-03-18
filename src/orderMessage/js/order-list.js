@@ -685,7 +685,7 @@ layui.config({
             });
             $(".list_driver_name").unbind().on("click", function (e) {
                 var id = e.target.dataset.id;
-                xadmin.open('订单录入','../../DriverManager/DriverArchives/info.html?id=' + id, 1100, 500);
+                xadmin.open('司机信息','../DriverManager/DriverArchives/info.html?id=' + id, 1100, 500);
             });
         },
         exportData: function exportExcel() {
@@ -805,11 +805,11 @@ layui.config({
                     layer.alert('你没有访问权限', {icon: 2});
                     return;
                 }else if (layEvent === 'edit') { //编辑
-                    top.xadmin.add_tab('修改订单', 'orderMessage/order-edit.html?action=edit&orderNo=' + data.orderNo + "&orderId=" + data.id);
+                    xadmin.open('修改订单', './order-edit.html?action=edit&orderNo=' + data.orderNo + "&orderId=" + data.id);
                 } else if (layEvent === 'verify') { //审核
-                    xadmin.open('审核', './order-view.html?action=verify&orderNo=' + data.orderNo + "&orderId=" + data.id, 1100, 500);
+                    xadmin.open('审核', './order-view.html?action=verify&orderNo=' + data.orderNo + "&orderId=" + data.id);
                 } else if (layEvent === 'view') { //查看
-                    top.xadmin.add_tab('查看订单', 'orderMessage/order-view.html?orderNo=' + data.orderNo + "&orderId=" + data.id);
+                    xadmin.open('查看订单', './order-view.html?orderNo=' + data.orderNo + "&orderId=" + data.id);
                 } else if (layEvent === 'cancel') { //取消
                     var index = layer.open({
                         title: "取消确认",

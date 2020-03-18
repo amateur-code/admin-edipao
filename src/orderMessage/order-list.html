@@ -58,15 +58,17 @@
         <div id="pre_fee_verify_table"></div>
     </div>
 <script id="pic_view_tpl" type="text/html">
-    <div style="padding: 10px">
+    <div style="padding: 10px;background:#e6e6e6;">
         <form id="pic_view_form" lay-filter="uploadPic" class="layui-form">
-            <div>车辆vin码</div>
-            <div>
-                <select name="pic_view">
-                    {{#  layui.each(d.list, function(index, item){ }}
-                    <option data-index="{{index}}" {{index==0?'selected':''}} value="{{item.id}}">{{item.vinCode}}</option>
-                    {{#  }); }}
-                </select>
+            <div class="layui-card">
+                <div class="layui-card-header">车辆vin码</div>
+                <div class="layui-card-body">
+                    <select name="pic_view">
+                        {{#  layui.each(d.list, function(index, item){ }}
+                        <option data-index="{{index}}" {{index==0?'selected':''}} value="{{item.id}}">{{item.vinCode}}</option>
+                        {{#  }); }}
+                    </select>
+                </div>
             </div>
             <div id="pic_view_list_container" class="pic_view_list"></div>
         </form>
@@ -75,61 +77,80 @@
 <script id="pic_view_list_tpl" type="text/html">
     <div style="margin-top:20px;" class="view_pic_container">
         {{#  if(d.field == 'fetchStatus'){ }}
-        <div style="margin-bottom: 20px;">提车图片</div>
-        <div class="layui-row">
-            {{#  layui.each(d.fetchImages, function(index, item){ }}
-            <img class="pic_view_image" src="{{item}}">
-            {{#  }); }}
+        <div class="layui-card">
+            <div class="layui-card-header">提车图片</div>
+            <div class="layui-card-body">
+                <div class="layui-row">
+                    {{#  layui.each(d.fetchImages, function(index, item){ }}
+                    <img class="pic_view_image" src="{{item}}">
+                    {{#  }); }}
+                </div>
+            </div>
         </div>
         {{#  } }} 
         {{#  if(d.field == 'startAuditStatus'){ }}
-        <div style="margin-bottom: 20px;">发车单</div>
-        <div class="layui-row">
-            {{#  layui.each(d.startBillImage, function(index, item){ }}
-            <img class="pic_view_image" src="{{item}}">
-            {{#  }); }}
+        <div class="layui-card">
+            <div class="layui-card-header">发车单</div>
+            <div class="layui-card-body">
+                <div class="layui-row">
+                    {{#  layui.each(d.startBillImage, function(index, item){ }}
+                    <img class="pic_view_image" src="{{item}}">
+                    {{#  }); }}
+                </div>
+            </div>
         </div>
         {{#  } }} 
         {{#  if(d.field == 'returnAuditStatus'){ }}
-        <div style="margin-bottom: 20px;">交车单</div>
-        <div class="layui-row">
-            {{#  layui.each(d.returnImages, function(index, item){ }}
-            <img class="pic_view_image" src="{{item}}">
-            {{#  }); }}
+        <div class="layui-card">
+            <div class="layui-card-header">交车单</div>
+            <div class="layui-card-body">
+                <div class="layui-row">
+                    {{#  layui.each(d.returnImages, function(index, item){ }}
+                    <img class="pic_view_image" src="{{item}}">
+                    {{#  }); }}
+                </div>
+            </div>
         </div>
         {{#  } }} 
     </div>
 </script>
 <script id="pic_verify_tpl" type="text/html">
-    <div style="padding: 10px;">
+    <div style="padding: 20px;background:#e6e6e6;">
         <form lay-filter="verifyPic" class="layui-form">
             {{#  layui.each(d.list, function(index, item){ }}
-            <div style="margin-bottom:20px;" class="blue">{{item.masterFlag == '否'?'上车':'下车'}}vin码(车架号)：<span>{{item.vinCode}}</span></div>
-            <div class="layui-row">
-                {{#  layui.each(item[d.key], function(index2, item2){ }}
-                <div style="margin-bottom:10px;" class="layui-col-md3">
-                    <img width="100%" src="{{item2}}">
-                </div>
-                {{#  }); }}
-            </div>
-            {{#  }); }}
-            <div style="margin-top: 20px;">
-                <div class="layui-row">
-                    <div class="layui-form-item">
-                        <div style="line-height:34px;" class="layui-col-md3">
-                            审核结果：
+            <div class="layui-card">
+                <div class="layui-card-header blue">{{item.masterFlag == '否'?'上车':'下车'}}vin码(车架号)：<span>{{item.vinCode}}</span></div>
+                <div class="layui-card-body">
+                    <div class="layui-row">
+                        {{#  layui.each(item[d.key], function(index2, item2){ }}
+                        <div style="margin-bottom:10px;margin-right: 10px;" class="layui-col-md3">
+                            <img width="100%" src="{{item2}}">
                         </div>
-                        <div class="layui-col-md3">
-                            <input type="radio" name="result" value="0" title="通过" checked>
-                        </div>
-                        <div class="layui-col-md3">
-                            <input type="radio" name="result" value="1" title="驳回">
-                        </div>
+                        {{#  }); }}
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <div>审核备注：</div>
-                    <textarea name="remark" placeholder="请输入" class="layui-textarea"></textarea>
+            </div>
+            {{#  }); }}
+            <div class="layui-card">
+                <div class="layui-card-header">审核</div>
+                <div class="layui-card-body">
+                    <div class="layui-row">
+                        <div class="layui-form-item">
+                            <div style="line-height:34px;" class="layui-col-md3">
+                                审核结果：
+                            </div>
+                            <div class="layui-col-md3">
+                                <input type="radio" name="result" value="0" title="通过" checked>
+                            </div>
+                            <div class="layui-col-md3">
+                                <input type="radio" name="result" value="1" title="驳回">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div>审核备注：</div>
+                        <textarea name="remark" placeholder="请输入" class="layui-textarea"></textarea>
+                    </div>
                 </div>
             </div>
         </form>
@@ -211,50 +232,64 @@
     </div>
 </script>
 <script type="text/html" id="uploadStartPic">
-    <div style="padding:20px;">
+    <div style="padding:20px;background:#e6e6e6;">
           <div class="layui-upload">
            <form lay-filter="uploadStartPic" class="layui-form">
-                <div>车辆vin码</div>
-                <div>
-                    <select name="vinCode" lay-verify="">
-                        {{#  layui.each(d.list, function(index, item){ }}
-                        <option {{index==0?'selected':''}} value="{{item.id}}">{{item.vinCode}}</option>
+                <div class="layui-card">
+                    <div class="layui-card-header">车辆vin码</div>
+                    <div class="layui-card-body">
+                        <select name="vinCode" lay-verify="">
+                            {{#  layui.each(d.list, function(index, item){ }}
+                            <option {{index==0?'selected':''}} value="{{item.id}}">{{item.vinCode}}</option>
+                            {{#  }); }}
+                        </select> 
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">提车图片</div>
+                    <div class="layui-card-body">
+                        {{#  layui.each(d.five, function(index, item){ }}
+                        <div class="layui-row upload_start_row">
+                            <div class="layui-col-md5">
+                                <div id="{{'upload_get_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
+                            </div>
+                            <div id="{{'upload_get_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
+                                
+                            </div>
+                        </div>
                         {{#  }); }}
-                    </select>  
-                </div>
-                <div class="upload_pic_title">提车图片</div>
-                {{#  layui.each(d.five, function(index, item){ }}
-                <div class="layui-row upload_start_row">
-                    <div class="layui-col-md5">
-                        <div id="{{'upload_get_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
-                    </div>
-                    <div id="{{'upload_get_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
-                        
                     </div>
                 </div>
-                {{#  }); }}
-                <div class="upload_pic_title">发车单</div>
-                {{#  layui.each(d.six, function(index, item){ }}
-                <div class="layui-row upload_start_row">
-                    <div class="layui-col-md5">
-                        <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
-                    </div>
-                    <div id="{{'upload_start_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
-                        
-                    </div>
-                </div>
-                {{#  }); }}
-                <div class="upload_pic_title">交车单</div>
-                {{#  layui.each(d.three, function(index, item){ }}
-                <div class="layui-row upload_start_row">
-                    <div class="layui-col-md5">
-                        <div id="{{'upload_give_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
-                    </div>
-                    <div id="{{'upload_give_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
-                        
+                <div class="layui-card">
+                    <div class="layui-card-header">发车单</div>
+                    <div class="layui-card-body">
+                        {{#  layui.each(d.six, function(index, item){ }}
+                        <div class="layui-row upload_start_row">
+                            <div class="layui-col-md5">
+                                <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
+                            </div>
+                            <div id="{{'upload_start_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
+                                
+                            </div>
+                        </div>
+                        {{#  }); }}
                     </div>
                 </div>
-                {{#  }); }}
+                <div class="layui-card">
+                    <div class="layui-card-header">交车单</div>
+                    <div class="layui-card-body">
+                        {{#  layui.each(d.three, function(index, item){ }}
+                        <div class="layui-row upload_start_row">
+                            <div class="layui-col-md5">
+                                <div id="{{'upload_give_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
+                            </div>
+                            <div id="{{'upload_give_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
+                                
+                            </div>
+                        </div>
+                        {{#  }); }}
+                    </div>
+                </div>
            </form>
           </div>
     </div>

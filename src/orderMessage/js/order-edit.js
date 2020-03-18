@@ -477,35 +477,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     //     }
     //   }
     // });
-    upload.render({
-      elem: $('.tempLicenseBackImage')[index],
-      url: edipao.API_HOST + '/admin/truck/upload/image',
-      data: {
-        loginStaffId: _this.user.staffId,
-        truckId: idToAdd,
-        type: 1,
-        index: 1
-      },
-      before: function () {
-        if(!idToAdd){
-          layer.msg('请先选择车辆', {icon: 5,anim: 6});
-          return false;
-        }
-      },
-      done: function (res) {
-        if(res.code == 0){
-          _this.tempLicenseBackImage[index] = {
-            image: res.data,
-            id: idToAdd
-          };
-          layer.msg("上传成功");
-        }else{
-          layer.msg(res.message, {icon: 5,anim: 6});
-        }
-      }
-    });
-
-
     var delCarsFlag = _this.carsToDel.some(function (item, index) {
       if(item.id == data.id) {idTodel = item.id; indexTodel = index;}
       return item.id == data.id;
@@ -775,10 +746,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var reqs = [];
     req1.done(function (res) {
       if(res.code == "0"){
-        layer.msg("修改成功");
-        setTimeout(function () {
-          location.reload();
-        }, 1000);
+        layer.alert("修改成功", {icon: 6}, function(){
+          xadmin.close();
+          xadmin.father_reload();
+        });
       }else{
         layer.msg(res.message, {icon: 5,anim: 6});
       }
@@ -973,6 +944,33 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         elem: $(".latestArriveTime")[index], //指定元素
         type: "datetime",
         trigger: "click"
+      });
+      upload.render({
+        elem: $('.tempLicenseBackImage')[index],
+        url: edipao.API_HOST + '/admin/truck/upload/image',
+        data: {
+          loginStaffId: _this.user.staffId,
+          truckId: idToAdd,
+          type: 1,
+          index: 1
+        },
+        before: function () {
+          if(!idToAdd){
+            layer.msg('请先选择车辆', {icon: 5,anim: 6});
+            return false;
+          }
+        },
+        done: function (res) {
+          if(res.code == 0){
+            _this.tempLicenseBackImage[index] = {
+              image: res.data,
+              id: idToAdd
+            };
+            layer.msg("上传成功");
+          }else{
+            layer.msg(res.message, {icon: 5,anim: 6});
+          }
+        }
       });
     });
     $(".add_fee").unbind().on("click", function (e) {

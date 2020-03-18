@@ -39,15 +39,13 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           });
         });
       }else{
+        $(".page_title_text").text("订单审核");
         _this.getUpdate(function () {
           _this.getOrder().done(function (res) {
             if(res.code == "0"){
               _this.orderData = res.data;
               _this.setData(res.data);
               _this.bindEvents();
-              if(_this.action == "verify"){
-                _this.getUpdate();
-              }
             }else{
               layer.msg(res.message, {icon: 5,anim: 6});
             }
@@ -75,6 +73,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             updateData.forEach(function (item) {
               _this.updateData[item.name] = item.value;
             });
+            if(_this.updateData.prePayFeeItems)_this.updateData.prePayFeeItems = JSON.parse(_this.updateData.prePayFeeItems);
+            if(_this.updateData.tailPayFeeItems)_this.updateData.tailPayFeeItems = JSON.parse(_this.updateData.tailPayFeeItems);
+            if(_this.updateData.arrivePayFeeItems)_this.updateData.arrivePayFeeItems = JSON.parse(_this.updateData.arrivePayFeeItems);
           }
           laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
             $("#form_income_container").after(html);
@@ -118,7 +119,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         prePay: _this.prePay,
         tailPay: _this.tailPay,
         arrivePay: _this.arrivePay,
-        updateData: _this.updateData
+        updateData: _this.updateData,
+        orderData: _this.orderData
       }, function (html) {
         $("#fee_list_container").html(html);
       });
