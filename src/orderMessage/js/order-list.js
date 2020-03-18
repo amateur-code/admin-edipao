@@ -707,6 +707,7 @@ layui.config({
                         layui.each(data, function(k, v){
                             var exportObj={};
                             layui.each(v,function (index,item) {
+                                console.log(item)
                                 exportObj[index] = DataNull(item);
                             });
                             exportData.push(exportObj)
@@ -721,7 +722,7 @@ layui.config({
                     if(data == null||data == ''){
                         return '--'
                     }else{
-                        return  data
+                        return  data;
                     }
                 }
             });

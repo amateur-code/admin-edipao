@@ -108,8 +108,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         });
       });
       $("#btn_cancel").unbind().on("click", function (e) {
-        var lay_id = localStorage.current_tab;
-        top.$('.layui-tab-title li[lay-id=' + lay_id + ']').find('.layui-tab-close').click();
+        xadmin.close();
       });
     },
     setFeeList: function () {

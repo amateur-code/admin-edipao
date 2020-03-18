@@ -398,6 +398,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     });
   }
   Edit.prototype.openAddFeeItem = function (e) {
+    var _this = this;
     laytpl($("#fee_item_tpl").html()).render({list: _this.feeUnitItemList}, function(html){
       var layerIndex2 = layer.open({
         title: "增加费用项",
@@ -600,8 +601,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             }).done(function(res){
               if(res.code == 0){
                 layer.alert("订单已取消", { icon: 6 }, function() {
-                  var lay_id = localStorage.current_tab;
-                  top.$('.layui-tab-title li[lay-id=' + lay_id + ']').find('.layui-tab-close').click();
+                  xadmin.close();
                 });
               }
             });
@@ -911,8 +911,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       _this.handleDeleteCar(e);
     });
     $("#btn_cancel").unbind().on("click", function (e) {
-      var lay_id = localStorage.current_tab;
-      top.$('.layui-tab-title li[lay-id=' + lay_id + ']').find('.layui-tab-close').click();
+      xadmin.close();
     });
     $(".car_income").unbind().on("input", function (e) {
       _this.handleIncomeInput(e);
