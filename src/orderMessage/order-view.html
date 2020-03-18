@@ -301,7 +301,7 @@
                                 {{# if(d.dispatchOperator){ }}
                                 <div class="check">
                                     <label class=" x-red">待审：</label> 
-                                    <div class="">{{d.dispatchOperator}}</div>
+                                    <span class="">{{d.dispatchOperator}}</span>
                                 </div>
                                 {{# } }}
                             </div>
@@ -311,7 +311,7 @@
                                 {{# if(d.fetchOperator){ }}
                                 <div class="check">
                                     <label class=" x-red">待审：</label> 
-                                    <div class="">{{d.fetchOperator}}</div>
+                                    <span class="">{{d.fetchOperator}}</span>
                                 </div>
                                 {{# } }}
                             </div>
@@ -321,7 +321,7 @@
                                 {{# if(d.deliveryOperator){ }}
                                 <div class="check">
                                     <label class=" x-red">待审：</label> 
-                                    <div class="">{{d.deliveryOperator}}</div>
+                                    <span class="">{{d.deliveryOperator}}</span>
                                 </div>
                                 {{# } }}
                             </div>
@@ -333,17 +333,17 @@
                                 {{# if(d.followOperator){ }}
                                 <div class="check">
                                     <label class=" x-red">待审：</label> 
-                                    <div class="">{{d.followOperator}}</div>
+                                    <span class="">{{d.followOperator}}</span>
                                 </div>
                                 {{# } }}
                             </div>
                             <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                                <span class="layui-form-span text_left form_span">跟单员：</span>
+                                <span class="layui-form-span text_left form_span">跟单员手机号：</span>
                                 <input disabled type="text" name="fetchOperatorPhone" lay-verify="required" autocomplete="off" class="layui-input">
                                 {{# if(d.fetchOperatorPhone){ }}
                                 <div class="check">
                                     <label class=" x-red">待审：</label> 
-                                    <div class="">{{d.fetchOperatorPhone}}</div>
+                                    <span class="">{{d.fetchOperatorPhone}}</span>
                                 </div>
                                 {{# } }}
                             </div>
@@ -353,7 +353,7 @@
                                 {{# if(d.department){ }}
                                 <div class="check">
                                     <label class=" x-red">待审：</label> 
-                                    <div class="">{{d.department}}</div>
+                                    <span class="">{{d.department}}</span>
                                 </div>
                                 {{# } }}
                             </div>
@@ -482,7 +482,7 @@
         <div class="layui-form-item layui-row">
             <div class="form_item_inner">
                 <div>
-                    预付款
+                    预付款: {{d.orderData.prePayAmount}}
                     {{# if(d.updateData.prePayAmount){ }}
                     <div class="check">
                         <span class="x-red">待审：</span> 
@@ -490,20 +490,28 @@
                     </div>
                     {{# } }}
                 </div>
-                <div style="padding-left: 20px;">
+                <div style="padding-left: 20px;overflow:hidden;">
                     {{#  layui.each(d.prePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
                         <span class="layui-form-span text_left form_span">{{item.key}}({{item.unit}})：</span>
-                            <input disabled value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                        <span class="blue">{{item.val}}</span>
                     </div>
                     {{#  }); }}
+                </div>
+                <div style="padding-left: 20px;overflow:hidden;">
+                    {{#  layui.each(d.updateData.prePayFeeItems, function(index, item){ }}
+                    <div class="check layui-inline layui-col-md3">
+                        <span class="x-red">待审：</span> 
+                        <span class="">{{item.key + '(' + item.unit + ')' + '：' + item.val}}</span>
+                    </div>
+                    {{# }); }}
                 </div>
             </div>
         </div>
         <div class="layui-form-item layui-row">
             <div class="form_item_inner">
                 <div>
-                    到付款
+                    到付款 {{d.orderData.arrivePayAmount}}
                     {{# if(d.updateData.arrivePayAmount){ }}
                     <div class="check">
                         <span class="x-red">待审：</span> 
@@ -515,17 +523,25 @@
                     {{#  layui.each(d.arrivePay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
                         <span class="layui-form-span text_left form_span">{{item.key}}({{item.unit}})：</span>
-                            <input disabled value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                        <span class="blue">{{item.val}}</span>
                     </div>
                     {{#  }); }}
+                </div>
+                <div style="padding-left: 20px;overflow:hidden;">
+                    {{#  layui.each(d.updateData.arrivePayFeeItems, function(index, item){ }}
+                    <div class="check layui-inline layui-col-md3">
+                        <span class="x-red">待审：</span> 
+                        <span class="">{{item.key + '(' + item.unit + ')' + '：' + item.val}}</span>
+                    </div>
+                    {{# }); }}
                 </div>
             </div>
         </div>
         <div class="layui-form-item layui-row">
             <div class="form_item_inner">
                 <div>
-                    尾款
-                    {{# if(d.updateData.arrivePayAmount){ }}
+                    尾款 {{d.orderData.tailPayAmount}}
+                    {{# if(d.updateData.tailPayAmount){ }}
                     <div class="check">
                         <span class="x-red">待审：</span> 
                         <span class="">{{d.updateData.tailPayAmount}}</span>
@@ -536,9 +552,17 @@
                     {{#  layui.each(d.tailPay, function(index, item){ }}
                     <div class="layui-inline layui-col-md3">
                         <span class="layui-form-span text_left form_span">{{item.key}}({{item.unit}})：</span>
-                            <input disabled value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                        <span class="blue">{{item.val}}</span>
                     </div>
                     {{#  }); }}
+                </div>
+                <div style="padding-left: 20px;overflow:hidden;">
+                    {{#  layui.each(d.updateData.tailPayFeeItems, function(index, item){ }}
+                    <div class="check layui-inline layui-col-md3">
+                        <span class="x-red">待审：</span> 
+                        <span class="">{{item.key + '(' + item.unit + ')' + '：' + item.val}}</span>
+                    </div>
+                    {{# }); }}
                 </div>
             </div>
         </div>
