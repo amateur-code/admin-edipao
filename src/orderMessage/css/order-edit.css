@@ -56,6 +56,9 @@
   padding-top: 10px;
   border-top: 1px solid #EFEEF0;
 }
+#form_fee_list .layui-form-select .layui-input {
+  padding-right: 20px !important;
+}
 .select_driver_btn {
   display: inline-block;
 }

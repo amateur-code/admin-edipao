@@ -8,6 +8,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
   function View() {
     var qs = edipao.urlGet();
     this.orderNo = qs.orderNo;
+    this.orderId = qs.orderId;
     this.action = qs.action || "";
     this.user = JSON.parse(sessionStorage.user);
     this.prePay = [];
@@ -15,27 +16,99 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     this.tailPay = [];
     this.orderData = null;
     this.carFormList = [];
+    this.updateData = {};
   }
   $.extend(View.prototype, {
     init: function () {
       var _this = this;
-      if(this.action != "verify"){
+      if(_this.action != "verify"){
         $("#verify_container").remove();
+        laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
+          $("#form_income_container").after(html);
+          _this.getOrder().done(function (res) {
+            if(res.code == "0"){
+              _this.orderData = res.data;
+              _this.setData(res.data);
+              _this.bindEvents();
+              if(_this.action == "verify"){
+                _this.getUpdate();
+              }
+            }else{
+              layer.msg(res.message, {icon: 5,anim: 6});
+            }
+          });
+        });
+      }else{
+        _this.getUpdate(function () {
+          _this.getOrder().done(function (res) {
+            if(res.code == "0"){
+              _this.orderData = res.data;
+              _this.setData(res.data);
+              _this.bindEvents();
+              if(_this.action == "verify"){
+                _this.getUpdate();
+              }
+            }else{
+              layer.msg(res.message, {icon: 5,anim: 6});
+            }
+          });
+        });
       }
-      this.getOrder().done(function (res) {
+    },
+    getUpdate: function (cb) {
+      var _this = this;
+      edipao.request({
+        url: "/admin/log/last-modify/get",
+        method: "GET",
+        data:{
+          loginStaffId: _this.user.staffId,
+          operationModule: 4,
+          dataPk: _this.orderId
+        }
+      }).done(function (res) {
         if(res.code == "0"){
-          _this.orderData = res.data;
-          _this.setData(res.data);
-          _this.bindEvents();
-        }else{
-          layer.msg(res.message, {icon: 5,anim: 6});
+          var updateData;
+          if(!res.data || !res.data.modifyAfterJson){
+            updateData = {};
+          }else{
+            updateData = JSON.parse(res.data.modifyAfterJson);
+            updateData.forEach(function (item) {
+              _this.updateData[item.name] = item.value;
+            });
+          }
+          laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
+            $("#form_income_container").after(html);
+            cb && cb();
+          });
         }
       });
     },
     bindEvents: function () {
+      var _this = this;
       $("#verify_submit").unbind().on("click", function (e) {
         var data = form.val("verify_form");
-
+        console.log(data)
+        edipao.request({
+          url: "/admin/order/approval/order",
+          method: "POST",
+          data: {
+            loginStaffId: _this.user.staffId,
+            orderId: _this.orderId,
+            approvalRemark: data.approvalRemark,
+            approvalResult: data.approvalResult * 1
+          }
+        }).done(function (res) {
+          if(res.code == "0"){
+            layer.alert("提交成功", { icon: 6 }, function () { 
+              xadmin.close();
+              xadmin.father_reload();
+            });
+          }
+        });
+      });
+      $("#btn_cancel").unbind().on("click", function (e) {
+        var lay_id = localStorage.current_tab;
+        top.$('.layui-tab-title li[lay-id=' + lay_id + ']').find('.layui-tab-close').click();
       });
     },
     setFeeList: function () {
@@ -45,6 +118,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         prePay: _this.prePay,
         tailPay: _this.tailPay,
         arrivePay: _this.arrivePay,
+        updateData: _this.updateData
       }, function (html) {
         $("#fee_list_container").html(html);
       });
@@ -70,6 +144,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       data.truckDTOList.forEach(function (item, index) {
         if(!item.fetchImages) item.fetchImages = "";
         item.fetchImages = item.fetchImages.split(",");
+        if(!item.startBillImage) item.startBillImage = "";
+        item.startBillImage = item.startBillImage.split(",");
         laytpl(imageStr).render(item, function (imageHtml) {
           var filterStr = "form_car_" + index;
           _this.carFormList.push(filterStr);
@@ -94,11 +170,12 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         method: "GET",
         data: {
           loginStaffId: _this.user.staffId,
-          orderNo: _this.orderNo
+          id: _this.orderId
         }
       });
     }
   });
   var view = new View();
   view.init();
+  top.window.view = view;
 });

@@ -40,3 +40,6 @@
 .pointer {
   cursor: pointer;
 }
+.layui-layer-content .layui-table {
+  margin-top: 0 !important;
+}

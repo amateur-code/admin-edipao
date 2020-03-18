@@ -101,9 +101,6 @@
                         <div class="layui-col-md1">
                             <div class="title">车辆信息</div>
                         </div>
-                        <div style="line-height: 32px;" class="layui-col-md1 blue pointer btn_btn">
-                            <!-- <span class="select_vin" data-filter="CARFORM">选择vin码：</span> -->
-                        </div>
                     </div>
                 </div>
                 <div class="form_item_container">
@@ -215,35 +212,31 @@
                             <span class="layui-form-span text_left form_span">临牌号：</span>
                                 <input disabled disabled type="text" name="tempLicense" autocomplete="off" class="layui-input">
                         </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <span class="layui-form-span text_left form_span">行驶证：</span>
-                            <input disabled disabled type="text" name="tempLicenseBackImage" autocomplete="off" class="layui-input">
-                        </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md5">
                             <span class="layui-form-span text_left form_span">销售备注：</span>
-                            <input disabled name="saleRemark" required lay-verify="" placeholder="请输入" class="layui-input"/>
+                            <textarea disabled name="saleRemark" required lay-verify="" placeholder="请输入" class="layui-input"/>
                         </div>
                         <div class="layui-inline layui-col-md5 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">储运备注：</span>
-                            <input disabled name="storageAndDeliverRemark" required lay-verify="" placeholder="请输入" class="layui-input"/>
+                            <textarea disabled name="storageAndDeliverRemark" required lay-verify="" placeholder="请输入" class="layui-input"/>
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md5">
                             <span class="layui-form-span text_left form_span">经销商备注：</span>
-                            <input disabled name="dealerRemark" required lay-verify="required" placeholder="请输入" class="layui-input"/>
+                            <textarea disabled name="dealerRemark" required lay-verify="required" placeholder="请输入" class="layui-input"/>
                         </div>
                         <div class="layui-inline layui-col-md5 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">发运资源库备注（委改库）：</span>
-                            <input disabled name="deliverResourceRemark" required lay-verify="required" placeholder="请输入" class="layui-input"/>
+                            <textarea disabled name="deliverResourceRemark" required lay-verify="required" placeholder="请输入" class="layui-input"/>
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md5">
                             <span class="layui-form-span text_left form_span">运输商备注：</span>
-                            <input disabled name="transportRemark" required lay-verify="required" placeholder="请输入" class="layui-input" />
+                            <textarea disabled name="transportRemark" required lay-verify="required" placeholder="请输入" class="layui-input" />
                         </div>
                     </div>
                     IMAGESTR
@@ -254,9 +247,11 @@
             <div class="layui-form-item layui-row">
                 <div class="layui-inline layui-col-md5">
                     <span class="layui-form-span text_left form_span">发车单：</span>
-                    <div>
-                        <img width="100%" class="car_image" src="{{d.startBillImage}}">
+                    {{# layui.each(d.startBillImage, function(index, item){ }}
+                    <div style="margin-right:20px;margin-bottom:20px" class="layui-col-md3">
+                        <img width="100%" class="car_image" src="{{item}}">
                     </div>
+                    {{# }); }}
                 </div>
                 <div class="layui-inline layui-col-md5 layui-col-md-offset1">
                     <span class="layui-form-span text_left form_span">行驶证：</span>
@@ -267,14 +262,14 @@
             </div>
             <div class="layui-form-item layui-row">
                 <div class="layui-form-span text_left form_span">提车图片：</div>
-                {{#  layui.each(d.fetchImages, function(index, item){ }}
+                {{# layui.each(d.fetchImages, function(index, item){ }}
                 <div style="margin-right:20px;margin-bottom:20px" class="layui-col-md3">
                     <img width="100%" class="car_image" src="{{item}}">
                 </div>
-                {{#  }); }}
+                {{# }); }}
             </div>
         </script>
-        <div class="layui-row layui-col-space15 page_block">
+        <div id="form_income_container" class="layui-row layui-col-space15 page_block">
             <form class="layui-col-md12 page-container layui-form">
                 <!-- 头部 -->
                 <div class="page-header border-bottom">
@@ -287,93 +282,167 @@
                 <div id="income_info" class="page_content"></div>
             </form>
         </div>
-        <div class="layui-row layui-col-space15 page_block">
-            <form lay-filter="form_ascription" class="layui-form">
-                <!-- 头部 -->
-                <div class="page-header border-bottom">
-                    <div class="layui-row">
-                        <div class="layui-col-md6">
-                            <div class="title">跟单与归属</div>
+        <script id="forms_tpl" type="text/html">
+            <div class="layui-row layui-col-space15 page_block">
+                <form lay-filter="form_ascription" class="layui-form">
+                    <!-- 头部 -->
+                    <div class="page-header border-bottom">
+                        <div class="layui-row">
+                            <div class="layui-col-md6">
+                                <div class="title">跟单与归属</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form_item_container">
-                    <div class="layui-form-item layui-row">
-                        <div class="layui-inline layui-col-md3">
-                            <span class="layui-form-span text_left form_span">调度员：</span>
+                    <div class="form_item_container">
+                        <div class="layui-form-item layui-row">
+                            <div class="layui-inline layui-col-md3">
+                                <span class="layui-form-span text_left form_span">调度员：</span>
                                 <input disabled type="text" name="dispatchOperator" lay-verify="required" autocomplete="off" class="layui-input">
-                        </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <span class="layui-form-span text_left form_span">提车员：</span>
+                                {{# if(d.dispatchOperator){ }}
+                                <div class="check">
+                                    <label class=" x-red">待审：</label> 
+                                    <div class="">{{d.dispatchOperator}}</div>
+                                </div>
+                                {{# } }}
+                            </div>
+                            <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                <span class="layui-form-span text_left form_span">提车员：</span>
                                 <input disabled type="text" name="fetchOperator" lay-verify="required" autocomplete="off" class="layui-input">
-                        </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <span class="layui-form-span text_left form_span">发运员：</span>
+                                {{# if(d.fetchOperator){ }}
+                                <div class="check">
+                                    <label class=" x-red">待审：</label> 
+                                    <div class="">{{d.fetchOperator}}</div>
+                                </div>
+                                {{# } }}
+                            </div>
+                            <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                <span class="layui-form-span text_left form_span">发运员：</span>
                                 <input disabled type="text" name="deliveryOperator" lay-verify="required" autocomplete="off" class="layui-input">
+                                {{# if(d.deliveryOperator){ }}
+                                <div class="check">
+                                    <label class=" x-red">待审：</label> 
+                                    <div class="">{{d.deliveryOperator}}</div>
+                                </div>
+                                {{# } }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="layui-form-item layui-row">
-                        <div class="layui-inline layui-col-md3">
-                            <span class="layui-form-span text_left form_span">跟单员：</span>
+                        <div class="layui-form-item layui-row">
+                            <div class="layui-inline layui-col-md3">
+                                <span class="layui-form-span text_left form_span">跟单员：</span>
                                 <input disabled type="text" name="followOperator" lay-verify="required" autocomplete="off" class="layui-input">
-                        </div>
-                        <div class="layui-inline layui-col-md3">
-                            <span class="layui-form-span text_left form_span">跟单员：</span>
+                                {{# if(d.followOperator){ }}
+                                <div class="check">
+                                    <label class=" x-red">待审：</label> 
+                                    <div class="">{{d.followOperator}}</div>
+                                </div>
+                                {{# } }}
+                            </div>
+                            <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                <span class="layui-form-span text_left form_span">跟单员：</span>
                                 <input disabled type="text" name="fetchOperatorPhone" lay-verify="required" autocomplete="off" class="layui-input">
-                        </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <span class="layui-form-span text_left form_span">归属部门：</span>
+                                {{# if(d.fetchOperatorPhone){ }}
+                                <div class="check">
+                                    <label class=" x-red">待审：</label> 
+                                    <div class="">{{d.fetchOperatorPhone}}</div>
+                                </div>
+                                {{# } }}
+                            </div>
+                            <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                <span class="layui-form-span text_left form_span">归属部门：</span>
                                 <input disabled type="text" name="department" lay-verify="required" autocomplete="off" class="layui-input">
+                                {{# if(d.department){ }}
+                                <div class="check">
+                                    <label class=" x-red">待审：</label> 
+                                    <div class="">{{d.department}}</div>
+                                </div>
+                                {{# } }}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </form>
-        </div>
-        <div class="layui-row layui-col-space15 page_block">
-            <form lay-filter="form_dispatch" class="layui-col-md12 page-container layui-form">
-                <!-- 头部 -->
-                <div class="page-header border-bottom">
-                    <div class="layui-row">
-                        <div class="layui-col-md6">
-                            <div class="title">调度信息</div>
+                </form>
+            </div>
+            <div class="layui-row layui-col-space15 page_block">
+                <form lay-filter="form_dispatch" class="layui-col-md12 page-container layui-form">
+                    <!-- 头部 -->
+                    <div class="page-header border-bottom">
+                        <div class="layui-row">
+                            <div class="layui-col-md6">
+                                <div class="title">调度信息</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div id="form_fee_list" class="form_item_container">
-                    <div class="layui-form-item layui-row">
-                        <div class="layui-inline layui-col-md3">
-                            <span class="layui-form-span text_left form_span">司机姓名：</span>
+                    <div id="form_fee_list" class="form_item_container">
+                        <div class="layui-form-item layui-row">
+                            <div class="layui-inline layui-col-md3">
+                                <span class="layui-form-span text_left form_span">司机姓名：</span>
                                 <input disabled id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
-                        </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <span class="layui-form-span text_left form_span">司机手机：</span>
+                                {{# if(d.driverName){ }}
+                                <div class="check">
+                                    <span class="x-red">待审：</span> 
+                                    <span class="">{{d.driverName}}</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                <span class="layui-form-span text_left form_span">司机手机：</span>
                                 <input disabled type="text" name="driverPhone" lay-verify="required" autocomplete="off" class="layui-input">
-                        </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <span class="layui-form-span text_left form_span">司机身份证：</span>
+                                {{# if(d.driverPhone){ }}
+                                <div class="check">
+                                    <span class="x-red">待审：</span> 
+                                    <span class="">{{d.driverPhone}}</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                <span class="layui-form-span text_left form_span">司机身份证：</span>
                                 <input disabled disabled type="text" name="driverIdCard" lay-verify="required" autocomplete="off" class="layui-input">
+                                {{# if(d.driverIdCard){ }}
+                                <div class="check">
+                                    <span class="x-red">待审：</span> 
+                                    <span class="">{{d.driverIdCard}}</span>
+                                </div>
+                                {{# } }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="layui-form-item layui-row">
-                        <div class="layui-inline layui-col-md3">
-                            <span class="layui-form-span text_left form_span">司机驾照：</span>
+                        <div class="layui-form-item layui-row">
+                            <div class="layui-inline layui-col-md3">
+                                <span class="layui-form-span text_left form_span">司机驾照：</span>
                                 <input disabled disabled type="tel" name="driverCertificate" lay-verify="required" autocomplete="off" class="layui-input">
-                        </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <span class="layui-form-span text_left form_span">承运公里数：</span>
+                                {{# if(d.driverCertificate){ }}
+                                <div class="check">
+                                    <span class="x-red">待审：</span> 
+                                    <span class="">{{d.driverCertificate}}</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                <span class="layui-form-span text_left form_span">承运公里数：</span>
                                 <input disabled disabled type="tel" name="driverMileage" lay-verify="required" autocomplete="off" class="layui-input">
+                                {{# if(d.driverMileage){ }}
+                                <div class="check">
+                                    <span class="x-red">待审：</span> 
+                                    <span class="">{{d.driverMileage}}</span>
+                                </div>
+                                {{# } }}
+                            </div>
                         </div>
-                    </div>
-                    <!-- <div class="layui-form-item layui-row">
-                        <div class="layui-inline layui-col-md3">
-                            <span class="layui-form-span text_left form_span">尾款账期：</span>
+                        <div class="layui-form-item layui-row">
+                            <div class="layui-inline layui-col-md3">
+                                <span class="layui-form-span text_left form_span">尾款账期：</span>
                                 <input disabled disabled type="tel" name="tailPayBillDate" lay-verify="required" autocomplete="off" class="layui-input">
+                                {{# if(d.tailPayBillDate){ }}
+                                <div class="check">
+                                    <span class="x-red">待审：</span> 
+                                    <span class="">{{d.tailPayBillDate}}</span>
+                                </div>
+                                {{# } }}
+                            </div>
                         </div>
-                    </div> -->
-                    <div id="fee_list_container"></div>
-                </div>
-            </form>
-        </div>
+                        <div id="fee_list_container"></div>
+                    </div>
+                </form>
+            </div>
+        </script>
         <div id="verify_container" class="verify_container layui-row layui-col-space15 page_block">
             <form lay-filter="verify_form" class="layui-col-md12 page-container layui-form">
                 <div class="page-header border-bottom">
@@ -386,21 +455,21 @@
                 <div class="layui-form-item layui-row">
                     <div style="line-height:34px;" class="layui-col-md1">审核结果：</div>
                     <div class="layui-col-md1">
-                        <input type="radio" name="verify_result" value="yes" title="通过" checked>
+                        <input type="radio" name="approvalResult" value="0" title="通过" checked>
                     </div>
                     <div class="layui-col-md1">
-                        <input type="radio" name="verify_result" value="no" title="驳回">
+                        <input type="radio" name="approvalResult" value="1" title="驳回">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row">
                     <div style="line-height:34px;" class="layui-col-md1">审核备注：</div>
                     <div class="layui-col-md10">
-                        <textarea name="verify_text" lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+                        <textarea name="approvalRemark" lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
                     </div>
                 </div>
                 <div class="layui-form-item layui-row">
                     <div class="layui-col-md1 layui-col-md-offset5">
-                        <div class="layui-btn layui-btn-primary">取消</div>
+                        <div id="btn_cancel" class="layui-btn layui-btn-primary">取消</div>
                     </div>
                     <div class="layui-col-md1">
                         <div id="verify_submit" class="layui-btn layui-btn-normal">确认</div>
@@ -414,6 +483,12 @@
             <div class="form_item_inner">
                 <div>
                     预付款
+                    {{# if(d.updateData.prePayAmount){ }}
+                    <div class="check">
+                        <span class="x-red">待审：</span> 
+                        <span class="">{{d.updateData.prePayAmount}}</span>
+                    </div>
+                    {{# } }}
                 </div>
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.prePay, function(index, item){ }}
@@ -429,6 +504,12 @@
             <div class="form_item_inner">
                 <div>
                     到付款
+                    {{# if(d.updateData.arrivePayAmount){ }}
+                    <div class="check">
+                        <span class="x-red">待审：</span> 
+                        <span class="">{{d.updateData.arrivePayAmount}}</span>
+                    </div>
+                    {{# } }}
                 </div>
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.arrivePay, function(index, item){ }}
@@ -444,6 +525,12 @@
             <div class="form_item_inner">
                 <div>
                     尾款
+                    {{# if(d.updateData.arrivePayAmount){ }}
+                    <div class="check">
+                        <span class="x-red">待审：</span> 
+                        <span class="">{{d.updateData.tailPayAmount}}</span>
+                    </div>
+                    {{# } }}
                 </div>
                 <div style="padding-left: 20px;">
                     {{#  layui.each(d.tailPay, function(index, item){ }}
@@ -454,34 +541,6 @@
                     {{#  }); }}
                 </div>
             </div>
-        </div>
-    </script>
-    <script type="text/html" id="fee_tpl">
-        <div class="fee_container">
-            <form lay-filter="add_fee_form" class="fee_list layui-form">
-                <div class="layui-row">
-                    {{#  layui.each(d.feeList, function(index, item){ }}
-                        <div class="layui-col-md4">
-                        <input disabled type="checkbox" {{item.checked?'checked':''}} name="{{item.key}}" title="{{item.key}}" lay-skin="primary">
-                        </div>
-                    {{#  }); }}
-                </div>
-            </form>
-            <div class="fee_footer">
-                费用不够？<span id="add_fee_item" class="blue pointer">增加费用项：</span>
-            </div>
-        </div>
-    </script>
-    <script type="text/html" id="fee_item_tpl">
-        <div class="fee_container">
-            <form class="fee_list layui-form">
-                <div style="width:100%" class="layui-inline">
-                    <span class="layui-form-span text_left form_span">费用项名称：</span>
-                    <div style="width:100%" class="layui-input-inline">
-                        <input disabled id="addFeeName" type="tel" name="addFeeName" lay-verify="required" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-            </form>
         </div>
     </script>
     <div lay-filter="cars_table" id="cars_table"></div>

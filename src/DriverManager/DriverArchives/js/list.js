@@ -97,32 +97,32 @@ layui.config({
     var tableCols = [
         { checkbox: true },
         {
-            field: 'name', title: '司机姓名',
+            field: 'name', title: '司机姓名',width: 100,
             templet: function (data) {
                 var val = data.name;
                 return DataNull(val)
             }
         },
-        { field: 'phone', title: '司机手机',
+        { field: 'phone', title: '司机手机',width: 120,
             templet: function (data) {
                 var val = data.phone;
                 return DataNull(val)
             }
         },
-        { field: 'idNum', title: '身份证号',
+        { field: 'idNum', title: '身份证号',width: 160,
             templet: function (data) {
                 var val = data.idNum;
                 return DataNull(val)
             }
         },
         {
-            field: 'driverType', title: '司机类型',width: 80,
+            field: 'driverType', title: '司机类型',width: 100,
             templet: function (data) {
                 var val = data.driverType;
                 return val || '--'
             }
         },
-        { field: 'driveLicenceType', title: '驾照类型',width: 80,
+        { field: 'driveLicenceType', title: '驾照类型',width: 100,
             templet: function (data) {
                 var val = data.driveLicenceType;
                 return DataNull(val)
@@ -135,31 +135,31 @@ layui.config({
             }
         },
         {
-            field: 'wishJourney', title: '意向线路',
+            field: 'wishJourney', title: '意向线路',width: 100,
             templet: function (data) {
                 var val = data.wishJourney;
-                return wishJourneyNull(val)
+                return wishJourneyNullHtml(val)
             }
         },
-        { field: 'oftenJourney', title: '常跑线路',
+        { field: 'oftenJourney', title: '常跑线路',width: 100,
             templet: function (data) {
                 var val = data.oftenJourney;
-                return wishJourneyNull(val)
+                return oftenJourneyNullHtml(val)
             }
         },
-        { field: 'location', title: '位置',
+        { field: 'location', title: '位置',width: 100,
             templet: function (data) {
                 var val = data.location;
                 return DataNull(val);
             }
         },
-        { field: 'deposit', title: '押金',
+        { field: 'deposit', title: '押金',width: 100,
             templet: function (data) {
                 var val = data.deposit;
                return depositNull(val)
             }
         },
-        { field: 'depositStatus', title: '押金状态',
+        { field: 'depositStatus', title: '押金状态',width: 100,
             templet: function (data) {
                 var val = data.depositStatus;
                 if(val == null||val == ''){
@@ -181,8 +181,9 @@ layui.config({
                     var html='';
                     var val = JSON.parse(licenceWarn);
                     for(var i in val){
-                        html+='<p style="color: #EE5B22;">'+warnData[i]+(val[i]>0?''+val[i]+'天后到期':'已过期')+'</p>';
+                        html+='<span style="color: #EE5B22;">'+warnData[i]+(val[i]>0?''+val[i]+'天后到期':'已过期')+'</span>，';
                     }
+                    html = html.substring(0,html.length-1);
                     return html;
                 }else{
                     return '--'
@@ -190,7 +191,7 @@ layui.config({
             }
         },
         {
-            field: 'status', title: '司机状态',
+            field: 'status', title: '司机状态',width: 100,
             templet: function (data) {
                 var val = data.status;
                 return  val || '--'
@@ -204,7 +205,7 @@ layui.config({
             }
         },*/
         {
-            title: '操作', width: 320, fixed: '',toolbar: '#rowBtns'
+            title: '操作', width: 320, fixed: 'right',toolbar: '#rowBtns'
         }
     ];
 
@@ -407,6 +408,42 @@ layui.config({
         }
     }
     // 意向线路-常跑线路
+    function wishJourneyNullHtml(val){
+        if(val!=null&&val!=''&&val!='null'){
+            var newVal = JSON.parse(val);
+            if(newVal){
+                var len = newVal.length
+                if(len>0){
+                var html='<a lay-event="wishJourneyList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;width: 100%;display: block">'+len+'</a>'
+                 return html;
+                }else{
+                    return '--';
+                }
+            }else{
+                return '--';
+            }
+        }else{
+            return '--';
+        }
+    }
+    function oftenJourneyNullHtml(val){
+        if(val!=null&&val!=''&&val!='null'){
+            var newVal = JSON.parse(val);
+            if(newVal){
+                var len = newVal.length
+                if(len>0){
+                    var html='<a lay-event="oftenJourneyList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;width: 100%;display: block">'+len+'</a>'
+                    return html;
+                }else{
+                    return '--';
+                }
+            }else{
+                return '--';
+            }
+        }else{
+            return '--';
+        }
+    }
     function wishJourneyNull(val){
         if(val!=null&&val!=''&&val!='null'){
             var newVal = JSON.parse(val);
@@ -485,6 +522,12 @@ layui.config({
                 break;
             case 'info':
                 xadmin.open('查看司机', './info.html?id=' + data.id)
+                break;
+            case 'wishJourneyList':
+                xadmin.open('查看线路', './wishJourney-list.html?wishJourney=' + (data.wishJourney).replace(/\"/g,"'"))
+                break;
+            case 'oftenJourneyList':
+                xadmin.open('查看线路', './wishJourney-list.html?wishJourney=' + (data.oftenJourney).replace(/\"/g,"'"))
                 break;
             case 'del':
                 layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {

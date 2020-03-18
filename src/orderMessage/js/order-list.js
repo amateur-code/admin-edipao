@@ -20,6 +20,7 @@ layui.config({
     var orderData = {};
     var uploadTruckId = "";
     var permissionList = edipao.getMyPermission();
+    window.permissionList = permissionList;
     var exportHead = {};
     var where = {
         loginStaffId: user.staffId,
@@ -60,6 +61,15 @@ layui.config({
         { field: 'arrivePayAmount', type: 'input' },
         { field: 'tailPayAmount', type: 'input' },
     ]
+    initPermission();
+    function initPermission() {
+        if(permissionList.indexOf('订单录入') < 0){
+            $("#import_order").remove();
+        }
+        if(permissionList.indexOf('导出') < 0){
+            $("#export_data").remove();
+        }
+    }
     tableFilterIns = tableFilter.render({
         'elem' : '#orderList',//table的选择器
         'mode' : 'self',//过滤模式
@@ -106,13 +116,13 @@ layui.config({
     });
 
     var method = {
-        getOrder: function (orderNo) {
+        getOrder: function (orderId) {
             return edipao.request({
                 method: "GET",
                 url: "/admin/order/detail",
                 data: {
                     loginStaffId: user.staffId,
-                    orderNo: orderNo
+                    id: orderId  //ORDERNO
                 }
             })
         },
@@ -130,6 +140,7 @@ layui.config({
                 var type = e.target.dataset.type * 1;
                 var number = e.target.dataset.number * 1;
                 var orderNo = e.target.dataset.order;
+                var orderId = e.target.dataset.orderid;
                 var event = "ok";
                 type == 2 && permissionList.indexOf('提车照片上传') == -1 && (event = 'reject');
                 type == 3 && permissionList.indexOf('发车单-上传') == -1 && (event = 'reject');
@@ -139,9 +150,13 @@ layui.config({
                     return;
                 }
                 elem = $("#uploadStartPic").html();
-                method.getOrder(orderNo).done(function (res) {
+                method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
                         orderData = res.data;
+                        if(!res.data.truckDTOList || res.data.truckDTOList.length < 1){
+                            layer.msg("订单未包含车辆信息", {icon: 2});
+                            return;
+                        }
                         uploadTruckId = res.data.truckDTOList[0].id;
                         res.data.truckDTOList.forEach(function (item) {
                             uploadData[item.id + ""] = uploadObj;
@@ -153,7 +168,7 @@ layui.config({
                             three: [1,1,1],
                         };
                         laytpl(elem).render(renderData, function (html) {
-                            method.openUpload(html, renderData, type, truckId, orderNo);
+                            method.openUpload(html, renderData, type, truckId, orderId);
                         });
                     }else{
                         layer.msg(res.message, {icon: 5,anim: 6});
@@ -162,7 +177,7 @@ layui.config({
                     
             });
         },
-        openUpload: function (html, renderData, type, truckId, orderNo) {
+        openUpload: function (html, renderData, type, truckId, orderId) {
             var renderObj = [
                 {
                     num: renderData.six,
@@ -192,7 +207,7 @@ layui.config({
                 area: ["600px", "400px"],
                 btn: ["确定", "取消"],
                 yes: function () {
-                    method.uploadPics({orderNo: orderNo}, function (res) {
+                    method.uploadPics({id: orderId}, function (res) {
                         if(res.code == "0"){
                             layer.msg("上传成功", {icon: 1});
                             table.reload("orderList");
@@ -261,7 +276,6 @@ layui.config({
                     data: data
                 });
             }
-            console.log(uploadObj)
             if(uploadObj["returnImagesList"].length > 0){
                 data1 = {
                     loginStaffId: user.staffId,
@@ -330,7 +344,7 @@ layui.config({
                     , page: false //开启分页
                     , url: layui.edipao.API_HOST + "/admin/order/detail"
                     // , url: "js/order.json"
-                    , where: { loginStaffId: user.staffId, orderNo: orderNo }
+                    , where: { loginStaffId: user.staffId, id: orderId } //ORDERNO
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
                         return {
@@ -377,8 +391,8 @@ layui.config({
                     },
                     text: {none: "暂无数据"},
                     cols: [[
-                        {field: 'key', title: '费用项', sort: false,width: "100px"},
-                        {field: 'val', title: '金额', sort: false,width: "100px", templet: function (d) {
+                        {field: 'key', title: '费用项', sort: false,width: "80px"},
+                        {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) {
                             return d.val + " (" + d.unit + ")"
                         }},
                     ]]
@@ -407,7 +421,7 @@ layui.config({
                     , page: false //开启分页
                     , url: layui.edipao.API_HOST + "/admin/order/detail"
                     // , url: "js/order.json"
-                    , where: { loginStaffId: user.staffId, orderNo: orderNo }
+                    , where: { loginStaffId: user.staffId, id: orderId } //ORDERNO
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
                         return {
@@ -422,7 +436,7 @@ layui.config({
                         var index = layer.open({
                             title: title,
                             type: 1,
-                            area: ["400px", "500px"],
+                            area: "400px",
                             content: htmlStr.replace("TABLE", tableStr),
                             btn: ["确定", "取消"],
                             success: function () {
@@ -451,8 +465,8 @@ layui.config({
                     },
                     text: {none: "暂无数据"},
                     cols: [[
-                        {field: 'key', title: '费用项', sort: false,width: "100px"},
-                        {field: 'val', title: '金额', sort: false,width: "100px", templet: function (d) { 
+                        {field: 'key', title: '费用项', sort: false,width: "80px"},
+                        {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) { 
                             return d.val + ' (' + d.unit + ')'
                         }},
                     ]]
@@ -482,7 +496,7 @@ layui.config({
                     // , url: "js/order.json"
                     , page: false
 
-                    , where: { loginStaffId: user.staffId, orderNo: orderNo }
+                    , where: { loginStaffId: user.staffId, id: orderId } //ORDERNO
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
                         return {
@@ -497,7 +511,7 @@ layui.config({
                         var index = layer.open({
                             title: title,
                             type: 1,
-                            area: ["400px", "500px"],
+                            area: "400px",
                             content: htmlStr.replace("TABLE", tableStr),
                             btn: ["确定", "取消"],
                             success: function () {
@@ -526,8 +540,8 @@ layui.config({
                     },
                     text: {none: "暂无数据"},
                     cols: [[
-                        {field: 'key', title: '费用项', sort: false,width: "100px"},
-                        {field: 'val', title: '金额', sort: false,width: "100px", templet: function (d) {
+                        {field: 'key', title: '费用项', sort: false,width: "80px"},
+                        {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) {
                             return d.val + ' (' + d.unit + ')'
                         }},
                     ]]
@@ -541,7 +555,7 @@ layui.config({
                 var orderId = e.target.dataset.orderid;
                 var key = e.target.dataset.key;
                 var type = e.target.dataset.type*1;
-                method.getOrder(orderNo).done(function (res) {
+                method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
                         res.data.truckDTOList.forEach(function (item) {
                             if(!item[key]){
@@ -575,6 +589,7 @@ layui.config({
                                         if(res.code == "0"){
                                             layer.msg("提交成功");
                                             layer.close(index);
+                                            table.reload("orderList");
                                         }else{
                                             //layer.alert(res.message);
                                         }
@@ -591,15 +606,16 @@ layui.config({
         bindViewPic: function () {
             $(".list_picture_view").unbind().on("click", function (e) {
                 var orderNo = e.target.dataset.order;
+                var orderId = e.target.dataset.orderid;
                 var field = e.target.dataset.field;
                 var startIndex = 0;
-                method.getOrder(orderNo).done(function (res) {
+                method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
                         res.data.truckDTOList.forEach(function (item) {
-                            if(!item.startImages){
-                                item.startImages = [];
+                            if(!item.startBillImage){
+                                item.startBillImage = [];
                             }else{
-                                item.startImages = item.startImages.split(",");
+                                item.startBillImage = item.startBillImage.split(",");
                             }
                             if(!item.fetchImages){
                                 item.fetchImages = [];
@@ -612,6 +628,7 @@ layui.config({
                                 item.returnImages = item.returnImages.split(",");
                             }
                         });
+                        console.log(res.data.truckDTOList)
                         laytpl($("#pic_view_tpl").html()).render({
                             list: res.data.truckDTOList,
                             field: field
@@ -666,6 +683,10 @@ layui.config({
                         break;
                 }
             });
+            $(".list_driver_name").unbind().on("click", function (e) {
+                var id = e.target.dataset.id;
+                xadmin.open('订单录入','../../DriverManager/DriverArchives/info.html?id=' + id, 1100, 500);
+            });
         },
         exportData: function exportExcel() {
             var param = where;
@@ -712,8 +733,8 @@ layui.config({
                 , title: '订单列表'
                 , method: "get" // 请求方式  默认get
                 , page: true //开启分页
-                , limit: 20  //每页显示条数
-                , limits: [20, 50, 100] //每页显示条数可选择
+                , limit: 10  //每页显示条数
+                , limits: [10, 20] //每页显示条数可选择
                 , request: {
                     pageName: 'pageNo' //页码的参数名称，默认：page
                     , limitName: 'pageSize' //每页数据量的参数名，默认：limit
@@ -726,15 +747,12 @@ layui.config({
                     var data = [];
                     orderDTOList = res.data.orderDTOList;
                     orderDTOList.forEach(function(item){
-                        if(item.orderType == 1){
-                            data.push(item);
-                        }else if(item.orderType == 2){
-                            if(item.masterFlag == "是"){
-                                data.push(item);
-                            }
+                        if(item.orderType == 2 && item.masterFlag == "否"){
+                            item.showBtn = 0;
                         }else{
-                            data.push(item);
+                            item.showBtn = 1;
                         }
+                        data.push(item);
                     });
                     return {
                         "code": res.code, //解析接口状态
@@ -787,22 +805,22 @@ layui.config({
                     layer.alert('你没有访问权限', {icon: 2});
                     return;
                 }else if (layEvent === 'edit') { //编辑
-                    top.xadmin.add_tab('修改订单', 'orderMessage/order-edit.html?action=edit&orderNo=' + data.orderNo);
+                    top.xadmin.add_tab('修改订单', 'orderMessage/order-edit.html?action=edit&orderNo=' + data.orderNo + "&orderId=" + data.id);
                 } else if (layEvent === 'verify') { //审核
-                    top.xadmin.add_tab('审核', 'orderMessage/order-view.html?action=verify&orderNo=' + data.orderNo);
+                    xadmin.open('审核', './order-view.html?action=verify&orderNo=' + data.orderNo + "&orderId=" + data.id, 1100, 500);
                 } else if (layEvent === 'view') { //查看
-                    top.xadmin.add_tab('查看订单', 'orderMessage/order-view.html?orderNo=' + data.orderNo);
+                    top.xadmin.add_tab('查看订单', 'orderMessage/order-view.html?orderNo=' + data.orderNo + "&orderId=" + data.id);
                 } else if (layEvent === 'cancel') { //取消
                     var index = layer.open({
                         title: "取消确认",
                         content: "取消后订单将作废，确认继续取消订单？",
                         btn: ["确认", "取消"],
                         yes: function(){
-                            edipao.request({
+                            edipao.request({ //ORDERNO
                                 url: "/admin/order/cancelOrder",
                                 data: {
                                     loginStaffId: user.staffId,
-                                    orderNo: data.orderNo
+                                    id: data.id
                                 }
                             }).done(function (res) {
                                 if(res.code == "0"){
@@ -816,7 +834,7 @@ layui.config({
                         }
                     });
                 } else if (layEvent === 'log') {//日志
-                    top.xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=4');
+                    top.xadmin.open('操作日志', 'OperateLog/log.html?id=' + data.id + '&type=4');
                 }
             });
         },
@@ -902,20 +920,34 @@ layui.config({
             return d.dispatchTime ? d.dispatchTime : '- -';
         }},
         {field: 'openOperator', title: '开单员', sort: false,minWidth:100, templet: function(d){
-            return d.openOperator ? d.openOperator : '- -';
+            d.openOperator = d.openOperator || "";
+            d.openOperatorPhone = d.openOperatorPhone || "";
+            return (d.openOperator || d.openOperatorPhone) ? d.openOperator + d.openOperatorPhone : '- -';
         }},
         {field: 'dispatchOperator', title: '调度员', sort: false,minWidth:100, templet: function(d){
-            return d.dispatchOperator ? d.dispatchOperator : '- -';
+            d.dispatchOperator = d.dispatchOperator || "";
+            d.dispatchOperatorPhone = d.dispatchOperatorPhone || "";
+            return (d.dispatchOperator || d.dispatchOperatorPhone) ? d.dispatchOperator + d.dispatchOperatorPhone : '- -';
         }},
         {field: 'fetchOperator', title: '提车员', sort: false,minWidth:100, templet: function(d){
-            return d.fetchOperator ? d.fetchOperator : '- -';
+            d.fetchOperator = d.fetchOperator || "";
+            d.fetchOperatorPhone = d.fetchOperatorPhone || "";
+            return (d.fetchOperator || d.fetchOperatorPhone) ? d.fetchOperator + d.fetchOperatorPhone : '- -';
         }},
         {field: 'deliveryOperator', title: '发运员', sort: false,minWidth:100, templet: function(d){
-            return d.deliveryOperator ? d.deliveryOperator : '- -';
+            d.deliveryOperator = d.fetchOperator || "";
+            d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
+            return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
         }},
         {
         field: 'driverName', title: '司机姓名', sort: false,minWidth:100, templet: function (d) {
-            return d.driverName ? d.driverName : '- -';
+            var driverName = "<a class='table_a pointer blue list_driver_name' data-id="+ d.driverId +">{{}}</a>";
+            if(d.driverName){
+                driverName = driverName.replace("{{}}", d.driverName);
+            }else{
+                driverName = "- -";
+            }
+            return driverName;
         }},
         {
             field: 'driverName', title: '司机手机', sort: false,minWidth:100, templet: function (d) {
@@ -944,7 +976,9 @@ layui.config({
                 } else {
                     payStatus = "-非法状态";
                 }
-
+                if(d.orderType == 2 && d.masterFlag == "否"){
+                    return "";
+                }
                 return d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus;
             }
         },
@@ -968,6 +1002,9 @@ layui.config({
                     payStatus = " - 非法状态";
 
                 }
+                if(d.orderType == 2 && d.masterFlag == "否"){
+                    return "";
+                }
                 return d.arrivePayAmount + "元" + payStatus;
             }
         },
@@ -990,7 +1027,9 @@ layui.config({
                 } else {
                     payStatus = " - 非法状态";
                 }
-
+                if(d.orderType == 2 && d.masterFlag == "否"){
+                    return "";
+                }
                 return d.tailPayAmount + "元" + payStatus;
             }
         },
@@ -1008,6 +1047,9 @@ layui.config({
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='3' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
+            if(permissionList.indexOf("提车照片上传") < 0){
+                str2 = "";
+            }
             switch(d.fetchStatus*1){
                 case 0: 
                     status = "未上传";
@@ -1028,6 +1070,9 @@ layui.config({
             if(d.fetchApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
             }
+            if(d.orderType == 2 && d.masterFlag == "否"){
+                status = "";
+            }
             return status;
         }},
         {field: 'startAuditStatus', title: '发车单审核状态', sort: false,minWidth:100, hide: false, templet: function(d){
@@ -1035,6 +1080,9 @@ layui.config({
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + "  data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='6' data-order="+ d.orderNo +"  data-type='1' data-key='startImages' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
+            if(permissionList.indexOf("发车单-上传") < 0){
+                str2 = "";
+            }
             switch(d.startAuditStatus*1){
                 case 0:
                     status = "未上传";
@@ -1055,6 +1103,9 @@ layui.config({
             if(d.startApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
             }
+            if(d.orderType == 2 && d.masterFlag == "否"){
+                status = "";
+            }
             return status;
         }},
         {field: 'returnAuditStatus', title: '交车单审核状态', sort: false,minWidth:100, hide: false, templet: function(d){
@@ -1062,6 +1113,9 @@ layui.config({
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='3' data-order="+ d.orderNo +" data-type='2' data-key='returnImages' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
+            if(permissionList.indexOf("交接单回收-上传") < 0){
+                str2 = "";
+            }
             switch(d.returnAuditStatus * 1){
                 case 0:
                     status = "未上传";
@@ -1079,12 +1133,14 @@ layui.config({
                     status = "已驳回";
                     break;
             }
-            if(d.returnAuditStatus * 1 == 1){
+            if(d.returnApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
+            }
+            if(d.orderType == 2 && d.masterFlag == "否"){
+                status = "";
             }
             return status;
         }},
-        
     ];
     var showList = [
         "orderNo",
@@ -1120,7 +1176,7 @@ layui.config({
         "returnAuditStatus",
     ];
     var exportHead={};// 导出头部
-    var toolField = {title: '操作', toolbar: '#barDemo', align: 'center', fixed: 'right', width: 350};
+    var toolField = {title: '操作', toolbar: '#barDemo', align: 'left', fixed: 'right', width: 320,};
 
     edipao.request({
         type: 'GET',

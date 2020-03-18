@@ -3,19 +3,21 @@ layui.config({
 }).extend({
     excel: 'layui_exts/excel',
     tableFilter: 'TableFilter/tableFilter'
-}).use(['jquery', 'table','layer','excel','tableFilter'], function () {
+}).use(['jquery', 'table','layer','excel','tableFilter', 'laytpl', 'laypage'], function () {
     var table = layui.table,
         $ = layui.jquery,
         layer = layui.layer,
         edipao = layui.edipao,
         excel = layui.excel,
-        tableFilter = layui.tableFilter;
+        laytpl = layui.laytpl;
+        laypage = layui.laypage;
+        tableFilter = layui.tableFilter,
+        permissionList = edipao.getMyPermission();
 
     function _tableClass(){
         this.user = JSON.parse(sessionStorage.user);
         this.request = { loginStaffId: this.user.staffId };
-        this.permissionList = edipao.getMyPermission();
-        this.pageNumber = 1,
+        this.pageNo = 1,
         this.pageSize = 10;
         this.exportSize = 100000;
         this.exportHead = [];
@@ -45,7 +47,7 @@ layui.config({
             }},
             {field: 'updateTime', title: '更新时间', sort: false, hide: false,width:200}
         ];
-        this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 300}
+        this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 200}
     }
 
     
@@ -108,14 +110,17 @@ layui.config({
                 url: layui.edipao.API_HOST+'/admin/line/list',
                 title: '订单列表',
                 method: "get", // 请求方式  默认get
-                page: true, //开启分页
+                page: false, //开启分页
                 limit: this.pageSize,  //每页显示条数
                 limits: [20, 40], //每页显示条数可选择
                 request: {
                     pageName: 'pageNo', //页码的参数名称，默认：page
                     limitName: 'pageSize' //每页数据量的参数名，默认：limit
                 },
-                where: this.request,
+                where: Object.assign(this.request, {
+                    pageNo: _t.pageNo,
+                    pageSize: _t.pageSize
+                }),
                 height: 'full',
                 autoSort: true,
                 id: 'routeList',
@@ -123,7 +128,7 @@ layui.config({
                     return {
                         "code": res.code, //解析接口状态
                         "msg": res.message, //解析提示文本
-                        "count": res.data.totalSize, //解析数据长度
+                        "count": res.count, //解析数据长度
                         "data": res.data.dataList //解析数据列表
                     }
                 },
@@ -131,17 +136,36 @@ layui.config({
                     countName: 'count',
                     dataName: 'data'
                 },
-                done: function () {//表格渲染完成的回调
-                    _t.bindEvents();
+                done: function (res) {//表格渲染完成的回调
                     _t.bindToolEvent();
+                    if(_t.pageNo == 1){
+                        _t.setLayPage(res.count);
+                    }
                     _t.filterData();
                 },
                 text: {
                     none: "暂无数据"
                 },
+                toolbar: '#exportBtn',
+                defaultToolbar: [],
                 cols: [_t.cols]
             });
             
+        },
+        // 设置分页
+        setLayPage: function(total){
+            let _t = this;
+            laypage.render({
+                elem: 'footer-laypage',
+                count: total,
+                layout: ['count', 'prev', 'page', 'next'],
+                limit: _t.pageSize,
+                jump: function(obj, first){
+                    _t.pageNo = obj.curr;
+                    if(first) return;
+                    _t.tableRender();
+                }
+            });
         },
         // 过滤
         filterData: function(){
@@ -256,24 +280,20 @@ layui.config({
             var _t = this;
             //监听行工具事件
             table.on('tool(routeList)', function (obj) {
-                var data = obj.data; //获得当前行数据
-                var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-                if (layEvent === 'edit') { //下载
-                    // top.xadmin.add_tab('线路规划', 'orderMessage/route-plan.html?guideLineId=' + data.guideLineId, true);
-                    if(_t.permissionList.indexOf('修改') < 0){
-                        layer.alert('你没有访问权限', {icon: 2});
-                        return;
-                    }
+                var data = obj.data;
+                var layEvent = obj.event; 
+                if (layEvent === 'edit') { 
                     xadmin.open('线路规划', './route-plan.html?guideLineId=' + data.guideLineId, 1400, 700)
                 }
             });
-        },
-        // 绑定页面事件
-        bindEvents: function(){
-            var _t = this;
-            $('#exportExcel').off('click').on('click', function(){
-                _t.exportData();
-            })
+            table.on('toolbar(routeList)', function (obj) {
+                var data = obj.data;
+                var layEvent = obj.event; 
+                console.log(111)
+                if (layEvent === 'export') { 
+                    _t.exportData();
+                }
+            });
         }
      
     }

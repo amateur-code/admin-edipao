@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>E地跑运营平台</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Expires" CONTENT="-1">
+    <meta http-equiv="Cache-Control" CONTENT="no-cache">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css">
+    <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../lib/layui/layui.js"></script>
+    <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    // 是否开启刷新记忆tab功能
+    // var is_remember = false;
+    </script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body" id="doc-content">
+                    <table id="wishJourneyList" lay-filter="wishJourneyList"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+layui.use(['table', 'layer'], function(table, layer) {
+    var xadmin = layui.xadmin,
+        edipao = layui.edipao;
+    var params = edipao.urlGet();
+    var wishJourney = eval(params.wishJourney);
+    var wishJourneyData = [];
+    layui.each(wishJourney,function (index,item) {
+        wishJourneyData.push({
+            'start':item['start']['province']+item['start']['city'],
+            'end':item['end']['province']+item['end']['city']
+        })
+    })
+    table.render({
+        elem: '#wishJourneyList',
+        data:wishJourneyData,
+        cols: [
+            [ //表头
+                { field: 'start', title: '始发地'},
+                { field: 'end', title: '目的地'}
+            ]
+        ],
+    });
+})
+</script>
+</body>
+</html>

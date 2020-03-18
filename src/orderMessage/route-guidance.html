@@ -38,25 +38,26 @@
     <div class="layui-fluid">
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12 page-container">
-                <div class="page-header">
-                    <div class="layui-row">
-                        <div class="layui-col-md6">
-                            <div class="title">线路指引列表</div>
-                        </div>
-                        <div class="layui-col-md6 tr">
-                            <button class="layui-btn layui-bg-blue produceOrders" id="exportExcel">导出</button>
-                            <button class="layui-btn layui-bg-black" onclick="xadmin.open('表格设置', './table-set.html?tableKey=route-guidance-list', 600, 600)">表格设置</button>
-                        </div>
-                    </div>
-                </div>
-                <table id="routeList" lay-filter="routeList" lay-size="lg"></table> 
+                <table id="routeList" lay-filter="routeList" lay-size="lg"></table>
+                <div class="footer-laypage" id="footer-laypage"></div>
             </div>
         </div>
     </div>
 </body>
-<script type="text/html" id="edit">
-    <a class="edit" lay-event="edit">修改</a>
-</script>
 <script src="./js/route-guidance.js?VERSION"></script>
+
+<script type="text/html" id="edit">
+    {{# if(permissionList.indexOf('修改') > -1) { }}
+    <a class="layui-btn layui-btn-xs layui-bg-blue edit" lay-event="edit">修改</a>
+    {{# } }}
+</script>
+<script type="text/html" id="exportBtn">
+    <div class="layui-btn-container">
+        {{# if(permissionList.indexOf('导出') != -1){ }}
+        <button class="layui-btn produceOrders" lay-event="export">导出</button>
+        {{# } }}
+        <button class="layui-btn " onclick="xadmin.open('表格设置', './table-set.html?tableKey=route-guidance-list', 600, 600)">表格设置</button>
+    </div>
+</script>
 
 </html>

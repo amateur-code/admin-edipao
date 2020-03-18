@@ -189,25 +189,43 @@ layui.config({
     $("#driverType").html(optionType);
     form.render('select');
     // 身份证-正
+    driverNameVal = '';
+    idNumVal = '';
+    addressVal = '';
+    idLicenceFrontImgFlag = false; // 判断是否触发图片上传OCR识别，判断提交信息是否一致。如果修改司机时没提交图片OCR识别，则不判断，新增司机时判断。
     uploadImg('idLicenceFrontImg',{'imgType':1,'side':'face'},function (data) {
+        idLicenceFrontImgFlag = true;
         var val = data.data.ocrData;
+        driverNameVal = val.name;
         $('#name').val(val.name); // 司机姓名
         $('#accountName').val(val.name); //银行账户名
+        idNumVal = val.idNum;
         $('#idNum').val(val.idNum); // 身份证号码
+        addressVal = val.address;
         $('#address').val(val.address);  // 住址
     });
     // 身份证-反
+    idLicenceValidityVal = '';
+    idLicenceBackImgFlag = false;
     uploadImg('idLicenceBackImg',{'imgType':1,'side':'back'},function (data) {
+        idLicenceBackImgFlag = true;
         var endDate = data.data.ocrData.endDate;
         if(endDate!=null&&endDate!=''){
             var dateFormat = getFormatDate(endDate);
+            idLicenceValidityVal = dateFormat;
             $('#idLicenceValidity').val(dateFormat); // 身份证有效期
         }
     });
     // 驾驶证-正
+    driveLicenceTypeVal = '';
+    drivingAgeVal = '';
+    driveLicenceValidityVal = '';
+    driveLicenceFrontImgFlag = false;
     uploadImg('driveLicenceFrontImg',{'imgType':2,'side':'face'},function (data) {
+        driveLicenceFrontImgFlag = true;
         var val = data.data.ocrData;
         var vehicleType = val.vehicleType; //驾照类型
+        driveLicenceTypeVal = vehicleType;
         $('#driveLicenceType').val(vehicleType);
         form.render('select');
         var issueDate = val.issueDate; // 驾龄计算
@@ -215,11 +233,13 @@ layui.config({
             var startDateStr = getFormatDate(issueDate);
             var endDateStr = getNowFormatDate();//当前时间
             var year = getDateYearSub(startDateStr, endDateStr);// 驾龄计算差值
+            drivingAgeVal = year;
             $('#drivingAge').val(year);
         }
         var endDate = val.endDate; // 驾照有效期
         if(endDate!=null&&endDate!=''){
             var dateFormat = getFormatDate(endDate);
+            driveLicenceValidityVal = dateFormat;
             $('#driveLicenceValidity').val(dateFormat); // 驾照有效期
         }
     });

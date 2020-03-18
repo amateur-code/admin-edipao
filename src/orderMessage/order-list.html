@@ -45,8 +45,8 @@
                         </div>
                         <div class="layui-col-md6 tr">
                             <button id="import_order" data-event="import_order" class="top_tool_bar layui-btn">录入订单</button>
-                            <button id="export_data" data-event="export_data" class="top_tool_bar layui-btn layui-bg-blue">导出</button>
-                            <button id="table_set" data-event="table_set" class="top_tool_bar layui-btn layui-bg-black">表格设置</button>
+                            <button id="export_data" data-event="export_data" class="top_tool_bar layui-btn">导出</button>
+                            <button id="table_set" data-event="table_set" class="top_tool_bar layui-btn">表格设置</button>
                         </div>
                     </div>
                 </div>
@@ -57,7 +57,6 @@
     <div class="hide">
         <div id="pre_fee_verify_table"></div>
     </div>
-</body>
 <script id="pic_view_tpl" type="text/html">
     <div style="padding: 10px">
         <form id="pic_view_form" lay-filter="uploadPic" class="layui-form">
@@ -75,7 +74,6 @@
 </script>
 <script id="pic_view_list_tpl" type="text/html">
     <div style="margin-top:20px;" class="view_pic_container">
-        {{# console.log(d)}}
         {{#  if(d.field == 'fetchStatus'){ }}
         <div style="margin-bottom: 20px;">提车图片</div>
         <div class="layui-row">
@@ -261,14 +259,22 @@
           </div>
     </div>
 </script>
+
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>
-    <a class="layui-btn layui-btn-xs layui-bg-red" lay-event="verify">审核</a>
-    <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="view">查看</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="cancel">取消</a>
-    <a class="layui-btn layui-bg-cyan layui-btn-xs" lay-event="log">日志</a>
+    {{# if(d.showBtn * 1 == 1){ }}
+        {{# if(permissionList.indexOf('修改') > -1){ }}
+        <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>
+        {{# } }}
+        {{# if(d.orderApprovalBtn*1 == 1){ }}
+        <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="verify">审核</a>
+        {{# } }}
+        <a class="layui-btn laydui-btn-xs layui-bg-blue" lay-event="view">查看</a>
+        {{# if(permissionList.indexOf('取消') > -1){ }}
+        <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="cancel">取消</a>
+        {{# } }}
+        <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="log">日志</a>
+    {{# } }}
 </script>
-
 <script src="./js/order-list.js?VERSION"></script>
-
+</body>
 </html>

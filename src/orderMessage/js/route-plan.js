@@ -18,7 +18,6 @@ tableFilter: 'TableFilter/tableFilter'
     function _routePlan(){
         this.user = JSON.parse(sessionStorage.user);
         this.request = { loginStaffId: this.user.staffId };
-        console.log(edipao.urlGet().guideLineId)
         this.guideLineId =  edipao.urlGet().guideLineId;
         this.driverReportPoint = [];
         this.pageNumber = 1;
@@ -77,7 +76,7 @@ tableFilter: 'TableFilter/tableFilter'
         updateLine: function(){
             var _t = this;
             if(!_t.map) return;
-            $.getJSON("http://api.careland.com.cn/api/v1/navi/routeplan?origin=410817199,81362500&destination=419364916,143908009&prefer=1-2-16&evade=32&avoid=2&callback=&ak=6012dcd6278a2d4db3840604",function(json){          
+            $.getJSON("http://api.careland.com.cn/api/v1/navi/routeplan?origin=410817199,81362500&destination=419364916,143908009&prefer=1-2-16&evade=32&avoid=2&callback=&ak=6012dcd6278a2d4db3840604&xytype=2",function(json){          
                 // 提交保存json
                 if(json.errorCode != 0 ){
                     layer.msg(json.errorMessage, {
@@ -126,7 +125,7 @@ tableFilter: 'TableFilter/tableFilter'
                 var tmp1 = tmp[i].split(',');
                 var l = data[d].length;
                 data[d][l] = {};
-                data[d][l].Point = new Careland.Point(tmp1[0],tmp1[1]);
+                data[d][l].Point = new Careland.GbPoint(tmp1[1], tmp1[0]);
                 data[d][l].IconType = CLDMAP_TRACK_ICON_TRUCK;
             }
             var trackHandler = new Careland.Track();
@@ -317,15 +316,15 @@ tableFilter: 'TableFilter/tableFilter'
                     btn: ['取消', '确定'],
                     btnAlign: 'c',
                     zIndex:9990, //层优先级
-                    cancel: function () {
-                        
+                    end: function () {
+                        document.getElementById('add-report-detail').innerHTML = '';
+                        form.val("report-form", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                            "driverReportType": ""
+                        });
                     },
-                    yes: function(){
-                        
-                    },
+                    shadeClose: true,
                     btn2: function(){
                         var formData = form.val('report-form');
-                        console.log(formData)
                         _t.submitDriverReport(formData);
                     },
                     success: function () {
@@ -360,7 +359,7 @@ tableFilter: 'TableFilter/tableFilter'
                     btnAlign: 'c',
                     zIndex:9991, //层优先级
                     cancel: function () {
-                        
+                        _t.loc = {};
                     },
                     btn2: function(){
                         if(_t.loc){
@@ -382,7 +381,6 @@ tableFilter: 'TableFilter/tableFilter'
                         ac.setLocation(map);
                         ac.setInputForm('seachLocation');
                         ac.addEventListener("onConfirm",function(e){
-                            console.log(e.item)
                             _t.address = e.item.poi.name;
                             _t.loc = {
                                 name: e.item.poi.name,
@@ -392,6 +390,17 @@ tableFilter: 'TableFilter/tableFilter'
                                 GbPoint: e.item.poi.pointGb
                             }
                             map.setCenter(e.item.poi.pointGb);
+                            var layer = new Careland.Layer('point', 'layer');		    //创建点图层
+                            map.addLayer(layer);										//将图层添加到地图上
+                            //创建样式，包括标注点位置的偏移以及文本的偏移
+                            var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'../../images/center.png',fontColor:'#000'});
+                            //创建图片标注点
+                            var marker = new Careland.Marker('image');
+                            marker.setStyle(style);										//设置图片标注点样式
+                            marker.setPoint(e.item.poi.pointGb);										//设置标注点位置
+                            marker.setText(e.item.poi.name);										//设置标注点文本
+                            marker.setTip(e.item.poi.name);							//设置鼠标移到标注点上显示的文本
+                            layer.add(marker);
                             ac.hide();
                         });
 
