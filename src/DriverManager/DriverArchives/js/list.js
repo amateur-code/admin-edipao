@@ -273,7 +273,11 @@ layui.config({
             defaultToolbar: [],
             cols: [tableCols],
             done: function (res, curr, count) {
-                // console.log("监听where:", this.where);
+                if(res.data== null){
+                    $('.layui-table-header').css('overflow-x','scroll')
+                }else{
+                    $('.layui-table-header').css('overflow','hidden')
+                }
                 tableFilterIns&&tableFilterIns.reload() // 搜索
             }
         });
