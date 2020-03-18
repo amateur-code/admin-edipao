@@ -560,6 +560,11 @@ layui.config({
     }
     // 导出
     function exportExcel() {
+        var checkStatus = table.checkStatus('driverList');
+        if(checkStatus.data.length > 0){
+            exportXlsx(checkStatus.data)
+            return;
+        }
         var param = where;
         param['pageNumber']= 1;
         param['pageSize'] =10000;
@@ -571,53 +576,56 @@ layui.config({
             if (res.code == 0) {
                 if(res.data){
                     var data = res.data.driverInfoListDtoList;
-                    var exportData = [];
-                    // 添加头部
-                    exportData.push(exportHead);
-                    // 过滤处理数据
-                    layui.each(data, function(k, v){
-                        var exportObj={};
-                        layui.each(v,function (index,item) {
-                            if(index && showList.indexOf(index) != -1){
-                                switch(index) {
-                                    case 'drivingAge':
-                                        // 驾龄-处理数据
-                                        exportObj[index] = drivingAgeNull(item)
-                                        break;
-                                    case 'wishJourney':
-                                        // 意向线路-处理数据
-                                        exportObj[index] = wishJourneyNull(item)
-                                        break;
-                                    case 'oftenJourney':
-                                        // 常跑线路-处理数据
-                                        exportObj[index] = wishJourneyNull(item)
-                                        break;
-                                    case 'deposit':
-                                        // 押金-处理数据
-                                        exportObj[index] = depositNull(item)
-                                        break;
-                                    case 'licenceWarn':
-                                        // 证件预警-处理数据
-                                        exportObj[index] = licenceWarnNull(item)
-                                        break;
-                                    case 'approvalFlag':
-                                        // 审核状态-处理数据
-                                        exportObj[index] = approvalFlagData[item]
-                                        break;
-                                    default:
-                                        exportObj[index] = DataNull(item);
-                                }
-                            }
-                        })
-                        exportData.push(exportObj)
-                    })
-                    // 导出
-                    excel.exportExcel({
-                        sheet1: exportData
-                    }, '司机档案.xlsx', 'xlsx');
+                    exportXlsx(data)
                 }
             }
         })
+    }
+    function exportXlsx (data) {
+        var exportData = [];
+        // 添加头部
+        exportData.push(exportHead);
+        // 过滤处理数据
+        layui.each(data, function(k, v){
+            var exportObj={};
+            layui.each(v,function (index,item) {
+                if(index && showList.indexOf(index) != -1){
+                    switch(index) {
+                        case 'drivingAge':
+                            // 驾龄-处理数据
+                            exportObj[index] = drivingAgeNull(item)
+                            break;
+                        case 'wishJourney':
+                            // 意向线路-处理数据
+                            exportObj[index] = wishJourneyNull(item)
+                            break;
+                        case 'oftenJourney':
+                            // 常跑线路-处理数据
+                            exportObj[index] = wishJourneyNull(item)
+                            break;
+                        case 'deposit':
+                            // 押金-处理数据
+                            exportObj[index] = depositNull(item)
+                            break;
+                        case 'licenceWarn':
+                            // 证件预警-处理数据
+                            exportObj[index] = licenceWarnNull(item)
+                            break;
+                        case 'approvalFlag':
+                            // 审核状态-处理数据
+                            exportObj[index] = approvalFlagData[item]
+                            break;
+                        default:
+                            exportObj[index] = DataNull(item);
+                    }
+                }
+            })
+            exportData.push(exportObj)
+        })
+        // 导出
+        excel.exportExcel({
+            sheet1: exportData
+        }, '司机档案.xlsx', 'xlsx');
     }
     // 获取今天之后几天的日期
     function getDay (val) {
