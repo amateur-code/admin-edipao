@@ -27,6 +27,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     this.tempLicenseBackImage = [];
     this.tempLicense = [];
     this.driverInfoListDto = [];
+    this.staffList = [];
+    this.driverTimer = null;
     this.formList = [
       "form_ascription",
       "form_dispatch",
@@ -40,9 +42,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
   }
   Edit.prototype.init = function(){
     var _this = this;
-    this.getFeeItemList();
-    this.getFeeItemUnitList();
-    this.getOrder().done(function (res) {
+    $.when(this.getStaffList(), this.getFeeItemList(), this.getFeeItemUnitList(), this.getOrder()).done(function (res1, res2, res3, res4) {
+      res = res4[0];
       if(res.code == "0"){
         _this.orderData = res.data;
         _this.setData(res.data);
@@ -52,17 +53,34 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       }
     });
   }
+  Edit.prototype.getStaffList = function(){
+    var _this = this;
+    return edipao.request({
+      url: "/admin/staff/list",
+      method: "GET",
+      data: {
+        loginStaffId: _this.user.staffId,
+        pageNo: 1,
+        pageSize: 9999
+      }
+    }).done(function (res) {
+      if(res.code == "0"){
+        _this.staffList = res.data.staffDtoList;
+      }
+    });
+  }
   Edit.prototype.addFeeItem = function (data) {
     //后台增加费用项
     var _this = this;
     return edipao.request({
       url: "/admin/feeItem/add",
+      method: "GET",
       data: {
         loginStaffId: _this.user.staffId,
         name: data.addFeeName,
         unit: data.addFeeUnit
       }
-    })
+    });
   }
   Edit.prototype.getFeeItemUnitList = function () {
     var _this = this;
@@ -112,13 +130,15 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
   Edit.prototype.bindFeeUnitSelect = function () {
     var _this = this;
     form.on("select", function (obj) {
-      console.log(obj)
       var elem = obj.elem;
       if(elem.name == "unit"){
         var type = elem.dataset.type;
         var index = elem.dataset.index * 1;
         var value = elem.value;
         _this[type][index].unit = value;
+      }else if(elem.name == "followOperatorPhone"){
+        var name = obj.elem.selectedOptions[0].dataset.name;
+        form.val("form_ascription", {followOperator: name});
       }
     });
   }
@@ -129,14 +149,18 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
     _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
     _this.setFeeList();
+    laytpl($("#form_ascription_tpl").html()).render({orderData: _this.orderData, staffList: _this.staffList}, function (html) {
+      $("#form_ascription_container").html(html);
+      form.val("form_ascription", data);
+    });
     laytpl($("#base_info_tpl").html()).render(data, function(html){
       $("#base_info").html(html);
     });
     laytpl($("#income_info_tpl").html()).render(data, function(html){
       $("#income_info").html(html);
+      form.render();
     });
     if(data.driverId) form.val("form_dispatch", data);
-    form.val("form_ascription", data);
     var carFormStr = "";
     var carFormHtml = $("#car_info_tpl").html();
     data.truckDTOList.forEach(function (item, index) {
@@ -339,18 +363,15 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     });
     var feeList = [];
     _this.feeItemList.forEach(function(item){
-      if(list.includes(item)){
-        feeList.push({
-          key: item,
-          checked: true
-        });
+      if(list.includes(item.value)){
+        item.checked = true;
+        feeList.push(item);
       }else{
-        feeList.push({
-          key: item,
-          checked: false
-        })
+        item.checked = false;
+        feeList.push(item);
       }
     });
+    console.log(feeList)
     laytpl($("#fee_tpl").html()).render({feeList: feeList}, function(html){
       var layerIndex1 = layer.open({
         title: "增加费用",
@@ -371,7 +392,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
                 key: item,
                 val: 0,
                 unit: _this.feeUnitItemList[0],
-                new: true
               });
             }else{
               newObj.push(_this[type][oldList.indexOf(item)])
@@ -769,10 +789,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     }).done(function (res) {
       if(res.code == "0"){
         if(!res.data) res.data = [];
+        if(res.data.length < 1)return;
         _this.driverInfoListDto = res.data;
         laytpl($("#driver_list_tpl").html()).render({list: res.data}, function (html) {
           $("#driver_name_select").append(html);
-          $(".driver_item").unbind().on("click", function (e) {
+          $(".driver_item").on("click", function (e) {
             var index = e.target.dataset.index;
             if(index == "none") {
               var data = _this.driverInfoListDto[index*1];
@@ -895,6 +916,39 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     $("#driver_name").unbind().on("click", function(){
       _this.openSelectDriver();
     });
+    $("#driver_name").on("input", function (e) {
+      var name = e.target.value;
+      _this.driverTimer = setTimeout(function () {
+        edipao.request({
+          url: "/admin/driver/info/list?pageNumber=1&pageSize=100&searchFieldDTOList%5B0%5D.fieldName=name&searchFieldDTOList%5B0%5D.fieldValue=" + name,
+          method: "GET",
+        }).done(function (res) {
+          if(res.code == "0"){
+            if(!res.data) return;
+            if(!res.data.driverInfoListDtoList || res.data.driverInfoListDtoList.length < 0) return;
+            _this.driverInfoListDto = res.data.driverInfoListDtoList;
+            laytpl($("#driver_list_tpl").html()).render({list: res.data.driverInfoListDtoList}, function (html) {
+              $("#driver_name_select").append(html);
+              $(".driver_item").on("click", function (e) {
+                var index = e.target.dataset.index;
+                if(index != "none") {
+                  var data = _this.driverInfoListDto[index*1];
+                  var driverData = {
+                    driverId: data.id,
+                    driverName: data.name,
+                    driverPhone: data.phone,
+                    driverIdCard: data.idNum,
+                    driverCertificate: data.driveLicenceType,
+                  }
+                  form.val("form_dispatch", driverData);
+                }
+                $('#match_driver_list').remove();
+              });
+            });
+          }
+        });
+      }, 500);
+    });
     $("#driver_name").on("blur", function(){
       setTimeout(function(){
         $('#match_driver_list').hide();
@@ -902,6 +956,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       }, 1000);
     });
     $("#select_driver_btn").unbind().on("click", function () {
+      $('#match_driver_list').hide();
+      $('#match_driver_list').remove();
       _this.openSelectDriverTable();
     });
     $("#btn_confirm").unbind().on("click", function (e){
@@ -936,6 +992,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         _this.handleManageFeeInput(e);
       });
       $(".select_vin").unbind().on("click", function (e) {
+        layer.alert("没有数据");
+        return;
         _this.openSelectVin(e);
       });
       var index = _this.carFormList.length - 1;
@@ -976,6 +1034,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       _this.openAddFee(e);
     });
     $(".select_vin").unbind().on("click", function (e) {
+      layer.alert("没有数据");
+      return;
       _this.openSelectVin(e);
     });
   }

@@ -107,7 +107,7 @@
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
                             <span class="layui-form-span text_left form_span">车辆vin码：</span>
-                            <input disabled type="tel" value="111111111111111111123123" name="vinCodee" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input disabled type="tel" name="vinCodee" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">产品代码：</span>
@@ -121,57 +121,57 @@
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
                             <span class="layui-form-span text_left form_span">轴数：</span>
-                                <input disabled disabled type="tel" name="shaftNum" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input disabled disabled type="tel" name="shaftNum" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">功率：</span>
-                                <input disabled disabled type="text" name="power" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input disabled disabled type="text" name="power" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">GPS设备编号：</span>
-                                <input disabled disabled type="text" name="gpsDeviceCode" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input disabled disabled type="text" name="gpsDeviceCode" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
                             <span class="layui-form-span text_left form_span">客户名称：</span>
-                                <input disabled type="text" name="customerFullName" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input disabled type="text" name="customerFullName" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">发车仓库：</span>
-                                <input disabled type="text" name="startWarehouse" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input disabled type="text" name="startWarehouse" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">仓库单号：</span>
-                                <input disabled disabled type="text" name="warehouseNo" autocomplete="off" class="layui-input">
+                            <input disabled disabled type="text" name="warehouseNo" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
                             <span class="layui-form-span text_left form_span">发车停车场：</span>
-                                <input disabled type="text" name="startPark" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input disabled type="text" name="startPark" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">发车城市：</span>
-                                <input disabled type="text" name="startCity" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input disabled type="text" name="startCity" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">发车地址：</span>
-                                <input disabled disabled type="text" name="startAddress" autocomplete="off" class="layui-input">
+                            <input disabled disabled type="text" name="startAddress" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
                             <span class="layui-form-span text_left form_span">收车网点：</span>
-                                <input disabled type="text" name="endPark" lay-verify="required" autocomplete="off" class="layui-input">
+                            <input disabled type="text" name="endPark" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">收车城市：</span>
-                                <input disabled disabled type="text" name="endCity" autocomplete="off" class="layui-input">
+                            <input disabled disabled type="text" name="endCity" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">收车地址：</span>
-                                <input disabled disabled type="text" name="endAddress" autocomplete="off" class="layui-input">
+                            <input disabled disabled type="text" name="endAddress" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
@@ -339,11 +339,11 @@
                             </div>
                             <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                                 <span class="layui-form-span text_left form_span">跟单员手机号：</span>
-                                <input disabled type="text" name="fetchOperatorPhone" lay-verify="required" autocomplete="off" class="layui-input">
-                                {{# if(d.fetchOperatorPhone){ }}
+                                <input disabled type="text" name="followOperatorPhone" lay-verify="required" autocomplete="off" class="layui-input">
+                                {{# if(d.followOperatorPhone){ }}
                                 <div class="check">
                                     <label class=" x-red">待审：</label> 
-                                    <span class="">{{d.fetchOperatorPhone}}</span>
+                                    <span class="">{{d.followOperatorPhone}}</span>
                                 </div>
                                 {{# } }}
                             </div>

@@ -150,6 +150,8 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                         });
                     });
                 }
+            }else{
+                layer.alert("导入成功");
             }
             //展示已知数据
             renderTable();
