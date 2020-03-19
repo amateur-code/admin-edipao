@@ -1,3 +1,19 @@
+//过滤器数据
+var orderStatusData = [
+    {key: 1, value: "待调度"},
+    {key: 2, value: "待发车"},
+    {key: 3, value: "运输中"},
+    {key: 4, value: "已收车"},
+    {key: 5, value: "已完结"},
+    {key: 6, value: "已取消"},
+]
+var orderTypeData = [
+    {key: 1, value: "单车单"},
+    {key: 2, value: "背车单"},
+]
+var provinceList = [];
+var cityCode = {};
+
 layui.config({
     base: '../lib/'
 }).extend({
@@ -9,6 +25,7 @@ layui.config({
     var table = layui.table;
     var $ = layui.jquery;
     var form = layui.form;
+    window.form = form;
     var layer = layui.layer;
     var upload = layui.upload;
     var laytpl = layui.laytpl;
@@ -31,25 +48,25 @@ layui.config({
         returnImagesList: []
     }
     var uploadData = {}
-    top.window.uploadData = uploadData;
-    top.window.uploadObj = uploadObj;
     var filters = [
         { field: 'orderNo', type: 'input' },
         { field: 'warehouseNo', type: 'input' },
         { field: 'vinCode', type: 'input' },
-        { field: 'tempLicense', type: 'radio' },
-        { field: 'orderStatus', type: 'radio' },
-        { field: 'orderType', type: 'input' },
-        { field: 'customerFullName', type: 'city' },
-        { field: 'startWarehouse', type: 'city' },
+        { field: 'tempLicense', type: 'input' },
+        { field: 'orderStatus', type: 'radio', data: orderStatusData },
+        { field: 'orderType', type: 'radio', data:orderTypeData },
+        { field: 'customerFullName', type: 'input' },
+        { field: 'startWarehouse', type: 'input' },
         { field: 'startPark', type: 'input' },
-        { field: 'startCity', type: 'input' },
+        { field: 'startCity', type: 'city' },
         { field: 'startAddress', type: 'input' },
+        { field: 'startProvince', type: 'province' },
         { field: 'endPark', type: 'input' },
-        { field: 'endCity', type: 'input' },
+        { field: "endProvince", title: "收车省" },
+        { field: 'endCity', type: 'city' },
         { field: 'endAddress', type: 'input' },
-        { field: 'transportAssignTime', type: 'input' },
-        { field: 'dispatchTime', type: 'input' },
+        { field: 'transportAssignTime', type: 'timeslot' },
+        { field: 'dispatchTime', type: 'timeslot' },
         { field: 'openOperator', type: 'input' },
         { field: 'dispatchOperator', type: 'input' },
         { field: 'fetchOperator', type: 'input' },
@@ -57,9 +74,9 @@ layui.config({
         { field: 'driverName', type: 'input' },
         { field: 'driverPhone', type: 'input' },
         { field: 'driverIdCard', type: 'input' },
-        { field: 'prePayAmount', type: 'input' },
-        { field: 'arrivePayAmount', type: 'input' },
-        { field: 'tailPayAmount', type: 'input' },
+        { field: 'prePayAmount', type: 'numberslot' },
+        { field: 'arrivePayAmount', type: 'numberslot' },
+        { field: 'tailPayAmount', type: 'numberslot' },
     ]
     initPermission();
     function initPermission() {
@@ -70,6 +87,74 @@ layui.config({
             $("#export_data").remove();
         }
     }
+    // 自定义验证规则
+    form.verify({
+        provinceVerify: function(value) {
+            if(value==''||value=='请选择省份'){
+                return '请选择省份';
+            }
+        },
+        cityVerify: function(value) {
+            if(value==''||value=='请选择市级'){
+                return '请选择市级';
+            }
+        }
+    });
+    // 获取城市数据
+    edipao.request({
+        url: '/admin/city/all',
+    }).done(res=>{
+        if(res.code == 0){
+            var data = res.data;
+            if(data){
+                provinceList = toTree(data);
+            }
+        }else{
+            layer.msg(res.message)
+        }
+    })
+    function toTree(data) {
+         var val = [
+                 {
+                     name: '请选择省份',
+                     code:'',
+                     cityList: [
+                         { name: '请选择市级', areaList: [],code:'', },
+                     ]
+                 }
+             ];
+        var level2 = [];
+        layui.each(data,function (index,item) {
+            if(item.level == 1){
+                var cityList = []
+                if(item.province.indexOf('北京')=='-1'&&item.province.indexOf('天津')=='-1'&&item.province.indexOf('上海')=='-1'&&item.province.indexOf('重庆')=='-1'){
+                    cityList = [{ name: '全部', areaList: []}]
+                }
+                val.push({
+                    name: item.province,
+                    code:item.code,
+                    cityList:cityList
+                })
+            }else{
+                level2.push(item)
+            }
+        });
+
+        layui.each(val,function (k,v) {
+            layui.each(level2,function (m,n) {
+                if(v.name==n.province){
+                    val[k]['cityList'].push({
+                        name: n.city,
+                        code:n.code,
+                        areaList:[]
+                    });
+                    cityCode[n.city] = n.code;
+                }
+            })
+            cityCode[v.name] = v.code;
+        });
+        return val;
+    }
     tableFilterIns = tableFilter.render({
         'elem' : '#orderList',//table的选择器
         'mode' : 'self',//过滤模式
@@ -79,7 +164,9 @@ layui.config({
             where = {
                 loginStaffId: edipao.getLoginStaffId()
             };
+            console.log(filters)
             layui.each(filters,function(key, value){
+                console.log(key, value)
                 if(key=='licenceWarn'){
                     // 证件预警 比如预警是30天, 今天是3月8号, 传值4月8日。
                     where['searchFieldDTOList['+ index +'].fieldName'] = validityData[value];

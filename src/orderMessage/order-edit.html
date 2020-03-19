@@ -302,11 +302,11 @@
                             <label class="layui-form-label text_left form_label">收车联系人</label><br>
                             <div class="layui-input-inline">
                                 <div class="layui-row">
-                                    <div class="layui-col-md5">
-                                        <input type="text" name="connectorName" autocomplete="off" class="layui-input">
+                                    <div class="layui-col-md6">
+                                        <input type="text" name="connectorName" autocomplete="off" class="layui-input" placeholder="联系人姓名">
                                     </div>
-                                    <div class="layui-col-md5">
-                                        <input type="number" name="connectorPhone" autocomplete="off" class="layui-input">
+                                    <div class="layui-col-md6">
+                                        <input type="number" name="connectorPhone" autocomplete="off" class="layui-input" placeholder="联系人手机号">
                                     </div>
                                 </div>
                             </div>
@@ -323,7 +323,9 @@
                                 <input type="number" name="customerMileage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">收入金额(元)</label><br>
                             <div class="layui-input-inline">
                                 <input data-filter="CARFORM" type="number" name="income" autocomplete="off" class="layui-input car_income">
@@ -335,9 +337,7 @@
                                 <input data-filter="CARFORM" type="text" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
                             </div>
                         </div>
-                    </div>
-                    <div class="layui-form-item layui-row">
-                        <div class="layui-inline layui-col-md3">
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">结算方式</label><br>
                             <div class="layui-input-inline">
                                 <select name="settleWay" lay-verify="">

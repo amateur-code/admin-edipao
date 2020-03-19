@@ -175,12 +175,16 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var carFormHtml = $("#car_info_tpl").html();
     data.truckDTOList.forEach(function (item, index) {
       var filterStr = "form_car_" + index;
-      _this.carFormList.push(filterStr);
+      _this.carFormList.push({
+        filter: filterStr,
+        id: item.id
+      });
       carFormStr += carFormHtml.replace(/CARFORM/g,filterStr);
     });
     $("#car_form_container").html(carFormStr);
     form.render();
     _this.carFormList.forEach(function (item, index) {
+      item = item.filter;
       var truckData;
       try {
         data.truckDTOList[index] = data.truckDTOList[index] || "{}";
@@ -384,7 +388,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         feeList.push(item);
       }
     });
-    console.log(feeList)
     laytpl($("#fee_tpl").html()).render({feeList: feeList}, function(html){
       var layerIndex1 = layer.open({
         title: "增加费用",
@@ -482,8 +485,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var idToAdd = data.id;
     //待删除的车辆中已包含
     var indexTodel;
-    var index = _this.carFormList.length - 1;
-
+    var index = filter.slice(-1) * 1;
     // upload.render({
     //   elem: $('.tempLicense')[index],
     //   url: edipao.API_HOST + '/admin/truck/upload/image',
@@ -511,6 +513,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     //     }
     //   }
     // });
+    _this.carFormList[index].id = idToAdd;
     var delCarsFlag = _this.carsToDel.some(function (item, index) {
       if(item.id == data.id) {idTodel = item.id; indexTodel = index;}
       return item.id == data.id;
@@ -589,7 +592,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       });
     }
     _this.carFormList.forEach(function (item, index) {
-      if(item == filter) carFormListIndex = index;
+      if(item.filter == filter) carFormListIndex = index;
     });
     _this.carFormList.splice(carFormListIndex, 1);
     _this.tempLicenseBackImage.splice(carFormListIndex, 1);
@@ -656,7 +659,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     delete orderData.truckDTOList;
     var ascriptionData = form.val("form_ascription");
     var dispatchData = form.val("form_dispatch");
-    console.log(dispatchData)
     _this.prePay = _this.prePay.map(function (item, index) {
       delete item.new;
       item.val = dispatchData["prePay_" + index] || 0;
@@ -676,8 +678,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var totalManageFee = 0;
     var carsLength = _this.cars.length + _this.carsToAdd.length - _this.carsToDel.length;
     _this.carFormList.forEach(function (item, index) {
-      var itemData = form.val(item);
-      console.log(itemData.masterFlag)
+      var itemData = form.val(item.filter);
       if(!itemData.id && itemData.id != 0) return;
       totalIncome += itemData.income * 1;
       totalManageFee += itemData.manageFee * 1;
@@ -1179,7 +1180,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     $("#add_car").unbind().on("click", function(e){
       var carFormHtml = $("#car_info_tpl").html();
       var filterStr = "form_car_" + _this.carFormList.length;
-      _this.carFormList.push(filterStr);
+      _this.carFormList.push({
+        filter: filterStr,
+        id: ""
+      });
       var html = carFormHtml.replace(/CARFORM/g, filterStr);
       $("#car_form_container").append(html);
       form.render();
@@ -1205,6 +1209,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         id: "",
         image: ""
       });
+      _this.tempLicenseBackImage.push({
+        id: "",
+        image: ""
+      });
       laydate.render({
         elem: $(".latestArriveTime")[index], //指定元素
         type: "datetime",
@@ -1215,7 +1223,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         url: edipao.API_HOST + '/admin/truck/upload/image',
         data: {
           loginStaffId: _this.user.staffId,
-          truckId: idToAdd,
+          truckId: _this.carFormList[index].id,
           type: 1,
           index: 1
         },
@@ -1229,7 +1237,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           if(res.code == 0){
             _this.tempLicenseBackImage[index] = {
               image: res.data,
-              id: idToAdd
+              id: _this.carFormList[index].id
             };
             layer.msg("上传成功");
           }else{

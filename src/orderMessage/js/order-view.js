@@ -161,14 +161,16 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         if(!item.startBillImage) item.startBillImage = "";
         item.startBillImage = item.startBillImage.split(",");
         laytpl(imageStr).render(item, function (imageHtml) {
-          var filterStr = "form_car_" + index;
-          _this.carFormList.push(filterStr);
-          carFormHtml = carFormHtml.replace(/CARFORM/g, filterStr);
-          carFormHtml = carFormHtml.replace("IMAGESTR", imageHtml);
-          carFormStr += carFormHtml;
-          if(index == data.truckDTOList.length -1){
-            $("#car_form_container").html(carFormStr);
-          }
+          laytpl(carFormHtml).render(data.truckDTOList[index], function (html) {
+            var filterStr = "form_car_" + index;
+            _this.carFormList.push(filterStr);
+            html = html.replace(/CARFORM/g, filterStr);
+            html = html.replace("IMAGESTR", imageHtml);
+            carFormStr += html;
+            if(index == data.truckDTOList.length -1){
+              $("#car_form_container").html(carFormStr);
+            }
+          });
         });
       });
       form.render();

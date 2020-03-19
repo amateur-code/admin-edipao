@@ -119,6 +119,16 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						filterBox.find('form').append('<input type="search" name="'+filterName+'-phone" lay-verify="contract" lay-verType="tips" placeholder="输入手机号" class="layui-input">');
 					}
 
+					if(filterType == 'province'){
+						filterBox.find('form').append(
+							`<div class="layui-form-item x-city" id="${filterName}Start">
+							<select name="${filterName}Start-province" lay-filter="province" lay-verify="provinceVerify">
+							<option value="">请选择省</option>
+							</select>
+							</div>`
+						);
+					}
+
 					// 自定义-城市
 					if(filterType == "city"){
 						filterBox.find('form').append(`<div class="layui-form layui-col-md12  layui-form-pane">
@@ -166,7 +176,8 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						laydate.render({
 						    elem: filterBox.find('input[name='+filterName+']')[0],
 						    type: 'datetime',
-						    range: '至'
+								range: '至',
+								trigger: "click"
 						});
 					}
 
@@ -183,6 +194,16 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 							// 必须引用xctiy.js 初始化
 							$('#'+filterName+'Start').xcity();
 							$('#'+filterName+'End').xcity();
+						}
+					}
+					if(filterType == "province"){
+						var val = tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
+						if(val&&JSON.stringify(val) != "{}"){
+							// 必须引用xctiy.js 有值时赋值
+							$('#'+filterName+'Start').xcity(val[filterName+'Start-province'],val[filterName+'Start-city']);
+						}else{
+							// 必须引用xctiy.js 初始化
+							$('#'+filterName+'Start').xcity();
 						}
 					}
 					//渲染layui form
@@ -247,6 +268,14 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 
 						// 如果城市
 						if(filterType == "city"){
+							var NEWfield = {};
+							for(var key in data.field){
+								NEWfield[key] = data.field[key]
+							}
+							data.field[filterName] = NEWfield
+						}
+
+						if(filterType == "province"){
 							var NEWfield = {};
 							for(var key in data.field){
 								NEWfield[key] = data.field[key]
