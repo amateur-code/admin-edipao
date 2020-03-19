@@ -137,6 +137,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       laytpl($("#income_info_tpl").html()).render(data, function(html){
         $("#income_info").html(html);
       });
+      console.log(data)
       form.val("form_ascription", data);
       if(data.driverId) form.val("form_dispatch", data);
       var carFormStr = "";
