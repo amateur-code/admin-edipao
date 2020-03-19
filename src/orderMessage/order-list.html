@@ -245,6 +245,7 @@
                         </select> 
                     </div>
                 </div>
+                {{# if(d.type == 2){ }}
                 <div class="layui-card">
                     <div class="layui-card-header">提车图片</div>
                     <div class="layui-card-body">
@@ -260,6 +261,8 @@
                         {{#  }); }}
                     </div>
                 </div>
+                {{# } }}
+                {{# if(d.type == 3){ }}
                 <div class="layui-card">
                     <div class="layui-card-header">发车单</div>
                     <div class="layui-card-body">
@@ -275,6 +278,8 @@
                         {{#  }); }}
                     </div>
                 </div>
+                {{# } }}
+                {{# if(d.type == 5){ }}
                 <div class="layui-card">
                     <div class="layui-card-header">交车单</div>
                     <div class="layui-card-body">
@@ -290,6 +295,7 @@
                         {{#  }); }}
                     </div>
                 </div>
+                {{# } }}
            </form>
           </div>
     </div>

@@ -143,6 +143,18 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       var carFormHtml = $("#car_info_tpl").html();
       var imageStr = $("#image_tpl").html();
       data.truckDTOList.forEach(function (item, index) {
+        switch(item.settleWay * 1){
+          case 1:
+            item.settleWay = "现结";
+            break;
+          case 2:
+            item.settleWay = "月结";
+            break;
+          case 3:
+            item.settleWay = "账期";
+            break;
+        }
+        item.connector = item.connectorName + item.connectorPhone;
         if(!item.fetchImages) item.fetchImages = "";
         item.fetchImages = item.fetchImages.split(",");
         if(!item.startBillImage) item.startBillImage = "";

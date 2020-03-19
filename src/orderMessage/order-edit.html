@@ -255,6 +255,19 @@
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
+                            <label class="layui-form-label text_left form_label">收车联系人</label><br>
+                            <div class="layui-input-inline">
+                                <div class="layui-row">
+                                    <div class="layui-col-md5">
+                                        <input type="text" name="connectorName" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-col-md5">
+                                        <input type="number" name="connectorPhone" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">最迟送达时间</label><br>
                             <div class="layui-input-inline">
                                 <input id="" type="text" name="latestArriveTime" lay-verify="required" autocomplete="off" class="layui-input latestArriveTime">
@@ -264,12 +277,6 @@
                             <label class="layui-form-label text_left form_label">客户里程(公里)</label><br>
                             <div class="layui-input-inline">
                                 <input type="number" name="customerMileage" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <label class="layui-form-label text_left form_label">收入单价(元)</label><br>
-                            <div class="layui-input-inline">
-                                <input type="number" name="pricePerMeliage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
@@ -289,8 +296,6 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">结算方式</label><br>
                             <div class="layui-input-inline">
-                                <!-- <input type="text" name="settleWay" lay-verify="required" autocomplete="off" class="layui-input"> -->
-
                                 <select name="settleWay" lay-verify="">
                                     <option value="1" selected>现结</option>
                                     <option value="2">月结</option>
@@ -300,7 +305,13 @@
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset4">
+                        <div class="layui-inline layui-col-md3">
+                            <label class="layui-form-label text_left form_label">收入单价(元)</label><br>
+                            <div class="layui-input-inline">
+                                <input type="number" name="pricePerMeliage" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">临牌号</label><br>
                             <div class="layui-input-inline">
                                 <input type="text" name="tempLicense" autocomplete="off" class="layui-input tempLicense">
@@ -475,7 +486,7 @@
                     <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                         <label class="layui-form-label text_left form_label">跟单员手机号</label><br>
                         <div id="followOperatorPhoneSelecter" class="layui-input-inline">
-                            <select name="followOperatorPhone" lay-verify="">
+                            <select name="followOperatorPhone" lay-search>
                                 {{#  layui.each(d.staffList, function(index, item){ }}
                                     <option data-name="{{item.name}}" value="{{item.phone}}">{{item.phone}}</option>
                                 {{#  }); }}

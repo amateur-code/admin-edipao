@@ -166,6 +166,7 @@ layui.config({
                             six: [1,1,1,1,1,1],
                             five: [1,1,1,1,1],
                             three: [1,1,1],
+                            type: type
                         };
                         laytpl(elem).render(renderData, function (html) {
                             method.openUpload(html, renderData, type, truckId, orderId);

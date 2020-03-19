@@ -686,6 +686,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         endProvince: itemData.endProvince||"",
         endCity: itemData.endCity||"",
         endAddress: itemData.endAddress||"",
+        connectorName: itemData.connectorName||"",
+        connectorPhone: itemData.connectorPhone||"",
         latestArriveTime: itemData.latestArriveTime||"",
         customerMileage: itemData.customerMileage||"",
         pricePerMeliage: itemData.pricePerMeliage||"",
@@ -992,11 +994,15 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         _this.handleManageFeeInput(e);
       });
       $(".select_vin").unbind().on("click", function (e) {
-        layer.alert("没有数据");
-        return;
+        // layer.alert("没有数据");
+        // return;
         _this.openSelectVin(e);
       });
       var index = _this.carFormList.length - 1;
+      _this.tempLicense.push({
+        id: "",
+        image: ""
+      });
       laydate.render({
         elem: $(".latestArriveTime")[index], //指定元素
         type: "datetime",
@@ -1034,8 +1040,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       _this.openAddFee(e);
     });
     $(".select_vin").unbind().on("click", function (e) {
-      layer.alert("没有数据");
-      return;
+      // layer.alert("没有数据");
+      // return;
       _this.openSelectVin(e);
     });
   }
