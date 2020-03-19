@@ -175,16 +175,13 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var carFormHtml = $("#car_info_tpl").html();
     data.truckDTOList.forEach(function (item, index) {
       var filterStr = "form_car_" + index;
-      _this.carFormList.push({
-        filter: filterStr,
-        id: item.id
-      });
+      _this.carFormList.push(filterStr);
       carFormStr += carFormHtml.replace(/CARFORM/g,filterStr);
     });
     $("#car_form_container").html(carFormStr);
+    
     form.render();
     _this.carFormList.forEach(function (item, index) {
-      item = item.filter;
       var truckData;
       try {
         data.truckDTOList[index] = data.truckDTOList[index] || "{}";
@@ -209,11 +206,22 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         filter: item
       });
       truckData.masterFlag = truckData.masterFlag == "是"? '' : 'on';
+      if(truckData.startCity && truckData.startCity.indexOf('-') > -1){
+        truckData.startProvince = truckData.startCity.split('-')[0]
+        truckData.startCity = truckData.startCity.split('-')[1]
+      }
+      if(truckData.endCity && truckData.endCity.indexOf('-') > -1){
+        truckData.endProvince = truckData.endCity.split('-')[0]
+        truckData.endCity = truckData.endCity.split('-')[1]
+      }
+      console.log(truckData)
+      _this.setStartSelectCity(truckData);
+      _this.setEndSelectCity(truckData);
       form.val(item, truckData);
+      form.render('select');
+
       $("[lay-filter=" + item + "] .select_vin").remove();
     });
-    _this.setStartSelectCity();
-    _this.setEndSelectCity();
     _this.getMapAddress();
   }
   Edit.prototype.renderUpload = function(index){
@@ -388,6 +396,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         feeList.push(item);
       }
     });
+    console.log(feeList)
     laytpl($("#fee_tpl").html()).render({feeList: feeList}, function(html){
       var layerIndex1 = layer.open({
         title: "增加费用",
@@ -485,7 +494,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var idToAdd = data.id;
     //待删除的车辆中已包含
     var indexTodel;
-    var index = filter.slice(-1) * 1;
+    var index = _this.carFormList.length - 1;
+
     // upload.render({
     //   elem: $('.tempLicense')[index],
     //   url: edipao.API_HOST + '/admin/truck/upload/image',
@@ -513,7 +523,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     //     }
     //   }
     // });
-    _this.carFormList[index].id = idToAdd;
     var delCarsFlag = _this.carsToDel.some(function (item, index) {
       if(item.id == data.id) {idTodel = item.id; indexTodel = index;}
       return item.id == data.id;
@@ -592,7 +601,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       });
     }
     _this.carFormList.forEach(function (item, index) {
-      if(item.filter == filter) carFormListIndex = index;
+      if(item == filter) carFormListIndex = index;
     });
     _this.carFormList.splice(carFormListIndex, 1);
     _this.tempLicenseBackImage.splice(carFormListIndex, 1);
@@ -659,6 +668,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     delete orderData.truckDTOList;
     var ascriptionData = form.val("form_ascription");
     var dispatchData = form.val("form_dispatch");
+    console.log(dispatchData)
     _this.prePay = _this.prePay.map(function (item, index) {
       delete item.new;
       item.val = dispatchData["prePay_" + index] || 0;
@@ -678,7 +688,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var totalManageFee = 0;
     var carsLength = _this.cars.length + _this.carsToAdd.length - _this.carsToDel.length;
     _this.carFormList.forEach(function (item, index) {
-      var itemData = form.val(item.filter);
+      var itemData = form.val(item);
+      console.log(itemData.masterFlag)
       if(!itemData.id && itemData.id != 0) return;
       totalIncome += itemData.income * 1;
       totalManageFee += itemData.manageFee * 1;
@@ -693,12 +704,12 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         warehouseNo: itemData.warehouseNo||"",
         startPark: itemData.startPark||"",
         startProvince: itemData.startProvince||"",
-        startCity: itemData.startCity||"",
+        startCity: (itemData.startProvince + '-' + itemData.startCity) ||"",
         startAddress: itemData.startAddress||"",
         settleWay: itemData.settleWay||"",
         endPark: itemData.endPark||"",
         endProvince: itemData.endProvince||"",
-        endCity: itemData.endCity||"",
+        endCity: (itemData.endProvince + '-' + itemData.endCity) ||"",
         endAddress: itemData.endAddress||"",
         connectorName: itemData.connectorName||"",
         connectorPhone: itemData.connectorPhone||"",
@@ -927,7 +938,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     });
     $("#totalManageFee").text(total + "元");
   }
-  Edit.prototype.setStartSelectCity = function(){
+  Edit.prototype.setStartSelectCity = function(data){
     var province = $(".startProvince"),
       city = $(".startCity");
       // district = $("#district");
@@ -936,6 +947,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     for (var i = 0; i < provinceList.length; i++) {
       addEle(province, provinceList[i].name);
     }
+    
+    
+    
+    
     
     //赋予完成 重新渲染select
     form.render('select');
@@ -953,10 +968,20 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       var optionStar = "<option value=" + "0" + ">" + "请选择" + "</option>";
       ele.append(optionStar);
     }
-
-    var provinceText,
-      cityText,
+    
+    var provinceText = !data ? '' : data.startProvince,
+      cityText = !data ? '' : data.startCity,
       cityItem;
+
+    //初始将城市数据赋予
+    $.each(provinceList, function(i, item) {
+      if (provinceText == item.name) {
+        console.log(provinceList[i].cityList)
+        for (var j = 0; j < provinceList[i].cityList.length; j++) {
+          addEle(city, provinceList[i].cityList[j].name);
+        }
+      }
+    });
     
     //选定省份后 将该省份的数据读取追加上
     form.on('select(startProvince)', function(data) {
@@ -972,6 +997,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       $.each(provinceList[cityItem].cityList, function(i, item) {
         addEle(city, item.name);
       })
+      console.log(province)
+      console.log(provinceText)
       //重新渲染select 
       form.render('select');
     })
@@ -986,6 +1013,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           return cityItem;
         }
       });
+      console.log(cityText)
       // $.each(provinceList[cityItem].cityList, function(i, item) {
       //   if (cityText == item.name) {
       //     for (var n = 0; n < item.areaList.length; n++) {
@@ -997,7 +1025,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       form.render('select');
     })
   }
-  Edit.prototype.setEndSelectCity = function(){
+  Edit.prototype.setEndSelectCity = function(data){
     var province = $(".endProvince"),
       city = $(".endCity");
       // district = $("#district");
@@ -1024,9 +1052,18 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       ele.append(optionStar);
     }
 
-    var provinceText,
-      cityText,
+    var provinceText = !data ? '' : data.endProvince,
+      cityText = !data ? '' : data.endCity,
       cityItem;
+
+    //初始将城市数据赋予
+    $.each(provinceList, function(i, item) {
+      if (provinceText == item.name) {
+        for (var j = 0; j < provinceList[i].cityList.length; j++) {
+          addEle(city, provinceList[i].cityList[j].name);
+        }
+      }
+    });
     
     //选定省份后 将该省份的数据读取追加上
     form.on('select(endProvince)', function(data) {
@@ -1080,7 +1117,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
               });
               return;
           }
-          console.log(json)
           
           _t.parent().parent().append('<div class="addressList">'+ getItem(json.pois) + '</div>');
 
@@ -1099,7 +1135,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           }
 
           $('.addressList .item').click(function(){
-            console.log(1)
             $(this).parents('.address-map').find('input').val($(this).text())
             $('.addressList') && $('.addressList').remove();
           })
@@ -1180,10 +1215,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     $("#add_car").unbind().on("click", function(e){
       var carFormHtml = $("#car_info_tpl").html();
       var filterStr = "form_car_" + _this.carFormList.length;
-      _this.carFormList.push({
-        filter: filterStr,
-        id: ""
-      });
+      _this.carFormList.push(filterStr);
       var html = carFormHtml.replace(/CARFORM/g, filterStr);
       $("#car_form_container").append(html);
       form.render();
@@ -1209,10 +1241,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         id: "",
         image: ""
       });
-      _this.tempLicenseBackImage.push({
-        id: "",
-        image: ""
-      });
       laydate.render({
         elem: $(".latestArriveTime")[index], //指定元素
         type: "datetime",
@@ -1223,7 +1251,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         url: edipao.API_HOST + '/admin/truck/upload/image',
         data: {
           loginStaffId: _this.user.staffId,
-          truckId: _this.carFormList[index].id,
+          truckId: idToAdd,
           type: 1,
           index: 1
         },
@@ -1237,7 +1265,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           if(res.code == 0){
             _this.tempLicenseBackImage[index] = {
               image: res.data,
-              id: _this.carFormList[index].id
+              id: idToAdd
             };
             layer.msg("上传成功");
           }else{

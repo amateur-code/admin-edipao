@@ -21,17 +21,71 @@ var provinceList = [
       {name: '延庆县',areaList:[]}
   ]},
   {name:'上海', cityList:[
-      {name:'市辖区', areaList:['黄浦区','卢湾区','徐汇区','长宁区','静安区','普陀区','闸北区','虹口区','杨浦区','闵行区','宝山区','嘉定区','浦东新区','金山区','松江区','青浦区','南汇区','奉贤区']},
-      {name:'县', areaList:['崇明县']}
+      // {name:'市辖区', areaList:['黄浦区','卢湾区','徐汇区','长宁区','静安区','普陀区','闸北区','虹口区','杨浦区','闵行区','宝山区','嘉定区','浦东新区','金山区','松江区','青浦区','南汇区','奉贤区']},
+      // {name:'县', areaList:['崇明县']}
+      {name: '黄浦区',areaList:[]},
+      {name: '卢湾区',areaList:[]},
+      {name: '徐汇区',areaList:[]},
+      {name: '长宁区',areaList:[]},
+      {name: '静安区',areaList:[]},
+      {name: '普陀区',areaList:[]},
+      {name: '闸北区',areaList:[]},
+      {name: '虹口区',areaList:[]},
+      {name: '杨浦区',areaList:[]},
+      {name: '闵行区',areaList:[]},
+      {name: '宝山区',areaList:[]},
+      {name: '嘉定区',areaList:[]},
+      {name: '浦东新区',areaList:[]},
+      {name: '松江区',areaList:[]},
+      {name: '青浦区',areaList:[]},
+      {name: '南汇区',areaList:[]},
+      {name: '奉贤区',areaList:[]},
+      {name: '崇明县',areaList:[]}
   ]},
   {name:'天津', cityList:[
-      {name:'市辖区', areaList:['和平区','河东区','河西区','南开区','河北区','红桥区','塘沽区','汉沽区','大港区','东丽区','西青区','津南区','北辰区','武清区','宝坻区']},
-      {name:'县', areaList:['宁河县','静海县','蓟　县']}
+      // {name:'市辖区', areaList:['和平区','河东区','河西区','南开区','河北区','红桥区','塘沽区','汉沽区','大港区','东丽区','西青区','津南区','北辰区','武清区','宝坻区']},
+      // {name:'县', areaList:['宁河县','静海县','蓟　县']}
+      {name: '和平区',areaList:[]},
+      {name: '河东区',areaList:[]},
+      {name: '河西区',areaList:[]},
+      {name: '河北区',areaList:[]},
+      {name: '红桥区',areaList:[]},
+      {name: '塘沽区',areaList:[]},
+      {name: '汉沽区',areaList:[]},
+      {name: '大港区',areaList:[]},
+      {name: '东丽区',areaList:[]},
+      {name: '西青区',areaList:[]},
+      {name: '津南区',areaList:[]},
+      {name: '北辰区',areaList:[]},
+      {name: '武清区',areaList:[]},
+      {name: '宝坻区',areaList:[]},
+      {name: '宁河县',areaList:[]},
+      {name: '静海县',areaList:[]},
+      {name: '蓟　县',areaList:[]}
   ]},
   {name:'重庆', cityList:[
-      {name:'市辖区', areaList:['万州区','涪陵区','渝中区','大渡口区','江北区','沙坪坝区','九龙坡区','南岸区','北碚区','万盛区','双桥区','渝北区','巴南区','黔江区','长寿区']},
-      {name:'县', areaList:['綦江县','潼南县','铜梁县','大足县','荣昌县','璧山县','梁平县','城口县','丰都县','垫江县','武隆县','忠　县','开　县','云阳县','奉节县','巫山县','巫溪县','石柱土家族自治县','秀山土家族苗族自治县','酉阳土家族苗族自治县','彭水苗族土家族自治县']},
-      {name:'市', areaList:['江津市','合川市','永川市','南川市']}
+      // {name:'市辖区', areaList:['万州区','涪陵区','渝中区','大渡口区','江北区','沙坪坝区','九龙坡区','南岸区','北碚区','万盛区','双桥区','渝北区','巴南区','黔江区','长寿区']},
+      // {name:'县', areaList:['綦江县','潼南县','铜梁县','大足县','荣昌县','璧山县','梁平县','城口县','丰都县','垫江县','武隆县','忠　县','开　县','云阳县','奉节县','巫山县','巫溪县','石柱土家族自治县','秀山土家族苗族自治县','酉阳土家族苗族自治县','彭水苗族土家族自治县']},
+      // {name:'市', areaList:['江津市','合川市','永川市','南川市']}
+      {name: '万州区',areaList:[]},
+      {name: '涪陵区',areaList:[]},
+      {name: '渝中区',areaList:[]},
+      {name: '大渡口区',areaList:[]},
+      {name: '江北区',areaList:[]},
+      {name: '沙坪坝区',areaList:[]},
+      {name: '九龙坡区',areaList:[]},
+      {name: '南岸区',areaList:[]},
+      {name: '北碚区',areaList:[]},
+      {name: '西青区',areaList:[]},
+      {name: '万盛区',areaList:[]},
+      {name: '双桥区',areaList:[]},
+      {name: '渝北区',areaList:[]},
+      {name: '黔江区',areaList:[]},
+      {name: '长寿区',areaList:[]},
+      {name: '江津市',areaList:[]},
+      {name: '合川市',areaList:[]},
+      {name: '永川市',areaList:[]},
+      {name: '南川市',areaList:[]}
   ]},
   {name:'广东', cityList:[
       {name:'广州市', areaList:['东山区','荔湾区','越秀区','海珠区','天河区','芳村区','白云区','黄埔区','番禺区','花都区','增城市','从化市']},
