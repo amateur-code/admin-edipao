@@ -138,7 +138,7 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">轴数</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="number" name="shaftNum" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input disabled type="text" name="shaftNum" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -255,6 +255,17 @@
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
+                            <label class="layui-form-label text_left form_label">收车联系人</label><br>
+                            <div class="layui-input-inline">
+                                <div class="layui-input-inline" style="width: 100px;">
+                                    <input type="text" name="endName" autocomplete="off" class="layui-input" placeholder="请输入姓名" style="width:100px;">
+                                </div>
+                                <div class="layui-input-inline" style="width: 150px;">
+                                    <input type="text" name="endPhone" autocomplete="off" class="layui-input" placeholder="请输入电话号码" style="width:150px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">最迟送达时间</label><br>
                             <div class="layui-input-inline">
                                 <input id="" type="text" name="latestArriveTime" lay-verify="required" autocomplete="off" class="layui-input latestArriveTime">
@@ -266,15 +277,15 @@
                                 <input type="number" name="customerMileage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">收入单价(元)</label><br>
                             <div class="layui-input-inline">
                                 <input type="number" name="pricePerMeliage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
-                    </div>
-                    <div class="layui-form-item layui-row">
-                        <div class="layui-inline layui-col-md3">
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">收入金额(元)</label><br>
                             <div class="layui-input-inline">
                                 <input data-filter="CARFORM" type="number" name="income" autocomplete="off" class="layui-input car_income">
@@ -286,7 +297,9 @@
                                 <input data-filter="CARFORM" type="text" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
                             </div>
                         </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">结算方式</label><br>
                             <div class="layui-input-inline">
                                 <!-- <input type="text" name="settleWay" lay-verify="required" autocomplete="off" class="layui-input"> -->
@@ -298,9 +311,7 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
-                    <div class="layui-form-item layui-row">
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset4">
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">临牌号</label><br>
                             <div class="layui-input-inline">
                                 <input type="text" name="tempLicense" autocomplete="off" class="layui-input tempLicense">
