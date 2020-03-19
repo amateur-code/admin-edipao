@@ -33,6 +33,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       "form_ascription",
       "form_dispatch",
     ];
+    this.hiddenMap = null;
   }
   Edit.prototype.getOrderJson = function(){
     return $.ajax({
@@ -52,6 +53,15 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         layer.msg(res.message, {icon: 5,anim: 6});
       }
     });
+
+    _this.renderHiddenMap();
+  }
+  Edit.prototype.renderHiddenMap = function(){
+    var point = new Careland.Point(419364916, 143908009);	//创建坐标点
+    var map = new Careland.Map('hiddenMap', point, 12); 			//实例化地图对象
+    map.enableAutoResize();                                 //启用自动适应容器尺寸变化
+    map.load();
+    this.hiddenMap = map;
   }
   Edit.prototype.getStaffList = function(){
     var _this = this;
@@ -198,6 +208,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       form.val(item, truckData);
       $("[lay-filter=" + item + "] .select_vin").remove();
     });
+    _this.setStartSelectCity();
+    _this.setEndSelectCity();
+    _this.getMapAddress();
   }
   Edit.prototype.renderUpload = function(index){
     var _this = this;
@@ -913,6 +926,192 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     });
     $("#totalManageFee").text(total + "元");
   }
+  Edit.prototype.setStartSelectCity = function(){
+    var province = $(".startProvince"),
+      city = $(".startCity");
+      // district = $("#district");
+    
+    //初始将省份数据赋予
+    for (var i = 0; i < provinceList.length; i++) {
+      addEle(province, provinceList[i].name);
+    }
+    
+    //赋予完成 重新渲染select
+    form.render('select');
+    
+    //向select中 追加内容
+    function addEle(ele, value) {
+      var optionStr = "";
+      optionStr = "<option value=" + value + " >" + value + "</option>";
+      ele.append(optionStr);
+    }
+
+    //移除select中所有项 赋予初始值
+    function removeEle(ele) {
+      ele.find("option").remove();
+      var optionStar = "<option value=" + "0" + ">" + "请选择" + "</option>";
+      ele.append(optionStar);
+    }
+
+    var provinceText,
+      cityText,
+      cityItem;
+    
+    //选定省份后 将该省份的数据读取追加上
+    form.on('select(startProvince)', function(data) {
+      provinceText = data.value;
+      $.each(provinceList, function(i, item) {
+        if (provinceText == item.name) {
+          cityItem = i;
+          return cityItem;
+        }
+      });
+      removeEle(city);
+      // removeEle(district);
+      $.each(provinceList[cityItem].cityList, function(i, item) {
+        addEle(city, item.name);
+      })
+      //重新渲染select 
+      form.render('select');
+    })
+
+    ////选定市或直辖县后 将对应的数据读取追加上
+    form.on('select(startCity)', function(data) {
+      cityText = data.value;
+      // removeEle(district);
+      $.each(provinceList, function(i, item) {
+        if (provinceText == item.name) {
+          cityItem = i;
+          return cityItem;
+        }
+      });
+      // $.each(provinceList[cityItem].cityList, function(i, item) {
+      //   if (cityText == item.name) {
+      //     for (var n = 0; n < item.areaList.length; n++) {
+      //       addEle(district, item.areaList[n]);
+      //     }
+      //   }
+      // })
+      //重新渲染select 
+      form.render('select');
+    })
+  }
+  Edit.prototype.setEndSelectCity = function(){
+    var province = $(".endProvince"),
+      city = $(".endCity");
+      // district = $("#district");
+    
+    //初始将省份数据赋予
+    for (var i = 0; i < provinceList.length; i++) {
+      addEle(province, provinceList[i].name);
+    }
+    
+    //赋予完成 重新渲染select
+    form.render('select');
+    
+    //向select中 追加内容
+    function addEle(ele, value) {
+      var optionStr = "";
+      optionStr = "<option value=" + value + " >" + value + "</option>";
+      ele.append(optionStr);
+    }
+
+    //移除select中所有项 赋予初始值
+    function removeEle(ele) {
+      ele.find("option").remove();
+      var optionStar = "<option value=" + "0" + ">" + "请选择" + "</option>";
+      ele.append(optionStar);
+    }
+
+    var provinceText,
+      cityText,
+      cityItem;
+    
+    //选定省份后 将该省份的数据读取追加上
+    form.on('select(endProvince)', function(data) {
+      provinceText = data.value;
+      $.each(provinceList, function(i, item) {
+        if (provinceText == item.name) {
+          cityItem = i;
+          return cityItem;
+        }
+      });
+      removeEle(city);
+      // removeEle(district);
+      $.each(provinceList[cityItem].cityList, function(i, item) {
+        addEle(city, item.name);
+      })
+      //重新渲染select 
+      form.render('select');
+    })
+
+    ////选定市或直辖县后 将对应的数据读取追加上
+    form.on('select(endCity)', function(data) {
+      cityText = data.value;
+      // removeEle(district);
+      $.each(provinceList, function(i, item) {
+        if (provinceText == item.name) {
+          cityItem = i;
+          return cityItem;
+        }
+      });
+      // $.each(provinceList[cityItem].cityList, function(i, item) {
+      //   if (cityText == item.name) {
+      //     for (var n = 0; n < item.areaList.length; n++) {
+      //       addEle(district, item.areaList[n]);
+      //     }
+      //   }
+      // })
+      //重新渲染select 
+      form.render('select');
+    })
+  }
+  Edit.prototype.getMapAddress = function(){
+    $('.getAddressList').unbind('input').bind('input', function(){
+      $('.addressList').remove();
+      if($(this).val() == '') return;
+      var _t = $(this);
+      $.getJSON('http://api.careland.com.cn/api/v1/search/keyword?keyword=' + $(this).val() + '&ak=6012dcd6278a2d4db3840604&xytype=2',function(json){          
+          // 提交保存json
+          if(json.errorCode != 0 ){
+              layer.msg(json.errorMessage, {
+                  time: 1500,
+              });
+              return;
+          }
+          console.log(json)
+          
+          _t.parent().parent().append('<div class="addressList">'+ getItem(json.pois) + '</div>');
+
+          function getItem(pois){
+            var content = '';
+            if(pois.length > 0){
+              $('.empty') && $('.empty').remove();
+              for(var i = 0; i < pois.length; i ++ ){
+                content += '<div class="item">' +  pois[i].address + '</div>';
+              }
+            } else {
+              content = '<div class="empty">暂无数据</div>'
+            }
+            
+            return content;
+          }
+
+          $('.addressList .item').click(function(){
+            console.log(1)
+            $(this).parents('.address-map').find('input').val($(this).text())
+            $('.addressList') && $('.addressList').remove();
+          })
+
+      });
+      
+    })
+    $('.getAddressList').blur(function(){
+      setTimeout(function(){
+        $('.addressList') && $('.addressList').remove();
+      }, 500)
+    })
+  }
   Edit.prototype.bindEvents = function(){
     var _this = this;
     $("#driver_name").unbind().on("click", function(){
@@ -984,6 +1183,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       var html = carFormHtml.replace(/CARFORM/g, filterStr);
       $("#car_form_container").append(html);
       form.render();
+      _this.setStartSelectCity();
+      _this.setEndSelectCity();
+      _this.getMapAddress();
       $(".del_car_btn").unbind().on("click", function(e){
         _this.handleDeleteCar(e);
       });
@@ -1044,6 +1246,109 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       // return;
       _this.openSelectVin(e);
     });
+
+    var address = '';
+    $('.selectMapLocation').off('click').on('click', function(){
+      var _t = $(this);
+      var height = $(document).scrollTop()
+      $('html,body').animate({scrollTop:0},100);
+      layer.open({
+        type: 1,
+        title: "选择位置",
+        area: ['900px', '500px'],
+        content: $("#select-map-dialog"),
+        btn: ['取消', '确定'],
+        btnAlign: 'c',
+        scrollbar: false,
+        zIndex: 9991, //层优先级
+        cancel: function () {
+          address = '';
+          $('#seachLocation').val('');
+          $('#select-address').text('');
+        },
+        btn2: function(){
+          _t.parents('.address-map').find('input').val(address);
+          address = '';
+          $('#seachLocation').val('');
+          $('#select-address').text('');
+        },
+        success: function () {
+          //凯立德地图API功能
+          var point = new Careland.Point(419364916, 143908009);
+          var map = new Careland.Map('select-map', point, 15); 
+          map.enableAutoResize();      
+          map.load();
+
+          regionMapView(map, $(this));
+        },
+        end: function(){
+          $('html,body').animate({scrollTop:height},100);
+        }
+      })
+    })
+
+    // 获取点击点的坐标数据
+    function regionMapView(map, ctx){
+        var myGeo = new Careland.Geocoder();
+
+        var layer = new Careland.Layer('point', 'layer');
+        var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'../../images/center.png',fontColor:'#000'});
+        layer.setStyle(style);
+        map.addLayer(layer);
+
+        var mapInfoWin = new Careland.InfoWindow();
+        mapInfoWin.setOffset(new Careland.Size(0, -22));
+
+        $('#regionMapPoint').off('click').on('click', function(){
+            var searchTxt = $('#seachLocation').val();
+            var poiSearch = new Careland.LocalSearch(map,{
+                map: map,
+                selectFirstResult:false,
+                autoViewport:true,
+                onMarkersSet: function(pois){
+                    layui.each(pois, function(v, k){
+                        var marker = k.marker;
+                        marker.addEventListener('click', function(e){
+                          e.event.defaultPrevented = true;
+                          layer.clear();
+                          myGeo.getLocation(e.point,function(data){
+                            setViewData(mapInfoWin, marker, data, ctx)
+                          });
+                        })
+                    })
+                },
+            });
+            poiSearch.search(searchTxt);
+        })
+
+          
+        map.addEventListener('click', function(point){
+            var point = point;
+            if(!point || typeof (point) != "object"){
+              return;
+            }
+            myGeo.getLocation(point,function(data){
+              layer.clear();
+              //创建文本标注点
+              var marker = new Careland.Marker('image');
+              marker.setPoint(point);
+              layer.add(marker);
+
+              setViewData(mapInfoWin, marker, data, ctx);
+            });
+            
+        });
+
+    }
+    // 设置视图显示和数据
+    function setViewData(mapInfoWin, marker, data, ctx){
+      $('#seachLocation').val(data.address);
+      $('#select-address').text(data.address);
+      mapInfoWin.setContent('当前地址：' + data.address);
+      mapInfoWin.redraw();
+      marker.openInfoWindow(mapInfoWin);
+      address = data.address;
+    }
   }
   var edit = new Edit();
   top.edit = edit;

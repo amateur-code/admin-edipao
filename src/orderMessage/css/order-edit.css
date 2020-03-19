@@ -99,3 +99,78 @@
 .blue {
   color: #3490E9;
 }
+.select-map-dialog {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.select-map-dialog #select-map {
+  width: 100%;
+  height: 370px;
+}
+.select-map-dialog .select-location {
+  width: 500px;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  margin-left: -250px;
+  font-size: 0;
+  z-index: 9999;
+}
+.select-map-dialog .select-location .label {
+  font-size: 12px;
+}
+.select-map-dialog .select-location .location-name {
+  display: inline-block;
+  width: 400px;
+  height: 28px;
+  line-height: 28px;
+  border: 1px solid #aaaaaa;
+  border-right: 0;
+  font-size: 12px;
+  text-align: left;
+  padding-left: 10px;
+  color: #333;
+  background: #fff;
+}
+.select-map-dialog .select-location .select-btn {
+  position: relative;
+  top: -4px;
+}
+.hiddenMap {
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.address-map {
+  position: relative;
+}
+.addressList {
+  position: absolute;
+  top: 32px;
+  left: 0;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  height: auto;
+  border: 1px solid #666;
+  background: #fff;
+  z-index: 100;
+}
+.addressList .item {
+  padding: 10px 10px;
+  border-bottom: 1px dashed #666;
+  color: #666;
+}
+.addressList .item:hover {
+  background: #abcdef;
+}
+.addressList .item:last-child {
+  border: none;
+}
+.addressList .empty {
+  text-align: center;
+  padding: 30px 0;
+  color: #333;
+}
