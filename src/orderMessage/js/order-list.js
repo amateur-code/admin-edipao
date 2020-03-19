@@ -58,12 +58,12 @@ layui.config({
         { field: 'customerFullName', type: 'input' },
         { field: 'startWarehouse', type: 'input' },
         { field: 'startPark', type: 'input' },
-        { field: 'startCity', type: 'city' },
-        { field: 'startAddress', type: 'input' },
         { field: 'startProvince', type: 'province' },
+        { field: 'startCity', type: 'provincecity' },
+        { field: 'startAddress', type: 'input' },
         { field: 'endPark', type: 'input' },
-        { field: "endProvince", title: "收车省" },
-        { field: 'endCity', type: 'city' },
+        { field: "endProvince", type: "province" },
+        { field: 'endCity', type: 'provincecity' },
         { field: 'endAddress', type: 'input' },
         { field: 'transportAssignTime', type: 'timeslot' },
         { field: 'dispatchTime', type: 'timeslot' },
@@ -164,30 +164,12 @@ layui.config({
             where = {
                 loginStaffId: edipao.getLoginStaffId()
             };
-            console.log(filters)
             layui.each(filters,function(key, value){
-                console.log(key, value)
-                if(key=='licenceWarn'){
-                    // 证件预警 比如预警是30天, 今天是3月8号, 传值4月8日。
-                    where['searchFieldDTOList['+ index +'].fieldName'] = validityData[value];
-                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = getDay(warnDataVal[value]);
-                }else if(key=='wishJourney'||key=='oftenJourney'){
-                    // 意向线路、常跑线路
-                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
-                    var fieldValue = {
-                        'start': {
-                            "code": cityCode[value[key+'Start-city']],
-                            "province": value[key+'Start-province'],
-                            "city": value[key+'Start-city']
-                        },
-                        'end': {
-                            "code": cityCode[value[key+'End-city']],
-                            "province": value[key+'End-province'],
-                            "city": value[key+'End-city']
-                        }
-                    };
-                    where['searchFieldDTOList['+ index +'].fieldValue'] = JSON.stringify(fieldValue);
-                }else if(key == 'drivingAge'||key == 'deposit'){
+                if(key=='startProvince'||key=='endProvince'){
+                    
+                }else if(key=='startCity'||key=='endCity'){
+                    console.log(value)
+                }else if(key == 'prePayAmount'||key == 'arrivePayAmount'||key == "tailPayAmount"){
                     // 驾龄、押金
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
@@ -1192,14 +1174,14 @@ layui.config({
         {field: 'startPark', title: '发车停车场', sort: false,minWidth:100, templet: function(d){
             return d.startPark ? d.startPark : '- -';
         }},
+        {field: 'startProvince', title: '发车省', sort: false,minWidth:100, templet: function(d){
+            return d.startProvince ? d.startProvince : '- -';
+        }},
         {field: 'startCity', title: '发车城市', sort: false,minWidth:100, templet: function(d){
             return d.startCity ? d.startCity : '- -';
         }},
         {field: 'startAddress', title: '发车地址', sort: false,minWidth:100, templet: function(d){
             return d.startAddress ? d.startAddress : '- -';
-        }},
-        {field: 'startProvince', title: '发车省', sort: false,minWidth:100, templet: function(d){
-            return d.startProvince ? d.startProvince : '- -';
         }},
         {field: 'endPark', title: '收车网点', sort: false,minWidth:100, templet: function(d){
             return d.endPark ? d.endPark : '- -';
@@ -1452,9 +1434,9 @@ layui.config({
         "customerFullName",
         "startWarehouse",
         "startPark",
+        "startProvince",
         "startCity",
         "startAddress",
-        "startProvince",
         "endPark",
         "endProvince",
         "endCity",

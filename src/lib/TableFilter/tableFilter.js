@@ -109,6 +109,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 					if(filterType == "timeslot"){
 						filterBox.find('form').append('<input type="text" id="'+filterName+'-timeslot" name="'+filterName+'" lay-verify="required" lay-verType="tips" placeholder="请选择时间段" class="layui-input">');
 					}
+
 					if(filterType == 'numberslot'){
 						filterBox.find('form').append('<input type="search" name="'+filterName+'-min" lay-verify="numberslot" lay-verType="tips" placeholder="输入最小值" class="layui-input">');
 						filterBox.find('form').append('<input type="search" name="'+filterName+'-max" lay-verify="numberslot" lay-verType="tips" placeholder="输入最大值" class="layui-input">');
@@ -121,11 +122,25 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 
 					if(filterType == 'province'){
 						filterBox.find('form').append(
-							`<div class="layui-form-item x-city" id="${filterName}Start">
-							<select name="${filterName}Start-province" lay-filter="province" lay-verify="provinceVerify">
-							<option value="">请选择省</option>
-							</select>
+							`<div class="layui-form-item x-city" id="${filterName}">
+								<select name="${filterName}" lay-filter="province" lay-verify="provinceVerify">
+								<option value="">请选择省</option>
+								</select>
 							</div>`
+						);
+					}
+					if(filterType == 'provincecity'){
+						filterBox.find('form').append(
+							`
+							<div class="layui-form-item x-city" id="${filterName}">
+								<select name="${filterName}" lay-filter="province" lay-verify="provinceVerify">
+								<option value="">请选择省</option>
+								</select>
+								<select name="${filterName}" lay-filter="city" lay-verify="cityVerify">
+								<option value="">请选择市</option>
+								</select>
+							</div>
+							`
 						);
 					}
 
@@ -200,10 +215,20 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						var val = tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
 						if(val&&JSON.stringify(val) != "{}"){
 							// 必须引用xctiy.js 有值时赋值
-							$('#'+filterName+'Start').xcity(val[filterName+'Start-province'],val[filterName+'Start-city']);
+							$('#'+filterName).xcity(val[filterName]);
 						}else{
 							// 必须引用xctiy.js 初始化
-							$('#'+filterName+'Start').xcity();
+							$('#'+filterName).xcity();
+						}
+					}
+					if(filterType == "provincecity"){
+						var val = tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
+						if(val&&JSON.stringify(val) != "{}"){
+							// 必须引用xctiy.js 有值时赋值
+							$('#'+filterName).xcity(val[filterName]+"_province",val[filterName]+"_city");
+						}else{
+							// 必须引用xctiy.js 初始化
+							$('#'+filterName).xcity();
 						}
 					}
 					//渲染layui form
@@ -276,6 +301,13 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						}
 
 						if(filterType == "province"){
+							var NEWfield = {};
+							for(var key in data.field){
+								NEWfield[key] = data.field[key]
+							}
+							data.field[filterName] = NEWfield
+						}
+						if(filterType == "provincecity"){
 							var NEWfield = {};
 							for(var key in data.field){
 								NEWfield[key] = data.field[key]
