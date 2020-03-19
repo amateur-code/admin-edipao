@@ -528,10 +528,10 @@ layui.config({
                 xadmin.open('查看司机', './info.html?id=' + data.id)
                 break;
             case 'wishJourneyList':
-                xadmin.open('查看线路', './wishJourney-list.html?wishJourney=' + (data.wishJourney).replace(/\"/g,"'"))
+                xadmin.open('查看线路', './wishJourney-list.html?id=' + data.id+'&type=wishJourney')
                 break;
             case 'oftenJourneyList':
-                xadmin.open('查看线路', './wishJourney-list.html?wishJourney=' + (data.oftenJourney).replace(/\"/g,"'"))
+                xadmin.open('查看线路', './wishJourney-list.html?id=' + data.id+'&type=oftenJourney')
                 break;
             case 'del':
                 layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {

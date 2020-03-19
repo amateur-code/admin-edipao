@@ -89,9 +89,9 @@
                         // 司机档案-意向路线
                             var data = res.modifyBeforeJson;
                             if(data.indexOf('意向路线')!='-1'){
-                                var val = data.split('意向路线json:[');
-                                var startVal=val[1].split('],')[0];
-                                var endVal =val[1].split('],')[1];
+                                var val = data.split('意向路线:[');
+                                var startVal=val[1].split(']')[0];
+                                var endVal =val[0];
                                 var html = '意向路线:';
                                 if(startVal!=''&&startVal!=null){
                                     startVal = '['+startVal+']';
@@ -102,8 +102,7 @@
                                     })
                                     html = html.substring(0,html.length-1);
                                 }
-                                html += ',';
-                                var newData = html+endVal;
+                                var newData = endVal+html;
                                 return newData;
                             }else{
                                 return data;
@@ -115,9 +114,9 @@
                         // 司机档案-意向路线
                             var data = res.modifyAfterJson;
                             if(data.indexOf('意向路线')!='-1'){
-                                var val = data.split('意向路线json:[');
-                                var startVal=val[1].split('],')[0];
-                                var endVal =val[1].split('],')[1];
+                                var val = data.split('意向路线:[');
+                                var startVal=val[1].split(']')[0];
+                                var endVal =val[0];
                                 var html = '意向路线:';
                                 if(startVal!=''&&startVal!=null){
                                     startVal = '['+startVal+']';
@@ -128,8 +127,7 @@
                                     })
                                     html = html.substring(0,html.length-1);
                                 }
-                                html += ',';
-                                var newData = html+endVal;
+                                var newData = endVal+html;
                                 return newData;
                             }else{
                                 return data;

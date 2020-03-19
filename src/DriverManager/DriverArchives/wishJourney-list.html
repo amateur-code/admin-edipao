@@ -42,24 +42,44 @@ layui.use(['table', 'layer'], function(table, layer) {
     var xadmin = layui.xadmin,
         edipao = layui.edipao;
     var params = edipao.urlGet();
-    var wishJourney = eval(params.wishJourney);
-    var wishJourneyData = [];
-    layui.each(wishJourney,function (index,item) {
-        wishJourneyData.push({
-            'start':item['start']['province']+item['start']['city'],
-            'end':item['end']['province']+item['end']['city']
-        })
+    var id = params.id;
+    var type = params.type;
+
+    edipao.request({
+        type: 'GET',
+        url: '/admin/driver/info/getDriver',
+        data: {
+            driverId: id
+        }
+    }).done(function(res) {
+        if (res.code == 0) {
+            var data = res.data[type]
+            var wishJourney = JSON.parse(data);
+            initTable (wishJourney)
+        } else {
+            layer.msg(res.message, {icon: 5,anim: 6});
+        }
     })
-    table.render({
-        elem: '#wishJourneyList',
-        data:wishJourneyData,
-        cols: [
-            [ //表头
-                { field: 'start', title: '始发地'},
-                { field: 'end', title: '目的地'}
-            ]
-        ],
-    });
+
+   function initTable (wishJourney) {
+       var wishJourneyData = [];
+       layui.each(wishJourney,function (index,item) {
+           wishJourneyData.push({
+               'start':item['start']['province']+item['start']['city'],
+               'end':item['end']['province']+item['end']['city']
+           })
+       })
+       table.render({
+           elem: '#wishJourneyList',
+           data:wishJourneyData,
+           cols: [
+               [ //表头
+                   { field: 'start', title: '始发地'},
+                   { field: 'end', title: '目的地'}
+               ]
+           ],
+       });
+   }
 })
 </script>
 </body>

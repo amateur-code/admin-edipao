@@ -111,7 +111,7 @@ layui.config({
                 }
                 index++;
             })
-            tableIns.reload( { where: where, page: { curr: 1 }});
+            mainTable.reload( { where: where, page: { curr: 1 }});
         }
     });
 
@@ -689,6 +689,7 @@ layui.config({
             });
         },
         exportData: function exportExcel() {
+            let _t = this;
             var param = where;
             param['pageNo']= 1;
             param['pageSize'] =10000;
@@ -704,14 +705,224 @@ layui.config({
                         // 添加头部
                         exportData.push(exportHead);
                         // 过滤处理数据
-                        layui.each(data, function(k, v){
-                            var exportObj={};
-                            layui.each(v,function (index,item) {
-                                console.log(item)
-                                exportObj[index] = DataNull(item);
-                            });
-                            exportData.push(exportObj)
-                        });
+                        layui.each(data, function(index, item){
+                            var newObj = {};
+                            console.log(item)
+                            for(var i in item){
+                                var orderType = item.orderType;
+                                var masterFlag = item.masterFlag;
+                                var prePayOil = item.prePayOil ? item.prePayOil : '';
+                                var fetchApprovalBtn = item.fetchApprovalBtn;
+                                var startApprovalBtn = item.startApprovalBtn;
+                                var returnApprovalBtn = item.returnApprovalBtn;
+                                var prePayApprovalBtn = item.prePayApprovalBtn;
+                                var tailPayApprovalBtn = item.tailPayApprovalBtn;
+                                var arrivePayApprovalBtn = item.arrivePayApprovalBtn;
+                                var openOperator = item.openOperator ? item.openOperator : '';
+                                var openOperatorPhone = item.openOperatorPhone ? item.openOperatorPhone : '';
+                                var dispatchOperator = item.dispatchOperator ? item.dispatchOperator : '';
+                                var dispatchOperatorPhone = item.dispatchOperatorPhone ? item.dispatchOperatorPhone : '';
+                                var fetchOperator = item.fetchOperator ? item.fetchOperator : '';
+                                var fetchOperatorPhone = item.fetchOperatorPhone ? item.fetchOperatorPhone : '';
+                                var deliveryOperator = item.deliveryOperator ? item.deliveryOperator : '';
+                                var deliveryOperatorPhone = item.deliveryOperatorPhone ? item.deliveryOperatorPhone : '';
+                                if(showList.indexOf(i) > -1){
+                                    var value = item[i];
+                                    switch(i){
+                                        case 'orderType':
+                                            switch(item[i]){
+                                                case 1:
+                                                    value = '单车单';
+                                                    break;
+                                                case 2:
+                                                    value = '背车单';
+                                                    break;
+                                                default:
+                                                    value = '非法类型';
+                                                    break;
+                                            }
+                                            break;
+                                        case 'orderStatus':
+                                            switch(item[i]){
+                                                case 1:
+                                                    value = '待调度';
+                                                    break;
+                                                case 2:
+                                                    value = '待发车';
+                                                    break;
+                                                case 3:
+                                                    value = '运输中';
+                                                    break;
+                                                case 4:
+                                                    value = '已收车';
+                                                    break;
+                                                case 5:
+                                                    value = '已完结';
+                                                    break;
+                                                case 6:
+                                                    value = '已取消';
+                                                    break;
+                                                default:
+                                                    value = '非法状态';
+                                                    break;
+                                            }
+                                            break;
+                                        case 'openOperator':
+                                            value = openOperator + '' + openOperatorPhone;
+                                            break;
+                                        case 'dispatchOperator':
+                                            value = dispatchOperator + '' + dispatchOperatorPhone;
+                                            break;
+                                        case 'fetchOperator':
+                                            value = fetchOperator + '' + fetchOperatorPhone;
+                                            break;
+                                        case 'deliveryOperator':
+                                            value = deliveryOperator + '' + deliveryOperatorPhone;
+                                            break;
+                                        case 'prePayAmount':
+                                            var payStatus = "";
+                                            if (prePayApprovalBtn == 1) {
+                                                payStatus = '-申请支付';
+                                            } else if (prePayApprovalBtn == 2) {
+                                                payStatus = '-审核';
+                                            } else if (prePayApprovalBtn == 3) {
+                                                payStatus = '-支付';
+                                            } else if (prePayApprovalBtn == 4) {
+                                                payStatus = "-已支付";
+                                            }else if(prePayApprovalBtn == 0){
+                                                payStatus = "";
+                                            } else {
+                                                payStatus = "-非法状态";
+                                            }
+                                            if(orderType == 2 && masterFlag == "否"){
+                                                value = "";
+                                                break;
+                                            }
+                                            value = item[i] + "元" + "/" + prePayOil + "升" + payStatus;
+                                            break;
+                                        case 'arrivePayAmount':
+                                            var payStatus = "";
+                                            if (arrivePayApprovalBtn == 1) {
+                                                payStatus = '-申请支付';
+                                            } else if (arrivePayApprovalBtn == 2) {
+                                                payStatus = '-审核';
+                                            } else if (arrivePayApprovalBtn == 3) {
+                                                payStatus = '-支付';
+                                            } else if (arrivePayApprovalBtn == 4) {
+                                                payStatus = "-已支付";
+                                            }else if(arrivePayApprovalBtn == 0){
+                                                payStatus = "";
+                                            } else {
+                                                payStatus = "-非法状态";
+                                            }
+                                            if(orderType == 2 && masterFlag == "否"){
+                                                value = "";
+                                                break;
+                                            }
+                                            value = item[i] + "元" + payStatus;
+                                            break;
+                                        case 'tailPayAmount':
+                                            var payStatus = "";
+                                            if (tailPayApprovalBtn == 1) {
+                                                payStatus = '-申请支付';
+                                            } else if (tailPayApprovalBtn == 2) {
+                                                payStatus = '-审核';
+                                            } else if (tailPayApprovalBtn == 3) {
+                                                payStatus = '-支付';
+                                            } else if (tailPayApprovalBtn == 4) {
+                                                payStatus = "-已支付";
+                                            }else if(tailPayApprovalBtn == 0){
+                                                payStatus = "";
+                                            } else {
+                                                payStatus = "-非法状态";
+                                            }
+                                            if(orderType == 2 && masterFlag == "否"){
+                                                value = "";
+                                                break;
+                                            }
+                                            value = item[i] + "元" + payStatus;
+                                            break;
+                                        case 'fetchStatus':
+                                            switch(item[i]){
+                                                case 0:
+                                                case 1:
+                                                    value = '未上传';
+                                                    break;
+                                                case 2:
+                                                case 3:
+                                                    value = '已上传';
+                                                    break;
+                                                case 4:
+                                                    value = '已驳回';
+                                                    break;
+                                                default:
+                                                    value = '非法状态';
+                                                    break;
+                                            }
+                                            if(fetchApprovalBtn * 1 == 1){
+                                                value = '未审核';
+                                            }
+                                            if(orderType == 2 && masterFlag == "否"){
+                                                value = "";
+                                            }
+                                            break;
+                                        case 'startAuditStatus':
+                                            switch(item[i]){
+                                                case 0:
+                                                case 1:
+                                                    value = '未上传';
+                                                    break;
+                                                case 2:
+                                                case 3:
+                                                    value = '已上传';
+                                                    break;
+                                                case 4:
+                                                    value = '已驳回';
+                                                    break;
+                                                default:
+                                                    value = '非法状态';
+                                                    break;
+                                            }
+                                            if(startApprovalBtn * 1 == 1){
+                                                value = '未审核';
+                                            }
+                                            if(orderType == 2 && masterFlag == "否"){
+                                                value = "";
+                                            }
+                                            break;
+                                        case 'returnAuditStatus':
+                                            switch(item[i]){
+                                                case 0:
+                                                case 1:
+                                                    value = '未上传';
+                                                    break;
+                                                case 2:
+                                                case 3:
+                                                    value = '已上传';
+                                                    break;
+                                                case 4:
+                                                    value = '已驳回';
+                                                    break;
+                                                default:
+                                                    value = '非法状态';
+                                                    break;
+                                            }
+                                            if(returnApprovalBtn * 1 == 1){
+                                                value = '未审核';
+                                            }
+                                            if(orderType == 2 && masterFlag == "否"){
+                                                value = "";
+                                            }
+                                            break;
+                                        default:
+                                            value = item[i] ? item[i] : '--'
+                                            break;
+                                    }
+                                    newObj[i] = value;
+                                }
+                            }
+                            exportData.push(newObj);
+                        })
                         // 导出
                         excel.exportExcel({
                             sheet1: exportData
@@ -1171,7 +1382,6 @@ layui.config({
         "prePayAmount",
         "arrivePayAmount",
         "tailPayAmount",
-        "settleWay",
         "fetchStatus",
         "startAuditStatus",
         "returnAuditStatus",
