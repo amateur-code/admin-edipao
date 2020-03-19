@@ -205,6 +205,10 @@
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
+                            <span class="layui-form-span text_left form_span">车主标识：</span>
+                                <input disabled type="text" name="masterFlag" lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <span class="layui-form-span text_left form_span">运输商指派时间：</span>
                                 <input disabled type="text" name="createTime" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
@@ -215,27 +219,27 @@
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md5">
-                            <span class="layui-form-span text_left form_span">销售备注：</span>
+                            <span class="layui-form-span text_left form_span textarea_span">销售备注：</span>
                             <textarea disabled name="saleRemark" required lay-verify="" placeholder="请输入" class="layui-input"/>
                         </div>
                         <div class="layui-inline layui-col-md5 layui-col-md-offset1">
-                            <span class="layui-form-span text_left form_span">储运备注：</span>
+                            <span class="layui-form-span text_left form_span textarea_span">储运备注：</span>
                             <textarea disabled name="storageAndDeliverRemark" required lay-verify="" placeholder="请输入" class="layui-input"/>
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md5">
-                            <span class="layui-form-span text_left form_span">经销商备注：</span>
+                            <span class="layui-form-span text_left form_span textarea_span">经销商备注：</span>
                             <textarea disabled name="dealerRemark" required lay-verify="required" placeholder="请输入" class="layui-input"/>
                         </div>
                         <div class="layui-inline layui-col-md5 layui-col-md-offset1">
-                            <span class="layui-form-span text_left form_span">发运资源库备注（委改库）：</span>
+                            <span class="layui-form-span text_left form_span textarea_span">发运资源库备注（委改库）：</span>
                             <textarea disabled name="deliverResourceRemark" required lay-verify="required" placeholder="请输入" class="layui-input"/>
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md5">
-                            <span class="layui-form-span text_left form_span">运输商备注：</span>
+                            <span class="layui-form-span text_left form_span textarea_span">运输商备注：</span>
                             <textarea disabled name="transportRemark" required lay-verify="required" placeholder="请输入" class="layui-input" />
                         </div>
                     </div>
@@ -248,7 +252,7 @@
                 <div class="layui-inline layui-col-md5">
                     <span class="layui-form-span text_left form_span">发车单：</span>
                     {{# layui.each(d.startBillImage, function(index, item){ }}
-                    <div style="margin-right:20px;margin-bottom:20px" class="layui-col-md3">
+                    <div>
                         <img width="100%" class="car_image" src="{{item}}">
                     </div>
                     {{# }); }}
@@ -558,7 +562,7 @@
                 </div>
                 <div style="padding-left: 20px;overflow:hidden;">
                     {{#  layui.each(d.updateData.tailPayFeeItems, function(index, item){ }}
-                    <div class="check layui-inline layui-col-md3">
+                    <div class="check layui-block layui-col-md3">
                         <span class="x-red">待审：</span> 
                         <span class="">{{item.key + '(' + item.unit + ')' + '：' + item.val}}</span>
                     </div>
