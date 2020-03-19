@@ -228,14 +228,17 @@
                 mode: 'self',
                 filters: filtersHeader,//过滤项配置
                 done: function(filters){
+                    filters = $.extend({},filters);
                     if(filters.contractName){
-                        filters.contractPhone =  filters.contractName[1];
+                        filters.contractPhone = filters.contractName[1];
+                        filters.contractName = filters.contractName[0];
                     }
                     var index = 0,  
                         where = {
                             loginStaffId: edipao.getLoginStaffId()
                         };
                     layui.each(filters,function(key, value){
+                        if(!value) return;
                         where['searchFieldDTOList['+ index +'].fieldName'] = key;
                         if(key == 'supplierType' || key == 'status'){
                             where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');

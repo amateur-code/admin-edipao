@@ -228,15 +228,18 @@
                 'mode' : 'self',//过滤模式
                 'filters' : filtersHeader,//过滤项配置
                 'done': function(filters){
+                    filters = $.extend({},filters);
                     if(filters.contractPeople){
                         filters.contractName =  filters.contractPeople[0];
                         filters.contractPhone =  filters.contractPeople[1];
+                        delete filters.contractPeople
                     }
                     var index = 0,  
                         where = {
                             loginStaffId: edipao.getLoginStaffId()
                         };
                     layui.each(filters,function(key, value){
+                        if(!value) return; 
                         where['searchFieldDTOList['+ index +'].fieldName'] = key;
                         if(key == 'supplierType' || key == 'status'){
                             where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
@@ -276,7 +279,7 @@
                     xadmin.open('审核网点', './check.html?id=' + data.productNo)
                     break;
                 case 'preview':
-                    xadmin.open('产看网点', './preview.html?id=' + data.productNo)
+                    xadmin.open('查看网点', './preview.html?id=' + data.productNo)
                     break;
                 case 'delete':
                     layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
