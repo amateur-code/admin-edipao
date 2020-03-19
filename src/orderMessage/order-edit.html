@@ -541,7 +541,7 @@
                             <div class="layui-col-md6">
                                 <input {{d.prePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
-                            <div class="layui-col-md4">
+                            <div class="layui-col-md5">
                                 <select data-type="prePay" data-index="{{index}}" class="fee_unit_select" name="unit">
                                     {{#  layui.each(d.unitList, function(index2, item2){ }}
                                     <option value="{{item2}}" {{index2 == 0 || item.unit == item2 ? 'selected':''}}>{{item2}}</option>
@@ -571,7 +571,7 @@
                                 <input {{d.arrivePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             {{# if(item.new){ }}
-                            <div class="layui-col-md4">
+                            <div class="layui-col-md5">
                                 <select data-type="arrivePay" data-index="{{index}}" class="fee_unit_select" name="unit">
                                     {{#  layui.each(d.unitList, function(index2, item2){ }}
                                     <option value="{{item2}}" {{index2 == 0 || item.unit == item2 ? 'selected':''}}>{{item2}}</option>
@@ -602,7 +602,7 @@
                                 <input {{d.tailPayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             {{# if(item.new){ }}
-                            <div class="layui-col-md4">
+                            <div class="layui-col-md5">
                                 <select data-type="tailPay" data-index="{{index}}" class="fee_unit_select" name="unit">
                                     {{#  layui.each(d.unitList, function(index2, item2){ }}
                                     <option value="{{item2}}" {{index2 == 0 || item.unit == item2 ? 'selected':''}}>{{item2}}</option>
