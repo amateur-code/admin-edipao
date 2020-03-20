@@ -55,11 +55,11 @@
         <div id="car_form_container" class="car_car_form_container"></div>
         <script id="base_info_tpl" type="text/html">
             <div class="layui-row">
-                <div class="layui-col-md3">
+                <div class="layui-col-md6">
                     <span class="content_name">业务单号：</span>
                     <span id="" class="content_name blue">{{d.orderNo}}</span>
                 </div>
-                <div class="layui-col-md3 layui-col-md-offset1">
+                <div class="layui-col-md6">
                     <span class="content_name">订单类型：</span>
                     <span class="content_name blue">
                         {{#  
@@ -76,7 +76,13 @@
                           {{fn(d.orderType)}}
                     </span>
                 </div>
-                <div class="layui-col-md3 layui-col-md-offset1">
+            </div>
+            <div style="margin-top:20px" class="layui-row">
+                <div class="layui-col-md6">
+                    <span class="content_name">创建时间：</span>
+                    <span id="" class="content_name blue">{{d.createTime||'- -'}}</span>
+                </div>
+                <div class="layui-col-md6">
                     <span class="content_name">最后修改时间：</span>
                     <span id="" class="content_name blue">{{d.updateTime||'- -'}}</span>
                 </div>
@@ -626,7 +632,7 @@
                     </div>
                 </div>
                 <div class="layui-form-item layui-row">
-                    <div style="line-height:34px;" class="layui-col-md1">审核结果：</div>
+                    <div style="line-height:34px;" class="layui-col-md1"><span class="red">*</span>审核结果：</div>
                     <div class="layui-col-md1">
                         <input type="radio" name="approvalResult" value="0" title="通过" checked>
                     </div>

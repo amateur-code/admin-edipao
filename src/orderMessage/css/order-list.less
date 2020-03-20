@@ -2,6 +2,7 @@
   margin-top: 20px;
   text-align: center;
   .upload_start_holder{
+    overflow: visible;
     position: relative;
     display: inline-block;
     cursor: pointer;
@@ -11,6 +12,25 @@
     color: #ccc;
     text-align: center;
     line-height: 80px;
+    .pic_del_btn{
+      position: absolute;
+      z-index: -1;
+    }
+    &.pre{
+      .pic_del_btn{
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        line-height: 10px;
+        text-align: center;
+        border: 1px solid red;
+        color: red;
+        z-index: 999;
+      }
+    }
     .pre_img{
       position: absolute;
       max-height: 70px;

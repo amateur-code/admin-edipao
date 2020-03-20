@@ -138,9 +138,24 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     setData: function (data) {
        //渲染订单数据
       var _this =this;
-      _this.prePay = JSON.parse(data.prePayFeeItems) || [];
-      _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
-      _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
+      data.prePayFeeItems = data.prePayFeeItems || "[]";
+      data.tailPayFeeItems = data.tailPayFeeItems || "[]";
+      data.arrivePayFeeItems = data.arrivePayFeeItems || "[]";
+      try {
+        _this.prePay = JSON.parse(data.prePayFeeItems);
+      } catch (error) {
+        _this.prePay = [];
+      }
+      try {
+        _this.tailPay = JSON.parse(data.tailPayFeeItems);
+      } catch (error) {
+        _this.tailPay = [];
+      }
+      try {
+        _this.arrivePay = JSON.parse(data.arrivePayFeeItems);
+      } catch (error) {
+        _this.arrivePay = [];
+      }
       _this.setFeeList();
       laytpl($("#base_info_tpl").html()).render(data, function(html){
         $("#base_info").html(html);

@@ -3,6 +3,7 @@
   text-align: center;
 }
 .upload_start_row .upload_start_holder {
+  overflow: visible;
   position: relative;
   display: inline-block;
   cursor: pointer;
@@ -12,6 +13,23 @@
   color: #ccc;
   text-align: center;
   line-height: 80px;
+}
+.upload_start_row .upload_start_holder .pic_del_btn {
+  position: absolute;
+  z-index: -1;
+}
+.upload_start_row .upload_start_holder.pre .pic_del_btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  line-height: 10px;
+  text-align: center;
+  border: 1px solid red;
+  color: red;
+  z-index: 999;
 }
 .upload_start_row .upload_start_holder .pre_img {
   position: absolute;

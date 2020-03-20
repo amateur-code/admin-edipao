@@ -169,6 +169,11 @@ layui.config({
                 if(key=='startProvince'||key=='endProvince'){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
+                }else if(key=="transportAssignTime"||key=="dispatchTime"){
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    value = value.split(" 至 ");
+                    where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
                 }else if(key=='startCity'||key=='endCity'){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
@@ -231,7 +236,7 @@ layui.config({
                         }
                         uploadTruckId = res.data.truckDTOList[0].id;
                         res.data.truckDTOList.forEach(function (item) {
-                            uploadData[item.id + ""] = uploadObj;
+                            uploadData[item.id + ""] = JSON.parse(JSON.stringify(uploadObj));
                         });
                         var renderData = {
                             list: res.data.truckDTOList,
@@ -300,6 +305,11 @@ layui.config({
                     function render() {
                         laytpl($("#upload_pic_list_tpl").html()).render({uploadData:uploadData[uploadTruckId+""], type: type}, function (html) {
                             $("#upload_pic_select_car").html(html);
+                            $(".pic_del_btn").unbind().on("click", function (e) {
+                                e.stopPropagation();
+                                uploadData[uploadTruckId][e.target.dataset.field][e.target.dataset.index * 1] = "";
+                                $(e.target).parent().removeClass("pre").find(".pre_image_holder_inner").remove();
+                            });
                             renderObj.forEach(function (item) {
                                 item.num.forEach(function (item2, index) {
                                     var uploadInst = upload.render({
@@ -310,14 +320,13 @@ layui.config({
                                         ,data: {
                                             loginStaffId: user.staffId,
                                             type: item.type,
-                                            truckId: truckId,
-                                            index: uploadData[uploadTruckId+""][item.key].length + 1,
+                                            truckId: uploadTruckId,
+                                            index: index + 1,
                                         }
                                         ,done: function(res){
                                             if(res.code == "0"){
                                                 uploadData[uploadTruckId+""][item.key][index*1] = res.data;
                                                 $(item.holder + index + "").addClass("pre").append('<div class="pre_image_holder_inner"><img src="'+ res.data +'" class="layui-upload-img pre_img"></div>')
-                                                console.log(uploadData)
                                             }else{
                                                 layer.msg(res.message, {icon: 5,anim: 6});
                                             }
@@ -331,62 +340,78 @@ layui.config({
             });
         },
         uploadPics: function (options, cb) {
-            var data1, data2, data3;
-            var promise;
-            var flag = [data1, data2, data3];
-            var uploadObj = uploadData[uploadTruckId + ''];
-            var getReq = function (data) {
-                return edipao.request({
-                    url: "/admin/truck/submit/image",
-                    method: "post",
-                    data: data
+            var keys = Object.keys(uploadData)
+            keys.forEach(function (id, index) {
+                var data1, data2, data3;
+                var promise;
+                var flag = [data1, data2, data3];
+                var uploadObj = uploadData[id + ''];
+                var getReq = function (data) {
+                    return edipao.request({
+                        url: "/admin/truck/submit/image",
+                        method: "post",
+                        data: data
+                    });
+                }
+                uploadObj = notNull(uploadObj);
+                if(uploadObj["returnImagesList"].length > 0){
+                    data1 = {
+                        loginStaffId: user.staffId,
+                        truckId: id,
+                        type: 5,
+                        images: uploadObj["returnImagesList"].join(",")
+                    }
+                    flag[0] = data1;
+                }
+                if(uploadObj["startImagesList"].length > 0){
+                    data2 = {
+                        loginStaffId: user.staffId,
+                        truckId: id,
+                        type: 3,
+                        images: uploadObj["startImagesList"].join(",")
+                    }
+                    flag[1] = data2;
+                }
+                if(uploadObj["fetchImagesList"].length > 0){
+                    data3 = {
+                        loginStaffId: user.staffId,
+                        truckId: id,
+                        type: 2,
+                        images: uploadObj["fetchImagesList"].join(",")
+                    }
+                    flag[2] = data3;
+                }
+                flag = flag.filter(function (item) {
+                    return !!item;
                 });
-            }
-            if(uploadObj["returnImagesList"].length > 0){
-                data1 = {
-                    loginStaffId: user.staffId,
-                    truckId: uploadTruckId,
-                    type: 5,
-                    images: uploadObj["returnImagesList"].join(",")
+                flag = flag.map(function (item) {
+                    return getReq(item);
+                });
+                if(flag.length == 0){
+                    layer.msg("请先选择图片");
+                }else if(flag.length == 1){
+                    promise = $.when(flag[0]);
+                }else if(flag.length == 2){
+                    promise = $.when(flag[0], flag[1]);
+                }else if(flag.length == 3){
+                    promise = $.when(flag[0], flag[1], flag[2]);
                 }
-                flag[0] = data1;
-            }
-            if(uploadObj["startImagesList"].length > 0){
-                data2 = {
-                    loginStaffId: user.staffId,
-                    truckId: uploadTruckId,
-                    type: 3,
-                    images: uploadObj["startImagesList"].join(",")
+                if(promise){
+                    promise.done(function () {
+                        if(index == keys.length - 1)cb({code:0});
+                    });
+                }else{
+                    if(index == keys.length - 1)cb({code:0});
                 }
-                flag[1] = data2;
-            }
-            if(uploadObj["fetchImagesList"].length > 0){
-                data3 = {
-                    loginStaffId: user.staffId,
-                    truckId: uploadTruckId,
-                    type: 2,
-                    images: uploadObj["fetchImagesList"].join(",")
-                }
-                flag[2] = data3;
-            }
-            flag = flag.filter(function (item) {
-                return !!item;
             });
-            flag = flag.map(function (item) {
-                return getReq(item);
-            });
-            if(flag.length == 0){
-                layer.msg("请先选择图片");
-            }else if(flag.length == 1){
-                promise = $.when(flag[0]);
-            }else if(flag.length == 2){
-                promise = $.when(flag[0], flag[1]);
-            }else if(flag.length == 3){
-                promise = $.when(flag[0], flag[1], flag[2]);
+            function notNull(obj) {
+                Object.keys(obj).forEach(function (key) {
+                    obj[key] = obj[key].filter(function (item) {
+                        return !!item;
+                    });
+                });
+                return obj;
             }
-            promise.done(function () {
-                cb({code:0})
-            });
         },
         bindVerify: function(){
             $(".list_arrive_verify").unbind().on("click", function(e){
@@ -678,10 +703,10 @@ layui.config({
                 method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
                         res.data.truckDTOList.forEach(function (item) {
-                            if(!item.startBillImage){
-                                item.startBillImage = [];
+                            if(!item.startImages){
+                                item.startImages = [];
                             }else{
-                                item.startBillImage = item.startBillImage.split(",");
+                                item.startImages = item.startImages.split(",");
                             }
                             if(!item.fetchImages){
                                 item.fetchImages = [];
@@ -1235,7 +1260,7 @@ layui.config({
         }},
         {
             field: 'driverName', title: '司机手机', sort: false,minWidth:100, templet: function (d) {
-                return d.driverPhone;
+                return d.driverPhone || "- -";
             }
         },
         {field: 'driverIdCard', title: '司机身份证', sort: false,minWidth:100, hide: false, templet: function(d){
