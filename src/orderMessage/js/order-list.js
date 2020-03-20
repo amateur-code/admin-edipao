@@ -399,9 +399,10 @@ layui.config({
                 }
                 if(promise){
                     promise.done(function (res1, res2, res3) {
+                        console.log(res1)
+                        return
                         if(flag.length > 0){
                             if(res1){
-                                res1 = res1[0];
                                 if(res1.code != 0){
                                     successFlag = false;
                                     layer.msg(res1.message);
@@ -412,7 +413,6 @@ layui.config({
                         }
                         if(flag.length > 1){
                             if(res2){
-                                res2 = res2[0];
                                 if(res2.code != 0){
                                     successFlag = false;
                                     layer.msg(res2.message);
@@ -423,7 +423,6 @@ layui.config({
                         }
                         if(flag.length > 2){
                             if(res3){
-                                res3 = res3[0];
                                 if(res3.code != 0){
                                     successFlag = false;
                                     layer.msg(res3.message);
@@ -433,9 +432,9 @@ layui.config({
                             }
                         }
                     });
-                    if(index == keys.length - 1 &&  successFlag)cb({code:0});
+                    if(index == keys.length - 1 && successFlag)cb({code:0});
                 }else{
-                    if(index == keys.length - 1 &&  successFlag)cb({code:0});
+                    if(index == keys.length - 1 && successFlag)cb({code:0});
                 }
             });
             function notNull(obj) {
@@ -1105,7 +1104,6 @@ layui.config({
                     method.bindPay();
                     method.bindPrePay();
                     method.bindEvents();
-                    console.log(res)
                     if(res.data == null || res.data.length < 1){
                         $('.layui-table-header').css('overflow-x','scroll');
                     }else{
