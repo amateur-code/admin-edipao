@@ -293,7 +293,7 @@
                                 <div class="layui-input-inline" style="width: 250px;margin-right: 0;">
                                     <!-- <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList"> -->
                                     <input class="layui-input location-end-name" name="endAddress" id="seach-location-input" autocomplete="off" placeholder="请输入收车位置" value=""/>
-                                    <input name="endLat" id="endLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                    <input name="endLat" id="endLat" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
                                     <input name="endLng" id="endLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
                                 </div>
                                 <div class="layui-input-inline" style="width: 50px;">
@@ -373,7 +373,10 @@
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>行驶证</label><br>
                             <div class="layui-input-inline">
                                 <input readonly type="text" value="+点击上传图片" autocomplete="off" class="layui-input tempLicenseBackImage">
-                                <input readonly type="text" name="tempLicenseBackImage" autocomplete="off" class="layui-input" style="margin-top: 10px;">
+                                <input readonly type="text" name="tempLicenseBackImage" autocomplete="off" class="layui-input" style="width:0;height:0;opacity:0;">
+                            </div>
+                            <div class="tempLicenseBackImageBox">
+                                <img style="width: 100%;height: auto;" src="" alt="">
                             </div>
                         </div>
                     </div>

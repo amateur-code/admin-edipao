@@ -914,6 +914,12 @@ layui.config({
                                         case 'deliveryOperator':
                                             value = deliveryOperator + '' + deliveryOperatorPhone;
                                             break;
+                                        case 'driverName':
+                                            value = item[i];
+                                            break;
+                                        case 'driverPhone':
+                                            value = item[i];
+                                            break;
                                         case 'prePayAmount':
                                             var payStatus = "";
                                             if (prePayApprovalBtn == 1) {
@@ -1058,6 +1064,7 @@ layui.config({
                             }
                             exportData.push(newObj);
                         })
+                        console.log(exportData)
                         // 导出
                         excel.exportExcel({
                             sheet1: exportData

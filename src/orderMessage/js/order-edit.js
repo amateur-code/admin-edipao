@@ -77,7 +77,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         ac.hide();
       });
     })
-    
+
   }
   Edit.prototype.getStaffList = function(){
     var _this = this;
@@ -208,6 +208,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         id: 'seach-location-input' + i
       })
     })
+    $.each($('.tempLicenseBackImageBox'), function(i,d){
+      $(this).attr({
+        id: 'tempLicenseBackImageBox' + i
+      })
+    })
     
     form.render();
     _this.carFormList.forEach(function (item, index) {
@@ -238,6 +243,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       if(truckData.startCity && truckData.startCity.indexOf('-') > -1){
         truckData.startProvince = truckData.startCity.split('-')[0]
         truckData.startCity = truckData.startCity.split('-')[1]
+      }
+      console.log(truckData)
+      if(truckData.tempLicenseBackImage){
+        $('#tempLicenseBackImageBox' + index).find('img').attr('src', truckData.tempLicenseBackImage + '?' + Math.floor(Math.random() * 10e6))
       }
       _this.setStartSelectCity(truckData);
       _this.setEndSelectCity(truckData);
@@ -288,6 +297,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             image: res.data,
             id: data.truckDTOList[index].id
           };
+          $('#tempLicenseBackImageBox' + index).find('img').attr('src', res.data + '?' + Math.floor(Math.random() * 10e6))
           layer.msg("上传成功");
         }else{
           layer.msg(res.message, {icon: 5,anim: 6});
@@ -769,6 +779,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         endPark: itemData.endPark||"",
         endProvince: itemData.endProvince ||"",
         endCity: itemData.endCity ||"",
+        endLat: itemData.endLat||"",
+        endLng: itemData.endLng||"",
         endAddress: itemData.endAddress||"",
         connectorName: itemData.connectorName||"",
         connectorPhone: itemData.connectorPhone||"",
@@ -826,6 +838,18 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         return;
       }
     }
+    var hasLatAndLng = true;
+    for(var i = 0; i < truckUpdateReqList.length; i ++){
+      if(!truckUpdateReqList[i].endLat || !truckUpdateReqList[i].endLng){
+        hasLatAndLng = false;
+        break;
+      }
+    }
+    if(!hasLatAndLng){
+      layer.msg("请选择正确的收车地址");
+      return;
+    }
+  
     _this.submitAll(edipao.request({
       url: "/admin/order/updateOrder",
       method: "POST",
@@ -1356,6 +1380,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           id: 'seach-location-input' + i
         })
       })
+      $.each($('.tempLicenseBackImageBox'), function(i,d){
+        $(this).attr({
+          id: 'tempLicenseBackImageBox' + i
+        })
+      })
       _this.renderHiddenMap(_this.hiddenMap);
       form.render();
       _this.setStartSelectCity();
@@ -1367,6 +1396,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       $(".productCode_input").unbind().on("input", function (e) {
         if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);
       });
+      _this.showMap();
       $(".del_car_btn").unbind().on("click", function(e){
         _this.handleDeleteCar(e);
       });
@@ -1423,9 +1453,14 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       _this.openSelectVin(e);
     });
 
-    var address = '';
+    _this.showMap();
+    
+  }
+
+  Edit.prototype.showMap = function(){
     $('.selectMapLocation').unbind('click').on('click', function(){
       var _t = $(this);
+      var address = '';
       var height = $(document).scrollTop()
       $('html,body').animate({scrollTop:0},100);
       layer.open({
@@ -1440,13 +1475,13 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         cancel: function () {
           address = '';
           $('#seachLocation').val('');
-          $('#select-address').text('');
+          $('#select-address').val('');
         },
         btn2: function(){
-          _t.parents('.address-map').find('input').val(address);
+          _t.parents('.address-map').find('.location-end-name').val(address.name).next().val(address.lat).next().val(address.lng);
           address = '';
           $('#seachLocation').val('');
-          $('#select-address').text('');
+          $('#select-address').val('');
         },
         success: function () {
           //凯立德地图API功能
@@ -1454,77 +1489,110 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           var map = new Careland.Map('select-map', point, 15); 
           map.enableAutoResize();      
           map.load();
-
           regionMapView(map, $(this));
+          
         },
         end: function(){
           $('html,body').animate({scrollTop:height},100);
         }
       })
-    })
 
-    // 获取点击点的坐标数据
-    function regionMapView(map, ctx){
-        var myGeo = new Careland.Geocoder();
+      // 获取点击点的坐标数据
+      function regionMapView(map, ctx){
+          var myGeo = new Careland.Geocoder();
 
-        var layer = new Careland.Layer('point', 'layer');
-        var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'https://www.d.edipao.cn/admin/images/center.png',fontColor:'#000'});
-        layer.setStyle(style);
-        map.addLayer(layer);
+          var layer = new Careland.Layer('point', 'layer');
+          var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'https://www.d.edipao.cn/admin/images/center.png',fontColor:'#000'});
+          layer.setStyle(style);
+          map.addLayer(layer);
 
-        var mapInfoWin = new Careland.InfoWindow();
-        mapInfoWin.setOffset(new Careland.Size(0, -22));
+          var mapInfoWin = new Careland.InfoWindow();
+          mapInfoWin.setOffset(new Careland.Size(0, -22));
 
-        $('#regionMapPoint').off('click').on('click', function(){
-            var searchTxt = $('#seachLocation').val();
-            var poiSearch = new Careland.LocalSearch(map,{
-                map: map,
-                selectFirstResult:false,
-                autoViewport:true,
-                onMarkersSet: function(pois){
-                    layui.each(pois, function(v, k){
-                        var marker = k.marker;
-                        marker.addEventListener('click', function(e){
-                          e.event.defaultPrevented = true;
-                          layer.clear();
-                          myGeo.getLocation(e.point,function(data){
-                            setViewData(mapInfoWin, marker, data, ctx)
-                          });
-                        })
-                    })
-                },
-            });
-            poiSearch.search(searchTxt);
-        })
-
-          
-        map.addEventListener('click', function(point){
-            var point = point;
-            if(!point || typeof (point) != "object"){
-              return;
+          var ac = new Careland.Autocomplete({
+            input : "seachLocation",
+            location : map
+          });
+          ac.setLocation(map);
+          ac.setInputForm('seachLocation');
+          ac.addEventListener("onConfirm",function(e){
+            console.log(e)
+            $('#select-address').text(e.item.poi.name);
+            mapInfoWin.setContent('当前地址：' + e.item.poi.name);
+            mapInfoWin.redraw();
+            layer.clear();
+            //创建文本标注点
+            var marker = new Careland.Marker('image');
+            marker.setPoint(e.item.poi.point);
+            layer.add(marker);
+            marker.openInfoWindow(mapInfoWin);
+            address = {
+              name: e.item.poi.name,
+              address: e.item.poi.address,
+              lat: e.item.poi.pointGb.lat,
+              lng: e.item.poi.pointGb.lng,
             }
-            myGeo.getLocation(point,function(data){
-              layer.clear();
-              //创建文本标注点
-              var marker = new Careland.Marker('image');
-              marker.setPoint(point);
-              layer.add(marker);
+            map.centerAndZoom(e.item.poi.point, 15);
+          });
 
-              setViewData(mapInfoWin, marker, data, ctx);
-            });
+          $('#regionMapPoint').off('click').on('click', function(){
+              var searchTxt = $('#seachLocation').val();
+              var poiSearch = new Careland.LocalSearch(map,{
+                  map: map,
+                  selectFirstResult:false,
+                  autoViewport:true,
+                  onMarkersSet: function(pois){
+                      layui.each(pois, function(v, k){
+                          var marker = k.marker;
+                          marker.addEventListener('click', function(e){
+                            e.event.defaultPrevented = true;
+                            layer.clear();
+                            myGeo.getLocation(e.point,function(data){
+                              setViewData(mapInfoWin, marker, data, ctx)
+                            });
+                          })
+                      })
+                  },
+              });
+              poiSearch.search(searchTxt);
+          })
+
             
-        });
+          map.addEventListener('click', function(point){
+              var point = point;
+              if(!point || typeof (point) != "object"){
+                return;
+              }
+              myGeo.getLocation(point,function(data){
+                layer.clear();
+                //创建文本标注点
+                var marker = new Careland.Marker('image');
+                marker.setPoint(point);
+                layer.add(marker);
 
-    }
-    // 设置视图显示和数据
-    function setViewData(mapInfoWin, marker, data, ctx){
-      $('#seachLocation').val(data.address);
-      $('#select-address').text(data.address);
-      mapInfoWin.setContent('当前地址：' + data.address);
-      mapInfoWin.redraw();
-      marker.openInfoWindow(mapInfoWin);
-      address = data.address;
-    }
+                setViewData(mapInfoWin, marker, data, ctx);
+              });
+              
+          });
+
+      }
+      // 设置视图显示和数据
+      function setViewData(mapInfoWin, marker, data, ctx){
+        $('#seachLocation').val(data.address);
+        $('#select-address').text(data.address);
+        mapInfoWin.setContent('当前地址：' + data.address);
+        mapInfoWin.redraw();
+        marker.openInfoWindow(mapInfoWin);
+        console.log(data)
+        address = {
+          name: data.address,
+          address: data.address,
+          lat: edipao.kcodeToGb(data.kcode).lat,
+          lng: edipao.kcodeToGb(data.kcode).lng,
+        }
+        console.log(address)
+      }
+    })
   }
   var edit = new Edit();
   top.edit = edit;
