@@ -303,7 +303,7 @@
     <div class="layui-card">
         <div class="layui-card-header">交车单</div>
         <div class="layui-card-body">
-            {{#  layui.each(d.returnImagesList, function(index, item){ }}
+            {{# layui.each(d.uploadData.returnImagesList, function(index, item){ }}
             <div class="layui-row upload_start_row">
                 <div class="layui-col-md5">
                     <div id="{{'upload_give_holder_' + index}}" data-index="{{index}}" class="upload_start_holder {{item?'pre':''}}">
@@ -318,7 +318,7 @@
                     预览图
                 </div>
             </div>
-            {{#  }); }}
+            {{# }); }}
         </div>
     </div>
     {{# } }}

@@ -1295,8 +1295,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         _this.handleManageFeeInput(e);
       });
       $(".select_vin").unbind().on("click", function (e) {
-        // layer.alert("没有数据");
-        // return;
+        layer.alert("没有数据");
+        return;
         _this.openSelectVin(e);
       });
       var index = _this.carFormList.length - 1;
@@ -1314,21 +1314,15 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         url: edipao.API_HOST + '/admin/truck/upload/image',
         data: {
           loginStaffId: _this.user.staffId,
-          truckId: idToAdd,
+          truckId: _this.carFormList[index].id||"",
           type: 1,
           index: 1
-        },
-        before: function () {
-          if(!idToAdd){
-            layer.msg('请先选择车辆', {icon: 5,anim: 6});
-            return false;
-          }
         },
         done: function (res) {
           if(res.code == 0){
             _this.tempLicenseBackImage[index] = {
               image: res.data,
-              id: idToAdd
+              id: _this.carFormList[index].id || ""
             };
             $($('.tempLicenseBackImage')[index]).html("已上传 - 点击更换").css("border-color","#67C23A");
             layer.msg("上传成功");
@@ -1342,8 +1336,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       _this.openAddFee(e);
     });
     $(".select_vin").unbind().on("click", function (e) {
-      // layer.alert("没有数据");
-      // return;
+      layer.alert("没有数据");
+      return;
       _this.openSelectVin(e);
     });
 

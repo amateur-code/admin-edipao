@@ -340,7 +340,8 @@ layui.config({
             });
         },
         uploadPics: function (options, cb) {
-            var keys = Object.keys(uploadData)
+            var keys = Object.keys(uploadData);
+            var successFlag = true;
             keys.forEach(function (id, index) {
                 var data1, data2, data3;
                 var promise;
@@ -397,11 +398,44 @@ layui.config({
                     promise = $.when(flag[0], flag[1], flag[2]);
                 }
                 if(promise){
-                    promise.done(function () {
-                        if(index == keys.length - 1)cb({code:0});
+                    promise.done(function (res1, res2, res3) {
+                        if(flag.length > 0){
+                            if(res1){
+                                res1 = res1[0];
+                                if(res1.code != 0){
+                                    successFlag = false;
+                                    layer.msg(res1.message);
+                                }
+                            }else{
+                                res1 = {code:0};
+                            }
+                        }
+                        if(flag.length > 1){
+                            if(res2){
+                                res2 = res2[0];
+                                if(res2.code != 0){
+                                    successFlag = false;
+                                    layer.msg(res2.message);
+                                }
+                            }else{
+                                res2 = {code:0};
+                            }
+                        }
+                        if(flag.length > 2){
+                            if(res3){
+                                res3 = res3[0];
+                                if(res3.code != 0){
+                                    successFlag = false;
+                                    layer.msg(res3.message);
+                                }
+                            }else{
+                                res3 = {code:0};
+                            }
+                        }
                     });
+                    if(index == keys.length - 1 &&  successFlag)cb({code:0});
                 }else{
-                    if(index == keys.length - 1)cb({code:0});
+                    if(index == keys.length - 1 &&  successFlag)cb({code:0});
                 }
             });
             function notNull(obj) {
@@ -417,7 +451,6 @@ layui.config({
             $(".list_arrive_verify").unbind().on("click", function(e){
                 var field = e.target.dataset.field;
                 var orderId = e.target.dataset.orderid;
-
                 var orderNo = e.target.dataset.order;
                 var type = e.target.dataset.type*1;
                 var key = "prePayFeeItems";
@@ -719,7 +752,6 @@ layui.config({
                                 item.returnImages = item.returnImages.split(",");
                             }
                         });
-                        console.log(res.data.truckDTOList)
                         laytpl($("#pic_view_tpl").html()).render({
                             list: res.data.truckDTOList,
                             field: field
@@ -736,10 +768,11 @@ layui.config({
                                         form.on("select", function (obj) {
                                             if(obj.elem.name == "pic_view"){
                                                 var index = obj.elem.options.selectedIndex*1;
-                                                if(index == startIndex) return;
                                                 var data = res.data.truckDTOList[index];
-                                                laytpl($("#pic_view_list_tpl").html()).render(data, function (html) {
-                                                    $("#pic_view_list_container").html(html);
+                                                data.field = field;
+                                                laytpl($("#pic_view_list_tpl").html()).render(data, function (html2) {
+                                                    console.log(html2)
+                                                    $("#pic_view_list_container").html(html2);
                                                 });
                                             }
                                         });
@@ -1248,8 +1281,7 @@ layui.config({
             d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
             return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
         }},
-        {
-        field: 'driverName', title: '司机姓名', sort: false,minWidth:100, templet: function (d) {
+        {field: 'driverName', title: '司机姓名', sort: false,minWidth:100, templet: function (d) {
             var driverName = "<a class='table_a pointer blue list_driver_name' data-id="+ d.driverId +">{{}}</a>";
             if(d.driverName){
                 driverName = driverName.replace("{{}}", d.driverName);
@@ -1259,7 +1291,7 @@ layui.config({
             return driverName;
         }},
         {
-            field: 'driverName', title: '司机手机', sort: false,minWidth:100, templet: function (d) {
+            field: 'driverPhone', title: '司机手机', sort: false,minWidth:100, templet: function (d) {
                 return d.driverPhone || "- -";
             }
         },
@@ -1354,7 +1386,7 @@ layui.config({
         {field: 'fetchStatus', title: '提车照片', sort: false,minWidth:100, hide: false, templet: function(d){
             var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='5' data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='3' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
+            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-key='fetchImages' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='3' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var status = "未上传";
             if(permissionList.indexOf("提车照片上传") < 0){
                 str2 = "";
@@ -1475,6 +1507,7 @@ layui.config({
         "fetchOperator",
         "deliveryOperator",
         "driverName",
+        "driverPhone",
         "driverIdCard",
         "prePayAmount",
         "arrivePayAmount",
