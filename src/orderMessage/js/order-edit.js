@@ -49,30 +49,34 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         _this.orderData = res.data;
         _this.setData(res.data);
         _this.bindEvents();
+        var point = new Careland.Point(419364916, 143908009);
+        var map = new Careland.Map('hiddenMap', point, 12); 
+        map.enableAutoResize(); 
+        map.load();
+        _this.hiddenMap = map;
+        _this.renderHiddenMap(map);
       }else{
         layer.msg(res.message, {icon: 5,anim: 6});
       }
     });
-
-    _this.renderHiddenMap();
+    
   }
-  Edit.prototype.renderHiddenMap = function(){
-    var point = new Careland.Point(419364916, 143908009);	//创建坐标点
-    var map = new Careland.Map('hiddenMap', point, 12); 			//实例化地图对象
-    map.enableAutoResize();                                 //启用自动适应容器尺寸变化
-    map.load();
-    this.hiddenMap = map;
-
-    var ac = new Careland.Autocomplete({
-        input : "seach-location-input",
-        location : map
-    });
-    ac.setLocation(map);
-    ac.setInputForm('seach-location-input');
-    ac.addEventListener("onConfirm",function(e){
-      console.log(e)
-      ac.hide();
-    });
+  Edit.prototype.renderHiddenMap = function(map){
+    $.each($('.location-end-name'), function(i, d){
+      var _this = $(this);
+      var ac = new Careland.Autocomplete({
+          input : "seach-location-input" + i,
+          location : map
+      });
+      ac.setLocation(map);
+      ac.setInputForm('seach-location-input' + i);
+      ac.addEventListener("onConfirm",function(e){
+        console.log(e.item.poi.gbpoint)
+        _this.next().val(e.item.poi.gbpoint.lat).next().val(e.item.poi.gbpoint.lng);
+        ac.hide();
+      });
+    })
+    
   }
   Edit.prototype.getStaffList = function(){
     var _this = this;
@@ -131,27 +135,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       }
     });
   }
-  Edit.prototype.setFeeList = function(flag){
+  Edit.prototype.setFeeList = function(){
     //保存费用项
     var _this = this;
-    if(flag){
-      var dispatchData = form.val("form_dispatch");
-      _this.prePay = _this.prePay.map(function (item, index) {
-        delete item.new;
-        item.val = dispatchData["prePay_" + index] || 0;
-        return item;
-      });
-      _this.arrivePay = _this.arrivePay.map(function (item, index) {
-        delete item.new;
-        item.val = dispatchData["arrivePay_" + index] || 0;
-        return item;
-      });
-      _this.tailPay = _this.tailPay.map(function (item, index) {
-        delete item.new;
-        item.val = dispatchData["tailPay_" + index] || 0;
-        return item;
-      });
-    }
     laytpl($("#fee_list_tpl").html()).render({
       prePayDisabled: _this.orderData.prePayAmount == "*",
       prePay: _this.prePay,
@@ -184,24 +170,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
   Edit.prototype.setData = function(data){
     //渲染订单数据
     var _this =this;
-    data.prePayFeeItems = data.prePayFeeItems || "[]";
-    data.tailPayFeeItems = data.tailPayFeeItems || "[]";
-    data.arrivePayFeeItems = data.arrivePayFeeItems || "[]";
-    try {
-      _this.prePay = JSON.parse(data.prePayFeeItems);
-    } catch (error) {
-      _this.prePay = [];
-    }
-    try {
-      _this.tailPay = JSON.parse(data.tailPayFeeItems);
-    } catch (error) {
-      _this.tailPay = [];
-    }
-    try {
-      _this.arrivePay = JSON.parse(data.arrivePayFeeItems);
-    } catch (error) {
-      _this.arrivePay = [];
-    }
+    _this.prePay = JSON.parse(data.prePayFeeItems) || [];
+    _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
+    _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
     _this.setFeeList();
     laytpl($("#form_ascription_tpl").html()).render({orderData: _this.orderData, staffList: _this.staffList}, function (html) {
       $("#form_ascription_container").html(html);
@@ -223,9 +194,13 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       carFormStr += carFormHtml.replace(/CARFORM/g,filterStr);
     });
     $("#car_form_container").html(carFormStr);
+    $.each($('.location-end-name'), function(i,d){
+      $(this).attr({
+        id: 'seach-location-input' + i
+      })
+    })
     
     form.render();
-    var $tempLicenseBackImage = $(".tempLicenseBackImage");
     _this.carFormList.forEach(function (item, index) {
       var truckData;
       try {
@@ -255,16 +230,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         truckData.startProvince = truckData.startCity.split('-')[0]
         truckData.startCity = truckData.startCity.split('-')[1]
       }
-      if(truckData.endCity && truckData.endCity.indexOf('-') > -1){
-        truckData.endProvince = truckData.endCity.split('-')[0]
-        truckData.endCity = truckData.endCity.split('-')[1]
-      }
-      if(!truckData.saleRemark) truckData.saleRemark = "暂无数据";
-      if(!truckData.storageAndDeliverRemark) truckData.storageAndDeliverRemark = "暂无数据";
-      if(!truckData.saledealerRemarkRemark) truckData.dealerRemark = "暂无数据";
-      if(!truckData.deliverResourceRemark) truckData.deliverResourceRemark = "暂无数据";
-      if(!truckData.transportRemark) truckData.transportRemark = "暂无数据";
-      if(truckData.tempLicenseBackImage) $($tempLicenseBackImage[index]).html("已上传 - 点击更换").css("border-color","#67C23A");
       _this.setStartSelectCity(truckData);
       _this.setEndSelectCity(truckData);
       form.val(item, truckData);
@@ -313,7 +278,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             image: res.data,
             id: data.truckDTOList[index].id
           };
-          $($('.tempLicenseBackImage')[index]).html("已上传 - 点击更换").css("border-color","#67C23A");
           layer.msg("上传成功");
         }else{
           layer.msg(res.message, {icon: 5,anim: 6});
@@ -452,7 +416,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       var layerIndex1 = layer.open({
         title: "增加费用",
         type: 1,
-        area: '600px',
+        area: ['600px', '400px'],
         content: html,
         btn:["确认", "取消"],
         yes: function (e) {
@@ -474,7 +438,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             }
           });
           _this[type] = newObj;
-          _this.setFeeList(true);
+          _this.setFeeList();
           $(".add_fee").unbind().on("click", function (e) {
             _this.openAddFee(e);
           });
@@ -690,7 +654,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         if(res.code == 0){
           $("." + filter).remove();
           if(_this.orderData.truckDTOList.length == 1){
-            return;
             edipao.request({
               url: "/admin/order/cancelOrder",
               method: "post",
@@ -739,22 +702,12 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var totalIncome = 0;
     var totalManageFee = 0;
     var carsLength = _this.cars.length + _this.carsToAdd.length - _this.carsToDel.length;
-    var cityVerify = false;
     _this.carFormList.forEach(function (item, index) {
       var itemData = form.val(item);
+      console.log(itemData.masterFlag)
       if(!itemData.id && itemData.id != 0) return;
       totalIncome += itemData.income * 1;
       totalManageFee += itemData.manageFee * 1;
-      if(!itemData.startCity||!itemData.startProvince){
-        layer.msg("发车城市为必填项");
-        cityVerify = true;
-        return;
-      }
-      if(!itemData.endProvince||!itemData.endCity){
-        layer.msg("收车城市为必填项");
-        cityVerify = true;
-        return;
-      }
       truckUpdateReqList.push({
         truckId: itemData.id||"",
         masterFlag: itemData.masterFlag == "on" ? "否" : "是",
@@ -789,7 +742,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         transportRemark: itemData.transportRemark||"",
       });
     });
-    if(cityVerify) return;
     data.id = _this.orderId;
     data.loginStaffId = _this.user.staffId || "";
     data.orderNo = _this.orderNo || "";
@@ -1281,10 +1233,16 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       _this.carFormList.push(filterStr);
       var html = carFormHtml.replace(/CARFORM/g, filterStr);
       $("#car_form_container").append(html);
+      $.each($('.location-end-name'), function(i,d){
+        $(this).attr({
+          id: 'seach-location-input' + i
+        })
+      })
+      _this.renderHiddenMap(_this.hiddenMap);
       form.render();
       _this.setStartSelectCity();
       _this.setEndSelectCity();
-      _this.getMapAddress();
+      // _this.getMapAddress();
       $(".del_car_btn").unbind().on("click", function(e){
         _this.handleDeleteCar(e);
       });
@@ -1295,8 +1253,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         _this.handleManageFeeInput(e);
       });
       $(".select_vin").unbind().on("click", function (e) {
-        layer.alert("没有数据");
-        return;
+        // layer.alert("没有数据");
+        // return;
         _this.openSelectVin(e);
       });
       var index = _this.carFormList.length - 1;
@@ -1314,17 +1272,22 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         url: edipao.API_HOST + '/admin/truck/upload/image',
         data: {
           loginStaffId: _this.user.staffId,
-          truckId: _this.carFormList[index].id||"",
+          truckId: idToAdd,
           type: 1,
           index: 1
+        },
+        before: function () {
+          if(!idToAdd){
+            layer.msg('请先选择车辆', {icon: 5,anim: 6});
+            return false;
+          }
         },
         done: function (res) {
           if(res.code == 0){
             _this.tempLicenseBackImage[index] = {
               image: res.data,
-              id: _this.carFormList[index].id || ""
+              id: idToAdd
             };
-            $($('.tempLicenseBackImage')[index]).html("已上传 - 点击更换").css("border-color","#67C23A");
             layer.msg("上传成功");
           }else{
             layer.msg(res.message, {icon: 5,anim: 6});
@@ -1336,13 +1299,13 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       _this.openAddFee(e);
     });
     $(".select_vin").unbind().on("click", function (e) {
-      layer.alert("没有数据");
-      return;
+      // layer.alert("没有数据");
+      // return;
       _this.openSelectVin(e);
     });
 
     var address = '';
-    $('.selectMapLocation').off('click').on('click', function(){
+    $('.selectMapLocation').unbind('click').on('click', function(){
       var _t = $(this);
       var height = $(document).scrollTop()
       $('html,body').animate({scrollTop:0},100);
