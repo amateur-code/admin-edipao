@@ -103,11 +103,17 @@
                                         .replace(/\[\{(start)\:\{(code)\:(\d*)(province)\:/g, '始发地：')
                                         .replace(/(city)\:/g, '-')
                                         .replace(/\}(end)\:\{(code)\:(\d*)(province)\:/g, '  目的地：')
+                                        .replace(/(null)/g, '--')
                                         
                             } else if(data.indexOf('预付款') > -1 || data.indexOf('到付款') > -1 || data.indexOf('尾款') > -1){
-                                return data = data.replace(/(\')|(\,)/g, '').replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '').replace(/\}\{(key)/g, ',')
+                                return data = data
+                                            .replace(/(\')|(\,)/g, '')
+                                            .replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '')
+                                            .replace(/\}\{(key)/g, ',')
+                                            .replace(/(null)/g, '--')
                             }else{
-                                return data;
+                                return data
+                                        .replace(/(null)/g, '--');
                             }
                         }
                     },
@@ -118,15 +124,22 @@
                             var data = res.modifyAfterJson;
                             var data = res.modifyAfterJson;
                             if(data.indexOf('意向路线') > -1){
-                                return data = data.replace(/(\')|(\,)|(\}\}\])/g, '')
+                                return data = data
+                                        .replace(/(\')|(\,)|(\}\}\])/g, '')
                                         .replace(/\[\{(start)\:\{(code)\:(\d*)(province)\:/g, '始发地：')
                                         .replace(/(city)\:/g, '-')
                                         .replace(/\}(end)\:\{(code)\:(\d*)(province)\:/g, '  目的地：')
+                                        .replace(/(null)/g, '--')
                                         
                             } else if(data.indexOf('预付款') > -1 || data.indexOf('到付款') > -1 || data.indexOf('尾款') > -1){
-                                return data = data.replace(/(\')|(\,)/g, '').replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '').replace(/\}\{(key)/g, ',')
+                                return data = data
+                                            .replace(/(\')|(\,)/g, '')
+                                            .replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '')
+                                            .replace(/\}\{(key)/g, ',')
+                                            .replace(/(null)/g, '--')
                             }else{
-                                return data;
+                                return data
+                                        .replace(/(null)/g, '--');
                             }
                         }},
                     { field: 'operationRemark', title: '说明' , width: 200}
@@ -154,7 +167,7 @@
         function isWishJourney (data) {
             if(data.indexOf('意向路线')!='-1'){
                 if(data.indexOf('意向路线:null')!='-1'){
-                    var newData = data.replace('null','--')
+                    var newData = data.replace(/(null)/g,'--')
                     return newData;
                 }else{
                     var val = data.split('意向路线:[');
