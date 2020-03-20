@@ -45,7 +45,7 @@ layui.config({
     var uploadObj = {
         startImagesList: ['','','','','',''],
         fetchImagesList: ['','','','',''],
-        returnImagesList: ['','','']
+        returnImagesList: ['','']
     }
     var uploadData = {}
     top.window.uploadData = uploadData;
@@ -208,7 +208,7 @@ layui.config({
                 uploadObj = {
                     startImagesList: ['','','','','',''],
                     fetchImagesList: ['','','','',''],
-                    returnImagesList: ['','','']
+                    returnImagesList: ['','']
                 };
                 uploadData = {};
                 var elem;
@@ -342,9 +342,24 @@ layui.config({
         uploadPics: function (options, cb) {
             var keys = Object.keys(uploadData);
             var successFlag = true;
+            var emptyFlag = true;
+            keys.forEach(function (id) {
+                Object.keys(uploadData[id]).forEach(function(item){
+                    uploadData[id][item].forEach(function (img) {
+                        if(img){
+                            emptyFlag = false;
+                        }
+                    });
+                });
+            });
+            if(emptyFlag){
+                layer.msg("请先上传图片",{icon: 2});
+                return;
+            }
             keys.forEach(function (id, index) {
                 var data1, data2, data3;
                 var promise;
+                var hadUpload = false;
                 var flag = [data1, data2, data3];
                 var uploadObj = uploadData[id + ''];
                 var getReq = function (data) {
@@ -388,8 +403,8 @@ layui.config({
                 flag = flag.map(function (item) {
                     return getReq(item);
                 });
-                if(flag.length == 0){
-                    layer.msg("请先选择图片");
+                if(flag.length == 0 && !hadUpload){
+                    //layer.msg("请先选择图片");
                 }else if(flag.length == 1){
                     promise = $.when(flag[0]);
                 }else if(flag.length == 2){
@@ -399,8 +414,6 @@ layui.config({
                 }
                 if(promise){
                     promise.done(function (res1, res2, res3) {
-                        console.log(res1)
-                        return
                         if(flag.length > 0){
                             if(res1){
                                 if(res1.code != 0){
@@ -432,9 +445,10 @@ layui.config({
                             }
                         }
                     });
-                    if(index == keys.length - 1 && successFlag)cb({code:0});
-                }else{
-                    if(index == keys.length - 1 && successFlag)cb({code:0});
+                    if(successFlag){
+                        hadUpload = true;
+                        cb({code:0});
+                    }
                 }
             });
             function notNull(obj) {
@@ -770,7 +784,6 @@ layui.config({
                                                 var data = res.data.truckDTOList[index];
                                                 data.field = field;
                                                 laytpl($("#pic_view_list_tpl").html()).render(data, function (html2) {
-                                                    console.log(html2)
                                                     $("#pic_view_list_container").html(html2);
                                                 });
                                             }
@@ -830,7 +843,6 @@ layui.config({
                         // 过滤处理数据
                         layui.each(data, function(index, item){
                             var newObj = {};
-                            console.log(item)
                             for(var i in item){
                                 var orderType = item.orderType;
                                 var masterFlag = item.masterFlag;

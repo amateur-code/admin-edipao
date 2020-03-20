@@ -121,13 +121,13 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">车辆vin码</label><br>
                             <div class="layui-input-inline">
-                                <input type="tel" name="vinCode" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input type="text" name="vinCode" lay-verify="required" autocomplete="off" class="layui-input vinCode_input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">产品代码</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="productCode" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input type="text" name="productCode" lay-verify="required" autocomplete="off" class="layui-input productCode_input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -451,9 +451,10 @@
                                 <div class="layui-inline layui-col-md8">
                                     <input id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
                                 </div>
-                                <div class="layui-inline layui-col-md2">
+                                <div class="layui-inline layui-col-md3">
                                     <button id="select_driver_btn" type="button" class="layui-btn layui-btn-sm layui-btn-fluid">选择</button>
                                 </div>
+                                <div id="driver_select_item_container"></div>
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -513,19 +514,52 @@
                     <div class="layui-inline layui-col-md3">
                         <label class="layui-form-label text_left form_label">调度员</label><br>
                         <div class="layui-input-inline">
-                            <input type="text" name="dispatchOperator" lay-verify="required" autocomplete="off" class="layui-input">
+                            <div class="layui-row">
+                                <div class="layui-col-md8">
+                                    <select name="dispatchOperator" lay-search>
+                                        {{#  layui.each(d.staffList, function(index, item){ }}
+                                            <option data-name="{{item.name}}" value="{{item.name + ',' + item.phone}}">{{item.name + item.phone}}</option>
+                                        {{#  }); }}
+                                    </select>
+                                </div>
+                                <div class="layui-col-md3">
+                                    <button data-field="dispatchOperator" type="button" class="select_operator_btn layui-btn layui-btn-sm layui-btn-fluid">选择</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                         <label class="layui-form-label text_left form_label">提车员</label><br>
                         <div class="layui-input-inline">
-                            <input type="text" name="fetchOperator" lay-verify="required" autocomplete="off" class="layui-input">
+                            <div class="layui-row">
+                                <div class="layui-col-md8">
+                                    <select name="fetchOperator" lay-search>
+                                        {{#  layui.each(d.staffList, function(index, item){ }}
+                                            <option data-name="{{item.name}}" value="{{item.name + ',' + item.phone}}">{{item.name + item.phone}}</option>
+                                        {{#  }); }}
+                                    </select>
+                                </div>
+                                <div class="layui-col-md3">
+                                    <button data-field="fetchOperator" type="button" class="select_operator_btn layui-btn layui-btn-sm layui-btn-fluid">选择</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                         <label class="layui-form-label text_left form_label">发运员</label><br>
                         <div class="layui-input-inline">
-                            <input type="text" name="deliveryOperator" lay-verify="required" autocomplete="off" class="layui-input">
+                            <div class="layui-row">
+                                <div class="layui-col-md8">
+                                    <select name="deliveryOperator" lay-search>
+                                        {{#  layui.each(d.staffList, function(index, item){ }}
+                                            <option data-name="{{item.name}}" value="{{item.name + ',' + item.phone}}">{{item.name + item.phone}}</option>
+                                        {{#  }); }}
+                                    </select>
+                                </div>
+                                <div class="layui-col-md3">
+                                    <button data-field="deliveryOperator" type="button" class="select_operator_btn layui-btn layui-btn-sm layui-btn-fluid">选择</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -533,17 +567,18 @@
                     <div class="layui-inline layui-col-md3">
                         <label class="layui-form-label text_left form_label">跟单员</label><br>
                         <div class="layui-input-inline">
-                            <input id="followOperatorInput" disabled type="text" name="followOperator" lay-verify="required" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                        <label class="layui-form-label text_left form_label"><span class="red">*</span>跟单员手机号</label><br>
-                        <div id="followOperatorPhoneSelecter" class="layui-input-inline">
-                            <select name="followOperatorPhone" lay-search>
-                                {{#  layui.each(d.staffList, function(index, item){ }}
-                                    <option data-name="{{item.name}}" value="{{item.phone}}">{{item.phone}}</option>
-                                {{#  }); }}
-                            </select>
+                            <div class="layui-row">
+                                <div class="layui-col-md8">
+                                    <select name="followOperator" lay-search>
+                                        {{#  layui.each(d.staffList, function(index, item){ }}
+                                            <option data-name="{{item.name}}" value="{{item.name + ',' + item.phone}}">{{item.name + item.phone}}</option>
+                                        {{#  }); }}
+                                    </select>
+                                </div>
+                                <div class="layui-col-md3">
+                                    <button data-field="followOperator" type="button" class="select_operator_btn layui-btn layui-btn-sm layui-btn-fluid">选择</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -570,11 +605,6 @@
                 <span class="driver_name">{{item.name}}</span>
             </div>
             {{#  }); }}
-            {{# if(d.list.lenght < 1){ }}
-            <div data-index="none" class="driver_item">
-                <span class="driver_name">{{暂无数据}}</span>
-            </div>
-            {{# } }}
         </div>
     </script>
     <script id="fee_list_tpl" type="text/html">
@@ -718,6 +748,7 @@
     <div class="">
         <div lay-filter="cars_table" id="cars_table"></div>
         <div lay-filter="drivers_table" id="drivers_table"></div>
+        <div lay-filter="staffList_table" id="staffList_table"></div>
     </div>
     <div class="select-map-dialog" id="select-map-dialog">
         <div id="select-map"></div>

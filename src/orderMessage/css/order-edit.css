@@ -71,10 +71,12 @@
 #driver_name_select .match_driver_list {
   position: absolute;
   width: 100%;
+  max-height: 130px;
+  overflow-y: scroll;
   top: 30px;
   border: 1px solid #e6e6e6;
   background-color: #fff;
-  z-index: 99;
+  z-index: 999;
 }
 #driver_name_select .match_driver_list .driver_item {
   position: relative;

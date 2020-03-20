@@ -342,7 +342,7 @@
                         <div class="layui-inline layui-col-md3">
                             <div clas="layui-row">
                                 <div class="layui-col-md3">
-                                    <span class="layui-form-span text_left form_span">车主标识：</span>
+                                    <span class="layui-form-span text_left form_span">主车标识：</span>
                                 </div>
                                 <div class="layui-col-md7">
                                     <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.masterFlag}}</span>
@@ -597,7 +597,7 @@
                             <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                                 <span class="layui-form-span text_left form_span">调度时间：</span>
                                 <input disabled type="tel" name="dispatchTime"  autocomplete="off" class="layui-input">
-                                {{# if(d.driverMileage){ }}
+                                {{# if(d.dispatchTime){ }}
                                 <div class="check">
                                     <span class="x-red">待审：</span> 
                                     <span class="">{{d.dispatchTime}}</span>
