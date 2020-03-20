@@ -241,14 +241,17 @@
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">发车地址</label><br>
-                            <div class="layui-inline address-map">
+                            <div class="layui-input-inline">
+                                <input disabled type="text" name="startAddress" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            <!-- <div class="layui-inline address-map">
                                 <div class="layui-input-inline" style="width: 200px;margin-right: 0;">
                                     <input type="text" name="startAddress" autocomplete="off" class="layui-input getAddressList">
                                 </div>
                                 <div class="layui-input-inline" style="width: 50px;">
                                     <button class="layui-btn showMap selectMapLocation">选择</button>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
@@ -286,9 +289,10 @@
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">收车地址</label><br>
-                            <div class="layui-inline address-map">
-                                <div class="layui-input-inline" style="width: 200px;margin-right: 0;">
-                                    <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList">
+                            <div class="address-map">
+                                <div class="layui-input-inline" style="width: 250px;margin-right: 0;">
+                                    <!-- <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList"> -->
+                                    <input class="layui-input location-name" name="endAddress" id="seach-location-input" autocomplete="off" placeholder="请输入收车位置" value=""/>
                                 </div>
                                 <div class="layui-input-inline" style="width: 50px;">
                                     <button class="layui-btn showMap selectMapLocation">选择</button>
@@ -366,7 +370,8 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">行驶证</label><br>
                             <div class="layui-input-inline">
-                                <input readonly type="text" name="tempLicenseBackImage" autocomplete="off" class="layui-input tempLicenseBackImage">
+                                <input readonly type="text" value="+点击上传图片" autocomplete="off" class="layui-input tempLicenseBackImage">
+                                <input readonly type="text" name="tempLicenseBackImage" autocomplete="off" class="layui-input" style="margin-top: 10px;">
                             </div>
                         </div>
                     </div>

@@ -62,6 +62,17 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     map.enableAutoResize();                                 //启用自动适应容器尺寸变化
     map.load();
     this.hiddenMap = map;
+
+    var ac = new Careland.Autocomplete({
+        input : "seach-location-input",
+        location : map
+    });
+    ac.setLocation(map);
+    ac.setInputForm('seach-location-input');
+    ac.addEventListener("onConfirm",function(e){
+      console.log(e)
+      ac.hide();
+    });
   }
   Edit.prototype.getStaffList = function(){
     var _this = this;
