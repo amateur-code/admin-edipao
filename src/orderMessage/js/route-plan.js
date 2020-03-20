@@ -411,6 +411,32 @@ tableFilter: 'TableFilter/tableFilter'
             var mapInfoWin = new Careland.InfoWindow();
             mapInfoWin.setOffset(new Careland.Size(0, -22));
 
+            var ac = new Careland.Autocomplete({
+                input : "seachLocation",
+                location : map
+            });
+            ac.setLocation(map);
+            ac.setInputForm('seachLocation');
+            ac.addEventListener("onConfirm",function(e){
+                console.log(e)
+                $('#select-address').text(e.item.poi.name);
+                mapInfoWin.setContent('当前地址：' + e.item.poi.name);
+                mapInfoWin.redraw();
+                layer.clear();
+                //创建文本标注点
+                var marker = new Careland.Marker('image');
+                marker.setPoint(e.item.poi.point);
+                layer.add(marker);
+                marker.openInfoWindow(mapInfoWin);
+                _t.loc = {
+                    name: e.item.poi.name,
+                    address: e.item.poi.address,
+                    lat: e.item.poi.pointGb.lat,
+                    lng: e.item.poi.pointGb.lng,
+                }
+                map.centerAndZoom(e.item.poi.point, 15);
+            });
+
             $('#regionMapPoint').off('click').on('click', function(){
                 var searchTxt = $('#seachLocation').val();
                 var poiSearch = new Careland.LocalSearch(map,{
