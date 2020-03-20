@@ -44,5 +44,29 @@ $(function  () {
             })
             return false;
         });
+
+
+        // enter键按下事件
+        $('body').keydown(function () {
+            if(event.keyCode == '13'){
+                var data = form.val("login");
+                //登陆
+                edipao.request({
+                    url: '/admin/staff/login',
+                    data: data,
+                }).done(function(res){
+                    if(res.code == 0){
+                        layui.each(res.data,function(item){
+                            layui.sessionData('user', {key:item, value: res.data[item]})
+                        })
+                        layui.xadmin.clear_tab_data()
+                        location.href='../index.html'
+                    }else{
+                        layer.msg(res.message, {icon: 5,anim: 6});
+                    }
+                })
+                return false;
+            }
+        })
     });
 })

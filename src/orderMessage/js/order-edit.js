@@ -199,6 +199,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         id: 'seach-location-input' + i
       })
     })
+    $.each($('.tempLicenseBackImageBox'), function(i,d){
+      $(this).attr({
+        id: 'tempLicenseBackImageBox' + i
+      })
+    })
     
     form.render();
     _this.carFormList.forEach(function (item, index) {
@@ -229,6 +234,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       if(truckData.startCity && truckData.startCity.indexOf('-') > -1){
         truckData.startProvince = truckData.startCity.split('-')[0]
         truckData.startCity = truckData.startCity.split('-')[1]
+      }
+      console.log(truckData)
+      if(truckData.tempLicenseBackImage){
+        $('#tempLicenseBackImageBox' + index).find('img').attr('src', truckData.tempLicenseBackImage + '?' + Math.floor(Math.random() * 10e6))
       }
       _this.setStartSelectCity(truckData);
       _this.setEndSelectCity(truckData);
@@ -278,6 +287,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             image: res.data,
             id: data.truckDTOList[index].id
           };
+          $('#tempLicenseBackImageBox' + index).find('img').attr('src', res.data + '?' + Math.floor(Math.random() * 10e6))
           layer.msg("上传成功");
         }else{
           layer.msg(res.message, {icon: 5,anim: 6});
@@ -1250,6 +1260,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       $.each($('.location-end-name'), function(i,d){
         $(this).attr({
           id: 'seach-location-input' + i
+        })
+      })
+      $.each($('.tempLicenseBackImageBox'), function(i,d){
+        $(this).attr({
+          id: 'tempLicenseBackImageBox' + i
         })
       })
       _this.renderHiddenMap(_this.hiddenMap);
