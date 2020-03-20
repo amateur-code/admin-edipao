@@ -288,13 +288,23 @@
                             <!-- <input type="text" name="endCity" autocomplete="off" class="layui-input"> -->
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+<<<<<<< Updated upstream
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收车地址</label><br>
                             <div class="layui-inline address-map">
                                 <div class="layui-input-inline" style="width: 200px;margin-right: 0;">
                                     <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList">
+=======
+                            <label class="layui-form-label text_left form_label">收车地址</label><br>
+                            <div class="address-map">
+                                <div class="layui-input-inline" style="width: 250px;margin-right: 0;">
+                                    <!-- <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList"> -->
+                                    <input class="layui-input location-end-name" name="endAddress" id="seach-location-input" autocomplete="off" placeholder="请输入收车位置" value=""/>
+                                    <input name="endLat" id="endLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                    <input name="endLng" id="endLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+>>>>>>> Stashed changes
                                 </div>
                                 <div class="layui-input-inline" style="width: 50px;">
-                                    <button class="layui-btn showMap selectMapLocation">选择</button>
+                                    <a class="layui-btn showMap selectMapLocation">选择</a>
                                 </div>
                             </div>
                             <!-- <div class="layui-input-inline">
