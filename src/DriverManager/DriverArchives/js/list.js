@@ -577,6 +577,7 @@ layui.config({
                 if(res.data){
                     var data = res.data.driverInfoListDtoList;
                     exportXlsx(data)
+                    exportLog()
                 }
             }
         })
@@ -627,6 +628,18 @@ layui.config({
             sheet1: exportData
         }, '司机档案.xlsx', 'xlsx');
     }
+    // 导出日志
+    function exportLog(){
+        edipao.request({
+            type: 'GET',
+            url: '/admin/log/export-log/add',
+            data: {'operationModule':'3','operationRemark':'导出档案'}
+        }).done(function(res) {
+            if (res.code == 0) {
+            }
+        })
+    }
+
     // 获取今天之后几天的日期
     function getDay (val) {
         var today = new Date();
