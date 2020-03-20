@@ -39,4 +39,10 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             });
             return false;
         });
+    // 监听取消
+    $('#addCancel').click(function () {
+        //关闭当前frame
+        xadmin.close();
+        return false;
+    });
 });
