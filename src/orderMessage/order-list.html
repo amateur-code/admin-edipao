@@ -139,7 +139,7 @@
                     <div class="layui-row">
                         <div class="layui-form-item">
                             <div style="line-height:34px;" class="layui-col-md3">
-                                审核结果：
+                                <span class="red">*</span>审核结果：
                             </div>
                             <div class="layui-col-md3">
                                 <input type="radio" name="result" value="0" title="通过" checked>
@@ -187,7 +187,7 @@
             <div class="layui-row">
                 <div class="layui-form-item">
                     <div style="line-height:34px;" class="layui-col-md3">
-                        审核结果：
+                        <span class="red">*</span>审核结果：
                     </div>
                     <div class="layui-col-md3">
                         <input type="radio" name="result" value="0" title="通过" checked>
@@ -247,62 +247,67 @@
                         </select> 
                     </div>
                 </div>
-                {{# if(d.type == 2){ }}
-                <div class="layui-card">
-                    <div class="layui-card-header">提车图片</div>
-                    <div class="layui-card-body">
-                        {{#  layui.each(d.five, function(index, item){ }}
-                        <div class="layui-row upload_start_row">
-                            <div class="layui-col-md5">
-                                <div id="{{'upload_get_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
-                            </div>
-                            <div id="{{'upload_get_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
-                                
-                            </div>
-                        </div>
-                        {{#  }); }}
-                    </div>
-                </div>
-                {{# } }}
-                {{# if(d.type == 3){ }}
-                <div class="layui-card">
-                    <div class="layui-card-header">发车单</div>
-                    <div class="layui-card-body">
-                        {{#  layui.each(d.six, function(index, item){ }}
-                        <div class="layui-row upload_start_row">
-                            <div class="layui-col-md5">
-                                <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
-                            </div>
-                            <div id="{{'upload_start_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
-                                
-                            </div>
-                        </div>
-                        {{#  }); }}
-                    </div>
-                </div>
-                {{# } }}
-                {{# if(d.type == 5){ }}
-                <div class="layui-card">
-                    <div class="layui-card-header">交车单</div>
-                    <div class="layui-card-body">
-                        {{#  layui.each(d.three, function(index, item){ }}
-                        <div class="layui-row upload_start_row">
-                            <div class="layui-col-md5">
-                                <div id="{{'upload_give_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">选择图片</div>
-                            </div>
-                            <div id="{{'upload_give_pre_'+index}}" class="layui-col-md5 layui-col-md-offset1">
-                                
-                            </div>
-                        </div>
-                        {{#  }); }}
-                    </div>
-                </div>
-                {{# } }}
+                <div id="upload_pic_select_car"></div>
            </form>
           </div>
     </div>
 </script>
-
+<script id="upload_pic_list_tpl" type="text/html">
+    {{# console.log(d) }}
+    {{# if(d.type == 2){ }}
+    <div class="layui-card">
+        <div class="layui-card-header">提车图片</div>
+        <div class="layui-card-body">
+            {{#  layui.each(d.uploadData.fetchImagesList, function(index, item){ }}
+            <div class="layui-row upload_start_row">
+                <div class="layui-col-md5">
+                    <div id="{{'upload_get_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">
+                        +
+                    </div>
+                </div>
+                <div id="{{'upload_get_pre_'+index}}" class="upload_get_pre layui-col-md5 layui-col-md-offset1">
+                    预览图
+                </div>
+            </div>
+            {{#  }); }}
+        </div>
+    </div>
+    {{# } }}
+    {{# if(d.type == 3){ }}
+    <div class="layui-card">
+        <div class="layui-card-header">发车单</div>
+        <div class="layui-card-body">
+            {{#  layui.each(d.uploadData.fetchImagesList, function(index, item){ }}
+            <div class="layui-row upload_start_row">
+                <div class="layui-col-md5">
+                    <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">+</div>
+                </div>
+                <div id="{{'upload_start_pre_'+index}}" class="upload_get_pre layui-col-md5 layui-col-md-offset1">
+                    预览图
+                </div>
+            </div>
+            {{#  }); }}
+        </div>
+    </div>
+    {{# } }}
+    {{# if(d.type == 5){ }}
+    <div class="layui-card">
+        <div class="layui-card-header">交车单</div>
+        <div class="layui-card-body">
+            {{#  layui.each(d.three, function(index, item){ }}
+            <div class="layui-row upload_start_row">
+                <div class="layui-col-md5">
+                    <div id="{{'upload_give_holder_' + index}}" data-index="{{index}}" class="upload_start_holder">+</div>
+                </div>
+                <div id="{{'upload_give_pre_'+index}}" class="upload_get_pre layui-col-md5 layui-col-md-offset1">
+                    预览图
+                </div>
+            </div>
+            {{#  }); }}
+        </div>
+    </div>
+    {{# } }}
+</script>
 <script type="text/html" id="barDemo">
     {{# if(d.showBtn * 1 == 1){ }}
         {{# if(permissionList.indexOf('修改') > -1){ }}

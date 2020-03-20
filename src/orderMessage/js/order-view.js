@@ -27,6 +27,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           $("#form_income_container").after(html);
           _this.getOrder().done(function (res) {
             if(res.code == "0"){
+              Object.keys(res.data).forEach(function (key) {
+                res.data[key] = res.data[key] || "- -";
+              });
               _this.orderData = res.data;
               _this.setData(res.data);
               _this.bindEvents();
@@ -43,6 +46,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         _this.getUpdate(function () {
           _this.getOrder().done(function (res) {
             if(res.code == "0"){
+              Object.keys(res.data).forEach(function (key) {
+                res.data[key] = res.data[key] || "- -";
+              });
               _this.orderData = res.data;
               _this.setData(res.data);
               _this.bindEvents();
@@ -69,13 +75,18 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           if(!res.data || !res.data.modifyAfterJson){
             updateData = {};
           }else{
-            updateData = JSON.parse(res.data.modifyAfterJson);
-            updateData.forEach(function (item) {
+            try {
+              updateData = JSON.parse(res.data.modifyAfterJson);
+              updateData.forEach(function (item) {
               _this.updateData[item.name] = item.value;
             });
-            if(_this.updateData.prePayFeeItems)_this.updateData.prePayFeeItems = JSON.parse(_this.updateData.prePayFeeItems);
-            if(_this.updateData.tailPayFeeItems)_this.updateData.tailPayFeeItems = JSON.parse(_this.updateData.tailPayFeeItems);
-            if(_this.updateData.arrivePayFeeItems)_this.updateData.arrivePayFeeItems = JSON.parse(_this.updateData.arrivePayFeeItems);
+              if(_this.updateData.prePayFeeItems)_this.updateData.prePayFeeItems = JSON.parse(_this.updateData.prePayFeeItems);
+              if(_this.updateData.tailPayFeeItems)_this.updateData.tailPayFeeItems = JSON.parse(_this.updateData.tailPayFeeItems);
+              if(_this.updateData.arrivePayFeeItems)_this.updateData.arrivePayFeeItems = JSON.parse(_this.updateData.arrivePayFeeItems);
+            } catch (error) {
+              _this.updateData = {};
+            }
+            
           }
           laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
             $("#form_income_container").after(html);

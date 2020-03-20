@@ -43,11 +43,12 @@ layui.config({
         loginStaffId: user.staffId,
     };
     var uploadObj = {
-        startImagesList: [],
-        fetchImagesList: [],
-        returnImagesList: []
+        startImagesList: ['','','','','',''],
+        fetchImagesList: ['','','','',''],
+        returnImagesList: ['','','']
     }
     var uploadData = {}
+    top.window.uploadData = uploadData;
     var filters = [
         { field: 'orderNo', type: 'input' },
         { field: 'warehouseNo', type: 'input' },
@@ -166,9 +167,11 @@ layui.config({
             };
             layui.each(filters,function(key, value){
                 if(key=='startProvince'||key=='endProvince'){
-                    
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
                 }else if(key=='startCity'||key=='endCity'){
-                    console.log(value)
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
                 }else if(key == 'prePayAmount'||key == 'arrivePayAmount'||key == "tailPayAmount"){
                     // 驾龄、押金
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
@@ -198,9 +201,9 @@ layui.config({
         bindUpload: function () {
             $(".list_picture_upload").unbind().on("click", function(e){
                 uploadObj = {
-                    startImagesList: [],
-                    fetchImagesList: [],
-                    returnImagesList: []
+                    startImagesList: ['','','','','',''],
+                    fetchImagesList: ['','','','',''],
+                    returnImagesList: ['','','']
                 };
                 uploadData = {};
                 var elem;
@@ -232,9 +235,6 @@ layui.config({
                         });
                         var renderData = {
                             list: res.data.truckDTOList,
-                            six: [1,1,1,1,1,1],
-                            five: [1,1,1,1,1],
-                            three: [1,1,1],
                             type: type
                         };
                         laytpl(elem).render(renderData, function (html) {
@@ -250,21 +250,21 @@ layui.config({
         openUpload: function (html, renderData, type, truckId, orderId) {
             var renderObj = [
                 {
-                    num: renderData.six,
+                    num: uploadObj.startImagesList,
                     holder: "#upload_start_holder_",
                     pre: "#upload_start_pre_",
                     type: 3,
                     key: "startImagesList"
                 },
                 {
-                    num: renderData.five,
+                    num: uploadObj.fetchImagesList,
                     holder: "#upload_get_holder_",
                     pre: "#upload_get_pre_",
                     type: 2,
                     key: "fetchImagesList"
                 },
                 {
-                    num: renderData.three,
+                    num: uploadObj.returnImagesList,
                     holder: "#upload_give_holder_",
                     pre: "#upload_give_pre_",
                     type: 5,
@@ -292,45 +292,41 @@ layui.config({
                     //多图片上传
                     form.on("select", function (data) {
                         if(data.elem.name == "vinCode"){
-                            if(uploadTruckId != data.value){
-                                uploadObj = {
-                                    startImagesList: [],
-                                    fetchImagesList: [],
-                                    returnImagesList: []
-                                }
-                                uploadData = {}
-                            }
                             uploadTruckId = data.value;
+                            render();
                         }
                     });
-                    renderObj.forEach(function (item) {
-                        item.num.forEach(function (item2, index) {
-                            var uploadInst = upload.render({
-                                elem: item.holder + index + "" //绑定元素
-                                ,accept: "images"
-                                ,multiple: true
-                                ,url: layui.edipao.API_HOST+'/admin/truck/upload/image' //上传接口
-                                ,before: function(obj){
-                                    obj.preview(function(idx, file, result){
-                                        $(item.pre + index + "").append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img pre_img">')
+                    render();
+                    function render() {
+                        laytpl($("#upload_pic_list_tpl").html()).render({uploadData:uploadData[uploadTruckId+""], type: type}, function (html) {
+                            $("#upload_pic_select_car").html(html);
+                            renderObj.forEach(function (item) {
+                                item.num.forEach(function (item2, index) {
+                                    var uploadInst = upload.render({
+                                        elem: item.holder + index + "" //绑定元素
+                                        ,accept: "images"
+                                        ,multiple: true
+                                        ,url: layui.edipao.API_HOST+'/admin/truck/upload/image' //上传接口
+                                        ,data: {
+                                            loginStaffId: user.staffId,
+                                            type: item.type,
+                                            truckId: truckId,
+                                            index: uploadData[uploadTruckId+""][item.key].length + 1,
+                                        }
+                                        ,done: function(res){
+                                            if(res.code == "0"){
+                                                uploadData[uploadTruckId+""][item.key][index*1] = res.data;
+                                                $(item.holder + index + "").addClass("pre").append('<div class="pre_image_holder_inner"><img src="'+ res.data +'" class="layui-upload-img pre_img"></div>')
+                                                console.log(uploadData)
+                                            }else{
+                                                layer.msg(res.message, {icon: 5,anim: 6});
+                                            }
+                                        }
                                     });
-                                }
-                                ,data: {
-                                    loginStaffId: user.staffId,
-                                    type: item.type,
-                                    truckId: truckId,
-                                    index: uploadData[uploadTruckId+""][item.key].length + 1,
-                                }
-                                ,done: function(res){
-                                    if(res.code == "0"){
-                                        uploadData[uploadTruckId+""][item.key].push(res.data);
-                                    }else{
-                                        layer.msg(res.message, {icon: 5,anim: 6});
-                                    }
-                                }
+                                });
                             });
                         });
-                    });
+                    }
                 }
             });
         },
@@ -1043,7 +1039,7 @@ layui.config({
                         "data": data //解析数据列表
                     }
                 }
-                , done: function () {//表格渲染完成的回调
+                , done: function (res) {//表格渲染完成的回调
                     method.bindUpload();
                     method.bindVerify();
                     method.bindViewPic();
@@ -1051,6 +1047,12 @@ layui.config({
                     method.bindPay();
                     method.bindPrePay();
                     method.bindEvents();
+                    console.log(res)
+                    if(res.data == null || res.data.length < 1){
+                        $('.layui-table-header').css('overflow-x','scroll');
+                    }else{
+                        $('.layui-table-header').css('overflow','hidden');
+                    }
                     tableFilterIns && tableFilterIns.reload();
                 },
                 text: {none: "暂无数据"}
@@ -1217,7 +1219,7 @@ layui.config({
             return (d.fetchOperator || d.fetchOperatorPhone) ? d.fetchOperator + d.fetchOperatorPhone : '- -';
         }},
         {field: 'deliveryOperator', title: '发运员', sort: false,minWidth:100, templet: function(d){
-            d.deliveryOperator = d.fetchOperator || "";
+            d.deliveryOperator = d.deliveryOperator || "";
             d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
             return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
         }},

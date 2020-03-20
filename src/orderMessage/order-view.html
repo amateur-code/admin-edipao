@@ -55,11 +55,11 @@
         <div id="car_form_container" class="car_car_form_container"></div>
         <script id="base_info_tpl" type="text/html">
             <div class="layui-row">
-                <div class="layui-col-md6">
+                <div class="layui-col-md3">
                     <span class="content_name">业务单号：</span>
                     <span id="" class="content_name blue">{{d.orderNo}}</span>
                 </div>
-                <div class="layui-col-md6">
+                <div class="layui-col-md3 layui-col-md-offset1">
                     <span class="content_name">订单类型：</span>
                     <span class="content_name blue">
                         {{#  
@@ -75,6 +75,10 @@
                         }}
                           {{fn(d.orderType)}}
                     </span>
+                </div>
+                <div class="layui-col-md3 layui-col-md-offset1">
+                    <span class="content_name">最后修改时间：</span>
+                    <span id="" class="content_name blue">{{d.updateTime||'- -'}}</span>
                 </div>
             </div>
         </script>
@@ -576,11 +580,21 @@
                             </div>
                             <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                                 <span class="layui-form-span text_left form_span">承运公里数：</span>
-                                <input disabled disabled type="tel" name="driverMileage"  autocomplete="off" class="layui-input">
+                                <input disabled type="tel" name="driverMileage"  autocomplete="off" class="layui-input">
                                 {{# if(d.driverMileage){ }}
                                 <div class="check">
                                     <span class="x-red">待审：</span> 
                                     <span class="">{{d.driverMileage}}</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                                <span class="layui-form-span text_left form_span">调度时间：</span>
+                                <input disabled type="tel" name="dispatchTime"  autocomplete="off" class="layui-input">
+                                {{# if(d.driverMileage){ }}
+                                <div class="check">
+                                    <span class="x-red">待审：</span> 
+                                    <span class="">{{d.dispatchTime}}</span>
                                 </div>
                                 {{# } }}
                             </div>
@@ -670,7 +684,7 @@
         <div class="layui-form-item layui-row">
             <div class="form_item_inner">
                 <div>
-                    到付款 {{d.orderData.arrivePayAmount}}
+                    到付款: {{d.orderData.arrivePayAmount}}
                     {{# if(d.updateData.arrivePayAmount){ }}
                     <div class="check">
                         <span class="x-red">待审：</span> 
@@ -699,7 +713,7 @@
         <div class="layui-form-item layui-row">
             <div class="form_item_inner">
                 <div>
-                    尾款 {{d.orderData.tailPayAmount}}
+                    尾款: {{d.orderData.tailPayAmount}}
                     {{# if(d.updateData.tailPayAmount){ }}
                     <div class="check">
                         <span class="x-red">待审：</span> 
