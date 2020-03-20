@@ -105,7 +105,7 @@ layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
         }
         // 心愿路线
         var wishJourney = JSON.parse(data.wishJourney);
-        if(wishJourney.length>0){
+        if(wishJourney&&wishJourney.length>0){
             for(var i=0 ;i<wishJourney.length;i++){
                 $('.no-data').hide();
                 var startId = guid();
