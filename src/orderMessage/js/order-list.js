@@ -1011,7 +1011,7 @@ layui.config({
                 , title: '订单列表'
                 , method: "get" // 请求方式  默认get
                 , page: true //开启分页
-                , limit: 10  //每页显示条数
+                , limit: 20  //每页显示条数
                 , limits: [20, 50, 100] //每页显示条数可选择
                 , request: {
                     pageName: 'pageNo' //页码的参数名称，默认：page
