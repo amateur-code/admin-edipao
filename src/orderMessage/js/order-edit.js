@@ -381,7 +381,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
   Edit.prototype.openUpdateFee = function (e) {
     var _this = this;
     var index = e.target.dataset.index*1;
-    laytpl($("#update_fee_tpl").html()).render({oldName: _this.feeItemList[index]}, function (html) {
+    console.log(_this.feeItemList[index])
+    laytpl($("#update_fee_tpl").html()).render({oldName: _this.feeItemList[index].value}, function (html) {
       var index = layer.open({
         title: "修改费用项",
         type: 1,
@@ -504,7 +505,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           
           _this.addFeeItem(data).done(function (res) {
             if(res.code == "0"){
-              $addFeeName.val("");
+              $('#addFeeName').val("");
               layer.closeAll();
               _this.getFeeItemList().done(function (res) {
                 if(res.code == "0"){
@@ -838,17 +839,17 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         return;
       }
     }
-    var hasLatAndLng = true;
-    for(var i = 0; i < truckUpdateReqList.length; i ++){
-      if(!truckUpdateReqList[i].endLat || !truckUpdateReqList[i].endLng){
-        hasLatAndLng = false;
-        break;
-      }
-    }
-    if(!hasLatAndLng){
-      layer.msg("请选择正确的收车地址");
-      return;
-    }
+    // var hasLatAndLng = true;
+    // for(var i = 0; i < truckUpdateReqList.length; i ++){
+    //   if(!truckUpdateReqList[i].endLat || !truckUpdateReqList[i].endLng){
+    //     hasLatAndLng = false;
+    //     break;
+    //   }
+    // }
+    // if(!hasLatAndLng){
+    //   layer.msg("请选择正确的收车地址");
+    //   return;
+    // }
   
     _this.submitAll(edipao.request({
       url: "/admin/order/updateOrder",

@@ -25,6 +25,11 @@
         // 是否开启刷新记忆tab功能
     // var is_remember = false;
     </script>
+    <style>
+        .layui-table-cell{
+            height: auto !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -69,6 +74,10 @@
                 layui.each(res.data.supplierRespList,function(index, el) {
                     el.supplierTypeName = SupplierTypeConfig[el.supplierType]
                 });
+                layui.each(res.data.operationLogDTOList,function(index, el) {
+                    el.modifyBeforeJson = el.modifyBeforeJson.replace(/\"/g, "'")
+                    el.modifyAfterJson = el.modifyAfterJson.replace(/\"/g, "'")
+                });
                 return {
                     code: res.code, //解析接口状态
                     msg: res.message, //解析提示文本
@@ -88,22 +97,14 @@
                         templet: function (res) {
                         // 司机档案-意向路线
                             var data = res.modifyBeforeJson;
-                            if(data.indexOf('意向路线')!='-1'){
-                                var val = data.split('意向路线:[');
-                                var startVal=val[1].split(']')[0];
-                                var endVal =val[0];
-                                var html = '意向路线:';
-                                if(startVal!=''&&startVal!=null){
-                                    startVal = '['+startVal+']';
-                                    var newVal = JSON.parse(startVal);
-                                    layui.each(newVal,function (index,item) {
-                                        html+='始发地:'+item['start']['province']+item['start']['city']+' '
-                                        html+='目的地:'+item['end']['province']+item['end']['city']+'、'
-                                    })
-                                    html = html.substring(0,html.length-1);
-                                }
-                                var newData = endVal+html;
-                                return newData;
+                            if(data.indexOf('意向路线') > -1){
+                                return data = data.replace(/(\')|(\,)|(\}\}\])/g, '')
+                                        .replace(/\[\{(start)\:\{(code)\:(\d*)(province)\:/g, '始发地：')
+                                        .replace(/(city)\:/g, '-')
+                                        .replace(/\}(end)\:\{(code)\:(\d*)(province)\:/g, '  目的地：')
+                                        
+                            } else if(data.indexOf('预付款') > -1 || data.indexOf('到付款') > -1 || data.indexOf('尾款') > -1){
+                                return data = data.replace(/(\')|(\,)/g, '').replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '').replace(/\}\{(key)/g, ',')
                             }else{
                                 return data;
                             }
@@ -113,22 +114,15 @@
                         templet: function (res) {
                         // 司机档案-意向路线
                             var data = res.modifyAfterJson;
-                            if(data.indexOf('意向路线')!='-1'){
-                                var val = data.split('意向路线:[');
-                                var startVal=val[1].split(']')[0];
-                                var endVal =val[0];
-                                var html = '意向路线:';
-                                if(startVal!=''&&startVal!=null){
-                                    startVal = '['+startVal+']';
-                                    var newVal = JSON.parse(startVal);
-                                    layui.each(newVal,function (index,item) {
-                                        html+='始发地:'+item['start']['province']+item['start']['city']+' '
-                                        html+='目的地:'+item['end']['province']+item['end']['city']+'、'
-                                    })
-                                    html = html.substring(0,html.length-1);
-                                }
-                                var newData = endVal+html;
-                                return newData;
+                            var data = res.modifyAfterJson;
+                            if(data.indexOf('意向路线') > -1){
+                                return data = data.replace(/(\')|(\,)|(\}\}\])/g, '')
+                                        .replace(/\[\{(start)\:\{(code)\:(\d*)(province)\:/g, '始发地：')
+                                        .replace(/(city)\:/g, '-')
+                                        .replace(/\}(end)\:\{(code)\:(\d*)(province)\:/g, '  目的地：')
+                                        
+                            } else if(data.indexOf('预付款') > -1 || data.indexOf('到付款') > -1 || data.indexOf('尾款') > -1){
+                                return data = data.replace(/(\')|(\,)/g, '').replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '').replace(/\}\{(key)/g, ',')
                             }else{
                                 return data;
                             }
