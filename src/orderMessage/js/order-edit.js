@@ -1227,74 +1227,69 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     $(".car_manageFee").unbind().on("input", function (e) {
       _this.handleManageFeeInput(e);
     });
-    $("#add_car").unbind().on("click", function(e){
-      var carFormHtml = $("#car_info_tpl").html();
-      var filterStr = "form_car_" + _this.carFormList.length;
-      _this.carFormList.push(filterStr);
-      var html = carFormHtml.replace(/CARFORM/g, filterStr);
-      $("#car_form_container").append(html);
+    $("#add_car").unbind().on("click", function(e){
+      var carFormHtml = $("#car_info_tpl").html();
+      var filterStr = "form_car_" + _this.carFormList.length;
+      _this.carFormList.push(filterStr);
+      var html = carFormHtml.replace(/CARFORM/g, filterStr);
+      $("#car_form_container").append(html);
       $.each($('.location-end-name'), function(i,d){
         $(this).attr({
           id: 'seach-location-input' + i
         })
       })
       _this.renderHiddenMap(_this.hiddenMap);
-      form.render();
-      _this.setStartSelectCity();
-      _this.setEndSelectCity();
-      // _this.getMapAddress();
-      $(".del_car_btn").unbind().on("click", function(e){
-        _this.handleDeleteCar(e);
-      });
-      $(".car_income").unbind().on("input", function (e) {
-        _this.handleIncomeInput(e);
-      });
-      $(".car_manageFee").unbind().on("input", function (e) {
-        _this.handleManageFeeInput(e);
-      });
-      $(".select_vin").unbind().on("click", function (e) {
-        // layer.alert("没有数据");
-        // return;
-        _this.openSelectVin(e);
-      });
-      var index = _this.carFormList.length - 1;
-      _this.tempLicense.push({
-        id: "",
-        image: ""
-      });
-      laydate.render({
-        elem: $(".latestArriveTime")[index], //指定元素
-        type: "datetime",
-        trigger: "click"
-      });
-      upload.render({
-        elem: $('.tempLicenseBackImage')[index],
-        url: edipao.API_HOST + '/admin/truck/upload/image',
-        data: {
-          loginStaffId: _this.user.staffId,
-          truckId: idToAdd,
-          type: 1,
-          index: 1
-        },
-        before: function () {
-          if(!idToAdd){
-            layer.msg('请先选择车辆', {icon: 5,anim: 6});
-            return false;
-          }
-        },
-        done: function (res) {
-          if(res.code == 0){
-            _this.tempLicenseBackImage[index] = {
-              image: res.data,
-              id: idToAdd
-            };
-            layer.msg("上传成功");
-          }else{
-            layer.msg(res.message, {icon: 5,anim: 6});
-          }
-        }
-      });
-    });
+      form.render();
+      _this.setStartSelectCity();
+      _this.setEndSelectCity();
+      _this.getMapAddress();
+      $(".del_car_btn").unbind().on("click", function(e){
+        _this.handleDeleteCar(e);
+      });
+      $(".car_income").unbind().on("input", function (e) {
+        _this.handleIncomeInput(e);
+      });
+      $(".car_manageFee").unbind().on("input", function (e) {
+        _this.handleManageFeeInput(e);
+      });
+      $(".select_vin").unbind().on("click", function (e) {
+        layer.alert("没有数据");
+        return;
+        _this.openSelectVin(e);
+      });
+      var index = _this.carFormList.length - 1;
+      _this.tempLicense.push({
+        id: "",
+        image: ""
+      });
+      laydate.render({
+        elem: $(".latestArriveTime")[index], //指定元素
+        type: "datetime",
+        trigger: "click"
+      });
+      upload.render({
+        elem: $('.tempLicenseBackImage')[index],
+        url: edipao.API_HOST + '/admin/truck/upload/image',
+        data: {
+          loginStaffId: _this.user.staffId,
+          truckId: _this.carFormList[index].id||"",
+          type: 1,
+          index: 1
+        },
+        done: function (res) {
+          if(res.code == 0){
+            _this.tempLicenseBackImage[index] = {
+              image: res.data,
+              id: _this.carFormList[index].id || ""
+            };
+            $($('.tempLicenseBackImage')[index]).html("已上传 - 点击更换").css("border-color","#67C23A");
+            layer.msg("上传成功");
+          }else{
+            layer.msg(res.message, {icon: 5,anim: 6});
+          }
+        }
+      });
+    });
     $(".add_fee").unbind().on("click", function (e) {
       _this.openAddFee(e);
     });
