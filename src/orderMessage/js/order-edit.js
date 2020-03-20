@@ -210,11 +210,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         truckData.startProvince = truckData.startCity.split('-')[0]
         truckData.startCity = truckData.startCity.split('-')[1]
       }
-      if(truckData.endCity && truckData.endCity.indexOf('-') > -1){
-        truckData.endProvince = truckData.endCity.split('-')[0]
-        truckData.endCity = truckData.endCity.split('-')[1]
-      }
-      console.log(truckData)
       _this.setStartSelectCity(truckData);
       _this.setEndSelectCity(truckData);
       form.val(item, truckData);
@@ -704,12 +699,12 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         warehouseNo: itemData.warehouseNo||"",
         startPark: itemData.startPark||"",
         startProvince: itemData.startProvince||"",
-        startCity: (itemData.startProvince + '-' + itemData.startCity) ||"",
+        startCity: itemData.startCity ||"",
         startAddress: itemData.startAddress||"",
         settleWay: itemData.settleWay||"",
         endPark: itemData.endPark||"",
-        endProvince: itemData.endProvince||"",
-        endCity: (itemData.endProvince + '-' + itemData.endCity) ||"",
+        endProvince: itemData.endProvince ||"",
+        endCity: itemData.endCity ||"",
         endAddress: itemData.endAddress||"",
         connectorName: itemData.connectorName||"",
         connectorPhone: itemData.connectorPhone||"",
@@ -1328,7 +1323,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         var myGeo = new Careland.Geocoder();
 
         var layer = new Careland.Layer('point', 'layer');
-        var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'../../images/center.png',fontColor:'#000'});
+        var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'https://www.d.edipao.cn/admin/images/center.png',fontColor:'#000'});
         layer.setStyle(style);
         map.addLayer(layer);
 
