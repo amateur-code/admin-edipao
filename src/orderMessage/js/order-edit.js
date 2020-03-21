@@ -1460,6 +1460,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
 
   Edit.prototype.showMap = function(){
     $('.selectMapLocation').unbind('click').on('click', function(){
+      $('#seachLocation').val('');
+      $('#select-address').text('');
       var _t = $(this);
       var address = '';
       var height = $(document).scrollTop()
@@ -1476,13 +1478,13 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         cancel: function () {
           address = '';
           $('#seachLocation').val('');
-          $('#select-address').val('');
+          $('#select-address').text('');
         },
         btn2: function(){
           _t.parents('.address-map').find('.location-end-name').val(address.name).next().val(address.lat).next().val(address.lng);
           address = '';
           $('#seachLocation').val('');
-          $('#select-address').val('');
+          $('#select-address').text('');
         },
         success: function () {
           //凯立德地图API功能
