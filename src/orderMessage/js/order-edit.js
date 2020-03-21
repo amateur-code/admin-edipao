@@ -819,7 +819,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     data.driverPhone = dispatchData.driverPhone || "";
     data.driverIdCard = dispatchData.driverIdCard || "";
     data.driverCertificate = dispatchData.driverCertificate || "";
-    data.driverMileage = dispatchData.driverMileage || "";
+    data.driverMileage = (dispatchData.driverMileage*1).toFixed(2) || "";
     data.prePay = JSON.stringify(_this.prePay);
     data.arrivePay = JSON.stringify(_this.arrivePay);
     data.tailPay = JSON.stringify(_this.tailPay);
