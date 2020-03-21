@@ -730,8 +730,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     }
     $(".layui-table-view[lay-id=cars_table]").remove();
     $(".layui-layer-content").html("");
-
     layer.closeAll();
+    $("#tables_container").html($("#tables_tpl").html());
     form.val(filter, data);
   }
   Edit.prototype.handleDeleteCar = function (e) {
@@ -1088,9 +1088,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
               driverCertificate: data.driveLicenceType,
             }
             form.val("form_dispatch", driverData);
+            //$(".layui-layer-content").html("");
             $(".layui-table-view[lay-id=drivers_table]").remove();
             layer.close(index);
-            $(".layui-layer-content").html("");
+            $("#tables_container").html($("#tables_tpl").html());
           });
         }
           , height: 'full'
@@ -1406,7 +1407,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
               form.val("form_ascription", data);
               $(".layui-table-view[lay-id=staffList_table]").remove();
               layer.close(index);
-              $(".layui-layer-content").html("");
+              //$(".layui-layer-content").html("");
+              $("#tables_container").html($("#tables_tpl").html());
             });
           }
             , height: 'full'

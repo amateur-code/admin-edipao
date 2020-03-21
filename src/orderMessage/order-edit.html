@@ -735,11 +735,16 @@
             </form>
         </div>
     </script>
-    <div class="">
+    <div id="tables_container" class="">
         <div lay-filter="cars_table" id="cars_table"></div>
         <div lay-filter="drivers_table" id="drivers_table"></div>
         <div lay-filter="staffList_table" id="staffList_table"></div>
     </div>
+    <script id="tables_tpl" type="text/html">
+        <div lay-filter="cars_table" id="cars_table"></div>
+        <div lay-filter="drivers_table" id="drivers_table"></div>
+        <div lay-filter="staffList_table" id="staffList_table"></div>
+    </script>
     <div class="select-map-dialog" id="select-map-dialog">
         <div id="select-map"></div>
         <div style="padding-top: 10px;text-align: center;">当前选择地址：<span id="select-address"></span></div>
