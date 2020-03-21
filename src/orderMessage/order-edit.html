@@ -161,25 +161,18 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>客户名称</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="customerFullName" lay-verify="required" autocomplete="off" class="layui-input">
+                                <!-- <input type="text" name="customerFullName" lay-verify="required" autocomplete="off" class="layui-input"> -->
 
-                                <!-- <select name="city" lay-verify="">
-                                    <option value="010">北京</option>
-                                    <option value="021" disabled>上海（禁用效果）</option>
-                                    <option value="0571" selected>杭州</option>
-                                </select>   -->
+                                <select name="customerFullName" lay-verify="required" class="customerList" lay-filter="customerFullName">
+                                </select>  
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>发车仓库</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="startWarehouse" lay-verify="required" autocomplete="off" class="layui-input">
-
-                                <!-- <select name="city" lay-verify="">
-                                    <option value="010">北京</option>
-                                    <option value="021" disabled>上海（禁用效果）</option>
-                                    <option value="0571" selected>杭州</option>
-                                </select>   -->
+                                <!-- <input type="text" name="startWarehouse" lay-verify="required" autocomplete="off" class="layui-input"> -->
+                                <select name="startWarehouse" lay-verify="required" class="startWarehouseList" lay-filter="startWarehouse">
+                                </select>  
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -193,13 +186,10 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>发车停车场</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="startPark" lay-verify="required" autocomplete="off" class="layui-input">
+                                <!-- <input type="text" name="startPark" lay-verify="required" autocomplete="off" class="layui-input"> -->
 
-                                <!-- <select name="city" lay-verify="">
-                                    <option value="010">北京</option>
-                                    <option value="021" disabled>上海（禁用效果）</option>
-                                    <option value="0571" selected>杭州</option>
-                                </select>   -->
+                                <select name="startPark" lay-verify="required" class="startParkList" lay-filter="startPark">
+                                </select>  
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -258,12 +248,9 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收车网点</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="endPark" lay-verify="required" autocomplete="off" class="layui-input">
-                                <!-- <select name="city" lay-verify="">
-                                    <option value="010">北京</option>
-                                    <option value="021" disabled>上海（禁用效果）</option>
-                                    <option value="0571" selected>杭州</option>
-                                </select> -->
+                                <!-- <input type="text" name="endPark" lay-verify="required" autocomplete="off" class="layui-input"> -->
+                                <select name="endPark" lay-verify="required" class="endParkList" lay-filter="endPark">
+                                </select>  
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -360,7 +347,7 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收入单价(元/km)</label><br>
                             <div class="layui-input-inline">
-                                <input type="number" name="pricePerMeliage" autocomplete="off" class="layui-input">
+                                <input style="width: 80%;display:inline-block;border-right:0;" type="number" name="pricePerMeliage" autocomplete="off" class="layui-input"><span class="price_unit">元/km</span>
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">

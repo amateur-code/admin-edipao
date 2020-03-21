@@ -35,6 +35,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       "form_dispatch",
     ];
     this.hiddenMap = null;
+    this.selectData = null;
   }
   Edit.prototype.getOrderJson = function(){
     return $.ajax({
@@ -50,6 +51,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         _this.orderData = res.data;
         _this.setData(res.data);
         _this.bindEvents();
+
+        // 默认地图初始化
         var point = new Careland.Point(419364916, 143908009);
         var map = new Careland.Map('hiddenMap', point, 12); 
         map.enableAutoResize(); 
@@ -62,6 +65,90 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     });
     
   }
+  Edit.prototype.setConfigData = function(cb){
+    var _this = this;
+    if(!_this.selectData){
+      $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList()).done(function (res1, res2, res3, res4) {
+        $('.customerList').append(returnOptions(res1[0].data));
+        $('.endParkList').append(returnOptions(res2[0].data));
+        $('.startParkList').append(returnOptions(res3[0].data));
+        $('.startWarehouseList').append(returnOptions(res4[0].data));
+        _this.selectData = [res1[0].data, res2[0].data, res3[0].data, res4[0].data];
+        console.log(_this.selectData)
+        cb && cb();
+      });
+    } else {
+      $('.customerList').append(returnOptions(_this.selectData[0]));
+      $('.endParkList').append(returnOptions(_this.selectData[1]));
+      $('.startParkList').append(returnOptions(_this.selectData[2]));
+      $('.startWarehouseList').append(returnOptions(_this.selectData[3]));
+      cb && cb();
+    }
+    
+
+    
+    
+    function returnOptions(array){
+      var html = '';
+      html = '<option value="请选择">请选择</option>'
+      for(var i = 0; i < array.length; i ++){
+        html += '<option value="' + array[i].name + '">' + array[i].name + '</option>';
+      }
+
+      return html;
+    }
+    // 获取客户名称
+    function getCustomerList(){
+      return edipao.request({
+        url: "/admin/dictionary/getCustomerList",
+        method: "GET",
+        data: {
+          loginStaffId: _this.user.staffId,
+          pageNo: 1,
+          pageSize: 9999
+        }
+      })
+    }
+    // 获取收车网点
+    function getEndAddressList(){
+      return edipao.request({
+        url: "/admin/dictionary/getEndAddressList",
+        method: "GET",
+        data: {
+          loginStaffId: _this.user.staffId,
+          pageNo: 1,
+          pageSize: 9999
+        }
+      })
+    }
+    //获取发车停车场
+    function getStartParkList(){
+      return edipao.request({
+        url: "/admin/dictionary/getStartParkList",
+        method: "GET",
+        data: {
+          loginStaffId: _this.user.staffId,
+          pageNo: 1,
+          pageSize: 9999
+        }
+      })
+    }
+    // 获取发车仓库
+    function getStartWarehouseList(){
+      return edipao.request({
+        url: "/admin/dictionary/getStartWarehouseList",
+        method: "GET",
+        data: {
+          loginStaffId: _this.user.staffId,
+          pageNo: 1,
+          pageSize: 9999
+        }
+      })
+    }
+    
+
+  }
+
   Edit.prototype.renderHiddenMap = function(map){
     $.each($('.location-end-name'), function(i, d){
       var _this = $(this);
@@ -268,11 +355,16 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       }
       _this.setStartSelectCity(truckData);
       _this.setEndSelectCity(truckData);
-      form.val(item.filter, truckData);
-      form.render('select');
+      _this.setConfigData(function(){
+        form.val(item.filter, truckData);
+        form.render('select');
 
-      $("[lay-filter=" + item.filter + "] .select_vin").remove();
+        $("[lay-filter=" + item.filter + "] .select_vin").remove();
+      });
+      
+      
     });
+    
     _this.bindInputLimit();
     _this.getMapAddress();
   }
@@ -1423,6 +1515,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       form.render();
       _this.setStartSelectCity();
       _this.setEndSelectCity();
+      _this.setConfigData(function(){
+        form.render('select');
+      });
       _this.getMapAddress();
       $(".vinCode_input").unbind().on("input", function (e) {
         if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);

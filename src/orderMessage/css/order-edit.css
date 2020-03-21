@@ -197,3 +197,10 @@
 .tempLicenseBackImageBox img {
   margin-top: 10px;
 }
+.price_unit {
+  display: inline-block;
+  height: 28px;
+  line-height: 28px;
+  border: 1px solid #e6e6e6;
+  border-left: 0;
+}
