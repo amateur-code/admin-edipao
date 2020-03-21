@@ -48,7 +48,6 @@ layui.config({
         returnImagesList: ['','']
     }
     var uploadData = {}
-    top.window.uploadData = uploadData;
     var filters = [
         { field: 'orderNo', type: 'input' },
         { field: 'warehouseNo', type: 'input' },
@@ -205,12 +204,6 @@ layui.config({
         },
         bindUpload: function () {
             $(".list_picture_upload").unbind().on("click", function(e){
-                uploadObj = {
-                    startImagesList: ['','','','','',''],
-                    fetchImagesList: ['','','','',''],
-                    returnImagesList: ['','']
-                };
-                uploadData = {};
                 var elem;
                 var field = e.target.dataset.field;
                 var truckId = e.target.dataset.truck;
@@ -229,6 +222,7 @@ layui.config({
                 elem = $("#uploadStartPic").html();
                 method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
+                        var uploadData = {}
                         orderData = res.data;
                         if(!res.data.truckDTOList || res.data.truckDTOList.length < 1){
                             layer.msg("订单未包含车辆信息", {icon: 2});
@@ -243,7 +237,7 @@ layui.config({
                             type: type
                         };
                         laytpl(elem).render(renderData, function (html) {
-                            method.openUpload(html, renderData, type, truckId, orderId);
+                            method.openUpload(html, renderData, type, truckId, orderId, uploadData);
                         });
                     }else{
                         layer.msg(res.message, {icon: 5,anim: 6});
@@ -252,7 +246,7 @@ layui.config({
                     
             });
         },
-        openUpload: function (html, renderData, type, truckId, orderId) {
+        openUpload: function (html, renderData, type, truckId, orderId, uploadData) {
             var renderObj = [
                 {
                     num: uploadObj.startImagesList,
@@ -282,13 +276,11 @@ layui.config({
                 area: ["600px", "400px"],
                 btn: ["确定", "取消"],
                 yes: function () {
-                    method.uploadPics({id: orderId}, function (res) {
+                    method.uploadPics({id: orderId,uploadData: uploadData}, function (res) {
                         if(res.code == "0"){
                             layer.msg("上传成功", {icon: 1});
                             table.reload("orderList");
                             layer.close(index);
-                        }else{
-
                         }
                     });
                 },
@@ -326,6 +318,7 @@ layui.config({
                                         ,done: function(res){
                                             if(res.code == "0"){
                                                 uploadData[uploadTruckId+""][item.key][index*1] = res.data;
+                                                console.log(uploadData)
                                                 $(item.holder + index + "").addClass("pre").append('<div class="pre_image_holder_inner"><img src="'+ res.data +'" class="layui-upload-img pre_img"></div>')
                                             }else{
                                                 layer.msg(res.message, {icon: 5,anim: 6});
@@ -340,9 +333,11 @@ layui.config({
             });
         },
         uploadPics: function (options, cb) {
+            var uploadData = JSON.parse(JSON.stringify(options.uploadData));
             var keys = Object.keys(uploadData);
             var successFlag = true;
             var emptyFlag = true;
+            var startBill = "";
             keys.forEach(function (id) {
                 Object.keys(uploadData[id]).forEach(function(item){
                     uploadData[id][item].forEach(function (img) {
@@ -361,7 +356,7 @@ layui.config({
                 var promise;
                 var hadUpload = false;
                 var flag = [data1, data2, data3];
-                var uploadObj = uploadData[id + ''];
+                var uploadObj = JSON.parse(JSON.stringify(uploadData[id + '']));
                 var getReq = function (data) {
                     return edipao.request({
                         url: "/admin/truck/submit/image",
@@ -379,13 +374,16 @@ layui.config({
                     }
                     flag[0] = data1;
                 }
-                if(uploadObj["startImagesList"].length > 0){
+                if(uploadObj["startImagesList"].length > 0 || startBill){
                     data2 = {
                         loginStaffId: user.staffId,
                         truckId: id,
                         type: 3,
-                        images: uploadObj["startImagesList"].join(",")
                     }
+                    if(uploadObj["startImagesList"].length > 0){
+                        data2.images = uploadObj["startImagesList"].join(",");
+                    }
+                    data2.startBill = startBill;
                     flag[1] = data2;
                 }
                 if(uploadObj["fetchImagesList"].length > 0){
@@ -444,16 +442,24 @@ layui.config({
                                 res3 = {code:0};
                             }
                         }
+                        if(successFlag && index == keys.length - 1){
+                            hadUpload = true;
+                            cb({code:0});
+                        }
                     });
-                    if(successFlag){
-                        hadUpload = true;
-                        cb({code:0});
-                    }
                 }
             });
             function notNull(obj) {
                 Object.keys(obj).forEach(function (key) {
-                    obj[key] = obj[key].filter(function (item) {
+                    obj[key] = obj[key].filter(function (item, index) {
+                        if(key == "startImagesList"){
+                            if(index == 5 && item){
+                                startBill = item;
+                                return false;
+                            }else{
+                                return !!item;
+                            }
+                        }
                         return !!item;
                     });
                 });
@@ -753,6 +759,11 @@ layui.config({
                                 item.startImages = [];
                             }else{
                                 item.startImages = item.startImages.split(",");
+                                if(item.startImages[5] == ""){
+                                    item.startImages[5] = item.startBillImage;
+                                }else{
+                                    item.startImages.push(item.startBillImage);
+                                }
                             }
                             if(!item.fetchImages){
                                 item.fetchImages = [];
@@ -765,6 +776,7 @@ layui.config({
                                 item.returnImages = item.returnImages.split(",");
                             }
                         });
+                        console.log(res.data.truckDTOList)
                         laytpl($("#pic_view_tpl").html()).render({
                             list: res.data.truckDTOList,
                             field: field

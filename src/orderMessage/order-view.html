@@ -333,7 +333,7 @@
                                     <span class="layui-form-span text_left form_span">结算方式：</span>
                                 </div>
                                 <div class="layui-col-md7">
-                                    <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.settleWay}}</span>
+                                    <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.settleWay||"- -"}}</span>
                                 </div>
                             </div>
                         </div>
@@ -374,7 +374,7 @@
                         <div class="layui-inline layui-col-md3">
                             <div clas="layui-row">
                                 <div class="layui-col-md3">
-                                    <span class="layui-form-span text_left form_span">收入单价：</span>
+                                    <span class="layui-form-span text_left form_span">收入单价(元/km)：</span>
                                 </div>
                                 <div class="layui-col-md7">
                                     <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.pricePerMeliage}}</span>
@@ -414,7 +414,7 @@
         </script>
         <script id="image_tpl" type="text/html">
             <div class="layui-form-item layui-row">
-                <div class="layui-inline layui-col-md5">
+                <div class="layui-inline layui-col-md3">
                     <span class="layui-form-span text_left form_span">发车单：</span>
                     {{# layui.each(d.startBillImage, function(index, item){ }}
                     <div>
@@ -422,7 +422,7 @@
                     </div>
                     {{# }); }}
                 </div>
-                <div class="layui-inline layui-col-md5 layui-col-md-offset1">
+                <div class="layui-inline layui-col-md3 layui-col-md-offset4">
                     <span class="layui-form-span text_left form_span">行驶证：</span>
                     <div>
                         <img width="100%" class="car_image" src="{{d.tempLicenseBackImage}}">
@@ -430,9 +430,25 @@
                 </div>
             </div>
             <div class="layui-form-item layui-row">
+                <div class="layui-form-span text_left form_span">发车图片：</div>
+                {{# layui.each(d.startImages, function(index, item){ }}
+                <div style="margin-right:40px;margin-bottom:40px" class="layui-col-md3">
+                    <img width="100%" class="car_image" src="{{item}}">
+                </div>
+                {{# }); }}
+            </div>
+            <div class="layui-form-item layui-row">
                 <div class="layui-form-span text_left form_span">提车图片：</div>
                 {{# layui.each(d.fetchImages, function(index, item){ }}
-                <div style="margin-right:20px;margin-bottom:20px" class="layui-col-md3">
+                <div style="margin-right:40px;margin-bottom:40px" class="layui-col-md3">
+                    <img width="100%" class="car_image" src="{{item}}">
+                </div>
+                {{# }); }}
+            </div>
+            <div class="layui-form-item layui-row">
+                <div class="layui-form-span text_left form_span">收车图片：</div>
+                {{# layui.each(d.returnImages, function(index, item){ }}
+                <div style="margin-right:40px;margin-bottom:40px" class="layui-col-md3">
                     <img width="100%" class="car_image" src="{{item}}">
                 </div>
                 {{# }); }}

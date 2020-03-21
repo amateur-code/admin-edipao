@@ -136,9 +136,27 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       }
     });
   }
-  Edit.prototype.setFeeList = function(){
+  Edit.prototype.setFeeList = function(flag){
     //保存费用项
     var _this = this;
+    if(flag){
+      var dispatchData = form.val("form_dispatch");
+      _this.prePay = _this.prePay.map(function (item, index) {
+        delete item.new;
+        item.val = dispatchData["prePay_" + index] || 0;
+        return item;
+      });
+      _this.arrivePay = _this.arrivePay.map(function (item, index) {
+        delete item.new;
+        item.val = dispatchData["arrivePay_" + index] || 0;
+        return item;
+      });
+      _this.tailPay = _this.tailPay.map(function (item, index) {
+        delete item.new;
+        item.val = dispatchData["tailPay_" + index] || 0;
+        return item;
+      });
+    }
     laytpl($("#fee_list_tpl").html()).render({
       prePayDisabled: _this.orderData.prePayAmount == "*",
       prePay: _this.prePay,
@@ -378,10 +396,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       }
     })
   } 
-  Edit.prototype.openUpdateFee = function (e) {
+  Edit.prototype.openUpdateFee = function (e, event, layerIndex1) {
     var _this = this;
-    var index = e.target.dataset.index*1;
-    console.log(_this.feeItemList[index])
+    var index = event.target.dataset.index*1;
+    console.log(_this.feeItemList[index]);
     laytpl($("#update_fee_tpl").html()).render({oldName: _this.feeItemList[index].value}, function (html) {
       var index = layer.open({
         title: "修改费用项",
@@ -404,8 +422,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             if(res.code == "0"){
               _this.getFeeItemList().done(function (res2) {
                 layer.msg("修改成功");
-                layer.closeAll();
-                console.log(e)
+                layer.close(index);
+                layer.close(layerIndex1);
                 _this.openAddFee(e);
               });
             }
@@ -437,7 +455,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       var layerIndex1 = layer.open({
         title: "增加费用",
         type: 1,
-        area: ['600px', '400px'],
+        area: '600px',
         content: html,
         btn:["确认", "取消"],
         yes: function (e) {
@@ -459,7 +477,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             }
           });
           _this[type] = newObj;
-          _this.setFeeList();
+          _this.setFeeList(true);
           $(".add_fee").unbind().on("click", function (e) {
             _this.openAddFee(e);
           });
@@ -467,18 +485,18 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         },
         success:function () {
           form.render("checkbox");
-          $(".edit_icon").unbind().on("click", function (e) {
-            e.target.dataset.type = type;
-            _this.openUpdateFee(e);
+          $(".edit_icon").unbind().on("click", function (event) {
+            event.target.dataset.type = type;
+            _this.openUpdateFee(e, event, layerIndex1);
           });
-          $("#add_fee_item").unbind().on("click", function(e){
-            _this.openAddFeeItem(e);
+          $("#add_fee_item").unbind().on("click", function(event){
+            _this.openAddFeeItem(e, layerIndex1);
           });
         }
       });
     });
   }
-  Edit.prototype.openAddFeeItem = function (e) {
+  Edit.prototype.openAddFeeItem = function (event, layerIndex1) {
     var _this = this;
     laytpl($("#fee_item_tpl").html()).render({list: _this.feeUnitItemList}, function(html){
       var layerIndex2 = layer.open({
@@ -506,11 +524,13 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           _this.addFeeItem(data).done(function (res) {
             if(res.code == "0"){
               $('#addFeeName').val("");
-              layer.closeAll();
+              layer.close(layerIndex1);
+              layer.close(layerIndex2);
+              layer.msg("添加成功");
               _this.getFeeItemList().done(function (res) {
                 if(res.code == "0"){
                   _this.feeItemList = res.data;
-                  _this.openAddFee();
+                  _this.openAddFee(event);
                 }else{
                   layer.msg(res.message, {icon: 5,anim: 6});
                 }
@@ -577,6 +597,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       setTimeout(function () {
         layer.closeAll();
         $(".layui-table-view[lay-id=cars_table]").remove();
+        $(".layui-layer-content").html("");
+        
       },1500);
       return;
     }else if(addCarsFlag){
@@ -584,6 +606,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       setTimeout(function () { 
         layer.closeAll();
         $(".layui-table-view[lay-id=cars_table]").remove();
+        $(".layui-layer-content").html("");
+
       },1500);
       return;
     }else{
@@ -602,6 +626,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             filter: filter
           });
           $(".layui-table-view[lay-id=cars_table]").remove();
+          $(".layui-layer-content").html("");
+
           layer.closeAll();
           form.val(filter, data);
         }else{
@@ -611,6 +637,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       return;
     }
     $(".layui-table-view[lay-id=cars_table]").remove();
+    $(".layui-layer-content").html("");
+
     layer.closeAll();
     form.val(filter, data);
   }
@@ -759,7 +787,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var carsLength = $(".car_info_form").length;
     _this.carFormList.forEach(function (item, index) {
       var itemData = form.val(item.filter);
-      console.log(itemData.masterFlag)
       if(!itemData.id && itemData.id != 0) return;
       totalIncome += itemData.income * 1;
       totalManageFee += itemData.manageFee * 1;
@@ -965,8 +992,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
               driverCertificate: data.driveLicenceType,
             }
             form.val("form_dispatch", driverData);
-            layer.close(index);
             $(".layui-table-view[lay-id=drivers_table]").remove();
+            layer.close(index);
+            $(".layui-layer-content").html("");
           });
         }
           , height: 'full'
@@ -1280,8 +1308,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
               var data = obj.data;
               data[field] = obj.data.name + "," + obj.data.phone;
               form.val("form_ascription", data);
-              layer.close(index);
               $(".layui-table-view[lay-id=staffList_table]").remove();
+              layer.close(index);
+              $(".layui-layer-content").html("");
             });
           }
             , height: 'full'
@@ -1321,9 +1350,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             laytpl($("#driver_list_tpl").html()).render({list: res.data.driverInfoListDtoList}, function (html) {
               $("#driver_select_item_container").html(html);
               $(".driver_item").unbind().on("click", function (e) {
-                console.log(e)
-                var index = e.target.dataset.index;
+                var index = e.currentTarget.dataset.index;
                 if(index != "none") {
+                  console.log(_this.driverInfoListDto, index)
                   var data = _this.driverInfoListDto[index*1];
                   var driverData = {
                     driverId: data.id,

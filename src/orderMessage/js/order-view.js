@@ -181,11 +181,19 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             item.settleWay = "账期";
             break;
         }
+        
         item.connector = item.connectorName + item.connectorPhone;
+        if(!item.returnImages) item.returnImages = "";
+        item.returnImages = item.returnImages.split(",");
         if(!item.fetchImages) item.fetchImages = "";
         item.fetchImages = item.fetchImages.split(",");
+        if(!item.startImages) item.startImages = "";
+        item.startImages = item.startImages.split(",");
         if(!item.startBillImage) item.startBillImage = "";
         item.startBillImage = item.startBillImage.split(",");
+        Object.keys(item).forEach(function (key) {
+          if(!item[key])item[key] = "- -";
+        });
         laytpl(imageStr).render(item, function (imageHtml) {
           laytpl(carFormHtml).render(data.truckDTOList[index], function (html) {
             var filterStr = "form_car_" + index;

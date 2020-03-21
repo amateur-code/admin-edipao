@@ -97,7 +97,7 @@
                         templet: function (res) {
                         // 上述field: 'modifyBeforeJson' 字段 使用"modifyBeforeJsonNo",日志返回有json串，框架自动放到data-content页面显示会报错
                         // 司机档案-意向路线
-                            var data = res.modifyBeforeJson;
+                            var data = res.modifyBeforeJson.replace(/:</g,':--<');
                             if(data.indexOf('意向路线') > -1){
                                 return data = data.replace(/(\')|(\,)|(\}\}\])/g, '')
                                         .replace(/\[\{(start)\:\{(code)\:(\d*)(province)\:/g, '始发地：')
@@ -122,7 +122,7 @@
                             // 上述field: 'modifyAfterJson' 字段 使用"modifyAfterJsonNo",日志返回有json串，框架自动放到data-content页面显示会报错
                             // 司机档案-意向路线
                             var data = res.modifyAfterJson;
-                            var data = res.modifyAfterJson;
+                            var data = res.modifyAfterJson.replace(/:</g,':--<');
                             if(data.indexOf('意向路线') > -1){
                                 return data = data
                                         .replace(/(\')|(\,)|(\}\}\])/g, '')
@@ -137,6 +137,8 @@
                                             .replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '')
                                             .replace(/\}\{(key)/g, ',')
                                             .replace(/(null)/g, '--')
+                                            .replace(/\[\]/g,'--')
+                                            
                             }else{
                                 return data
                                         .replace(/(null)/g, '--');

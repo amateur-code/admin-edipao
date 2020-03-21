@@ -288,7 +288,7 @@
                         {{# if(item){ }}
                         <div class="pre_image_holder_inner"><img src="{{item}}" class="layui-upload-img pre_img"></div>
                         {{# } }}
-                        +
+                        {{index == 5?'发车单':'发车照片'}}
                     </div>
                 </div>
                 <div id="{{'upload_start_pre_'+index}}" class="upload_get_pre layui-col-md5 layui-col-md-offset1">
