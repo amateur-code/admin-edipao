@@ -169,8 +169,8 @@ layui.define([], function(exports) {
         }
 
         return {
-            lat: DecodeLat(kcode),
-            lng: DecodeLon(kcode)
+            lat: DecodeLat(kcode).toFixed(5),
+            lng: DecodeLon(kcode).toFixed(5)
         }
     }
 
