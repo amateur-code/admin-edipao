@@ -318,7 +318,6 @@ layui.config({
                                         ,done: function(res){
                                             if(res.code == "0"){
                                                 uploadData[uploadTruckId+""][item.key][index*1] = res.data;
-                                                console.log(uploadData)
                                                 $(item.holder + index + "").addClass("pre").append('<div class="pre_image_holder_inner"><img src="'+ res.data +'" class="layui-upload-img pre_img"></div>')
                                             }else{
                                                 layer.msg(res.message, {icon: 5,anim: 6});
@@ -337,6 +336,7 @@ layui.config({
             var keys = Object.keys(uploadData);
             var successFlag = true;
             var emptyFlag = true;
+            var promiseList = [];
             var startBill = "";
             keys.forEach(function (id) {
                 Object.keys(uploadData[id]).forEach(function(item){
@@ -410,44 +410,51 @@ layui.config({
                 }else if(flag.length == 3){
                     promise = $.when(flag[0], flag[1], flag[2]);
                 }
-                if(promise){
-                    promise.done(function (res1, res2, res3) {
-                        if(flag.length > 0){
-                            if(res1){
-                                if(res1.code != 0){
-                                    successFlag = false;
-                                    layer.msg(res1.message);
-                                }
-                            }else{
-                                res1 = {code:0};
+                if(promise)promiseList.push({
+                    promise: promise,
+                    flag: flag
+                });
+            });
+            promiseList.forEach(function (promise, index) {
+                var flag = promise.flag;
+                promise = promise.promise;
+                promise.done(function (res1, res2, res3) {
+                    if(flag.length > 0){
+                        if(res1){
+                            if(res1.code != 0){
+                                successFlag = false;
+                                layer.msg(res1.message);
                             }
+                        }else{
+                            res1 = {code:0};
                         }
-                        if(flag.length > 1){
-                            if(res2){
-                                if(res2.code != 0){
-                                    successFlag = false;
-                                    layer.msg(res2.message);
-                                }
-                            }else{
-                                res2 = {code:0};
+                    }
+                    if(flag.length > 1){
+                        if(res2){
+                            if(res2.code != 0){
+                                successFlag = false;
+                                layer.msg(res2.message);
                             }
+                        }else{
+                            res2 = {code:0};
                         }
-                        if(flag.length > 2){
-                            if(res3){
-                                if(res3.code != 0){
-                                    successFlag = false;
-                                    layer.msg(res3.message);
-                                }
-                            }else{
-                                res3 = {code:0};
+                    }
+                    if(flag.length > 2){
+                        if(res3){
+                            if(res3.code != 0){
+                                successFlag = false;
+                                layer.msg(res3.message);
                             }
+                        }else{
+                            res3 = {code:0};
                         }
-                        if(successFlag && index == keys.length - 1){
-                            hadUpload = true;
-                            cb({code:0});
-                        }
-                    });
-                }
+                    }
+                    console.log(successFlag, index, promiseList.length)
+                    if(successFlag && index == promiseList.length - 1){
+                        hadUpload = true;
+                        cb({code:0});
+                    }
+                });
             });
             function notNull(obj) {
                 Object.keys(obj).forEach(function (key) {

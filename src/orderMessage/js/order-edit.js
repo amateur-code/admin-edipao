@@ -644,6 +644,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
   }
   Edit.prototype.handleDeleteCar = function (e) {
     var _this = this;
+    if(_this.carFormList.length <= 1){
+      layer.alert("不能删除唯一车辆信息", {icon: 2})
+      return;
+    }
     var filter = e.target.dataset.filter;
     var idTodel = "";
     var carFormListIndex;
