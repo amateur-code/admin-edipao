@@ -715,6 +715,7 @@ layui.config({
         });
 
         layui.each(val,function (k,v) {
+            cityCode[v.name] = v.code;
             layui.each(level2,function (m,n) {
                 if(v.name==n.province){
                     val[k]['cityList'].push({
@@ -725,7 +726,6 @@ layui.config({
                     cityCode[n.city] = n.code;
                 }
             })
-            cityCode[v.name] = v.code;
         });
         return val;
     }
