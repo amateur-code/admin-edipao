@@ -808,7 +808,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     _this.carFormList.forEach(function (item) {
       if(item.initial) initialLength ++;
     });
-    if(initialLength.length <= 1){
+    if(initialLength <= 1){
       layer.alert("不能删除唯一车辆信息", {icon: 2})
       return;
     }
@@ -985,7 +985,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         pricePerMeliage: itemData.pricePerMeliage||"",
         income: itemData.income||"",
         manageFee: itemData.manageFee||"",
-        tempLicense: _this.tempLicense[index].image || itemData.tempLicense,
+        tempLicense: itemData.tempLicense,
         tempLicenseBackImage: _this.tempLicenseBackImage[index].image || itemData.tempLicenseBackImage,
         saleRemark: itemData.saleRemark||"",
         storageAndDeliverRemark: itemData.storageAndDeliverRemark||"",
