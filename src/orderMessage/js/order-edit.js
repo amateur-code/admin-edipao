@@ -228,23 +228,35 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       }
     });
   }
-  Edit.prototype.setFeeList = function(flag){
+  Edit.prototype.setFeeList = function(flag, type, newObj){
     //保存费用项
     var _this = this;
     if(flag){
       var dispatchData = form.val("form_dispatch");
-      _this.prePay = _this.prePay.map(function (item, index) {
-        item.val = dispatchData["prePay_" + index] || 0;
-        return item;
-      });
-      _this.arrivePay = _this.arrivePay.map(function (item, index) {
-        item.val = dispatchData["arrivePay_" + index] || 0;
-        return item;
-      });
-      _this.tailPay = _this.tailPay.map(function (item, index) {
-        item.val = dispatchData["tailPay_" + index] || 0;
-        return item;
-      });
+      if(type == "prePay"){
+        _this.prePay = newObj;
+      }else{
+        _this.prePay = _this.prePay.map(function (item, index) {
+          item.val = dispatchData["prePay_" + index] || 0;
+          return item;
+        });
+      }
+      if(type == "arrivePay"){
+        _this.arrivePay = newObj;
+      }else{
+        _this.arrivePay = _this.arrivePay.map(function (item, index) {
+          item.val = dispatchData["arrivePay_" + index] || 0;
+          return item;
+        });
+      }
+      if(type == "tailPay"){
+        _this.tailPay = newObj;
+      }else{
+        _this.tailPay = _this.tailPay.map(function (item, index) {
+          item.val = dispatchData["tailPay_" + index] || 0;
+          return item;
+        });
+      }
     }
     if(_this.dataPermission.canViewOrderCost != "Y"){
       _this.prePay.forEach(function (item) {
@@ -612,6 +624,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           });
           var newList = Object.keys(data);
           var newObj = [];
+          console.log(data, oldList)
           newList.forEach(function(item){
             if(!oldList.includes(item)){
               newObj.push({
@@ -624,7 +637,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             }
           });
           _this[type] = newObj;
-          _this.setFeeList(true);
+          _this.setFeeList(true, type, newObj);
           $(".add_fee").unbind().on("click", function (e) {
             _this.openAddFee(e);
           });
