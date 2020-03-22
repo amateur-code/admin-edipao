@@ -103,6 +103,7 @@
                                         .replace(/\[\{(start)\:\{(code)\:(\d*)(province)\:/g, '始发地：')
                                         .replace(/(city)\:/g, '-')
                                         .replace(/\}(end)\:\{(code)\:(\d*)(province)\:/g, '  目的地：')
+                                        .replace(/\}\}\{(start)\:\{(code)\:(\d*)(province)\:/g, '; 始发地：')
                                         .replace(/(null)/g, '--')
                                         
                             } else if(data.indexOf('预付款') > -1 || data.indexOf('到付款') > -1 || data.indexOf('尾款') > -1){
@@ -129,6 +130,7 @@
                                         .replace(/\[\{(start)\:\{(code)\:(\d*)(province)\:/g, '始发地：')
                                         .replace(/(city)\:/g, '-')
                                         .replace(/\}(end)\:\{(code)\:(\d*)(province)\:/g, '  目的地：')
+                                        .replace(/\}\}\{(start)\:\{(code)\:(\d*)(province)\:/g, '; 始发地：')
                                         .replace(/(null)/g, '--')
                                         
                             } else if(data.indexOf('预付款') > -1 || data.indexOf('到付款') > -1 || data.indexOf('尾款') > -1){
