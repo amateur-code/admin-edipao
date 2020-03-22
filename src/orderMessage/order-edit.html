@@ -323,13 +323,13 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收入金额(元)</label><br>
                             <div class="layui-input-inline">
-                                <input data-filter="CARFORM" type="number" name="income" autocomplete="off" class="layui-input car_income">
+                                <input {{d.income=='*'?'disabled':''}} data-filter="CARFORM" type="{{d.income == '*'?'text':'number'}}" name="income" autocomplete="off" class="layui-input car_income">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>管理费(元)</label><br>
                             <div class="layui-input-inline">
-                                <input data-filter="CARFORM" type="text" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
+                                <input {{d.manageFee=='*'?'disabled':''}} data-filter="CARFORM" type="{{d.manageFee == '*'?'text':'number'}}" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -347,7 +347,7 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收入单价(元/km)</label><br>
                             <div class="layui-input-inline">
-                                <input style="width: 80%;display:inline-block;border-right:0;" type="number" name="pricePerMeliage" autocomplete="off" class="layui-input"><span class="price_unit">元/km</span>
+                                <input {{d.pricePerMeliage=='*'?'disabled':''}} type="{{d.pricePerMeliage == '*'?'text':'number'}}" name="pricePerMeliage" style="width: 80%;display:inline-block;border-right:0;" autocomplete="off" class="layui-input"><span class="price_unit">元/km</span>
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -612,10 +612,10 @@
                         <label class="layui-form-label text_left form_label">{{item.key}}：</label>
                         <div class="layui-row">
                             <div class="layui-col-md6">
-                                <input {{d.prePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="{{item.val == '*'?'text':'number'}}" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5">
-                                <select data-type="prePay" data-index="{{index}}" class="fee_unit_select" name="unit">
+                                <select {{item.val == '*' ? 'disabled' : ''}} data-type="prePay" data-index="{{index}}" class="fee_unit_select" name="unit">
                                     {{#  layui.each(d.unitList, function(index2, item2){ }}
                                     <option value="{{item2}}" {{index2 == 0 || item.unit == item2 ? 'selected':''}}>{{item2}}</option>
                                     {{#  }); }}
@@ -641,10 +641,10 @@
                         <label class="layui-form-label text_left form_label">{{item.key}}：</label>
                         <div class="layui-row">
                             <div class="layui-col-md6">
-                                <input {{d.arrivePayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="{{item.val == '*'?'text':'number'}}" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5">
-                                <select data-type="arrivePay" data-index="{{index}}" class="fee_unit_select" name="unit">
+                                <select {{item.val == '*' ? 'disabled' : ''}} data-type="arrivePay" data-index="{{index}}" class="fee_unit_select" name="unit">
                                     {{#  layui.each(d.unitList, function(index2, item2){ }}
                                     <option value="{{item2}}" {{index2 == 0 || item.unit == item2 ? 'selected':''}}>{{item2}}</option>
                                     {{#  }); }}
@@ -670,10 +670,10 @@
                         <label class="layui-form-label text_left form_label">{{item.key}}：</label>
                         <div class="layui-row">
                             <div class="layui-col-md6">
-                                <input {{d.tailPayDisabled ? 'disabled' : ''}} value="{{item.val}}" type="number" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="{{item.val == '*'?'text':'number'}}" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5">
-                                <select data-type="tailPay" data-index="{{index}}" class="fee_unit_select" name="unit">
+                                <select {{item.val == '*' ? 'disabled' : ''}} data-type="tailPay" data-index="{{index}}" class="fee_unit_select" name="unit">
                                     {{#  layui.each(d.unitList, function(index2, item2){ }}
                                     <option value="{{item2}}" {{index2 == 0 || item.unit == item2 ? 'selected':''}}>{{item2}}</option>
                                     {{#  }); }}

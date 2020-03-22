@@ -91,6 +91,16 @@ layui.define([], function(exports) {
       };
     }
 
+    Common.prototype.getDataPermission = function () {
+        var user = layui.sessionData('user');
+        var dataPermission = {};
+        console.log(user)
+        if(user&&user.dataPermissionDTO){
+            dataPermission = user.dataPermissionDTO;
+        }
+        return dataPermission;
+    }
+
     Common.prototype.getMyPermission = function() {
       var pid = this.urlGet().perssionId,
           user = layui.sessionData('user'),

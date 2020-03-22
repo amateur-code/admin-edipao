@@ -17,6 +17,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     this.orderData = null;
     this.carFormList = [];
     this.updateData = {};
+    this.dataPermission = edipao.getDataPermission();
+    window.dataPermission = this.dataPermission;
   }
   $.extend(View.prototype, {
     init: function () {
@@ -78,11 +80,17 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             try {
               updateData = JSON.parse(res.data.modifyAfterJson);
               updateData.forEach(function (item) {
-              _this.updateData[item.name] = item.value;
-            });
+                _this.updateData[item.name] = item.value;
+              });
               if(_this.updateData.prePayFeeItems)_this.updateData.prePayFeeItems = JSON.parse(_this.updateData.prePayFeeItems);
               if(_this.updateData.tailPayFeeItems)_this.updateData.tailPayFeeItems = JSON.parse(_this.updateData.tailPayFeeItems);
               if(_this.updateData.arrivePayFeeItems)_this.updateData.arrivePayFeeItems = JSON.parse(_this.updateData.arrivePayFeeItems);
+              if(_this. dataPermission.canViewOrderIncome != "Y"){
+                if(_this.updateData.totalIncome) _this.updateData.totalIncome = "*";
+              }
+              if(_this. dataPermission.canViewOrderIncome != "Y"){
+                if(_this.updateData.totalManageFee) _this.updateData.totalManageFee = "*";
+              }
             } catch (error) {
               _this.updateData = {};
             }
@@ -125,6 +133,42 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     setFeeList: function () {
       //保存费用项
       var _this = this;
+      if(_this.dataPermission.canViewOrderCost != "Y"){
+        _this.orderData.prePayAmount = "*";
+        if(_this.updateData.prePayAmount) _this.updateData.prePayAmount = "*";
+      }
+      if(_this.dataPermission.canViewOrderCost != "Y"){
+        _this.orderData.arrivePayAmount = "*";
+        if(_this.updateData.arrivePayAmount) _this.updateData.arrivePayAmount = "*";
+      }
+      if(_this.dataPermission.canViewOrderCost != "Y"){
+        _this.orderData.tailPayAmount = "*";
+        if(_this.updateData.tailPayAmount) _this.updateData.tailPayAmount = "*";
+      }
+      if(_this.dataPermission.canViewOrderCost != "Y"){
+        _this.prePay.forEach(function (item) {
+          item.val = "*";
+        });
+        _this.updateData.prePayFeeItems && _this.updateData.prePayFeeItems.forEach(function (item) {
+          item.val = "*";
+        });
+      }
+      if(_this.dataPermission.canViewOrderCost != "Y"){
+        _this.arrivePay.forEach(function (item) {
+          item.val = "*";
+        });
+        _this.updateData.arrivePayFeeItems && _this.updateData.arrivePayFeeItems.forEach(function (item) {
+          item.val = "*";
+        });
+      }
+      if(_this.dataPermission.canViewOrderCost != "Y"){
+        _this.tailPay.forEach(function (item) {
+          item.val = "*";
+        });
+        _this.updateData.tailPayFeeItems && _this.updateData.tailPayFeeItems.forEach(function (item) {
+          item.val = "*";
+        });
+      }
       laytpl($("#fee_list_tpl").html()).render({
         prePay: _this.prePay,
         tailPay: _this.tailPay,
@@ -142,34 +186,50 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       data.tailPayFeeItems = data.tailPayFeeItems || "[]";
       data.arrivePayFeeItems = data.arrivePayFeeItems || "[]";
       try {
-        _this.prePay = JSON.parse(data.prePayFeeItems);
+        _this.prePay = JSON.parse(data.prePayFeeItems) || [];
       } catch (error) {
         _this.prePay = [];
       }
       try {
-        _this.tailPay = JSON.parse(data.tailPayFeeItems);
+        _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
       } catch (error) {
         _this.tailPay = [];
       }
       try {
-        _this.arrivePay = JSON.parse(data.arrivePayFeeItems);
+        _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
       } catch (error) {
         _this.arrivePay = [];
       }
       _this.setFeeList();
+
+      if(_this. dataPermission.canViewOrderIncome != "Y"){
+        data.totalIncome = "*";
+      }
+      if(_this. dataPermission.canViewOrderIncome != "Y"){
+        data.totalManageFee = "*";
+      }
+
       laytpl($("#base_info_tpl").html()).render(data, function(html){
         $("#base_info").html(html);
       });
       laytpl($("#income_info_tpl").html()).render(data, function(html){
         $("#income_info").html(html);
       });
-      console.log(data)
       form.val("form_ascription", data);
       if(data.driverId) form.val("form_dispatch", data);
       var carFormStr = "";
       var carFormHtml = $("#car_info_tpl").html();
       var imageStr = $("#image_tpl").html();
       data.truckDTOList.forEach(function (item, index) {
+        if(_this. dataPermission.canViewOrderIncome != "Y"){
+          item.pricePerMeliage = "*";
+        }
+        if(_this. dataPermission.canViewOrderIncome != "Y"){
+          item.income = "*";
+        }
+        if(_this. dataPermission.canViewOrderIncome != "Y"){
+          item.manageFee = "*";
+        }
         switch(item.settleWay * 1){
           case 1:
             item.settleWay = "现结";

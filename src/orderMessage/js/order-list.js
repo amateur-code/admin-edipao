@@ -19,7 +19,7 @@ layui.config({
 }).extend({
     excel: 'layui_exts/excel',
     tableFilter: 'TableFilter/tableFilter'
-}).use(['form', 'table', 'jquery','layer', 'upload', 'laytpl', 'tableFilter', 'excel'], function () {
+}).use(['form', 'table', 'jquery','layer', 'upload', 'laytpl', 'excel'], function () {
     var tableName = "orderMessage-order-list";
     var mainTable;
     var table = layui.table;
@@ -36,6 +36,8 @@ layui.config({
     var orderDTOList = [];
     var orderData = {};
     var uploadTruckId = "";
+    var dataPermission = edipao.getDataPermission();
+    window.dataPermission = dataPermission;
     var permissionList = edipao.getMyPermission();
     window.permissionList = permissionList;
     var exportHead = {};
@@ -47,6 +49,25 @@ layui.config({
         fetchImagesList: ['','','','',''],
         returnImagesList: ['','']
     }
+    var startImagesHolder = [
+        "/admin/images/front.jpg",
+        "/admin/images/head_left_45.jpg",
+        "/admin/images/head_right_45.jpg",
+        "/admin/images/back_left_45.jpg",
+        "/admin/images/back_right_45.jpg",
+        "/admin/images/fache.jpg"
+    ];
+    var fetchImagesHolder = [
+        "/admin/images/front.jpg",
+        "/admin/images/head_left_45.jpg",
+        "/admin/images/head_right_45.jpg",
+        "/admin/images/back_left_45.jpg",
+        "/admin/images/back_right_45.jpg",
+    ]
+    var returnImagesHolder = [
+        "/admin/images/jiaojie.jpg",
+        "/admin/images/jiaojie.jpg",
+    ];
     var uploadData = {}
     var filters = [
         { field: 'orderNo', type: 'input' },
@@ -253,7 +274,7 @@ layui.config({
                     holder: "#upload_start_holder_",
                     pre: "#upload_start_pre_",
                     type: 3,
-                    key: "startImagesList"
+                    key: "startImagesList",
                 },
                 {
                     num: uploadObj.fetchImagesList,
@@ -285,6 +306,11 @@ layui.config({
                     });
                 },
                 success: function () {
+                    var holders = {
+                        startImagesHolder: startImagesHolder,
+                        fetchImagesHolder: fetchImagesHolder,
+                        returnImagesHolder: returnImagesHolder
+                    }
                     form.render("select");
                     //多图片上传
                     form.on("select", function (data) {
@@ -295,7 +321,11 @@ layui.config({
                     });
                     render();
                     function render() {
-                        laytpl($("#upload_pic_list_tpl").html()).render({uploadData:uploadData[uploadTruckId+""], type: type}, function (html) {
+                        laytpl($("#upload_pic_list_tpl").html()).render({
+                            uploadData:uploadData[uploadTruckId+""], 
+                            type: type, 
+                            holders: holders
+                        }, function (html) {
                             $("#upload_pic_select_car").html(html);
                             $(".pic_del_btn").unbind().on("click", function (e) {
                                 e.stopPropagation();
@@ -1356,6 +1386,9 @@ layui.config({
                 if(d.orderType == 2 && d.masterFlag == "否"){
                     return "";
                 }
+                if(dataPermission.canViewOrderCost != "Y"){
+                    return "* " + payStatus;
+                }
                 return d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus;
             }
         },
@@ -1382,6 +1415,9 @@ layui.config({
                 if(d.orderType == 2 && d.masterFlag == "否"){
                     return "";
                 }
+                if(dataPermission.canViewOrderCost != "Y"){
+                    return "* " + payStatus;
+                }
                 return d.arrivePayAmount + "元" + payStatus;
             }
         },
@@ -1406,6 +1442,9 @@ layui.config({
                 }
                 if(d.orderType == 2 && d.masterFlag == "否"){
                     return "";
+                }
+                if(dataPermission.canViewOrderCost != "Y"){
+                    return "* " + payStatus;
                 }
                 return d.tailPayAmount + "元" + payStatus;
             }

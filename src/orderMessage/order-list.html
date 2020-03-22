@@ -269,7 +269,7 @@
                     </div>
                 </div>
                 <div id="{{'upload_get_pre_'+index}}" class="upload_get_pre layui-col-md5 layui-col-md-offset1">
-                    预览图
+                    <div class="pre_image_holder_inner"><img src="{{d.holders.fetchImagesHolder[index]}}" class="layui-upload-img pre_img"></div>
                 </div>
             </div>
             {{#  }); }}
@@ -281,6 +281,8 @@
         <div class="layui-card-header">发车单</div>
         <div class="layui-card-body">
             {{#  layui.each(d.uploadData.startImagesList, function(index, item){ }}
+            {{index == 0?'发车照片':''}}
+            {{index == 5?'发车单':''}}
             <div class="layui-row upload_start_row">
                 <div class="layui-col-md5">
                     <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder {{item?'pre':''}}">
@@ -288,11 +290,11 @@
                         {{# if(item){ }}
                         <div class="pre_image_holder_inner"><img src="{{item}}" class="layui-upload-img pre_img"></div>
                         {{# } }}
-                        {{index == 5?'发车单':'发车照片'}}
+                        +
                     </div>
                 </div>
                 <div id="{{'upload_start_pre_'+index}}" class="upload_get_pre layui-col-md5 layui-col-md-offset1">
-                    预览图
+                    <div class="pre_image_holder_inner"><img src="{{d.holders.startImagesHolder[index]}}" class="layui-upload-img pre_img"></div>
                 </div>
             </div>
             {{#  }); }}
@@ -315,7 +317,7 @@
                     </div>
                 </div>
                 <div id="{{'upload_give_pre_'+index}}" class="upload_get_pre layui-col-md5 layui-col-md-offset1">
-                    预览图
+                    <div class="pre_image_holder_inner"><img src="{{d.holders.returnImagesHolder[index]}}" class="layui-upload-img pre_img"></div>
                 </div>
             </div>
             {{# }); }}
