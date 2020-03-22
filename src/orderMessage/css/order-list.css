@@ -2,13 +2,40 @@
   margin-top: 20px;
   text-align: center;
 }
+.upload_start_row .upload_get_pre {
+  position: relative;
+  width: 140px;
+  height: 100px;
+  border: 1px dotted #ccc;
+  line-height: 70px;
+  text-align: center;
+  overflow: hidden;
+}
+.upload_start_row .upload_get_pre::after {
+  position: absolute;
+  display: block;
+  right: -35px;
+  top: 5px;
+  width: 100px;
+  text-align: center;
+  content: "示例";
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+  line-height: normal;
+  background-color: rgba(244, 164, 96, 0.5);
+  border-bottom: 1px sandybrown solid;
+}
+.upload_start_row .upload_get_pre img {
+  max-height: 100%;
+  max-width: 100%;
+}
 .upload_start_row .upload_start_holder {
   overflow: visible;
   position: relative;
   display: inline-block;
   cursor: pointer;
-  width: 120px;
-  height: 70px;
+  width: 140px;
+  height: 100px;
   border: 1px dotted #ccc;
   color: #ccc;
   text-align: center;
@@ -74,11 +101,4 @@
 .upload_start_holder .pre_image_holder_inner img {
   max-width: 100%;
   max-height: 100%;
-}
-.upload_get_pre {
-  width: 120px;
-  height: 70px;
-  border: 1px dotted #ccc;
-  line-height: 70px;
-  text-align: center;
 }
