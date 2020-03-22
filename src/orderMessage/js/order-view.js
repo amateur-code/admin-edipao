@@ -87,8 +87,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
               if(_this.updateData.arrivePayFeeItems)_this.updateData.arrivePayFeeItems = JSON.parse(_this.updateData.arrivePayFeeItems);
               if(_this. dataPermission.canViewOrderIncome != "Y"){
                 if(_this.updateData.totalIncome) _this.updateData.totalIncome = "*";
-              }
-              if(_this. dataPermission.canViewOrderIncome != "Y"){
                 if(_this.updateData.totalManageFee) _this.updateData.totalManageFee = "*";
               }
             } catch (error) {
@@ -136,32 +134,25 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       if(_this.dataPermission.canViewOrderCost != "Y"){
         _this.orderData.prePayAmount = "*";
         if(_this.updateData.prePayAmount) _this.updateData.prePayAmount = "*";
-      }
-      if(_this.dataPermission.canViewOrderCost != "Y"){
         _this.orderData.arrivePayAmount = "*";
         if(_this.updateData.arrivePayAmount) _this.updateData.arrivePayAmount = "*";
-      }
-      if(_this.dataPermission.canViewOrderCost != "Y"){
         _this.orderData.tailPayAmount = "*";
         if(_this.updateData.tailPayAmount) _this.updateData.tailPayAmount = "*";
-      }
-      if(_this.dataPermission.canViewOrderCost != "Y"){
+
         _this.prePay.forEach(function (item) {
           item.val = "*";
         });
         _this.updateData.prePayFeeItems && _this.updateData.prePayFeeItems.forEach(function (item) {
           item.val = "*";
         });
-      }
-      if(_this.dataPermission.canViewOrderCost != "Y"){
+
         _this.arrivePay.forEach(function (item) {
           item.val = "*";
         });
         _this.updateData.arrivePayFeeItems && _this.updateData.arrivePayFeeItems.forEach(function (item) {
           item.val = "*";
         });
-      }
-      if(_this.dataPermission.canViewOrderCost != "Y"){
+
         _this.tailPay.forEach(function (item) {
           item.val = "*";
         });
@@ -204,8 +195,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 
       if(_this. dataPermission.canViewOrderIncome != "Y"){
         data.totalIncome = "*";
-      }
-      if(_this. dataPermission.canViewOrderIncome != "Y"){
         data.totalManageFee = "*";
       }
 
@@ -223,12 +212,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       data.truckDTOList.forEach(function (item, index) {
         if(_this. dataPermission.canViewOrderIncome != "Y"){
           item.pricePerMeliage = "*";
-        }
-        if(_this. dataPermission.canViewOrderIncome != "Y"){
-          item.income = "*";
-        }
-        if(_this. dataPermission.canViewOrderIncome != "Y"){
           item.manageFee = "*";
+          item.income = "*";
         }
         switch(item.settleWay * 1){
           case 1:

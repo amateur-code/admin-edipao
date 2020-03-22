@@ -250,17 +250,14 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       _this.prePay.forEach(function (item) {
         item.val = "*";
       });
-    }
-    if(_this.dataPermission.canViewOrderCost != "Y"){
       _this.arrivePay.forEach(function (item) {
         item.val = "*";
       });
-    }
-    if(_this.dataPermission.canViewOrderCost != "Y"){
       _this.tailPay.forEach(function (item) {
         item.val = "*";
       });
     }
+    
     laytpl($("#fee_list_tpl").html()).render({
       prePay: _this.prePay,
       tailPay: _this.tailPay,
@@ -334,8 +331,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
 
     if(_this. dataPermission.canViewOrderIncome != "Y"){
       data.totalIncome = "*";
-    }
-    if(_this. dataPermission.canViewOrderIncome != "Y"){
       data.totalManageFee = "*";
     }
 
@@ -369,9 +364,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         truckData = JSON.parse(JSON.stringify(data.truckDTOList[index]))
       } catch (error) {}
       //数据权限处理
-      if(_this. dataPermission.canViewOrderIncome != "Y") truckData.pricePerMeliage = "*";
-      if(_this. dataPermission.canViewOrderIncome != "Y") truckData.income = "*";
-      if(_this. dataPermission.canViewOrderIncome != "Y") truckData.manageFee = "*";
+      if(_this. dataPermission.canViewOrderIncome != "Y"){
+        truckData.pricePerMeliage = "*";
+        truckData.income = "*";
+        truckData.manageFee = "*";
+      }
 
       itemStr = itemStr.replace(/CARFORM/g, item.filter);
       laytpl(itemStr).render(truckData, function (html) {
@@ -402,9 +399,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           data.truckDTOList[index] = data.truckDTOList[index] || "{}";
           truckData = JSON.parse(JSON.stringify(data.truckDTOList[index]))
         } catch (error) {}
-        if(_this. dataPermission.canViewOrderIncome != "Y") truckData.pricePerMeliage = "*";
-        if(_this. dataPermission.canViewOrderIncome != "Y") truckData.income = "*";
-        if(_this. dataPermission.canViewOrderIncome != "Y") truckData.manageFee = "*";
+        if(_this.dataPermission.canViewOrderIncome != "Y"){
+          truckData.pricePerMeliage = "*";
+          truckData.income = "*";
+          truckData.manageFee = "*";
+        }
         _this.tempLicenseBackImage.push({
           image: truckData.tempLicenseBackImage,
           id: truckData.id
@@ -987,15 +986,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         }else{
           truckItem.income = "";
         }
-      }
-      if(_this. dataPermission.canViewOrderIncome != "Y"){
         if(_this.orderDataBackUp.truckDTOList[index]){
           truckItem.pricePerMeliage = _this.orderDataBackUp.truckDTOList[index].pricePerMeliage;
         }else{
           truckItem.pricePerMeliage = "";
         }
-      }
-      if(_this. dataPermission.canViewOrderIncome != "Y"){
         if(_this.orderDataBackUp.truckDTOList[index]){
           truckItem.manageFee = _this.orderDataBackUp.truckDTOList[index].manageFee;
         }else{
@@ -1026,12 +1021,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     
     if(_this. dataPermission.canViewOrderIncome != "Y"){
       data.totalIncome = _this.orderDataBackUp.totalIncome || "";
-    }else{
-      data.totalIncome = totalIncome || 0;
-    }
-    if(_this. dataPermission.canViewOrderIncome != "Y"){
       data.totalManageFee = _this.orderDataBackUp.totalManageFee || "";
     }else{
+      data.totalIncome = totalIncome || 0;
       data.totalManageFee = totalManageFee || 0;
     }
 
@@ -1041,11 +1033,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     //费用项
     if(_this.dataPermission.canViewOrderCost != "Y"){
       pres = _this.orderDataBackUp.prePayFeeItems;
-    }
-    if(_this.dataPermission.canViewOrderCost != "Y"){
       arrives = _this.orderDataBackUp.arrivePayFeeItems;
-    }
-    if(_this.dataPermission.canViewOrderCost != "Y"){
       tails = _this.orderDataBackUp.tailPayFeeItems;
     }
     data.prePay = JSON.stringify(pres);
