@@ -67,7 +67,8 @@
 }
 .pic_view_image {
   width: 150px;
-  margin-right: 10px;
+  margin-right: 20px;
+  margin-bottom: 10px;
 }
 .upload_pic_title {
   padding: 10px 0;

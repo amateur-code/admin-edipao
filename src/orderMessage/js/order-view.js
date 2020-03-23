@@ -45,59 +45,75 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         });
       }else{
         $(".page_title_text").text("订单审核");
-        _this.getUpdate(function () {
-          _this.getOrder().done(function (res) {
-            if(res.code == "0"){
-              Object.keys(res.data).forEach(function (key) {
-                res.data[key] = res.data[key] || "- -";
-              });
-              _this.orderData = res.data;
-              _this.setData(res.data);
-              _this.bindEvents();
+        $.when(_this.getUpdate(), _this.getOrder()).done(function (res1, res2) {
+          res1 = res1[0];
+          res2 = res2[0];
+          if(res1.code == "0" && res2.code == "0"){
+            var updateData;
+            if(!res1.data || !res1.data.modifyAfterJson){
+              updateData = {};
             }else{
-              layer.msg(res.message, {icon: 5,anim: 6});
+              try {
+                updateData = JSON.parse(res1.data.modifyAfterJson);
+                updateData.forEach(function (item) {
+                  _this.updateData[item.name] = item.value;
+                });
+
+                if(_this.updateData.prePayFeeItems){
+                  try {
+                    _this.updateData.prePayFeeItems = JSON.parse(_this.updateData.prePayFeeItems)||[];
+                  } catch (error) {
+                    _this.updateData.prePayFeeItems = [];
+                  }
+                }
+                if(_this.updateData.tailPayFeeItems){
+                  try {
+                    _this.updateData.tailPayFeeItems = JSON.parse(_this.updateData.tailPayFeeItems)||[];
+                  } catch (error) {
+                    _this.updateData.tailPayFeeItems = [];
+                  }
+                }
+                if(_this.updateData.arrivePayFeeItems){
+                  try {
+                    _this.updateData.arrivePayFeeItems = JSON.parse(_this.updateData.arrivePayFeeItems)||[];
+                  } catch (error) {
+                    _this.updateData.arrivePayFeeItems = [];
+                  }
+                }
+                if(_this. dataPermission.canViewOrderIncome != "Y"){
+                  if(_this.updateData.totalIncome) _this.updateData.totalIncome = "*";
+                  if(_this.updateData.totalManageFee) _this.updateData.totalManageFee = "*";
+                }
+              } catch (error) {
+                _this.updateData = {};
+              }
             }
-          });
+            laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
+              $("#form_income_container").after(html);
+              if(res2.code == "0"){
+                Object.keys(res2.data).forEach(function (key) {
+                  res2.data[key] = res2.data[key] || "- -";
+                });
+                _this.orderData = res2.data;
+                _this.setData(res2.data);
+                _this.bindEvents();
+              }else{
+                layer.msg(res2.message, {icon: 5,anim: 6});
+              }
+            });
+          }
         });
       }
     },
     getUpdate: function (cb) {
       var _this = this;
-      edipao.request({
+      return edipao.request({
         url: "/admin/log/last-modify/get",
         method: "GET",
         data:{
           loginStaffId: _this.user.staffId,
           operationModule: 4,
           dataPk: _this.orderId
-        }
-      }).done(function (res) {
-        if(res.code == "0"){
-          var updateData;
-          if(!res.data || !res.data.modifyAfterJson){
-            updateData = {};
-          }else{
-            try {
-              updateData = JSON.parse(res.data.modifyAfterJson);
-              updateData.forEach(function (item) {
-                _this.updateData[item.name] = item.value;
-              });
-              if(_this.updateData.prePayFeeItems)_this.updateData.prePayFeeItems = JSON.parse(_this.updateData.prePayFeeItems);
-              if(_this.updateData.tailPayFeeItems)_this.updateData.tailPayFeeItems = JSON.parse(_this.updateData.tailPayFeeItems);
-              if(_this.updateData.arrivePayFeeItems)_this.updateData.arrivePayFeeItems = JSON.parse(_this.updateData.arrivePayFeeItems);
-              if(_this. dataPermission.canViewOrderIncome != "Y"){
-                if(_this.updateData.totalIncome) _this.updateData.totalIncome = "*";
-                if(_this.updateData.totalManageFee) _this.updateData.totalManageFee = "*";
-              }
-            } catch (error) {
-              _this.updateData = {};
-            }
-            
-          }
-          laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
-            $("#form_income_container").after(html);
-            cb && cb();
-          });
         }
       });
     },
@@ -171,6 +187,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       });
     },
     setData: function (data) {
+      console.log(data)
        //渲染订单数据
       var _this =this;
       data.prePayFeeItems = data.prePayFeeItems || "[]";
@@ -178,16 +195,74 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       data.arrivePayFeeItems = data.arrivePayFeeItems || "[]";
       try {
         _this.prePay = JSON.parse(data.prePayFeeItems) || [];
+        var delIndex, delItem, flag = false; //false标识被删除了
+        _this.prePay.forEach(function(before, index){
+          _this.updateData.prePayFeeItems.every(function (after) {
+            if(after.key == before.key){
+              delIndex = index;
+              delItem = before;
+              return true;
+            }else{
+              return false;
+            }
+          });
+        });
+        if(!flag){
+          _this.updateData.prePayFeeItems.splice(delIndex+1, 0, {
+            key: delItem.key,
+            val: "移除",
+            unit: delItem.unit,
+            del: true
+          });
+        }
       } catch (error) {
         _this.prePay = [];
       }
       try {
         _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
+        var delIndex, delItem, flag = false; //false标识被删除了
+        _this.tailPay.forEach(function(before, index){
+          _this.updateData.tailPayFeeItems.every(function (after) {
+            if(after.key == before.key){
+              delIndex = index;
+              delItem = before;
+              return true;
+            }else{
+              return false;
+            }
+          });
+        });
+        if(!flag){
+          _this.updateData.tailPayFeeItems.splice(delIndex+1, 0, {
+            key: "",
+            val: "移除",
+            unit: delItem.unit
+          });
+        }
       } catch (error) {
         _this.tailPay = [];
       }
       try {
         _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
+        var delIndex, delItem, flag = false; //false标识被删除了
+        _this.arrivePay.forEach(function(before, index){
+          _this.updateData.arrivePayFeeItems.every(function (after) {
+            if(after.key == before.key){
+              delIndex = index;
+              delItem = before;
+              return true;
+            }else{
+              return false;
+            }
+          });
+        });
+        if(!flag){
+          _this.updateData.arrivePayFeeItems.splice(delIndex+1, 0, {
+            key: "",
+            val: "移除",
+            unit: delItem.unit
+          });
+        }
       } catch (error) {
         _this.arrivePay = [];
       }

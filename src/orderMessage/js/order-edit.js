@@ -17,7 +17,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     this.carFormList = [];
     this.carFormListBackUp = [];
     this.feeItemList = [];
-    this.feeUnitItemList = ["%", "元", "升"];
+    this.feeUnitItemList = ["元", "升"];
     this.prePay = [];
     this.arrivePay = [];
     this.tailPay = [];
@@ -31,6 +31,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     this.driverInfoListDto = [];
     this.staffList = [];
     this.driverTimer = null;
+    this.loadingIndex = "";
     this.formList = [
       "form_ascription",
       "form_dispatch",
@@ -49,6 +50,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
   }
   Edit.prototype.init = function(){
     var _this = this;
+    _this.loadingIndex = layer.load(1);
     $.when(this.getStaffList(), this.getFeeItemList(), this.getFeeItemUnitList(), this.getOrder()).done(function (res1, res2, res3, res4) {
       res = res4[0];
       if(res.code == "0"){
@@ -63,7 +65,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         map.enableAutoResize(); 
         map.load();
         _this.hiddenMap = map;
-        _this.renderHiddenMap(map);
+        try {
+          _this.renderHiddenMap(map);
+        } catch (error) {}
       }else{
         layer.msg(res.message, {icon: 5,anim: 6});
       }
@@ -150,8 +154,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         }
       })
     }
-    
-
   }
 
   Edit.prototype.renderHiddenMap = function(map){
@@ -418,7 +420,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         }
         _this.tempLicenseBackImage.push({
           image: truckData.tempLicenseBackImage,
-          id: truckData.id
+          id: truckData.id,
+          filter: item.filter
         });
         _this.tempLicense.push({
           image: truckData.tempLicense,
@@ -447,7 +450,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         _this.setConfigData(function(){
           form.val(item.filter, truckData);
           form.render('select');
-  
+          layer.close(_this.loadingIndex);
           $("[lay-filter=" + item.filter + "] .select_vin").remove();
         });
       });
@@ -470,10 +473,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       },
       done: function (res) {
         if(res.code == 0){
-          _this.tempLicenseBackImage[index] = {
-            image: res.data,
-            id: data.truckDTOList[index].id
-          };
+          _this.tempLicenseBackImage[index].id = data.truckDTOList[index].id;
+          _this.tempLicenseBackImage[index].image = res.data;
           $('#tempLicenseBackImageBox' + index).find('img').attr('src', res.data + '?' + Math.floor(Math.random() * 10e6))
           layer.msg("上传成功");
         }else{
@@ -567,6 +568,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         content: html,
         btn: ['确定', '取消'],
         yes: function () {
+          var loadIndex = layer.load(1);
           var data = form.val("update_fee_item_form");
           if(!data.newName){
             layer.msg("请输入新名称");
@@ -580,10 +582,13 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           }).done(function (res) {
             if(res.code == "0"){
               _this.getFeeItemList().done(function (res2) {
-                layer.msg("修改成功");
                 layer.close(index);
                 layer.close(layerIndex1);
-                _this.openAddFee(e);
+                setTimeout(function(){
+                  _this.openAddFee(e);
+                  layer.msg("修改成功");
+                  layer.close(loadIndex);
+                }, 500);
               });
             }
           });
@@ -595,7 +600,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     //打开增加费用项弹窗
     var _this = this;
     var type = e.target.dataset.type;
-    console.log(type)
     var list = _this[type].map(function (item) {
       return item.key;
     });
@@ -609,7 +613,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         feeList.push(item);
       }
     });
-    console.log(feeList)
     laytpl($("#fee_tpl").html()).render({feeList: feeList}, function(html){
       var layerIndex1 = layer.open({
         title: "增加费用",
@@ -624,7 +627,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           });
           var newList = Object.keys(data);
           var newObj = [];
-          console.log(data, oldList)
           newList.forEach(function(item){
             if(!oldList.includes(item)){
               newObj.push({
@@ -649,6 +651,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             event.target.dataset.type = type;
             _this.openUpdateFee(e, event, layerIndex1);
           });
+          console.log($("#add_fee_item"))
           $("#add_fee_item").unbind().on("click", function(event){
             _this.openAddFeeItem(e, layerIndex1);
           });
@@ -680,17 +683,22 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             layer.msg("新增费用项名称不能与系统一致", {icon: 5,anim: 6});
             return;
           }
-          
+          var loadIndex = layer.load(1);
           _this.addFeeItem(data).done(function (res) {
             if(res.code == "0"){
               $('#addFeeName').val("");
               layer.close(layerIndex1);
               layer.close(layerIndex2);
+              layer.msg("添加成功");
+              // return;
               _this.getFeeItemList().done(function (res) {
-                layer.msg("添加成功");
                 if(res.code == "0"){
                   _this.feeItemList = res.data;
-                  _this.openAddFee(event);
+                  setTimeout(function(){
+                    layer.close(loadIndex);
+                    _this.openAddFee(event);
+                    layer.msg("添加成功");
+                  }, 500);
                 }else{
                   layer.msg(res.message, {icon: 5,anim: 6});
                 }
@@ -804,15 +812,17 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
   }
   Edit.prototype.handleDeleteCar = function (e) {
     var _this = this;
+    var filter = e.target.dataset.filter;
     var initialLength = 0;
+    var delInitialFlag = false;
     _this.carFormList.forEach(function (item) {
       if(item.initial) initialLength ++;
+      if(item.filter == filter && item.initial) delInitialFlag = true;
     });
-    if(initialLength <= 1){
+    if(initialLength <= 1 && delInitialFlag){
       layer.alert("不能删除唯一车辆信息", {icon: 2})
       return;
     }
-    var filter = e.target.dataset.filter;
     var idTodel = "";
     var carFormListIndex;
     var id;
@@ -836,7 +846,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       if(item.filter == filter) carFormListIndex = index;
     });
     _this.carFormList.splice(carFormListIndex, 1);
-    _this.tempLicenseBackImage.splice(carFormListIndex, 1);
+    _this.tempLicenseBackImage = _this.tempLicenseBackImage.filter(function (item) {
+      return item.filter != filter;
+    });
     // _this.tempLicense.splice(carFormListIndex, 1);
     var carsFlag = _this.cars.some(function (item, index) {
       if(item.filter == filter) {idTodel = item.id; indexTodel = index;}
@@ -891,6 +903,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       });
       return;
     }else{
+      $("." + filter).remove();
       if(_this.carFormList.length == 0){
         layer.alert("订单中已没有车辆，订单将会被取消", { icon: 6 }, function() {
           edipao.request({
@@ -899,8 +912,8 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             data: {loginStaffId: _this.user.staffId, id: _this.orderId}
           }).done(function(res){
             if(res.code == 0){
-              layer.msg("订单已取消");
               $("." + filter).remove();
+              layer.msg("订单已取消");
               xadmin.father_reload();
               xadmin.close();
             }
@@ -972,6 +985,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         startCity: itemData.startCity ||"",
         startAddress: itemData.startAddress||"",
         settleWay: itemData.settleWay||"",
+        shaftNum: itemData.shaftNum,
+        model: itemData.model,
+        power: itemData.power,
         endPark: itemData.endPark||"",
         endProvince: itemData.endProvince ||"",
         endCity: itemData.endCity ||"",
@@ -1043,11 +1059,26 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     var pres = JSON.parse(JSON.stringify(_this.prePay));
     var arrives = JSON.parse(JSON.stringify(_this.arrivePay));
     var tails = JSON.parse(JSON.stringify(_this.tailPay));
+    
     //费用项
     if(_this.dataPermission.canViewOrderCost != "Y"){
       pres = _this.orderDataBackUp.prePayFeeItems;
       arrives = _this.orderDataBackUp.arrivePayFeeItems;
       tails = _this.orderDataBackUp.tailPayFeeItems;
+    }
+    var feeItemErrorFlag = false;
+    pres.forEach(function(item){
+      if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
+    });
+    arrives.forEach(function(item){
+      if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
+    });
+    tails.forEach(function(item){
+      if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
+    });
+    if(feeItemErrorFlag){
+      layer.msg("收费项金额不正确", {icon: 2});
+      return;
     }
     data.prePay = JSON.stringify(pres);
     data.arrivePay = JSON.stringify(arrives);
@@ -1081,12 +1112,12 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     //   layer.msg("请选择正确的收车地址");
     //   return;
     // }
-  
+    var loadIndex = layer.load(1);
     _this.submitAll(edipao.request({
       url: "/admin/order/updateOrder",
       method: "POST",
       data: getParams(data),
-    }));
+    }), loadIndex);
     function getParams(data){
       var arr = [];
       Object.keys(data).forEach(function(item){
@@ -1103,10 +1134,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       return encodeURI(arr.join("&"));
     }
   }
-  Edit.prototype.submitAll = function(req1){
+  Edit.prototype.submitAll = function(req1, loadIndex){
     var _this = this;
     var reqs = [];
     req1.done(function (res) {
+      layer.close(loadIndex);
       if(res.code == "0"){
         layer.alert("修改成功", {icon: 6}, function(){
           xadmin.close();
@@ -1473,6 +1505,28 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);
     });
   }
+  Edit.prototype.getProductInfo = function (e) {
+    var code, _this = this, filter = e.target.dataset.filter;
+    if(e.target.value && e.target.value.length > 0){
+      code = e.target.value;
+      edipao.request({
+        method: "GET",
+        url: "/admin/truck/parse/truckattr",
+        data: {
+          loginStaffId: _this.user.staffId,
+          truckType: code
+        }
+      }).done(function(res){
+        if(res.code == "0"){
+          form.val(filter, {
+            model: res.data.modelDesc,
+            shaftNum: res.data.axlesDesc,
+            power: res.data.horsepowerDesc
+          });
+        }
+      });
+    }
+  }
   Edit.prototype.bindEvents = function(){
     var _this = this;
     $(".select_operator_btn").unbind().on("click", function (e) {
@@ -1601,12 +1655,20 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     $(".car_manageFee").unbind().on("input", function (e) {
       _this.handleManageFeeInput(e);
     });
+    $(".product_code").unbind().on("blur", function (e) {
+      _this.getProductInfo(e);
+    });
     $("#add_car").unbind().on("click", function(e){
       var carFormHtml = $("#car_info_tpl").html();
       var filterStr = "form_car_" + _this.carFormListBackUp.length;
       _this.carFormList.push({
         filter: filterStr,
         id: ""
+      });
+      _this.tempLicenseBackImage.push({
+        id: "",
+        filter: filterStr,
+        image: ""
       });
       _this.carFormListBackUp.push(filterStr);
       var html = carFormHtml.replace(/CARFORM/g, filterStr);
@@ -1626,7 +1688,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             id: 'tempLicenseBackImageBox' + i
           })
         })
-        _this.renderHiddenMap(_this.hiddenMap);
+        try {
+          _this.renderHiddenMap(_this.hiddenMap);
+        } catch (error) {}
         form.render();
         _this.setStartSelectCity();
         _this.setEndSelectCity();
@@ -1639,6 +1703,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         });
         $(".productCode_input").unbind().on("input", function (e) {
           if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);
+        });
+        $(".product_code").unbind().on("blur", function (e) {
+          _this.getProductInfo(e);
         });
         _this.showMap();
         $(".del_car_btn").unbind().on("click", function(e){
@@ -1678,9 +1745,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             if(res.code == 0){
               _this.tempLicenseBackImage[index] = {
                 image: res.data,
-                id: _this.carFormList[index].id || ""
+                id: _this.carFormList[index].id || "",
+                filter: _this.carFormList[index].filter
               };
-              $($('.tempLicenseBackImage')[index]).html("已上传 - 点击更换").css("border-color","#67C23A");
+              $('#tempLicenseBackImageBox' + index).find('img').attr('src', res.data + '?' + Math.floor(Math.random() * 10e6))
               layer.msg("上传成功");
             }else{
               layer.msg(res.message, {icon: 5,anim: 6});
@@ -1726,7 +1794,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         },
         btn2: function(){
           _t.parents('.address-map').find('.location-end-name').val(address.name).next().val(address.lat).next().val(address.lng);
-          address = '';
+          //address = '';
           $('#seachLocation').val('');
           $('#select-address').text('');
         },
@@ -1766,7 +1834,9 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
             console.log(e)
             $('#select-address').text(e.item.poi.name);
             mapInfoWin.setContent('当前地址：' + e.item.poi.name);
-            mapInfoWin.redraw();
+            try {
+              mapInfoWin.redraw();
+            } catch (error) {}
             layer.clear();
             //创建文本标注点
             var marker = new Careland.Marker('image');

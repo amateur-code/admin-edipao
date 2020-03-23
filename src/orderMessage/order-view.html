@@ -674,6 +674,7 @@
         </div>
     </div>
     <script id="fee_list_tpl" type="text/html">
+        {{# console.log(d) }}
         <div class="layui-form-item layui-row">
             <div class="form_item_inner">
                 <div>
@@ -697,7 +698,7 @@
                     {{#  layui.each(d.updateData.prePayFeeItems, function(index, item){ }}
                     <div class="check layui-inline layui-col-md3">
                         <span class="x-red">待审：</span> 
-                        <span class="">{{item.key + '(' + item.unit + ')' + '：' + item.val}}</span>
+                        <span class="">{{!item.del?item.key + '(' + item.unit + ')' + '：' + item.val:item.key + '：移除'}}</span>
                     </div>
                     {{# }); }}
                 </div>
@@ -726,7 +727,7 @@
                     {{#  layui.each(d.updateData.arrivePayFeeItems, function(index, item){ }}
                     <div class="check layui-inline layui-col-md3">
                         <span class="x-red">待审：</span> 
-                        <span class="">{{item.key + '(' + item.unit + ')' + '：' + item.val}}</span>
+                        <span class="">{{!item.del?item.key + '(' + item.unit + ')' + '：' + item.val:item.key + '：移除'}}</span>
                     </div>
                     {{# }); }}
                 </div>
@@ -755,7 +756,7 @@
                     {{#  layui.each(d.updateData.tailPayFeeItems, function(index, item){ }}
                     <div class="check layui-block layui-col-md3">
                         <span class="x-red">待审：</span> 
-                        <span class="">{{item.key + '(' + item.unit + ')' + '：' + item.val}}</span>
+                        <span class="">{{!item.del?item.key + '(' + item.unit + ')' + '：' + item.val:item.key + '：移除'}}</span>
                     </div>
                     {{# }); }}
                 </div>
