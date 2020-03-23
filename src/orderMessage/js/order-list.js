@@ -17,7 +17,7 @@ var cityCode = {};
 layui.config({
     base: '../lib/'
 }).extend({
-    excel: 'layui_exts/excel',
+    excel: 'layui_exts/excel.min',
     tableFilter: 'TableFilter/tableFilter'
 }).use(['form', 'table', 'jquery','layer', 'upload', 'laytpl', 'excel'], function () {
     var tableName = "orderMessage-order-list";
