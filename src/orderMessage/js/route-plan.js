@@ -1,7 +1,7 @@
 layui.config({
 base: '../lib/'
 }).extend({
-excel: 'layui_exts/excel',
+excel: 'layui_exts/excel.min',
 tableFilter: 'TableFilter/tableFilter'
 }).use(['jquery', 'table','layer','excel','tableFilter','form', 'upload', 'laytpl', 'laypage', 'laydate'], function () {
     var table = layui.table;
