@@ -127,7 +127,7 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">产品代码</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="productCode" lay-verify="required" autocomplete="off" class="layui-input productCode_input">
+                                <input type="text" data-filter="CARFORM" name="productCode" lay-verify="required" autocomplete="off" class="layui-input productCode_input product_code">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -163,7 +163,7 @@
                             <div class="layui-input-inline">
                                 <!-- <input type="text" name="customerFullName" lay-verify="required" autocomplete="off" class="layui-input"> -->
 
-                                <select name="customerFullName" lay-verify="required" class="customerList" lay-filter="customerFullName">
+                                <select name="customerFullName" lay-verify="required" class="customerList" lay-filter="customerFullName" lay-search>
                                 </select>  
                             </div>
                         </div>
@@ -171,7 +171,7 @@
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>发车仓库</label><br>
                             <div class="layui-input-inline">
                                 <!-- <input type="text" name="startWarehouse" lay-verify="required" autocomplete="off" class="layui-input"> -->
-                                <select name="startWarehouse" lay-verify="required" class="startWarehouseList" lay-filter="startWarehouse">
+                                <select name="startWarehouse" lay-verify="required" class="startWarehouseList" lay-filter="startWarehouse" lay-search>
                                 </select>  
                             </div>
                         </div>
@@ -188,7 +188,7 @@
                             <div class="layui-input-inline">
                                 <!-- <input type="text" name="startPark" lay-verify="required" autocomplete="off" class="layui-input"> -->
 
-                                <select name="startPark" lay-verify="required" class="startParkList" lay-filter="startPark">
+                                <select name="startPark" lay-verify="required" class="startParkList" lay-filter="startPark" lay-search>
                                 </select>  
                             </div>
                         </div>
@@ -249,7 +249,7 @@
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收车网点</label><br>
                             <div class="layui-input-inline">
                                 <!-- <input type="text" name="endPark" lay-verify="required" autocomplete="off" class="layui-input"> -->
-                                <select name="endPark" lay-verify="required" class="endParkList" lay-filter="endPark">
+                                <select name="endPark" lay-verify="required" class="endParkList" lay-filter="endPark" lay-search>
                                 </select>  
                             </div>
                         </div>
@@ -276,14 +276,14 @@
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">收车地址</label><br>
-                            <div class="address-map">
-                                <div class="layui-input-inline" style="width: 250px;margin-right: 0;">
+                            <div class="address-map layui-row">
+                                <div class="layui-input-inline layui-col-md9" style="width: 250px;margin-right: 0;">
                                     <!-- <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList"> -->
                                     <input class="layui-input location-end-name" name="endAddress" id="seach-location-input" autocomplete="off" placeholder="请输入收车位置" value=""/>
                                     <input name="endLat" id="endLat" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
                                     <input name="endLng" id="endLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
                                 </div>
-                                <div class="layui-input-inline" style="width: 50px;">
+                                <div class="layui-input-inline layui-col-md3" style="width: 50px;">
                                     <a class="layui-btn showMap selectMapLocation">选择</a>
                                 </div>
                             </div>
@@ -310,7 +310,7 @@
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>最迟送达时间</label><br>
                             <div class="layui-input-inline">
                                 <input id="" type="text" name="latestArriveTime" lay-verify="required" autocomplete="off" class="layui-input latestArriveTime">
-                            </div>cheng
+                            </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>客户里程(公里)</label><br>

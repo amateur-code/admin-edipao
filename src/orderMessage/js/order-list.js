@@ -17,7 +17,7 @@ var cityCode = {};
 layui.config({
     base: '../lib/'
 }).extend({
-    excel: 'layui_exts/excel',
+    excel: 'layui_exts/excel.min',
     tableFilter: 'TableFilter/tableFilter'
 }).use(['form', 'table', 'jquery','layer', 'upload', 'laytpl', 'excel'], function () {
     var tableName = "orderMessage-order-list";
@@ -295,6 +295,7 @@ layui.config({
                 type: 1, 
                 content: html, //这里content是一个普通的String,
                 area: ["600px", "400px"],
+                title: "上传",
                 btn: ["确定", "取消"],
                 yes: function () {
                     method.uploadPics({id: orderId,uploadData: uploadData}, function (res) {
@@ -743,11 +744,15 @@ layui.config({
                             }else{
                                 item[key] = item[key].split(",");
                             }
+                            if(key == "startImages" && item.startBillImage){
+                                item[key].push(item.startBillImage);
+                            }
                         });
                         laytpl($("#pic_verify_tpl").html()).render({list: res.data.truckDTOList, key: key}, function (html) {
                             var index = layer.open({
                                 type: 1,
                                 content: html,
+                                title: "审核",
                                 area: ["600px", "400px"],
                                 btn: ["确定", "取消"],
                                 success: function () {
@@ -813,13 +818,13 @@ layui.config({
                                 item.returnImages = item.returnImages.split(",");
                             }
                         });
-                        console.log(res.data.truckDTOList)
                         laytpl($("#pic_view_tpl").html()).render({
                             list: res.data.truckDTOList,
                             field: field
                         }, function (html) {
                             layer.open({
                                 type: 1,
+                                title: "查看",
                                 content: html,
                                 area: ["600px", "400px"],
                                 success: function () {
@@ -1249,7 +1254,7 @@ layui.config({
     }
     var tableCols = [
         {type: 'checkbox'},
-        {field: 'orderNo', title: '业务单号', sort: false,minWidth:100, templet: function(d){
+        {field: 'orderNo', title: '业务单号', sort: false,minWidth:105, templet: function(d){
             return d.orderNo ? d.orderNo : '- -';
         }},
         {field: 'warehouseNo', title: '仓库单号', sort: false,minWidth:100,minWidth:100, templet: function(d){
