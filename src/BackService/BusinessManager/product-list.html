@@ -49,7 +49,12 @@
                 { field: 'detailAddress', title: '详细地址' },
                 { field: 'supplierName', title: '归属供应商' },
                 { field: 'supplierTypeDesc', title: '供应商类型' },
-                { field: 'unitPrice', title: '单价' },
+                { field: 'unitPrice', title: '单价', templet:function(d){
+                    var after = ''
+                    after += d.supplierType == 'oilSupply'? '元/升':''
+                    after += d.supplierType == 'unloadCar'? '元/次':''
+                    return d.unitPrice + after
+                }},
                 { field: 'statusDesc', title: '状态' },
             ];
         var params = edipao.urlGet();
