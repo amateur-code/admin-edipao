@@ -242,7 +242,7 @@
                 staffIds.push(el.staffId)
             });
             console.log(CONFIG_CACHE[code].nodeDTOList[index].approvalStaffDTOList)
-            xadmin.open('选择员工', './staff.html?code=' + code + '&index=' + index + '&ids=' + staffIds.join(','), 600, 600)
+            xadmin.open('选择员工', './staff.html?code=' + code + '&index=' + index + '&ids=' + staffIds.join(','), 600)
         })
         $('#approvalFlowList').on('click', '.node-staff-save', function() {
             var index = $(this).data('index') - 1,

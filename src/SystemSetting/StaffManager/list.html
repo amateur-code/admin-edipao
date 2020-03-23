@@ -235,10 +235,10 @@
                     layer.alert('你没有访问权限', {icon: 2});
                     break;
                 case 'permission':
-                    xadmin.open('授权', './add-role.html?id=' + data.staffId, 600, 650)
+                    xadmin.open('授权', './add-role.html?id=' + data.staffId, 600)
                     break;
                 case 'edit':
-                    xadmin.open('修改员工', './edit.html?id=' + data.staffId, 600, 600)
+                    xadmin.open('修改员工', './edit.html?id=' + data.staffId, 600)
                     break;
                 case 'preview':
                     xadmin.open('员工信息', './preview.html?id=' + data.staffId)
@@ -264,13 +264,13 @@
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.staffId + '&type=5');    
                     break;
                 case 'add':
-                    xadmin.open('添加员工', './add.html', 600, 600)
+                    xadmin.open('添加员工', './add.html', 600)
                     break;
                 case 'export':
                     exportData();
                     break;
                 case 'tableSet':
-                    xadmin.open('表格设置', './table-set.html', 600, 600)
+                    xadmin.open('表格设置', './table-set.html', 600)
                     break;
             };
         }
