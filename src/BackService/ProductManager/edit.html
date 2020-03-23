@@ -276,6 +276,10 @@
                    
                 },
                 btn2: function(){
+                    if(!$('#seachLocation').val()){
+                        layer.msg("请选择地址");
+                        return false;
+                    }
                     if(detailAddress){
                         $('#detailAddress').val(detailAddress.address);
                     }
@@ -301,6 +305,7 @@
                     ac.setLocation(map);
                     ac.setInputForm('seachLocation');
                     ac.addEventListener("onConfirm",function(e){
+                        mapInfoWin.close();
                         mapInfoWin.setContent('当前地址：' + e.item.poi.name);
                         mapInfoWin.redraw();
                         layer.clear();

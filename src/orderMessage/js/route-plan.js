@@ -381,6 +381,10 @@ tableFilter: 'TableFilter/tableFilter'
                         _t.loc = {};
                     },
                     btn2: function(){
+                        if(!$('#seachLocation').val()){
+                            layer.msg("请选择地址");
+                            return false;
+                        }
                         if(_t.loc){
                             $('#seach-location-input').val(_t.loc.name);
                         }
@@ -418,7 +422,7 @@ tableFilter: 'TableFilter/tableFilter'
             ac.setLocation(map);
             ac.setInputForm('seachLocation');
             ac.addEventListener("onConfirm",function(e){
-                console.log(e)
+                mapInfoWin.close();
                 $('#select-address').text(e.item.poi.name);
                 mapInfoWin.setContent('当前地址：' + e.item.poi.name);
                 mapInfoWin.redraw();

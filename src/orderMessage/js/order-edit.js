@@ -1698,6 +1698,16 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       _this.openSelectVin(e);
     });
 
+    var currentAddress = '';
+    $('.location-end-name').focus(function (e) {
+      currentAddress = $(this).val()
+    });
+    $('.location-end-name').on("input", function (e) {
+      if(currentAddress !== $(this).val()){
+        $(this).next().val('').next().val('');
+      }
+    });
+
     _this.showMap();
     
   }
@@ -1725,6 +1735,10 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           $('#select-address').text('');
         },
         btn2: function(){
+          if(!$('#seachLocation').val()){
+            layer.msg("请选择地址");
+            return false;
+          }
           _t.parents('.address-map').find('.location-end-name').val(address.name).next().val(address.lat).next().val(address.lng);
           address = '';
           $('#seachLocation').val('');
@@ -1763,7 +1777,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           ac.setLocation(map);
           ac.setInputForm('seachLocation');
           ac.addEventListener("onConfirm",function(e){
-            console.log(e)
+            mapInfoWin.close();
             $('#select-address').text(e.item.poi.name);
             mapInfoWin.setContent('当前地址：' + e.item.poi.name);
             mapInfoWin.redraw();
