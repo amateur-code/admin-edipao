@@ -1131,6 +1131,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     }
     var feeItemErrorFlag = false;
     pres.forEach(function(item){
+      if(item.key == "油")item.unit = "升";
       if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
     });
     arrives.forEach(function(item){
