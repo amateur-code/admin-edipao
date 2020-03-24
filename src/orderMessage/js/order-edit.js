@@ -67,11 +67,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           _this.renderHiddenMap(map);
         } catch (error) {}
       }else{
-        layer.close(loadIndex);
+        layer.close(_this.loadingIndex);
         layer.msg(res.message, {icon: 5,anim: 6});
       }
     }).fail(function(){
-      layer.close(loadIndex);
+      layer.close(_this.loadingIndex);
     });
     
   }
