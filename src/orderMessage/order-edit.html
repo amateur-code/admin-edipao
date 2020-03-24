@@ -232,7 +232,7 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">发车地址</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="startAddress" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input type="text" name="startAddress" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <!-- <div class="layui-inline address-map">
                                 <div class="layui-input-inline" style="width: 200px;margin-right: 0;">
@@ -246,14 +246,6 @@
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
-                            <label class="layui-form-label text_left form_label"><span class="red">*</span>收车网点</label><br>
-                            <div class="layui-input-inline">
-                                <!-- <input type="text" name="endPark" lay-verify="required" autocomplete="off" class="layui-input"> -->
-                                <select name="endPark" lay-verify="required" class="endParkList" lay-filter="endPark" lay-search>
-                                </select>  
-                            </div>
-                        </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收车城市</label><br>
                             <!-- <div class="layui-input-inline">
                                 <input type="text" name="endCity" autocomplete="off" class="layui-input">
@@ -261,18 +253,26 @@
                             <div class="layui-form-item">
                                 <div class="layui-inline">
                                     <div class="layui-input-inline" style="width: 120px;">
-                                        <select name="endProvince" id="endProvince" class="endProvince" lay-verify="required" lay-search lay-filter="endProvince">
+                                        <select data-filter="CARFORM" name="endProvince" id="endProvince" class="endProvince" lay-verify="required" lay-search lay-filter="endProvince">
                                             <option value="">省份</option>
                                         </select>
                                     </div>
                                     <div class="layui-input-inline" style="width: 120px;">
-                                        <select name="endCity" id="endCity" class="endCity" lay-verify="required" lay-search lay-filter="endCity">
+                                        <select data-filter="CARFORM" name="endCity" id="endCity" class="endCity CARFORM" lay-verify="required" lay-search lay-filter="endCity">
                                             <option value="">地级市</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                             <!-- <input type="text" name="endCity" autocomplete="off" class="layui-input"> -->
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                            <label class="layui-form-label text_left form_label"><span class="red">*</span>收车网点</label><br>
+                            <div class="layui-input-inline">
+                                <!-- <input type="text" name="endPark" lay-verify="required" autocomplete="off" class="layui-input"> -->
+                                <select disabled name="endPark" lay-verify="required" class="endParkList CARFORM_endCity_select" lay-filter="endPark" lay-search>
+                                </select>  
+                            </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">收车地址</label><br>

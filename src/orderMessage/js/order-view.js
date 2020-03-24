@@ -195,74 +195,77 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       data.arrivePayFeeItems = data.arrivePayFeeItems || "[]";
       try {
         _this.prePay = JSON.parse(data.prePayFeeItems) || [];
-        var delIndex, delItem, flag = false; //false标识被删除了
         _this.prePay.forEach(function(before, index){
+          var delItem = before; //false标识被删除了
+          var flag = false;
           _this.updateData.prePayFeeItems.every(function (after) {
             if(after.key == before.key){
-              delIndex = index;
-              delItem = before;
+              flag = true;
               return true;
             }else{
               return false;
             }
           });
+          if(!flag){
+            _this.updateData.prePayFeeItems.splice(index, 0, {
+              key: delItem.key,
+              val: "移除",
+              unit: delItem.unit,
+              del: true,
+            });
+          }
         });
-        if(!flag){
-          _this.updateData.prePayFeeItems.splice(delIndex+1, 0, {
-            key: delItem.key,
-            val: "移除",
-            unit: delItem.unit,
-            del: true
-          });
-        }
       } catch (error) {
+        console.log(error)
         _this.prePay = [];
       }
       try {
         _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
-        var delIndex, delItem, flag = false; //false标识被删除了
         _this.tailPay.forEach(function(before, index){
+          var flag = false;
+          var delItem = before; //false标识被删除了
           _this.updateData.tailPayFeeItems.every(function (after) {
             if(after.key == before.key){
-              delIndex = index;
-              delItem = before;
+              flag = true;
               return true;
             }else{
               return false;
             }
           });
+          if(!flag){
+            _this.updateData.tailPayFeeItems.splice(index, 0, {
+              key: delItem.key,
+              val: "移除",
+              unit: delItem.unit,
+              del: true,
+            });
+          }
         });
-        if(!flag){
-          _this.updateData.tailPayFeeItems.splice(delIndex+1, 0, {
-            key: "",
-            val: "移除",
-            unit: delItem.unit
-          });
-        }
       } catch (error) {
         _this.tailPay = [];
       }
       try {
         _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
-        var delIndex, delItem, flag = false; //false标识被删除了
         _this.arrivePay.forEach(function(before, index){
+          var flag = false;
+          var delItem = before; //false标识被删除了
           _this.updateData.arrivePayFeeItems.every(function (after) {
             if(after.key == before.key){
-              delIndex = index;
-              delItem = before;
+              flag = true;
               return true;
             }else{
               return false;
             }
           });
+          if(!flag){
+            _this.updateData.arrivePayFeeItems.splice(index, 0, {
+              key: delItem.key,
+              val: "移除",
+              unit: delItem.unit,
+              del: true,
+            });
+          }
         });
-        if(!flag){
-          _this.updateData.arrivePayFeeItems.splice(delIndex+1, 0, {
-            key: "",
-            val: "移除",
-            unit: delItem.unit
-          });
-        }
       } catch (error) {
         _this.arrivePay = [];
       }

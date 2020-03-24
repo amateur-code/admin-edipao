@@ -1,6 +1,4 @@
-layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function () {
-  console.log(location.href)
-  var $ = layui.jquery;
+layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function () {
   var form = layui.form;
   var layer = layui.layer;
   var laydate = layui.laydate;
@@ -74,29 +72,26 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     });
     
   }
-  Edit.prototype.setConfigData = function(cb){
+  Edit.prototype.setConfigData = function(cb, options){
     var _this = this;
     if(!_this.selectData){
       $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList()).done(function (res1, res2, res3, res4) {
         $('.customerList').append(returnOptions(res1[0].data));
-        $('.endParkList').append(returnOptions(res2[0].data));
+        if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions(res2[0].data));
         $('.startParkList').append(returnOptions(res3[0].data));
         $('.startWarehouseList').append(returnOptions(res4[0].data));
         _this.selectData = [res1[0].data, res2[0].data, res3[0].data, res4[0].data];
-        console.log(_this.selectData)
         cb && cb();
       });
     } else {
       $('.customerList').append(returnOptions(_this.selectData[0]));
-      $('.endParkList').append(returnOptions(_this.selectData[1]));
+      if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions(_this.selectData[1]));
       $('.startParkList').append(returnOptions(_this.selectData[2]));
       $('.startWarehouseList').append(returnOptions(_this.selectData[3]));
       cb && cb();
     }
     
 
-    
-    
     function returnOptions(array){
       var html = '';
       html = '<option value="请选择">请选择</option>'
@@ -120,14 +115,19 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     }
     // 获取收车网点
     function getEndAddressList(){
+      var data = {
+          loginStaffId: _this.user.staffId,
+          pageNo: 1,
+        pageSize: 9999,
+        }
+      if(options.city&&options.province){
+        data.endProvince = options.province;
+        data.endCity = options.city;
+      }
       return edipao.request({
         url: "/admin/dictionary/getEndAddressList",
         method: "GET",
-        data: {
-          loginStaffId: _this.user.staffId,
-          pageNo: 1,
-          pageSize: 9999
-        }
+        data: data
       })
     }
     //获取发车停车场
@@ -366,9 +366,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         id: item.id,
         initial: true
       });
-      //carFormStr += carFormHtml.replace(/CARFORM/g, filterStr);
     });
-    //$("#car_form_container").html(carFormStr);
 
     _this.carFormList.forEach(function (item, index) {
       var itemStr = carFormHtml;
@@ -452,6 +450,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           form.render('select');
           layer.close(_this.loadingIndex);
           $("[lay-filter=" + item.filter + "] .select_vin").remove();
+        }, {
+          flag: true,
+          province: truckData.endProvince,
+          city: truckData.endCity,
+          selector: "." + item.filter + "_endCity_select"
         });
       });
       
@@ -559,7 +562,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
   Edit.prototype.openUpdateFee = function (e, event, layerIndex1) {
     var _this = this;
     var index = event.target.dataset.index*1;
-    console.log(_this.feeItemList[index]);
     laytpl($("#update_fee_tpl").html()).render({oldName: _this.feeItemList[index].value}, function (html) {
       var index = layer.open({
         title: "修改费用项",
@@ -622,6 +624,25 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         btn:["确认", "取消"],
         yes: function (e) {
           var data = form.val("add_fee_form");
+          var dispatchData = form.val("form_dispatch");
+          if(type == "prePay"){
+            _this.prePay = _this.prePay.map(function (item, index) {
+              item.val = dispatchData["prePay_" + index] || 0;
+              return item;
+            });
+          }
+          if(type == "arrivePay"){
+            _this.arrivePay = _this.arrivePay.map(function (item, index) {
+              item.val = dispatchData["arrivePay_" + index] || 0;
+              return item;
+            });
+          }
+          if(type == "tailPay"){
+            _this.tailPay = _this.tailPay.map(function (item, index) {
+              item.val = dispatchData["tailPay_" + index] || 0;
+              return item;
+            });
+          }
           var oldList = _this[type].map(function (item) {
             return item.key;
           });
@@ -819,7 +840,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       if(item.initial) initialLength ++;
       if(item.filter == filter && item.initial) delInitialFlag = true;
     });
-    if(initialLength <= 1 && delInitialFlag){
+    if(_this.carFormList.length <= 1){
       layer.alert("不能删除唯一车辆信息", {icon: 2})
       return;
     }
@@ -1298,9 +1319,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     }
     
     
-    
-    
-    
     //赋予完成 重新渲染select
     form.render('select');
     
@@ -1350,7 +1368,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       console.log(provinceText)
       //重新渲染select 
       form.render('select');
-    })
+    });
 
     ////选定市或直辖县后 将对应的数据读取追加上
     form.on('select(startCity)', function(data) {
@@ -1372,9 +1390,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       // })
       //重新渲染select 
       form.render('select');
-    })
+    });
+
   }
   Edit.prototype.setEndSelectCity = function(data){
+    var _this = this;
     var province = $(".endProvince"),
       city = $(".endCity");
       // district = $("#district");
@@ -1416,6 +1436,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     
     //选定省份后 将该省份的数据读取追加上
     form.on('select(endProvince)', function(data) {
+      var $productSelector = $("."+data.elem.dataset.filter+"_endCity_select");
       provinceText = data.value;
       $.each(provinceList, function(i, item) {
         if (provinceText == item.name) {
@@ -1423,6 +1444,7 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           return cityItem;
         }
       });
+      removeEle($productSelector);
       removeEle(city);
       // removeEle(district);
       $.each(provinceList[cityItem].cityList, function(i, item) {
@@ -1435,23 +1457,53 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
     ////选定市或直辖县后 将对应的数据读取追加上
     form.on('select(endCity)', function(data) {
       cityText = data.value;
-      // removeEle(district);
       $.each(provinceList, function(i, item) {
         if (provinceText == item.name) {
           cityItem = i;
           return cityItem;
         }
       });
-      // $.each(provinceList[cityItem].cityList, function(i, item) {
-      //   if (cityText == item.name) {
-      //     for (var n = 0; n < item.areaList.length; n++) {
-      //       addEle(district, item.areaList[n]);
-      //     }
-      //   }
-      // })
-      //重新渲染select 
+      _this.setEndAddressSelect(data.elem.dataset.filter);
       form.render('select');
+    });
+  }
+  Edit.prototype.setEndAddressSelect = function (filter) {
+    //关联选择网点
+    var _this = this;
+    var data = form.val(filter);
+    var province = data.endProvince;
+    var city = data.endCity;
+    var $selecter = $("."+filter+"_endCity_select");
+    getEndAddressList().done(function (res) {
+      if(res.code == "0"){
+        $selecter.html(returnOptions(res.data));
+        $selecter.removeAttr("disabled");
+        form.render("select");
+      }
+    });
+
+    function returnOptions(array){
+      var html = '';
+      html = '<option value="请选择">请选择</option>';
+      for(var i = 0; i < array.length; i ++){
+        html += '<option value="' + array[i].name + '">' + array[i].name + '</option>';
+      }
+      return html;
+    }
+    // 获取收车网点
+    function getEndAddressList(){
+      return edipao.request({
+        url: "/admin/dictionary/getEndAddressList",
+        method: "GET",
+        data: {
+          loginStaffId: _this.user.staffId,
+          pageNo: 1,
+          pageSize: 9999,
+          endProvince: province,
+          endCity: city
+        }
     })
+  }
   }
   Edit.prototype.getMapAddress = function(){
     $('.getAddressList').unbind('input').bind('input', function(){
@@ -1563,7 +1615,6 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
           }
           , done: function () {
             table.on('row(staffList_table)', function(obj){
-              console.log(obj.data)
               var data = obj.data;
               data[field] = obj.data.name + "," + obj.data.phone;
               form.val("form_ascription", data);
@@ -1672,11 +1723,15 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
       });
       _this.carFormListBackUp.push(filterStr);
       var html = carFormHtml.replace(/CARFORM/g, filterStr);
-      laytpl(html).render({
-        income: "*",
-        pricePerMeliage: "*",
-        manageFee: "*"
-      }, function(html2){
+      var addRenderData = {}
+      if(_this.dataPermission.canViewOrderIncome != "Y"){
+        addRenderData = {
+          income: "*",
+          pricePerMeliage: "*",
+          manageFee: "*"
+        }
+      }
+      laytpl(html).render(addRenderData, function(html2){
         $("#car_form_container").append(html2);
         $.each($('.location-end-name'), function(i,d){
           $(this).attr({
@@ -1696,6 +1751,11 @@ layui.use(['form', 'jquery', 'layer', 'laytpl', 'table', 'laydate', 'upload'], f
         _this.setEndSelectCity();
         _this.setConfigData(function(){
           form.render('select');
+        }, {
+          flag: false,
+          province: '',
+          city: '',
+          selector: "." + filterStr + "_endCity_select"
         });
         _this.getMapAddress();
         $(".vinCode_input").unbind().on("input", function (e) {
