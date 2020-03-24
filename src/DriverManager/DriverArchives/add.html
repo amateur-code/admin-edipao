@@ -397,7 +397,7 @@
                     <div class="layui-card-body layui-row layui-col-space10">
                         <div class="layui-col-md4">
                             <div class="layui-form-item" title="银行卡账户与司机姓名保持一致">
-                                <div>银行卡账户</div>
+                                <div><span class="x-red">*</span>银行卡账户</div>
                                 <div class="layui-input-block">
                                     <input  type="text" name="accountName" id="accountName"  placeholder="请输入银行卡账户名" autocomplete="off" class="layui-input layui-disabled" disabled>
                                 </div>
@@ -405,32 +405,32 @@
                         </div>
                         <div class="layui-col-md4">
                             <div class="layui-form-item">
-                                <div>银行卡账号</div>
+                                <div><span class="x-red">*</span>银行卡账号</div>
                                 <div class="layui-input-block">
-                                    <input type="text" name="accountNumber" id="accountNumber" lay-verify="accountNumberVerify" placeholder="请输入银行卡账号" autocomplete="off" class="layui-input">
+                                    <input type="text" name="accountNumber" id="accountNumber" lay-verify="accountNumberVerify" placeholder="请输入银行卡账号" autocomplete="off" class="layui-input" required>
                                 </div>
                             </div>
                         </div>
                         <div class="layui-col-md4">
                             <div class="layui-form-item">
-                                <div>开户银行</div>
+                                <div><span class="x-red">*</span>开户银行</div>
                                 <div class="layui-input-block">
-                                    <input type="text" name="accountBank" id="accountBank" placeholder="请搜索选择开户银行" autocomplete="off" class="layui-input">
+                                    <input type="text" name="accountBank" id="accountBank" lay-verify="accountBankVerify" placeholder="请搜索选择开户银行" autocomplete="off" class="layui-input" required>
                                 </div>
                             </div>
                         </div>
                         <div class="layui-col-md4">
                             <div class="layui-form-item">
-                                <div>开户省市</div>
+                                <div><span class="x-red">*</span>开户省市</div>
                                 <div class="layui-input-block">
                                     <div class="x-city" id="accountCity">
                                         <div class="layui-input-inline">
-                                            <select name="province" lay-filter="province">
+                                            <select name="province" lay-filter="province" lay-verify="provinceVerify">
                                                 <option value="">请选择省</option>
                                             </select>
                                         </div>
                                         <div class="layui-input-inline">
-                                            <select name="city" lay-filter="city">
+                                            <select name="city" lay-filter="city" lay-verify="cityVerify">
                                                 <option value="">请选择市</option>
                                             </select>
                                         </div>
@@ -440,7 +440,7 @@
                         </div>
                         <div class="layui-col-md4">
                             <div class="layui-form-item">
-                                <div>开户行地址</div>
+                                <div><span class="x-red">*</span>开户行地址</div>
                                 <div class="layui-input-block">
                                     <input type="text" name="accountBankAddress" id="accountBankAddress" lay-verify="accountBankAddressVerify"  placeholder="请输入开户行地址" autocomplete="off" class="layui-input">
                                 </div>
