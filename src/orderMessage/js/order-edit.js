@@ -1036,7 +1036,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         startCity: itemData.startCity ||"",
         startAddress: itemData.startAddress||"",
         startLat: itemData.startLat||"",
-        endLng: itemData.endLng||"",
+        startLng: itemData.startLng||"",
         settleWay: itemData.settleWay||"",
         shaftNum: itemData.shaftNum,
         model: itemData.model,
