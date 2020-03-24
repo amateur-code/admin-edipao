@@ -218,9 +218,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         _this.prePay = [];
       }
       try {
-        _this.updateData.tailPayFeeItems = _this.updateData.tailPayFeeItems || [];
         _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
         if(_this.action == "verify"){
+          _this.updateData.tailPayFeeItems = _this.updateData.tailPayFeeItems || [];
           _this.tailPay.forEach(function(before, index){
             var flag = false;
             var delItem = before; //false标识被删除了
@@ -241,9 +241,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         _this.tailPay = [];
       }
       try {
-        _this.updateData.arrivePayFeeItems = _this.updateData.arrivePayFeeItems || [];
         _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
         if(_this.action == "verify"){
+          _this.updateData.arrivePayFeeItems = _this.updateData.arrivePayFeeItems || [];
           _this.arrivePay.forEach(function(before, index){
             var flag = false;
             var delItem = before; //false标识被删除了
