@@ -89,7 +89,7 @@ var provinceList = [
     //   {name: '合川市',areaList:[]},
     //   {name: '永川市',areaList:[]},
     //   {name: '南川市',areaList:[]}
-      {name: '上海市',areaList:[]}
+      {name: '重庆市',areaList:[]}
   ]},
   {name:'广东省', cityList:[
       {name:'广州市', areaList:['东山区','荔湾区','越秀区','海珠区','天河区','芳村区','白云区','黄埔区','番禺区','花都区','增城市','从化市']},
