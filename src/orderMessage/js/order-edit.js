@@ -355,7 +355,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       $("#income_info").html(html);
       form.render();
     });
-    if(data.driverId) form.val("form_dispatch", data);
+    if(data.driverId){
+      form.val("form_dispatch", data);
+    }else{
+      form.val("form_dispatch", {driverMileage: data.driverMileage});
+    }
     var carFormStr = "";
     var carFormHtml = $("#car_info_tpl").html();
     data.truckDTOList.forEach(function (item, index) {
