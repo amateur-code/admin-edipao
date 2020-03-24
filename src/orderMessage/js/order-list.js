@@ -279,7 +279,25 @@ layui.config({
                         }
                         uploadTruckId = res.data.truckDTOList[0].id;
                         res.data.truckDTOList.forEach(function (item) {
-                            uploadData[item.id + ""] = JSON.parse(JSON.stringify(uploadObj));
+                            var uploadObjItem = JSON.parse(JSON.stringify(uploadObj))
+                            if(type == 2){ //提车图片
+                                item.fetchImages = item.fetchImages || "";
+                                item.fetchImages.split(",").forEach(function (item2, index) {
+                                    uploadObjItem.fetchImagesList[index] = item2;
+                                });
+                            }else if(type == 3){
+                                item.startImages = item.startImages || "";
+                                item.startImages.split(",").forEach(function (item2, index) {
+                                    uploadObjItem.startImagesList[index] = item2;
+                                });
+                                uploadObjItem.startImagesList[5] = item.startBillImage;
+                            }else if(type == 5){
+                                item.returnImages = item.returnImages || "";
+                                item.returnImages.split(",").forEach(function (item2, index) {
+                                    uploadObjItem.returnImagesList[index] = item2;
+                                });
+                            }
+                            uploadData[item.id + ""] = uploadObjItem;
                         });
                         var renderData = {
                             list: res.data.truckDTOList,
