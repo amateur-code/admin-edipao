@@ -1133,6 +1133,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     //   layer.msg("请选择正确的收车地址");
     //   return;
     // }
+    if(!_this.veriftParams(data)) return;
     var loadIndex = layer.load(1);
     _this.submitAll(edipao.request({
       url: "/admin/order/updateOrder",
@@ -1154,6 +1155,43 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       });
       return encodeURI(arr.join("&"));
     }
+  }
+  Edit.prototype.veriftParams = function (data) {
+    //校验必传参数
+    var flag = true;
+    data.truckUpdateReqList.some(function (item) {
+      if(!item.tempLicense){
+        layer.msg("临牌号为必填项", {icon: 2});
+        flag = false;
+        return true;
+      }
+      if(!item.settleWay){
+        layer.msg("结算方式为必填项", {icon: 2});
+        flag = false;
+        return true;
+      }
+      if(!item.tempLicenseBackImage){
+        layer.msg("请上传行驶证", {icon: 2});
+        flag = false;
+        return true;
+      }
+      // if(!item.income && _this.dataPermission.canViewOrderIncome == "Y"){
+      //   layer.msg("车辆收入为必填项", {icon: 2});
+      //   flag = false;
+      //   return true;
+      // }
+      // if(!item.pricePerMeliage && _this.dataPermission.canViewOrderIncome == "Y"){
+      //   layer.msg("收入单价为必填项", {icon: 2});
+      //   flag = false;
+      //   return true;
+      // }
+      // if(!item.manageFee && _this.dataPermission.canViewOrderIncome == "Y"){
+      //   layer.msg("管理费为必填项", {icon: 2});
+      //   flag = false;
+      //   return true;
+      // }
+    });
+    return flag;
   }
   Edit.prototype.submitAll = function(req1, loadIndex){
     var _this = this;
