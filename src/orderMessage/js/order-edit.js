@@ -67,8 +67,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           _this.renderHiddenMap(map);
         } catch (error) {}
       }else{
+        layer.close(loadIndex);
         layer.msg(res.message, {icon: 5,anim: 6});
       }
+    }).fail(function(){
+      layer.close(loadIndex);
     });
     
   }
@@ -621,7 +624,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
                   layer.close(loadIndex);
                 }, 500);
               });
+            }else{
+              layer.close(loadIndex);
             }
+          }).fail(function () {
+            layer.close(loadIndex);
           });
         }
       })
@@ -742,10 +749,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
               layer.msg("添加成功");
               // return;
               _this.getFeeItemList().done(function (res) {
+                layer.close(loadIndex);
                 if(res.code == "0"){
                   _this.feeItemList = res.data;
                   setTimeout(function(){
-                    layer.close(loadIndex);
                     _this.openAddFee(event);
                     layer.msg("添加成功");
                   }, 500);
@@ -754,8 +761,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
                 }
               });
             }else{
+              layer.close(loadIndex);
               layer.msg(res.message, {icon: 5,anim: 6});
             }
+          }).fail(function () {
+            layer.close(loadIndex);
           });
         },
       });
@@ -1237,6 +1247,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }else{
         layer.msg(res.message, {icon: 5,anim: 6});
       }
+    }).fail(function () {
+      layer.close(loadIndex);
     });
   }
   Edit.prototype.openSelectDriver = function () {

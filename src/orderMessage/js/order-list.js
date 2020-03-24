@@ -681,14 +681,16 @@ layui.config({
                                         approvalResult: 0
                                     }
                                 }).done(function (res) {
+                                    layer.close(loadIndex);
                                     if(res.code == "0"){
                                         layer.msg("提交成功", {icon: 1,anim: 6});
                                         table.reload("orderList");
                                         layer.close(index);
-                                        layer.close(loadIndex);
                                     }else{
                                         //layer.alert(res.message);
                                     }
+                                }).fail(function(){
+                                    layer.close(loadIndex);
                                 });
                             }
                         });
@@ -758,14 +760,16 @@ layui.config({
                                         approvalResult: 0
                                     }
                                 }).done(function (res) {
+                                    layer.close(loadIndex);
                                     if(res.code == "0"){
                                         layer.msg("提交成功", {icon: 1,anim: 6});
                                         table.reload("orderList");
                                         layer.close(index);
-                                        layer.close(loadIndex);
                                     }else{
                                         //layer.alert(res.message);
                                     }
+                                }).fail(function () {
+                                    layer.close(loadIndex);
                                 });
                             }
                         });
@@ -823,14 +827,16 @@ layui.config({
                                             approvalRemark: data.remark
                                         }
                                     }).done(function(res){
+                                        layer.close(loadIndex);
                                         if(res.code == "0"){
-                                            layer.msg("提交成功");
                                             layer.close(index);
-                                            layer.close(loadIndex);
+                                            layer.msg("提交成功");
                                             table.reload("orderList");
                                         }else{
                                             //layer.alert(res.message);
                                         }
+                                    }).fail(function () {
+                                        layer.close(loadIndex);
                                     });
                                 }
                             })
