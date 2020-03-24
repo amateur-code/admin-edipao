@@ -11,6 +11,9 @@
 .textarea_span {
   top: -20px;
 }
+.car_image {
+  max-width: 400px;
+}
 .red {
   color: red;
 }

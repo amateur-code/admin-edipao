@@ -616,9 +616,9 @@
                             </div>
                             <div class="layui-col-md5">
                                 <select {{item.val == '*' ? 'disabled' : ''}} data-type="prePay" data-index="{{index}}" class="fee_unit_select" name="unit">
-                                    {{#  layui.each(d.unitList, function(index2, item2){ }}
-                                    <option value="{{item2}}" {{index2 == 0 || item.unit == item2 ? 'selected':''}}>{{item2}}</option>
-                                    {{#  }); }}
+                                    {{# layui.each(d.unitList, function(index2, item2){ }}
+                                    <option {{item.key=='油'&&item2!='升'?'disabled':''}} {{item.key=='油'&&item2=='升'?'selected':''}} value="{{item2}}" {{(index2 == 0 || item.unit == item2)&&item.key!='油' ? 'selected':''}}>{{item2}}</option>
+                                    {{# }); }}
                                 </select>
                             </div>
                         </div>
@@ -710,7 +710,7 @@
                 <div class="layui-row">
                     {{#  layui.each(d.feeList, function(index, item){ }}
                         <div class="layui-col-md4 fee_list_item">
-                            <input type="checkbox" {{item.checked?'checked':''}} name="{{item.value}}" title="{{item.value}}" lay-skin="primary">
+                            <input {{(d.type=='arrivePay'||d.type=='tailPay')&&item.value=='油'?'disabled':''}} type="checkbox" {{item.checked?'checked':''}} name="{{item.value}}" title="{{item.value}}" lay-skin="primary">
                             {{# if(item.isDefault != "是"){ }}
                             <i data-index="{{index}}" class="blue edit_icon layui-icon">&#xe642;</i>  
                             {{# } }}

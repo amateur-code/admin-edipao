@@ -195,77 +195,83 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       data.arrivePayFeeItems = data.arrivePayFeeItems || "[]";
       try {
         _this.prePay = JSON.parse(data.prePayFeeItems) || [];
-        _this.prePay.forEach(function(before, index){
-          var delItem = before; //false标识被删除了
-          var flag = false;
-          _this.updateData.prePayFeeItems.every(function (after) {
-            if(after.key == before.key){
-              flag = true;
-              return true;
-            }else{
-              return false;
+        if(_this.action == "verify"){
+          _this.prePay.forEach(function(before, index){
+            var delItem = before; //false标识被删除了
+            var flag = false;
+            _this.updateData.prePayFeeItems.every(function (after) {
+              if(after.key == before.key){
+                flag = true;
+                return true;
+              }else{
+                return false;
+              }
+            });
+            if(!flag){
+              _this.updateData.prePayFeeItems.splice(index, 0, {
+                key: delItem.key,
+                val: "移除",
+                unit: delItem.unit,
+                del: true,
+              });
             }
           });
-          if(!flag){
-            _this.updateData.prePayFeeItems.splice(index, 0, {
-              key: delItem.key,
-              val: "移除",
-              unit: delItem.unit,
-              del: true,
-            });
-          }
-        });
+        }
       } catch (error) {
         console.log(error)
         _this.prePay = [];
       }
       try {
         _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
-        _this.tailPay.forEach(function(before, index){
-          var flag = false;
-          var delItem = before; //false标识被删除了
-          _this.updateData.tailPayFeeItems.every(function (after) {
-            if(after.key == before.key){
-              flag = true;
-              return true;
-            }else{
-              return false;
+        if(_this.action == "verify"){
+          _this.tailPay.forEach(function(before, index){
+            var flag = false;
+            var delItem = before; //false标识被删除了
+            _this.updateData.tailPayFeeItems.every(function (after) {
+              if(after.key == before.key){
+                flag = true;
+                return true;
+              }else{
+                return false;
+              }
+            });
+            if(!flag){
+              _this.updateData.tailPayFeeItems.splice(index, 0, {
+                key: delItem.key,
+                val: "移除",
+                unit: delItem.unit,
+                del: true,
+              });
             }
           });
-          if(!flag){
-            _this.updateData.tailPayFeeItems.splice(index, 0, {
-              key: delItem.key,
-              val: "移除",
-              unit: delItem.unit,
-              del: true,
-            });
-          }
-        });
+        }
       } catch (error) {
         _this.tailPay = [];
       }
       try {
         _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
-        _this.arrivePay.forEach(function(before, index){
-          var flag = false;
-          var delItem = before; //false标识被删除了
-          _this.updateData.arrivePayFeeItems.every(function (after) {
-            if(after.key == before.key){
-              flag = true;
-              return true;
-            }else{
-              return false;
+        if(_this.action == "verify"){
+          _this.arrivePay.forEach(function(before, index){
+            var flag = false;
+            var delItem = before; //false标识被删除了
+            _this.updateData.arrivePayFeeItems.every(function (after) {
+              if(after.key == before.key){
+                flag = true;
+                return true;
+              }else{
+                return false;
+              }
+            });
+            if(!flag){
+              _this.updateData.arrivePayFeeItems.splice(index, 0, {
+                key: delItem.key,
+                val: "移除",
+                unit: delItem.unit,
+                del: true,
+              });
             }
           });
-          if(!flag){
-            _this.updateData.arrivePayFeeItems.splice(index, 0, {
-              key: delItem.key,
-              val: "移除",
-              unit: delItem.unit,
-              del: true,
-            });
-          }
-        });
+        }
       } catch (error) {
         _this.arrivePay = [];
       }

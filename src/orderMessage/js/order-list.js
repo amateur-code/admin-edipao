@@ -181,6 +181,7 @@ layui.config({
         'mode' : 'self',//过滤模式
         'filters' : filters,//过滤项配置
         'done': function(filters){
+            filters = $.extend({},filters);
             var index = 0;
             where = {
                 loginStaffId: edipao.getLoginStaffId()
@@ -670,6 +671,7 @@ layui.config({
                                 form.render();
                             },
                             yes: function () {
+                                var loadIndex = layer.load(1);
                                 edipao.request({
                                     url: "/admin/order/approval/pay",
                                     data: {
@@ -683,6 +685,7 @@ layui.config({
                                         layer.msg("提交成功", {icon: 1,anim: 6});
                                         table.reload("orderList");
                                         layer.close(index);
+                                        layer.close(loadIndex);
                                     }else{
                                         //layer.alert(res.message);
                                     }
@@ -745,6 +748,7 @@ layui.config({
                                 form.render();
                             },
                             yes: function () {
+                                var loadIndex = layer.load(1);
                                 edipao.request({
                                     url: "/admin/order/approval/pay",
                                     data: {
@@ -758,6 +762,7 @@ layui.config({
                                         layer.msg("提交成功", {icon: 1,anim: 6});
                                         table.reload("orderList");
                                         layer.close(index);
+                                        layer.close(loadIndex);
                                     }else{
                                         //layer.alert(res.message);
                                     }
@@ -805,6 +810,7 @@ layui.config({
                                     form.render("radio");
                                 },
                                 yes: function () {
+                                    var loadIndex = layer.load(1);
                                     var data = form.val("verifyPic");
                                     edipao.request({
                                         url: "/admin/order/approval/image",
@@ -820,6 +826,7 @@ layui.config({
                                         if(res.code == "0"){
                                             layer.msg("提交成功");
                                             layer.close(index);
+                                            layer.close(loadIndex);
                                             table.reload("orderList");
                                         }else{
                                             //layer.alert(res.message);

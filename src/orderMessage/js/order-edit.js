@@ -621,7 +621,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         feeList.push(item);
       }
     });
-    laytpl($("#fee_tpl").html()).render({feeList: feeList}, function(html){
+    laytpl($("#fee_tpl").html()).render({feeList: feeList, type: type}, function(html){
       var layerIndex1 = layer.open({
         title: "增加费用",
         type: 1,
