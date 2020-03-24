@@ -199,13 +199,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           _this.prePay.forEach(function(before, index){
             var delItem = before; //false标识被删除了
             var flag = false;
-            _this.updateData.prePayFeeItems.every(function (after) {
-              if(after.key == before.key){
-                flag = true;
-                return true;
-              }else{
-                return false;
-              }
+            flag = _this.updateData.prePayFeeItems.some(function (after) {
+              return before.key == after.key;
             });
             if(!flag){
               _this.updateData.prePayFeeItems.splice(index, 0, {
@@ -227,13 +222,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           _this.tailPay.forEach(function(before, index){
             var flag = false;
             var delItem = before; //false标识被删除了
-            _this.updateData.tailPayFeeItems.every(function (after) {
-              if(after.key == before.key){
-                flag = true;
-                return true;
-              }else{
-                return false;
-              }
+            flag = _this.updateData.tailPayFeeItems.some(function (after) {
+              return before.key == after.key;
             });
             if(!flag){
               _this.updateData.tailPayFeeItems.splice(index, 0, {
@@ -254,13 +244,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           _this.arrivePay.forEach(function(before, index){
             var flag = false;
             var delItem = before; //false标识被删除了
-            _this.updateData.arrivePayFeeItems.every(function (after) {
-              if(after.key == before.key){
-                flag = true;
-                return true;
-              }else{
-                return false;
-              }
+            flag = _this.updateData.arrivePayFeeItems.some(function (after) {
+              return before.key == after.key;
             });
             if(!flag){
               _this.updateData.arrivePayFeeItems.splice(index, 0, {

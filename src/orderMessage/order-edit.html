@@ -231,20 +231,21 @@
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">发车地址</label><br>
-                            <div class="layui-input-inline">
-                                <input type="text" name="startAddress" lay-verify="required" autocomplete="off" class="layui-input">
+                            <div class="address-map layui-row">
+                                <div class="layui-input-inline layui-col-md9" style="width: 250px;margin-right: 0;">
+                                    <!-- <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList"> -->
+                                    <input class="layui-input location-start-name" name="startAddress" id="seach-location-input-start" autocomplete="off" placeholder="请输入收车位置" value=""/>
+                                    <input name="startLat" id="startLat" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                    <input name="startLng" id="startLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                </div>
+                                <div class="layui-input-inline layui-col-md3" style="width: 50px;">
+                                    <a data-field="start" class="layui-btn showMap selectMapLocation">选择</a>
+                                </div>
                             </div>
-                            <!-- <div class="layui-inline address-map">
-                                <div class="layui-input-inline" style="width: 200px;margin-right: 0;">
-                                    <input type="text" name="startAddress" autocomplete="off" class="layui-input getAddressList">
-                                </div>
-                                <div class="layui-input-inline" style="width: 50px;">
-                                    <button class="layui-btn showMap selectMapLocation">选择</button>
-                                </div>
-                            </div> -->
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
+                       
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收车城市</label><br>
                             <!-- <div class="layui-input-inline">

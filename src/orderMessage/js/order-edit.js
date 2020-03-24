@@ -170,7 +170,21 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.next().val(e.item.poi.gbpoint.lat).next().val(e.item.poi.gbpoint.lng);
         ac.hide();
       });
-    })
+    });
+    $.each($('.location-start-name'), function(i, d){
+      var _this = $(this);
+      var ac = new Careland.Autocomplete({
+          input : "seach-location-input-start" + i,
+          location : map
+      });
+      ac.setLocation(map);
+      ac.setInputForm('seach-location-input-start' + i);
+      ac.addEventListener("onConfirm",function(e){
+        console.log(e.item.poi.gbpoint)
+        _this.next().val(e.item.poi.gbpoint.lat).next().val(e.item.poi.gbpoint.lng);
+        ac.hide();
+      });
+    });
 
   }
   Edit.prototype.getStaffList = function(){
@@ -400,6 +414,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       $.each($('.location-end-name'), function(i,d){
         $(this).attr({
           id: 'seach-location-input' + i
+        })
+      })
+      $.each($('.location-start-name'), function(i,d){
+        $(this).attr({
+          id: 'seach-location-input-start' + i
         })
       })
       $.each($('.tempLicenseBackImageBox'), function(i,d){
@@ -1002,8 +1021,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       if(!itemData.id && itemData.id != 0) return;
       totalIncome += itemData.income * 1;
       totalManageFee += itemData.manageFee * 1;
+      console.log(itemData)
       var truckItem = {
-        truckId: itemData.id||"",
+        truckId: itemData.id||0,
         masterFlag: itemData.masterFlag == "on" ? "否" : "是",
         vinCode: itemData.vinCode||"",
         productCode: itemData.productCode||"",
@@ -1015,6 +1035,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         startProvince: itemData.startProvince||"",
         startCity: itemData.startCity ||"",
         startAddress: itemData.startAddress||"",
+        startLat: itemData.startLat||"",
+        endLng: itemData.endLng||"",
         settleWay: itemData.settleWay||"",
         shaftNum: itemData.shaftNum,
         model: itemData.model,
@@ -1114,7 +1136,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     data.prePay = JSON.stringify(pres);
     data.arrivePay = JSON.stringify(arrives);
     data.tailPay = JSON.stringify(tails);
-
 
     data.truckUpdateReqList = truckUpdateReqList || "";
     if(data.orderType == 1){
@@ -1786,6 +1807,12 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             id: 'seach-location-input' + i
           })
         })
+        $.each($('.location-start-name'), function(i,d){
+          $(this).attr({
+            id: 'seach-location-input-start' + i
+          })
+        })
+        
         $.each($('.tempLicenseBackImageBox'), function(i,d){
           $(this).attr({
             id: 'tempLicenseBackImageBox' + i
@@ -1883,13 +1910,22 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         $(this).next().val('').next().val('');
       }
     });
+    $('.location-start-name').focus(function (e) {
+      currentAddress = $(this).val()
+    });
+    $('.location-start-name').on("input", function (e) {
+      if(currentAddress !== $(this).val()){
+        $(this).next().val('').next().val('');
+      }
+    });
 
     _this.showMap();
     
   }
 
   Edit.prototype.showMap = function(){
-    $('.selectMapLocation').unbind('click').on('click', function(){
+    $('.selectMapLocation').unbind('click').on('click', function(e){
+      var field = e.target.dataset.field;
       $('#seachLocation').val('');
       $('#select-address').text('');
       var _t = $(this);
@@ -1915,7 +1951,12 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             layer.msg("请选择地址");
             return false;
           }
-          _t.parents('.address-map').find('.location-end-name').val(address.name).next().val(address.lat).next().val(address.lng);
+          console.log(address, field)
+          if(field == "start"){
+            _t.parents('.address-map').find('.location-start-name').val(address.name).next().val(address.lat).next().val(address.lng);
+          }else{
+            _t.parents('.address-map').find('.location-end-name').val(address.name).next().val(address.lat).next().val(address.lng);
+          }
           //address = '';
           $('#seachLocation').val('');
           $('#select-address').text('');
