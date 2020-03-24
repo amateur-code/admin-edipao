@@ -88,10 +88,10 @@ layui.config({
         { field: 'endAddress', type: 'input' },
         { field: 'transportAssignTime', type: 'timeslot' },
         { field: 'dispatchTime', type: 'timeslot' },
-        { field: 'openOperator', type: 'input' },
-        { field: 'dispatchOperator', type: 'input' },
-        { field: 'fetchOperator', type: 'input' },
-        { field: 'deliveryOperator', type: 'input' },
+        { field: 'openOperator', type: 'contract' },
+        { field: 'dispatchOperator', type: 'contract' },
+        { field: 'fetchOperator', type: 'contract' },
+        { field: 'deliveryOperator', type: 'contract' },
         { field: 'driverName', type: 'input' },
         { field: 'driverPhone', type: 'input' },
         { field: 'driverIdCard', type: 'input' },
@@ -185,6 +185,23 @@ layui.config({
             where = {
                 loginStaffId: edipao.getLoginStaffId()
             };
+            if(filters.openOperator){
+                console.log(filters)
+                filters.openOperatorPhone =  filters.openOperator[1];
+                filters.openOperator =  filters.openOperator[0];
+            }
+            if(filters.dispatchOperator){
+                filters.dispatchOperatorPhone =  filters.dispatchOperator[1];
+                filters.dispatchOperator =  filters.dispatchOperator[0];
+            }
+            if(filters.fetchOperator){
+                filters.fetchOperatorPhone =  filters.fetchOperator[1];
+                filters.fetchOperator =  filters.fetchOperator[0];
+            }
+            if(filters.deliveryOperator){
+                filters.deliveryOperatorPhone =  filters.deliveryOperator[1];
+                filters.deliveryOperator =  filters.deliveryOperator[0];
+            }
             layui.each(filters,function(key, value){
                 if(key=='startProvince'||key=='endProvince'){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
@@ -195,8 +212,19 @@ layui.config({
                     where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
                     where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
                 }else if(key=='startCity'||key=='endCity'){
-                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
-                    where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
+                    console.log(value)
+                    if(value.city == "全部") value.city = "";
+                    if(key == "startCity"){
+                        where['searchFieldDTOList['+ index +'].fieldName'] = "startProvince";
+                        where['searchFieldDTOList['+ index++ +'].fieldValue'] = value.province;
+                        where['searchFieldDTOList['+ index +'].fieldName'] = "startCity";
+                        where['searchFieldDTOList['+ index +'].fieldValue'] = value.city;
+                    }else if(key=='endCity'){
+                        where['searchFieldDTOList['+ index +'].fieldName'] = "endProvince";
+                        where['searchFieldDTOList['+ index++ +'].fieldValue'] = value.province;
+                        where['searchFieldDTOList['+ index +'].fieldName'] = "endCity";
+                        where['searchFieldDTOList['+ index +'].fieldValue'] = value.city;
+                    }
                 }else if(key == 'prePayAmount'||key == 'arrivePayAmount'||key == "tailPayAmount"){
                     // 驾龄、押金
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
@@ -1452,15 +1480,6 @@ layui.config({
                     return "* " + payStatus;
                 }
                 return d.tailPayAmount + "元" + payStatus;
-            }
-        },
-        {
-            field: 'settleWay', title: '结算方式', sort: false,minWidth:100, hide: true, templet: function (d) {
-                if (d.settleWay == 1) {
-                    return "月结";
-                } else {
-                    return "非法结算方式";
-                }
             }
         },
         {field: 'fetchStatus', title: '提车照片', sort: false,minWidth:100, hide: false, templet: function(d){

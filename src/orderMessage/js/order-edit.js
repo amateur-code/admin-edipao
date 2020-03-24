@@ -423,7 +423,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         });
         _this.tempLicense.push({
           image: truckData.tempLicense,
-          id: truckData.id
+          id: truckData.id,
+          filter: item.filter
         });
         laydate.render({
           elem: $(".latestArriveTime")[index], //指定元素
@@ -475,10 +476,15 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         index: 1
       },
       done: function (res) {
+        var boxIndex = index;
+        var filter = "form_car_" + index;
+        _this.tempLicenseBackImage.forEach(function (item, index2) {
+          if(item.filter == filter) index = index2;
+        });
         if(res.code == 0){
           _this.tempLicenseBackImage[index].id = data.truckDTOList[index].id;
           _this.tempLicenseBackImage[index].image = res.data;
-          $('#tempLicenseBackImageBox' + index).find('img').attr('src', res.data + '?' + Math.floor(Math.random() * 10e6))
+          $('#tempLicenseBackImageBox' + boxIndex).find('img').attr('src', res.data + '?' + Math.floor(Math.random() * 10e6))
           layer.msg("上传成功");
         }else{
           layer.msg(res.message, {icon: 5,anim: 6});

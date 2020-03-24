@@ -31,7 +31,6 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: "prePayAmount", title: "预付款金额" },
     { field: "arrivePayAmount", title: "到付款金额" },
     { field: "tailPayAmount", title: "尾款金额" },
-    { field: "settleWay", title: "结算方式" },
     { field: "fetchStatus", title: "提车照片" },
     { field: "startAuditStatus", title: "发车单审核状态" },
     { field: "returnAuditStatus", title: "交车单审核状态" },

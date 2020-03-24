@@ -133,10 +133,10 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						filterBox.find('form').append(
 							`
 							<div class="layui-form-item x-city" id="${filterName}">
-								<select name="${filterName}" lay-filter="province" lay-verify="provinceVerify">
+								<select name="${filterName + "_province"}" lay-filter="province" lay-verify="provinceVerify">
 								<option value="">请选择省</option>
 								</select>
-								<select name="${filterName}" lay-filter="city" lay-verify="cityVerify">
+								<select name="${filterName + "_city"}" lay-filter="city" lay-verify="cityVerify">
 								<option value="">请选择市</option>
 								</select>
 							</div>
@@ -308,10 +308,10 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 							data.field[filterName] = NEWfield
 						}
 						if(filterType == "provincecity"){
-							var NEWfield = {};
-							for(var key in data.field){
-								NEWfield[key] = data.field[key]
-							}
+							var NEWfield = {
+								province: data.field[filterName+"_province"],
+								city: data.field[filterName+"_city"],
+							};
 							data.field[filterName] = NEWfield
 						}
 
