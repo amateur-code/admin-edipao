@@ -152,9 +152,29 @@ layui.config({
                 return '请上传司机从业资格证正面图片';
             }
         },
-        qualificationsBackImgVerify:function(value) {
+        accountNumberVerify:function(value) {
             if (value == '') {
-                return '请上传司机从业资格证背面图片';
+                return '请输入银行卡账号';
+            }
+        },
+        accountBankVerify:function(value) {
+            if (value == '') {
+                return '请选择开户银行';
+            }
+        },
+        provinceVerify:function(value) {
+            if (value == '请选择省份') {
+                return '请选择省份';
+            }
+        },
+        cityVerify:function(value) {
+            if (value == '请选择市级') {
+                return '请选择市级';
+            }
+        },
+        accountBankAddressVerify:function(value) {
+            if (value == '') {
+                return '请输入开户行地址';
             }
         }
     });
