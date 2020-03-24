@@ -152,17 +152,7 @@
             edipao = layui.edipao;
 
         var params = edipao.urlGet();
-        edipao.request({
-            type: 'get',
-            url: '/admin/supplier/detail',
-            data: {
-                supplierNo: params.id
-            }
-        }).then(function(res) {
-            if (res.code == 0) {
-                form.val("edit", res.data);
-            }
-        })
+        
 
         edipao.request({
             type: 'get',
@@ -173,6 +163,18 @@
                     document.getElementById('supplierType').innerHTML = html;
                 })
                 form.render();
+                
+                edipao.request({
+                    type: 'get',
+                    url: '/admin/supplier/detail',
+                    data: {
+                        supplierNo: params.id
+                    }
+                }).then(function(res) {
+                    if (res.code == 0) {
+                        form.val("edit", res.data);
+                    }
+                })
             }
         })
 
