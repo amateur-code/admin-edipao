@@ -1031,7 +1031,14 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       if(!itemData.id && itemData.id != 0) return;
       totalIncome += itemData.income * 1;
       totalManageFee += itemData.manageFee * 1;
-      console.log(itemData)
+      if(itemData.customerFullName == "请选择"||itemData.customerFullName == "0") itemData.customerFullName = "";
+      if(itemData.startPark == "0" || itemData.startPark == "请选择") itemData.startPark = "";
+      if(itemData.startCity == "0" || itemData.startCity == "请选择") itemData.startCity = "";
+      if(itemData.startProvince == "0" || itemData.startProvince == "请选择") itemData.startProvince = "";
+      if(itemData.endPark == "0" || itemData.endPark == "请选择") itemData.endPark = "";
+      if(itemData.endCity == "0" || itemData.endCity == "请选择") itemData.endCity = "";
+      if(itemData.endProvince == "0" || itemData.endProvince == "请选择") itemData.endProvince = "";
+      if(itemData.settleWay == "0" || itemData.settleWay == "请选择") itemData.settleWay = "";
       var truckItem = {
         truckId: itemData.id||0,
         masterFlag: itemData.masterFlag == "on" ? "否" : "是",
@@ -1041,9 +1048,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         customerFullName: itemData.customerFullName||"",
         startWarehouse: itemData.startWarehouse||"",
         warehouseNo: itemData.warehouseNo||"",
-        startPark: itemData.startPark||"",
+        startPark: itemData.startPark || "",
         startProvince: itemData.startProvince||"",
-        startCity: itemData.startCity ||"",
+        startCity: itemData.startCity || "",
         startAddress: itemData.startAddress||"",
         startLat: itemData.startLat||"",
         startLng: itemData.startLng||"",
