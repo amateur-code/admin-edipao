@@ -1,12 +1,12 @@
 layui.define([], function(exports) {
     var Common = function() {
         this.VERSION = '1.0.0';
-        this.API_HOST = 'https://www.d.edipao.cn';
+        this.API_HOST = 'https://api.d.edipao.cn';
         if(location.href.indexOf('test.edipao.cn') > -1){
-            this.API_HOST = location.protocol + '//wwwv2.edipao.cn';
+            this.API_HOST = location.protocol + '//api.edipao.cn';
         }
         if(location.href.indexOf('wwwv2.edipao.cn') > -1){
-            this.API_HOST = location.protocol + '//wwwv2.edipao.cn';
+            this.API_HOST = location.protocol + '//api.edipao.cn';
         }
         if(location.href.indexOf('localhost') > -1){
             this.API_HOST = 'http://localhost:8080';
