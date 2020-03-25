@@ -495,7 +495,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     upload.render({
       elem: $('.tempLicenseBackImage')[index],
       url: edipao.API_HOST + '/admin/truck/upload/image',
-      data: {
+      size: 1024*5
+      ,accept: 'images' //只允许上传图片
+      ,acceptMime: 'image/*' //只筛选图片
+      ,data: {
         loginStaffId: _this.user.staffId,
         truckId: data.truckDTOList[index].id,
         type: 1,
@@ -1889,8 +1892,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         });
         upload.render({
           elem: $('.tempLicenseBackImage')[index],
-          url: edipao.API_HOST + '/admin/truck/upload/image',
-          data: {
+          url: edipao.API_HOST + '/admin/truck/upload/image'
+          ,size: 1024*5
+          ,accept: 'images' //只允许上传图片
+          ,acceptMime: 'image/*' //只筛选图片
+          ,data: {
             loginStaffId: _this.user.staffId,
             truckId: _this.carFormList[index].id||"",
             type: 1,

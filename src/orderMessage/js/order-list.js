@@ -384,7 +384,9 @@ layui.config({
                                 item.num.forEach(function (item2, index) {
                                     var uploadInst = upload.render({
                                         elem: item.holder + index + "" //绑定元素
-                                        ,accept: "images"
+                                        ,size: 1024*5
+                                        ,accept: 'images' //只允许上传图片
+                                        ,acceptMime: 'image/*' //只筛选图片
                                         ,multiple: true
                                         ,url: layui.edipao.API_HOST+'/admin/truck/upload/image' //上传接口
                                         ,data: {
