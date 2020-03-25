@@ -1065,7 +1065,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         income: itemData.income||0,
         manageFee: itemData.manageFee||0,
         tempLicense: itemData.tempLicense,
-        tempLicenseBackImage: _this.tempLicenseBackImage[index].image || itemData.tempLicenseBackImage,
+        tempLicenseBackImage: _this.tempLicenseBackImage[index].image || "",
         saleRemark: itemData.saleRemark||"",
         storageAndDeliverRemark: itemData.storageAndDeliverRemark||"",
         dealerRemark: itemData.dealerRemark||"",
@@ -1891,12 +1891,15 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           },
           done: function (res) {
             if(res.code == 0){
+              $('#tempLicenseBackImageBox' + index).find('img').attr('src', res.data + '?' + Math.floor(Math.random() * 10e6))
+              _this.tempLicenseBackImage.forEach(function (item, index2) {
+                if(item.filter == filterStr) index = index2;
+              });
               _this.tempLicenseBackImage[index] = {
                 image: res.data,
                 id: _this.carFormList[index].id || "",
                 filter: _this.carFormList[index].filter
               };
-              $('#tempLicenseBackImageBox' + index).find('img').attr('src', res.data + '?' + Math.floor(Math.random() * 10e6))
               layer.msg("上传成功");
             }else{
               layer.msg(res.message, {icon: 5,anim: 6});

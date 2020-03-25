@@ -98,6 +98,8 @@
                         // 上述field: 'modifyBeforeJson' 字段 使用"modifyBeforeJsonNo",日志返回有json串，框架自动放到data-content页面显示会报错
                         // 司机档案-意向路线
                             var data = res.modifyBeforeJson.replace(/:</g,':--<');
+                            data = data.replace(/订单类型：1/g, '订单类型：单车单')
+                                        .replace(/订单类型：2/g, '订单类型：背车单');
                             if(data.indexOf('意向路线') > -1){
                                 return data = data.replace(/(\')|(\,)|(\}\}\])/g, '')
                                         .replace(/\[\{(start)\:\{(code)\:(\d*)(province)\:/g, '始发地：')
@@ -112,6 +114,14 @@
                                             .replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '')
                                             .replace(/\}\{(key)/g, ',')
                                             .replace(/(null)/g, '--')
+                            }else if(data.indexOf('订单类型') > -1){
+                                console.log("lshhhhhhhhhhhhh")
+                                return data = data
+                                            .replace(/(\')|(\,)/g, '')
+                                            .replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '')
+                                            .replace(/\}\{(key)/g, ',')
+                                            .replace(/(null)/g, '--')
+                                            
                             }else{
                                 return data
                                         .replace(/(null)/g, '--');
@@ -124,6 +134,8 @@
                             // 司机档案-意向路线
                             var data = res.modifyAfterJson;
                             var data = res.modifyAfterJson.replace(/:</g,':--<');
+                            data = data.replace(/订单类型：1/g, '订单类型：单车单')
+                                        .replace(/订单类型：2/g, '订单类型：背车单');
                             if(data.indexOf('意向路线') > -1){
                                 return data = data
                                         .replace(/(\')|(\,)|(\}\}\])/g, '')

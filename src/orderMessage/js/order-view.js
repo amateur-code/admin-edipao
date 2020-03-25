@@ -195,8 +195,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       data.arrivePayFeeItems = data.arrivePayFeeItems || "[]";
       try {
         _this.prePay = JSON.parse(data.prePayFeeItems) || [];
-        if(_this.action == "verify"){
-          _this.updateData.prePayFeeItems = _this.updateData.prePayFeeItems || [];
+        _this.updateData.prePayFeeItems = _this.updateData.prePayFeeItems || [];
+        if(_this.action == "verify" && _this.updateData.prePayFeeItems.length){
           _this.prePay.forEach(function(before, index){
             var delItem = before; //false标识被删除了
             var flag = false;
@@ -219,8 +219,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       }
       try {
         _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
-        if(_this.action == "verify"){
-          _this.updateData.tailPayFeeItems = _this.updateData.tailPayFeeItems || [];
+        _this.updateData.tailPayFeeItems = _this.updateData.tailPayFeeItems || [];
+        if(_this.action == "verify" && _this.updateData.tailPayFeeItems.length){
           _this.tailPay.forEach(function(before, index){
             var flag = false;
             var delItem = before; //false标识被删除了
@@ -242,8 +242,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       }
       try {
         _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
-        if(_this.action == "verify"){
-          _this.updateData.arrivePayFeeItems = _this.updateData.arrivePayFeeItems || [];
+        _this.updateData.arrivePayFeeItems = _this.updateData.arrivePayFeeItems || [];
+        if(_this.action == "verify" && _this.updateData.arrivePayFeeItems.length){
           _this.arrivePay.forEach(function(before, index){
             var flag = false;
             var delItem = before; //false标识被删除了
