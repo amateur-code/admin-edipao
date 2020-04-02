@@ -459,11 +459,14 @@
         <div class="layui-col-md4">
             <div class="layui-form-item">
                 <label class="layui-form-label">当前住址：</label>
-                <div class="layui-input-block">
+                <div style="position:absolute;top:12px;left:30px;line-height:12px;max-width:200px;" class="layui-input-block">
                     <span class="name-color" name="address" id="address">{{d.detail.address}}</span>
                 </div>
                 {{# if(d.check.address){ }}
-                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.address}}</div></div>
+                <div class="check">
+                    <label class="layui-form-label x-red">待审：</label> 
+                    <div style="position:absolute;top:12px;left:30px;line-height:12px;max-width:200px;" class="layui-input-block">{{d.check.address}}</div>
+                </div>
                 {{# } }}
             </div>
         </div>
@@ -569,7 +572,7 @@
         </div>
         <div class="layui-col-md4">
             <div class="layui-form-item">
-                <label class="layui-form-label">开户行地址：</label>
+                <label class="layui-form-label">开户支行：</label>
                 <div class="layui-input-block">
                     <span class="name-color" name="accountBankAddress" id="accountBankAddress">{{d.detail.accountBankAddress|| '--'}}</span>
                 </div>

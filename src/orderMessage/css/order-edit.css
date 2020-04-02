@@ -201,12 +201,29 @@
   margin-top: 10px;
 }
 .price_unit {
-  display: inline-block;
+  display: block;
   height: 28px;
   line-height: 28px;
-  border: 1px solid #e6e6e6;
-  border-left: 0;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  margin-top: -14px;
 }
 .layui-inline {
   display: inline-block !important;
+}
+.flex_h {
+  display: -webkit-box !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-box-pack: justify !important;
+      -ms-flex-pack: justify !important;
+          justify-content: space-between !important;
+}
+.end_park_selector {
+  position: relative;
+}
+.end_park_search_input {
+  position: absolute;
+  z-index: 100;
 }

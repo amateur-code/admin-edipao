@@ -34,6 +34,13 @@
         .layui-btn-container{
             text-align: right;
         }
+        .opeartion_icon{
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 45px;
+          }
     </style>
 </head>
 
@@ -112,7 +119,7 @@
                     return d.roleNames || '--'
                 } },
                 { field: 'status', title: '状态',width: 200, align: 'center'},
-                { title: '操作', toolbar: '#rowBtns', width: 350, fixed:"right" }
+                { title: '操作', field:"operation",toolbar: '#rowBtns', width: 350, fixed:"right" }
             ],
             tableIns,
             tableFilterIns,
@@ -136,6 +143,7 @@
                         showList = JSON.parse(res.data);
                     }catch(e){}
                     layui.each(tableCols, function(index, item){
+                        if(item.field == "operation") return;
                         if(item.field && showList.indexOf(item.field) == -1){
                            item.hide = true;
                         }
@@ -144,7 +152,39 @@
                 renderTable();
             } 
         })
-
+        var resizeTime = null;
+        function resizeTable() {
+            var w = "100px";
+            var backw = "350px";
+            var backl = "-1px";
+            var l = "-250px";
+            var dur = 500;
+            if(resizeTime) clearTimeout(resizeTime);
+            resizeTime = setTimeout(function () {
+                $(".layui-table-main td[data-field=operation]").css("border-color","#ffffff").css("background","#ffffff").find(".layui-table-cell").css("width", w).html("");
+                $(".layui-table-box>.layui-table-header th[data-field=operation]").css("border", "none").css("color", "#f2f2f2");
+                var $fixed = $(".layui-table-fixed");
+                $fixed.removeClass("layui-hide").find(".layui-table-body").css("height", "auto");
+                $fixed.find(".layui-table-header").css("overflow", "visible")
+                $fixed.find(".layui-table-filter").css("left", "60px");
+                $fixed.find("thead .layui-table-cell").css("position", "relative");
+                if(!$fixed.find(".opeartion_icon").length) $fixed.find("thead .layui-table-cell").append("<i class='layui-icon opeartion_icon layui-icon-prev'></i>");
+                $fixed.animate({"right": l}, 500, function () {
+                    $(".opeartion_icon").unbind().on("click", function (e) {
+                        var $this = $(this);
+                        if($this.hasClass("layui-icon-prev")){
+                            $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", backw);
+                            $this.removeClass("layui-icon-prev").addClass("layui-icon-next");
+                            $fixed.animate({"right": backl}, 500);
+                        }else{
+                            $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", w);
+                            $this.removeClass("layui-icon-next").addClass("layui-icon-prev");
+                            $fixed.animate({"right": l}, 500);
+                        }
+                    });
+                });
+            }, dur);
+        }
         function renderTable(){
             tableIns = table.render({
                 id: 'list',
@@ -169,6 +209,8 @@
                 toolbar: '#headerBtns',
                 defaultToolbar: [],
                 done: function(res,curr,count){
+                    $(window).unbind("resize");
+                    resizeTable();
                     if(res.data.length == 0){
                         $('.layui-table-header').css('overflow-x','scroll')
                     }else{
@@ -192,7 +234,9 @@
                         return
                     }
 
-                    filtersHeader.push(item)
+                    if(el.field != "operation"){
+                        filtersHeader.push(item)
+                    }
                }
             });
 
@@ -311,8 +355,18 @@
                 data.push(dataItem)
             })
             excel.exportExcel({sheet1: data}, '员工管理.xlsx', 'xlsx');
+            var ids = [];
+            list.forEach(function (item) {ids.push(item.staffId)});
+            exportLog(ids.join(","));
         }
-
+        function exportLog(ids){
+            var params = {
+                operationModule: 5,
+                operationRemark: "导出员工数据"
+            }
+            if(ids) params.dataPkList = ids;
+            edipao.exportLog(params);
+        }
 
 
         table.on('toolbar(list)', handleEvent);

@@ -1,3 +1,4 @@
+var verifyFilter = false;
 //过滤器数据
 var orderStatusData = [
     {key: 1, value: "待调度"},
@@ -11,6 +12,9 @@ var orderTypeData = [
     {key: 1, value: "单车单"},
     {key: 2, value: "背车单"},
 ]
+var operationData = [
+    {key: 1, value: "待审核"},
+]
 var provinceList = [];
 var cityCode = {};
 
@@ -18,8 +22,8 @@ layui.config({
     base: '../lib/'
 }).extend({
     excel: 'layui_exts/excel.min',
-    tableFilter: 'TableFilter/tableFilter'
-}).use(['form', 'table', 'jquery','layer', 'upload', 'laytpl', 'excel'], function () {
+    tableFilter: 'TableFilter/tableFilter',
+}).use(['form', 'jquery','layer', 'upload', 'table','laytpl', 'excel'], function () {
     var tableName = "orderMessage-order-list";
     var mainTable;
     var table = layui.table;
@@ -50,23 +54,23 @@ layui.config({
         returnImagesList: ['','']
     }
     var startImagesHolder = [
-        "/admin/images/front.jpg",
-        "/admin/images/head_left_45.jpg",
-        "/admin/images/head_right_45.jpg",
-        "/admin/images/back_left_45.jpg",
-        "/admin/images/back_right_45.jpg",
-        "/admin/images/fache.jpg"
+        "/images/pic_20200331.jpg",
+        "/images/head_left_45.jpg",
+        "/images/head_right_45.jpg",
+        "/images/back_left_45.jpg",
+        "/images/back_right_45.jpg",
+        "/images/fache.jpg"
     ];
     var fetchImagesHolder = [
-        "/admin/images/front.jpg",
-        "/admin/images/head_left_45.jpg",
-        "/admin/images/head_right_45.jpg",
-        "/admin/images/back_left_45.jpg",
-        "/admin/images/back_right_45.jpg",
+        "/images/pic_20200331.jpg",
+        "/images/head_left_45.jpg",
+        "/images/head_right_45.jpg",
+        "/images/back_left_45.jpg",
+        "/images/back_right_45.jpg",
     ]
     var returnImagesHolder = [
-        "/admin/images/jiaojie.jpg",
-        "/admin/images/jiaojie.jpg",
+        "/images/jiaojie.jpg",
+        "/images/jiaojie.jpg",
     ];
     var uploadData = {}
     var filters = [
@@ -98,6 +102,7 @@ layui.config({
         { field: 'prePayAmount', type: 'numberslot' },
         { field: 'arrivePayAmount', type: 'numberslot' },
         { field: 'tailPayAmount', type: 'numberslot' },
+        // { field: 'operation', type: 'radio', data: operationData },
     ]
     initPermission();
     function initPermission() {
@@ -187,7 +192,6 @@ layui.config({
                 loginStaffId: edipao.getLoginStaffId()
             };
             if(filters.openOperator){
-                console.log(filters)
                 filters.openOperatorPhone =  filters.openOperator[1];
                 filters.openOperator =  filters.openOperator[0];
             }
@@ -203,6 +207,13 @@ layui.config({
                 filters.deliveryOperatorPhone =  filters.deliveryOperator[1];
                 filters.deliveryOperator =  filters.deliveryOperator[0];
             }
+            if(!filters.operation) {
+                verifyFilter = false;
+            }else{
+                // verifyFilter = true;
+                // where["pageSize"] = 60;
+            }
+            delete filters.operation;
             layui.each(filters,function(key, value){
                 if(key=='startProvince'||key=='endProvince'){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
@@ -213,7 +224,6 @@ layui.config({
                     where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
                     where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
                 }else if(key=='startCity'||key=='endCity'){
-                    console.log(value)
                     if(value.city == "全部") value.city = "";
                     if(key == "startCity"){
                         where['searchFieldDTOList['+ index +'].fieldName'] = "startProvince";
@@ -529,7 +539,6 @@ layui.config({
                             res3 = {code:0};
                         }
                     }
-                    console.log(successFlag, index, promiseList.length)
                     if(successFlag && index == promiseList.length - 1){
                         hadUpload = true;
                         cb({code:0});
@@ -623,6 +632,9 @@ layui.config({
                     cols: [[
                         {field: 'key', title: '费用项', sort: false,width: "80px"},
                         {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) {
+                            if(dataPermission.canViewOrderCost != "Y"){
+                                return "*";
+                            }
                             return d.val + " (" + d.unit + ")"
                         }},
                     ]]
@@ -701,6 +713,9 @@ layui.config({
                     cols: [[
                         {field: 'key', title: '费用项', sort: false,width: "80px"},
                         {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) { 
+                            if(dataPermission.canViewOrderCost != "Y"){
+                                return "*";
+                            }
                             return d.val + ' (' + d.unit + ')'
                         }},
                     ]]
@@ -780,6 +795,9 @@ layui.config({
                     cols: [[
                         {field: 'key', title: '费用项', sort: false,width: "80px"},
                         {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) {
+                            if(dataPermission.canViewOrderCost != "Y"){
+                                return "* ";
+                            }
                             return d.val + ' (' + d.unit + ')'
                         }},
                     ]]
@@ -930,269 +948,281 @@ layui.config({
                         method.exportData();
                         break;
                     case "table_set":
-                        xadmin.open('表格设置', './table-set.html?tableKey=orderMessage-order-list', 600, 600);
+                        xadmin.open('表格设置', './table-set.html?tableKey=orderMessage-order-list', 600, 400);
                         break;
                 }
             });
             $(".list_driver_name").unbind().on("click", function (e) {
                 var id = e.target.dataset.id;
-                xadmin.open('司机信息','../DriverManager/DriverArchives/info.html?id=' + id, 1100, 500);
+                xadmin.open('司机信息','../DriverManager/DriverArchives/info.html?id=' + id);
             });
         },
+        getExportData: function (cb) {
+            var _this = this;
+            var checkStatus = table.checkStatus('orderList');
+            if(checkStatus.data.length < 1){
+                var param = where;
+                param['pageNo']= 1;
+                param['pageSize'] = 10000;
+                edipao.request({
+                    type: 'GET',
+                    url: '/admin/order/list',
+                    data: param
+                }).done(function (res) {
+                    res.data = res.data || {};
+                    res.data.orderDTOList = res.data.orderDTOList || [];
+                    cb(res.data.orderDTOList);
+                });
+            }else{
+                cb(checkStatus.data);
+            }
+            
+        },
         exportData: function exportExcel() {
-            let _t = this;
-            var param = where;
-            param['pageNo']= 1;
-            param['pageSize'] =10000;
-            edipao.request({
-                type: 'GET',
-                url: '/admin/order/list',
-                data: param
-            }).done(function(res) {
-                if (res.code == 0) {
-                    if(res.data){
-                        var data = res.data.orderDTOList;
-                        var exportData = [];
-                        // 添加头部
-                        exportData.push(exportHead);
-                        // 过滤处理数据
-                        layui.each(data, function(index, item){
-                            var newObj = {};
-                            for(var i in item){
-                                var orderType = item.orderType;
-                                var masterFlag = item.masterFlag;
-                                var prePayOil = item.prePayOil ? item.prePayOil : '';
-                                var fetchApprovalBtn = item.fetchApprovalBtn;
-                                var startApprovalBtn = item.startApprovalBtn;
-                                var returnApprovalBtn = item.returnApprovalBtn;
-                                var prePayApprovalBtn = item.prePayApprovalBtn;
-                                var tailPayApprovalBtn = item.tailPayApprovalBtn;
-                                var arrivePayApprovalBtn = item.arrivePayApprovalBtn;
-                                var openOperator = item.openOperator ? item.openOperator : '';
-                                var openOperatorPhone = item.openOperatorPhone ? item.openOperatorPhone : '';
-                                var dispatchOperator = item.dispatchOperator ? item.dispatchOperator : '';
-                                var dispatchOperatorPhone = item.dispatchOperatorPhone ? item.dispatchOperatorPhone : '';
-                                var fetchOperator = item.fetchOperator ? item.fetchOperator : '';
-                                var fetchOperatorPhone = item.fetchOperatorPhone ? item.fetchOperatorPhone : '';
-                                var deliveryOperator = item.deliveryOperator ? item.deliveryOperator : '';
-                                var deliveryOperatorPhone = item.deliveryOperatorPhone ? item.deliveryOperatorPhone : '';
-                                if(showList.indexOf(i) > -1){
-                                    var value = item[i];
-                                    switch(i){
-                                        case 'orderType':
-                                            switch(item[i]){
-                                                case 1:
-                                                    value = '单车单';
-                                                    break;
-                                                case 2:
-                                                    value = '背车单';
-                                                    break;
-                                                default:
-                                                    value = '非法类型';
-                                                    break;
-                                            }
+            var _this = this;
+            var loadIndex = layer.load(1);
+            method.getExportData(function (data) {
+                var params = {
+                    loginStaffId: user.staffId,
+                    operationModule: 4,
+                    operationRemark: "导出订单数据",
+                }
+                var ids = [];
+                data.forEach(function (item) {ids.push(item.id)});
+                params.dataPkList = ids.join(",");
+                edipao.exportLog(params);
+                var exportData = [];
+                // 添加头部
+                exportData.push(exportHead);
+                // 过滤处理数据
+                layui.each(data, function(index, item){
+                    var newObj = {};
+                    for(var i in item){
+                        var orderType = item.orderType;
+                        var masterFlag = item.masterFlag;
+                        var prePayOil = item.prePayOil ? item.prePayOil : '';
+                        var fetchApprovalBtn = item.fetchApprovalBtn;
+                        var startApprovalBtn = item.startApprovalBtn;
+                        var returnApprovalBtn = item.returnApprovalBtn;
+                        var prePayApprovalBtn = item.prePayApprovalBtn;
+                        var tailPayApprovalBtn = item.tailPayApprovalBtn;
+                        var arrivePayApprovalBtn = item.arrivePayApprovalBtn;
+                        var openOperator = item.openOperator ? item.openOperator : '';
+                        var openOperatorPhone = item.openOperatorPhone ? item.openOperatorPhone : '';
+                        var dispatchOperator = item.dispatchOperator ? item.dispatchOperator : '';
+                        var dispatchOperatorPhone = item.dispatchOperatorPhone ? item.dispatchOperatorPhone : '';
+                        var fetchOperator = item.fetchOperator ? item.fetchOperator : '';
+                        var fetchOperatorPhone = item.fetchOperatorPhone ? item.fetchOperatorPhone : '';
+                        var deliveryOperator = item.deliveryOperator ? item.deliveryOperator : '';
+                        var deliveryOperatorPhone = item.deliveryOperatorPhone ? item.deliveryOperatorPhone : '';
+                        if(showList.indexOf(i) > -1){
+                            var value = item[i];
+                            switch(i){
+                                case 'orderType':
+                                    switch(item[i]){
+                                        case 1:
+                                            value = '单车单';
                                             break;
-                                        case 'orderStatus':
-                                            switch(item[i]){
-                                                case 1:
-                                                    value = '待调度';
-                                                    break;
-                                                case 2:
-                                                    value = '待发车';
-                                                    break;
-                                                case 3:
-                                                    value = '运输中';
-                                                    break;
-                                                case 4:
-                                                    value = '已收车';
-                                                    break;
-                                                case 5:
-                                                    value = '已完结';
-                                                    break;
-                                                case 6:
-                                                    value = '已取消';
-                                                    break;
-                                                default:
-                                                    value = '非法状态';
-                                                    break;
-                                            }
-                                            break;
-                                        case 'openOperator':
-                                            value = openOperator + '' + openOperatorPhone;
-                                            break;
-                                        case 'dispatchOperator':
-                                            value = dispatchOperator + '' + dispatchOperatorPhone;
-                                            break;
-                                        case 'fetchOperator':
-                                            value = fetchOperator + '' + fetchOperatorPhone;
-                                            break;
-                                        case 'deliveryOperator':
-                                            value = deliveryOperator + '' + deliveryOperatorPhone;
-                                            break;
-                                        case 'driverName':
-                                            value = item[i];
-                                            break;
-                                        case 'driverPhone':
-                                            value = item[i];
-                                            break;
-                                        case 'prePayAmount':
-                                            var payStatus = "";
-                                            if (prePayApprovalBtn == 1) {
-                                                payStatus = '-申请支付';
-                                            } else if (prePayApprovalBtn == 2) {
-                                                payStatus = '-审核';
-                                            } else if (prePayApprovalBtn == 3) {
-                                                payStatus = '-支付';
-                                            } else if (prePayApprovalBtn == 4) {
-                                                payStatus = "-已支付";
-                                            }else if(prePayApprovalBtn == 0){
-                                                payStatus = "";
-                                            } else {
-                                                payStatus = "-非法状态";
-                                            }
-                                            if(orderType == 2 && masterFlag == "否"){
-                                                value = "";
-                                                break;
-                                            }
-                                            value = item[i] + "元" + "/" + prePayOil + "升" + payStatus;
-                                            break;
-                                        case 'arrivePayAmount':
-                                            var payStatus = "";
-                                            if (arrivePayApprovalBtn == 1) {
-                                                payStatus = '-申请支付';
-                                            } else if (arrivePayApprovalBtn == 2) {
-                                                payStatus = '-审核';
-                                            } else if (arrivePayApprovalBtn == 3) {
-                                                payStatus = '-支付';
-                                            } else if (arrivePayApprovalBtn == 4) {
-                                                payStatus = "-已支付";
-                                            }else if(arrivePayApprovalBtn == 0){
-                                                payStatus = "";
-                                            } else {
-                                                payStatus = "-非法状态";
-                                            }
-                                            if(orderType == 2 && masterFlag == "否"){
-                                                value = "";
-                                                break;
-                                            }
-                                            value = item[i] + "元" + payStatus;
-                                            break;
-                                        case 'tailPayAmount':
-                                            var payStatus = "";
-                                            if (tailPayApprovalBtn == 1) {
-                                                payStatus = '-申请支付';
-                                            } else if (tailPayApprovalBtn == 2) {
-                                                payStatus = '-审核';
-                                            } else if (tailPayApprovalBtn == 3) {
-                                                payStatus = '-支付';
-                                            } else if (tailPayApprovalBtn == 4) {
-                                                payStatus = "-已支付";
-                                            }else if(tailPayApprovalBtn == 0){
-                                                payStatus = "";
-                                            } else {
-                                                payStatus = "-非法状态";
-                                            }
-                                            if(orderType == 2 && masterFlag == "否"){
-                                                value = "";
-                                                break;
-                                            }
-                                            value = item[i] + "元" + payStatus;
-                                            break;
-                                        case 'fetchStatus':
-                                            switch(item[i]){
-                                                case 0:
-                                                case 1:
-                                                    value = '未上传';
-                                                    break;
-                                                case 2:
-                                                case 3:
-                                                    value = '已上传';
-                                                    break;
-                                                case 4:
-                                                    value = '已驳回';
-                                                    break;
-                                                default:
-                                                    value = '非法状态';
-                                                    break;
-                                            }
-                                            if(fetchApprovalBtn * 1 == 1){
-                                                value = '未审核';
-                                            }
-                                            if(orderType == 2 && masterFlag == "否"){
-                                                value = "";
-                                            }
-                                            break;
-                                        case 'startAuditStatus':
-                                            switch(item[i]){
-                                                case 0:
-                                                case 1:
-                                                    value = '未上传';
-                                                    break;
-                                                case 2:
-                                                case 3:
-                                                    value = '已上传';
-                                                    break;
-                                                case 4:
-                                                    value = '已驳回';
-                                                    break;
-                                                default:
-                                                    value = '非法状态';
-                                                    break;
-                                            }
-                                            if(startApprovalBtn * 1 == 1){
-                                                value = '未审核';
-                                            }
-                                            if(orderType == 2 && masterFlag == "否"){
-                                                value = "";
-                                            }
-                                            break;
-                                        case 'returnAuditStatus':
-                                            switch(item[i]){
-                                                case 0:
-                                                case 1:
-                                                    value = '未上传';
-                                                    break;
-                                                case 2:
-                                                case 3:
-                                                    value = '已上传';
-                                                    break;
-                                                case 4:
-                                                    value = '已驳回';
-                                                    break;
-                                                default:
-                                                    value = '非法状态';
-                                                    break;
-                                            }
-                                            if(returnApprovalBtn * 1 == 1){
-                                                value = '未审核';
-                                            }
-                                            if(orderType == 2 && masterFlag == "否"){
-                                                value = "";
-                                            }
+                                        case 2:
+                                            value = '背车单';
                                             break;
                                         default:
-                                            value = item[i] ? item[i] : '--'
+                                            value = '非法类型';
                                             break;
                                     }
-                                    newObj[i] = value;
-                                }
+                                    break;
+                                case 'orderStatus':
+                                    switch(item[i]){
+                                        case 1:
+                                            value = '待调度';
+                                            break;
+                                        case 2:
+                                            value = '待发车';
+                                            break;
+                                        case 3:
+                                            value = '运输中';
+                                            break;
+                                        case 4:
+                                            value = '已收车';
+                                            break;
+                                        case 5:
+                                            value = '已完结';
+                                            break;
+                                        case 6:
+                                            value = '已取消';
+                                            break;
+                                        default:
+                                            value = '非法状态';
+                                            break;
+                                    }
+                                    break;
+                                case 'openOperator':
+                                    value = openOperator + '' + openOperatorPhone;
+                                    break;
+                                case 'dispatchOperator':
+                                    value = dispatchOperator + '' + dispatchOperatorPhone;
+                                    break;
+                                case 'fetchOperator':
+                                    value = fetchOperator + '' + fetchOperatorPhone;
+                                    break;
+                                case 'deliveryOperator':
+                                    value = deliveryOperator + '' + deliveryOperatorPhone;
+                                    break;
+                                case 'driverName':
+                                    value = item[i];
+                                    break;
+                                case 'driverPhone':
+                                    value = item[i];
+                                    break;
+                                case 'prePayAmount':
+                                    var payStatus = "";
+                                    if (prePayApprovalBtn == 1) {
+                                        payStatus = '-申请支付';
+                                    } else if (prePayApprovalBtn == 2) {
+                                        payStatus = '-审核';
+                                    } else if (prePayApprovalBtn == 3) {
+                                        payStatus = '-支付';
+                                    } else if (prePayApprovalBtn == 4) {
+                                        payStatus = "-已支付";
+                                    }else if(prePayApprovalBtn == 0){
+                                        payStatus = "";
+                                    } else {
+                                        payStatus = "-非法状态";
+                                    }
+                                    if(orderType == 2 && masterFlag == "否"){
+                                        value = "";
+                                        break;
+                                    }
+                                    value = item[i] + "元" + "/" + prePayOil + "升" + payStatus;
+                                    break;
+                                case 'arrivePayAmount':
+                                    var payStatus = "";
+                                    if (arrivePayApprovalBtn == 1) {
+                                        payStatus = '-申请支付';
+                                    } else if (arrivePayApprovalBtn == 2) {
+                                        payStatus = '-审核';
+                                    } else if (arrivePayApprovalBtn == 3) {
+                                        payStatus = '-支付';
+                                    } else if (arrivePayApprovalBtn == 4) {
+                                        payStatus = "-已支付";
+                                    }else if(arrivePayApprovalBtn == 0){
+                                        payStatus = "";
+                                    } else {
+                                        payStatus = "-非法状态";
+                                    }
+                                    if(orderType == 2 && masterFlag == "否"){
+                                        value = "";
+                                        break;
+                                    }
+                                    value = item[i] + "元" + payStatus;
+                                    break;
+                                case 'tailPayAmount':
+                                    var payStatus = "";
+                                    if (tailPayApprovalBtn == 1) {
+                                        payStatus = '-申请支付';
+                                    } else if (tailPayApprovalBtn == 2) {
+                                        payStatus = '-审核';
+                                    } else if (tailPayApprovalBtn == 3) {
+                                        payStatus = '-支付';
+                                    } else if (tailPayApprovalBtn == 4) {
+                                        payStatus = "-已支付";
+                                    }else if(tailPayApprovalBtn == 0){
+                                        payStatus = "";
+                                    } else {
+                                        payStatus = "-非法状态";
+                                    }
+                                    if(orderType == 2 && masterFlag == "否"){
+                                        value = "";
+                                        break;
+                                    }
+                                    value = item[i] + "元" + payStatus;
+                                    break;
+                                case 'fetchStatus':
+                                    switch(item[i]){
+                                        case 0:
+                                        case 1:
+                                            value = '未上传';
+                                            break;
+                                        case 2:
+                                        case 3:
+                                            value = '已上传';
+                                            break;
+                                        case 4:
+                                            value = '已驳回';
+                                            break;
+                                        default:
+                                            value = '非法状态';
+                                            break;
+                                    }
+                                    if(fetchApprovalBtn * 1 == 1){
+                                        value = '未审核';
+                                    }
+                                    if(orderType == 2 && masterFlag == "否"){
+                                        value = "";
+                                    }
+                                    break;
+                                case 'startAuditStatus':
+                                    switch(item[i]){
+                                        case 0:
+                                        case 1:
+                                            value = '未上传';
+                                            break;
+                                        case 2:
+                                        case 3:
+                                            value = '已上传';
+                                            break;
+                                        case 4:
+                                            value = '已驳回';
+                                            break;
+                                        default:
+                                            value = '非法状态';
+                                            break;
+                                    }
+                                    if(startApprovalBtn * 1 == 1){
+                                        value = '未审核';
+                                    }
+                                    if(orderType == 2 && masterFlag == "否"){
+                                        value = "";
+                                    }
+                                    break;
+                                case 'returnAuditStatus':
+                                    switch(item[i]){
+                                        case 0:
+                                        case 1:
+                                            value = '未上传';
+                                            break;
+                                        case 2:
+                                        case 3:
+                                            value = '已上传';
+                                            break;
+                                        case 4:
+                                            value = '已驳回';
+                                            break;
+                                        default:
+                                            value = '非法状态';
+                                            break;
+                                    }
+                                    if(returnApprovalBtn * 1 == 1){
+                                        value = '未审核';
+                                    }
+                                    if(orderType == 2 && masterFlag == "否"){
+                                        value = "";
+                                    }
+                                    break;
+                                default:
+                                    value = item[i] ? item[i] : '--'
+                                    break;
                             }
-                            exportData.push(newObj);
-                        })
-                        console.log(exportData)
-                        // 导出
-                        excel.exportExcel({
-                            sheet1: exportData
-                        }, '订单.xlsx', 'xlsx');
+                            newObj[i] = value;
+                        }
                     }
-                }
-                function DataNull (data) {
-                    if(data == null||data == ''){
-                        return '--'
-                    }else{
-                        return  data;
-                    }
-                }
+                    exportData.push(newObj);
+                })
+                // 导出
+                layer.close(loadIndex);
+                excel.exportExcel({
+                    sheet1: exportData
+                }, '订单.xlsx', 'xlsx');
             });
         },
         renderTable: function(){
@@ -1202,7 +1232,7 @@ layui.config({
                 , title: '订单列表'
                 , method: "get" // 请求方式  默认get
                 , page: true //开启分页
-                , limit: 20  //每页显示条数
+                , limit: 10  //每页显示条数
                 , limits: [20, 50, 100] //每页显示条数可选择
                 , request: {
                     pageName: 'pageNo' //页码的参数名称，默认：page
@@ -1221,8 +1251,14 @@ layui.config({
                         }else{
                             item.showBtn = 1;
                         }
-                        data.push(item);
-                    });
+                        if(verifyFilter){
+                            if(item.orderApprovalBtn * 1 == 1){
+                                data.push(item);
+                            }
+                        }else{
+                            data.push(item);
+                        }
+                        });
                     return {
                         "code": res.code, //解析接口状态
                         "msg": res.message, //解析提示文本
@@ -1231,6 +1267,8 @@ layui.config({
                     }
                 }
                 , done: function (res) {//表格渲染完成的回调
+                    $(window).unbind("resize");
+                    method.resizeTable();
                     method.bindUpload();
                     method.bindVerify();
                     method.bindViewPic();
@@ -1312,16 +1350,45 @@ layui.config({
                 }
             });
         },
+        resizeTable:function () {
+            var dur = 500;
+            var w = "90px";
+            if(method.timer) clearTimeout(method.timer);
+            method.timer = setTimeout(function () {
+                $(".layui-table-main td[data-field=operation]").css("border-color","#ffffff").css("background","#ffffff").find(".layui-table-cell").css("width", w).html("");
+                $(".layui-table-box>.layui-table-header th[data-field=operation]").css("border", "none").css("color", "#f2f2f2");
+                var $fixed = $(".layui-table-fixed");
+                $fixed.removeClass("layui-hide").find(".layui-table-body").css("height", "auto");
+                $fixed.find(".layui-table-header").css("overflow", "visible")
+                $fixed.find(".layui-table-filter").css("left","60px");
+                $fixed.find("thead .layui-table-cell").css("position", "relative");
+                if(!$fixed.find(".opeartion_icon").length) $fixed.find("thead .layui-table-cell").append("<i class='layui-icon opeartion_icon layui-icon-prev'></i>");
+                $fixed.animate({"right": "-230px"}, 500, function () {
+                    $(".opeartion_icon").unbind().on("click", function (e) {
+                        var $this = $(this);
+                        if($this.hasClass("layui-icon-prev")){
+                            $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", "320px");
+                            $this.removeClass("layui-icon-prev").addClass("layui-icon-next");
+                            $fixed.animate({"right": "-1px"}, 500);
+                        }else{
+                            $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", "90px");
+                            $this.removeClass("layui-icon-next").addClass("layui-icon-prev");
+                            $fixed.animate({"right": "-230px"}, 500);
+                        }
+                    });
+                });
+            }, dur);
+        }
     }
     var tableCols = [
         {type: 'checkbox'},
         {field: 'orderNo', title: '业务单号', sort: false,minWidth:105, templet: function(d){
             return d.orderNo ? d.orderNo : '- -';
         }},
-        {field: 'warehouseNo', title: '仓库单号', sort: false,minWidth:100,minWidth:100, templet: function(d){
+        {field: 'warehouseNo', title: '仓库单号', sort: false,minWidth:140, templet: function(d){
             return d.warehouseNo ? d.warehouseNo : '- -';
         }},
-        {field: 'vinCode', title: 'VIN码', sort: false,minWidth:100,minWidth:100, templet: function(d){
+        {field: 'vinCode', title: 'VIN码', sort: false,width: 200,minWidth:100, templet: function(d){
             return d.vinCode ? d.vinCode : '- -';
         }},
         {field: 'tempLicense', title: '临牌号', sort: false,minWidth:100,minWidth:100, templet: function(d){
@@ -1357,13 +1424,13 @@ layui.config({
                 }
             }
         },
-        {field: 'customerFullName', title: '客户全称', sort: true, templet: function(d){
+        {field: 'customerFullName', title: '客户全称', sort: true, width: 120, templet: function(d){
             return d.customerFullName ? d.customerFullName : '- -';
         }},
-        {field: 'startWarehouse', title: '发车仓库', sort: false,minWidth:100, templet: function(d){
+        {field: 'startWarehouse', title: '发车仓库', sort: false, width: 400, templet: function(d){
             return d.startWarehouse ? d.startWarehouse : '- -';
         }},
-        {field: 'startPark', title: '发车停车场', sort: false,minWidth:100, templet: function(d){
+        {field: 'startPark', title: '发车停车场', sort: false, width: 400, templet: function(d){
             return d.startPark ? d.startPark : '- -';
         }},
         {field: 'startProvince', title: '发车省', sort: false,minWidth:100, templet: function(d){
@@ -1372,10 +1439,10 @@ layui.config({
         {field: 'startCity', title: '发车城市', sort: false,minWidth:100, templet: function(d){
             return d.startCity ? d.startCity : '- -';
         }},
-        {field: 'startAddress', title: '发车地址', sort: false,minWidth:100, templet: function(d){
+        {field: 'startAddress', title: '发车地址', sort: false, width: 400, templet: function(d){
             return d.startAddress ? d.startAddress : '- -';
         }},
-        {field: 'endPark', title: '收车网点', sort: false,minWidth:100, templet: function(d){
+        {field: 'endPark', title: '收车网点', sort: false, width: 400, templet: function(d){
             return d.endPark ? d.endPark : '- -';
         }},
         {field: 'endProvince', title: '收车省', sort: false,minWidth:100, templet: function(d){
@@ -1384,16 +1451,16 @@ layui.config({
         {field: 'endCity', title: '收车城市', sort: false,minWidth:100, templet: function(d){
             return d.endCity ? d.endCity : '- -';
         }},
-        {field: 'endAddress', title: '收车地址', sort: false,minWidth:100, templet: function(d){
+        {field: 'endAddress', title: '收车地址', sort: false, width: 300, templet: function(d){
             return d.endAddress ? d.endAddress : '- -';
         }},
-        {field: 'transportAssignTime', title: '运输商指派时间', sort: false,minWidth:100, templet: function(d){
+        {field: 'transportAssignTime', title: '运输商指派时间', sort: false,width: 200, templet: function(d){
             return d.transportAssignTime ? d.transportAssignTime : '- -';
         }},
-        {field: 'dispatchTime', title: '调度时间', sort: false,minWidth:100, templet: function(d){
+        {field: 'dispatchTime', title: '调度时间', sort: false, width: 200, templet: function(d){
             return d.dispatchTime ? d.dispatchTime : '- -';
         }},
-        {field: 'openOperator', title: '开单员', sort: false,minWidth:100, templet: function(d){
+        {field: 'openOperator', title: '开单员', sort: false,width: 200, templet: function(d){
             d.openOperator = d.openOperator || "";
             d.openOperatorPhone = d.openOperatorPhone || "";
             return (d.openOperator || d.openOperatorPhone) ? d.openOperator + d.openOperatorPhone : '- -';
@@ -1427,11 +1494,11 @@ layui.config({
                 return d.driverPhone || "- -";
             }
         },
-        {field: 'driverIdCard', title: '司机身份证', sort: false,minWidth:100, hide: false, templet: function(d){
+        {field: 'driverIdCard', title: '司机身份证', sort: false,width: 120, hide: false, templet: function(d){
             return d.driverIdCard ? d.driverIdCard : '- -';
         }},
         {
-            field: 'prePayAmount', title: '预付款金额', sort: false,minWidth:130, hide: false, templet: function (d) {
+            field: 'prePayAmount', title: '预付款金额', sort: false,width: 120, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
@@ -1449,6 +1516,9 @@ layui.config({
                 } else {
                     payStatus = "-非法状态";
                 }
+                if(d.orderStatus == 6){
+                    payStatus = "";
+                }
                 if(d.orderType == 2 && d.masterFlag == "否"){
                     return "";
                 }
@@ -1459,7 +1529,7 @@ layui.config({
             }
         },
         {
-            field: 'arrivePayAmount', title: '到付款金额', sort: false,minWidth:120, hide: false, templet: function (d) {
+            field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 120, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
@@ -1478,6 +1548,9 @@ layui.config({
                     payStatus = " - 非法状态";
 
                 }
+                if(d.orderStatus == 6){
+                    payStatus = "";
+                }
                 if(d.orderType == 2 && d.masterFlag == "否"){
                     return "";
                 }
@@ -1488,7 +1561,7 @@ layui.config({
             }
         },
         {
-            field: 'tailPayAmount', title: '尾款金额', sort: false,minWidth:120, hide: false, templet: function (d) {
+            field: 'tailPayAmount', title: '尾款金额', sort: false,width: 120, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
@@ -1506,6 +1579,9 @@ layui.config({
                 } else {
                     payStatus = " - 非法状态";
                 }
+                if(d.orderStatus == 6){
+                    payStatus = "";
+                }
                 if(d.orderType == 2 && d.masterFlag == "否"){
                     return "";
                 }
@@ -1515,7 +1591,7 @@ layui.config({
                 return d.tailPayAmount + "元" + payStatus;
             }
         },
-        {field: 'fetchStatus', title: '提车照片', sort: false,minWidth:100, hide: false, templet: function(d){
+        {field: 'fetchStatus', title: '提车照片', sort: false,width: 120, hide: false, templet: function(d){
             var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='5' data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-key='fetchImages' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='3' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
@@ -1543,12 +1619,15 @@ layui.config({
             if(d.fetchApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
             }
+            if(d.orderStatus == 6){
+                status = str.replace("{{}}","查看");
+            }
             if(d.orderType == 2 && d.masterFlag == "否"){
                 status = "";
             }
             return status;
         }},
-        {field: 'startAuditStatus', title: '发车单审核状态', sort: false,minWidth:100, hide: false, templet: function(d){
+        {field: 'startAuditStatus', title: '发车单审核状态', sort: false,width: 130, hide: false, templet: function(d){
             var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + " data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + "  data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='6' data-order="+ d.orderNo +"  data-type='1' data-key='startImages' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
@@ -1576,12 +1655,15 @@ layui.config({
             if(d.startApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
             }
+            if(d.orderStatus == 6){
+                status = str.replace("{{}}","查看");
+            }
             if(d.orderType == 2 && d.masterFlag == "否"){
                 status = "";
             }
             return status;
         }},
-        {field: 'returnAuditStatus', title: '交车单审核状态', sort: false,minWidth:100, hide: false, templet: function(d){
+        {field: 'returnAuditStatus', title: '交车单审核状态', sort: false,width: 120, hide: false, templet: function(d){
             var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='3' data-order="+ d.orderNo +" data-type='2' data-key='returnImages' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
@@ -1608,6 +1690,9 @@ layui.config({
             }
             if(d.returnApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
+            }
+            if(d.orderStatus == 6){
+                status = str.replace("{{}}","查看");
             }
             if(d.orderType == 2 && d.masterFlag == "否"){
                 status = "";
@@ -1649,7 +1734,7 @@ layui.config({
         "returnAuditStatus",
     ];
     var exportHead={};// 导出头部
-    var toolField = {title: '操作', toolbar: '#barDemo', align: 'left', fixed: 'right', width: 320,};
+    var toolField = {title: '操作', field: "operation", toolbar: '#barDemo', align: 'left', fixed: 'right', width: 320};
 
     edipao.request({
         type: 'GET',

@@ -72,9 +72,33 @@
                 { field: 'tradeNo', title: '交易流水号', width: 200 },
                 { field: 'tradeTime', title: '交易时间',width: 200 },
                 { field: 'productName', title: '定点服务',width: 200 },
-                { field: 'tradeNumber', title: '消费数量',minWidth: 100},
-                { field: 'unitPrice', title: '单价',minWidth: 100 },
-                { field: 'tradeTotalPrice', title: '消费金额',minWidth:100  },
+                { field: 'tradeNumber', title: '消费数量',minWidth: 100, templet: function(d){
+                    var unit = "";
+                    switch (d.supplierType){
+                        case "oilSupply":
+                            unit = "(升)";
+                            break;
+                        case "unloadCar":
+                            unit = "(次)";
+                            break;
+                    }
+                    return d.tradeNumber + unit;
+                } },
+                { field: 'unitPrice', title: '单价',minWidth: 100, templet: function(d){
+                    var unit = "";
+                    switch (d.supplierType){
+                        case "oilSupply":
+                            unit = "(元/升)";
+                            break;
+                        case "unloadCar":
+                            unit = "(元/次)";
+                            break;
+                    }
+                    return d.unitPrice + unit;
+                } },
+                { field: 'tradeTotalPrice', title: '消费金额',minWidth:100, templet: function(d){
+                    return d.tradeTotalPrice + '(元)';
+                }},
                 { field: 'tradeDriverName', title: '消费人',width: 200, templet:function(d){
                     return d.tradeDriverName || '--'
                 }},

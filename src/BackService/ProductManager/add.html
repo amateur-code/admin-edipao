@@ -87,6 +87,14 @@
           position: relative;
           top: -4px;
         }
+        .unit_span{
+            position: absolute;
+            top: 45%;
+            transform: translateY(-50%);
+            -webkit-transform: translateY(-50%);
+            right: 40px;
+            color: #666666;
+        }
     </style>
 </head>
 
@@ -127,7 +135,7 @@
                                             <span class="x-red">*</span>归属供应商
                                         </label>
                                         <div class="layui-input-block">
-                                            <select name="supplierNo" id="supplierNo">
+                                            <select name="supplierNo" id="supplierNo" lay-filter="supplierNo">
                                             </select>
                                         </div>
                                     </div>
@@ -166,10 +174,11 @@
                                 <div class="layui-col-xs4">
                                     <div class="layui-form-item">
                                         <label for="unitPrice" class="layui-form-label">
-                                            <span class="x-red">*</span>单价
+                                            <span class="x-red">*</span>单价：
                                         </label>
-                                        <div class="layui-input-block">
+                                        <div style="position: relative;" class="layui-input-block">
                                             <input type="text" id="unitPrice" name="unitPrice" lay-verify="required|unitPrice" autocomplete="off" class="layui-input">
+                                            <span class="unit_span"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -211,7 +220,7 @@
     </div>
     <script id="selectDom" type="text/html">
         {{#  layui.each(d.list, function(index, item){ }}
-            <option value="{{item.supplierNo}}">{{item.supplierName}}</option>
+            <option data-type="{{item.supplierType}}" value="{{item.supplierNo}}">{{item.supplierName}}</option>
         {{# }) }}
     </script>
     <script id="selectMapDialog" type="text/html">
@@ -278,7 +287,7 @@
                     var myGeo = new Careland.Geocoder();
 
                     var layer = new Careland.Layer('point', 'layer');
-                    var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'https://www.d.edipao.cn/admin/images/center.png',fontColor:'#000'});
+                    var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:location.origin+'/images/center.png',fontColor:'#000'});
                     layer.setStyle(style);
                     map.addLayer(layer);
 
@@ -380,9 +389,24 @@
                 laytpl(selectDom.innerHTML).render({list: res.data},function(html){
                     document.getElementById('supplierNo').innerHTML = html;
                 })
+                if(res.data[0].supplierType=="unloadCar"){
+                    $(".unit_span").text("元 / 次");
+                }else if(res.data[0].supplierType=="oilSupply"){
+                    $(".unit_span").text("元 / 升");
+                }
                 form.render();
             }
         })
+
+        form.on("select(supplierNo)", function(obj){
+            var type = obj.elem.selectedOptions[0].dataset.type;
+            console.dir(obj.elem.selectedOptions[0])
+            if(type=="unloadCar"){
+                $(".unit_span").text("元 / 次");
+            }else if(type=="oilSupply"){
+                $(".unit_span").text("元 / 升");
+            }
+        });
 
         //自定义验证规则
         form.verify({

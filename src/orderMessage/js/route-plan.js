@@ -408,7 +408,7 @@ tableFilter: 'TableFilter/tableFilter'
             var myGeo = new Careland.Geocoder();
 
             var layer = new Careland.Layer('point', 'layer');
-            var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'https://www.d.edipao.cn/admin/images/center.png',fontColor:'#000'});
+            var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:location.origin+'/images/center.png',fontColor:'#000'});
             layer.setStyle(style);
             map.addLayer(layer);
 

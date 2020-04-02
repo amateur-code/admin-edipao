@@ -19,7 +19,6 @@
     
     <script src="../lib/TableFilter/tableFilter.js?VERSION"></script>
     <script src="../js/common.js?VERSION"></script>
-    <script src="./js/qs.js"></script>
     <script src="./js/area.js"></script>
     <script src="https://mapapi.careland.com.cn/api/?key=6012dcd6278a2d4db3840604&v=1.3"></script>
     <!--[if lt IE 9]>
@@ -195,14 +194,14 @@
                         <div style="display:inline-block;" class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>发车城市</label><br>
                             <div class="layui-form-item">
-                                <div class="layui-inline">
-                                    <div class="layui-input-inline" style="width: 120px;">
-                                        <select name="startProvince" id="startProvince" class="startProvince" lay-verify="required" lay-search lay-filter="startProvince">
+                                <div class="layui-inline flex_h start_city_selector">
+                                    <div class="layui-input-inline" style="min-width:100px;margin:0;">
+                                        <select data-filter="CARFORM" name="startProvince" id="startProvince" class="startProvince CARFORM" lay-verify="required" lay-search lay-filter="startProvince">
                                             <option value="">省份</option>
                                         </select>
                                     </div>
-                                    <div class="layui-input-inline" style="width: 120px;">
-                                        <select name="startCity" id="startCity" class="startCity" lay-verify="required" lay-search lay-filter="startCity">
+                                    <div class="layui-input-inline" style="min-width:100px;margin:0;">
+                                        <select data-filter="CARFORM" name="startCity" id="startCity" class="startCity CARFORM" lay-verify="required" lay-search lay-filter="startCity">
                                             <option value="">地级市</option>
                                         </select>
                                     </div>
@@ -245,20 +244,32 @@
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
-                       
                         <div class="layui-inline layui-col-md3">
+                            <label class="layui-form-label text_left form_label"><span class="red">*</span>收车网点</label><br>
+                            <div data-filter="CARFORM" class="layui-input-inline end_park_selector end_park_selector_CARFORM">
+                                <div class="layui-form-select">
+                                    <div class="layui-select-title">
+                                        <input name="endPark" type="text" class="end_park_search_input layui-input">
+                                    </div>
+                                    <dl class="layui-anim layui-anim-upbit end_park_options">
+                                        <dd lay-value="" class="layui-select-tips">暂无数据</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收车城市</label><br>
                             <!-- <div class="layui-input-inline">
                                 <input type="text" name="endCity" autocomplete="off" class="layui-input">
                             </div> -->
                             <div class="layui-form-item">
-                                <div class="layui-inline">
-                                    <div class="layui-input-inline" style="width: 120px;">
-                                        <select data-filter="CARFORM" name="endProvince" id="endProvince" class="endProvince" lay-verify="required" lay-search lay-filter="endProvince">
+                                <div class="layui-inline flex_h end_city_selector">
+                                    <div class="layui-input-inline" style="min-width:100px;margin:0;">
+                                        <select data-filter="CARFORM" name="endProvince" id="endProvince" class="endProvince CARFORM" lay-verify="required" lay-search lay-filter="endProvince">
                                             <option value="">省份</option>
                                         </select>
                                     </div>
-                                    <div class="layui-input-inline" style="width: 120px;">
+                                    <div class="layui-input-inline" style="min-width:100px;margin:0;">
                                         <select data-filter="CARFORM" name="endCity" id="endCity" class="endCity CARFORM" lay-verify="required" lay-search lay-filter="endCity">
                                             <option value="">地级市</option>
                                         </select>
@@ -267,14 +278,7 @@
                             </div>
                             <!-- <input type="text" name="endCity" autocomplete="off" class="layui-input"> -->
                         </div>
-                        <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <label class="layui-form-label text_left form_label"><span class="red">*</span>收车网点</label><br>
-                            <div class="layui-input-inline">
-                                <!-- <input type="text" name="endPark" lay-verify="required" autocomplete="off" class="layui-input"> -->
-                                <select disabled name="endPark" lay-verify="required" class="endParkList CARFORM_endCity_select" lay-filter="endPark" lay-search>
-                                </select>  
-                            </div>
-                        </div>
+                        
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">收车地址</label><br>
                             <div class="address-map layui-row">
@@ -285,7 +289,7 @@
                                     <input name="endLng" id="endLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
                                 </div>
                                 <div class="layui-input-inline layui-col-md3" style="width: 50px;">
-                                    <a class="layui-btn showMap selectMapLocation">选择</a>
+                                    <a data-field="end" class="layui-btn showMap selectMapLocation">选择</a>
                                 </div>
                             </div>
                             <!-- <div class="layui-input-inline">
@@ -302,7 +306,7 @@
                                         <input type="text" name="connectorName" autocomplete="off" class="layui-input" placeholder="联系人姓名">
                                     </div>
                                     <div class="layui-col-md6">
-                                        <input type="number" name="connectorPhone" autocomplete="off" class="layui-input" placeholder="联系人手机号">
+                                        <input type="text" name="connectorPhone" autocomplete="off" class="layui-input" placeholder="联系人手机号">
                                     </div>
                                 </div>
                             </div>
@@ -316,7 +320,7 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>客户里程(公里)</label><br>
                             <div class="layui-input-inline">
-                                <input type="number" name="customerMileage" autocomplete="off" class="layui-input">
+                                <input type="text" name="customerMileage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
@@ -324,13 +328,13 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收入金额(元)</label><br>
                             <div class="layui-input-inline">
-                                <input {{d.income=='*'?'disabled':''}} data-filter="CARFORM" type="{{d.income == '*'?'text':'number'}}" name="income" autocomplete="off" class="layui-input car_income">
+                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{d.income=='*'?'disabled':''}} data-filter="CARFORM" type="text" name="income" autocomplete="off" class="layui-input car_income">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>管理费(元)</label><br>
                             <div class="layui-input-inline">
-                                <input {{d.manageFee=='*'?'disabled':''}} data-filter="CARFORM" type="{{d.manageFee == '*'?'text':'number'}}" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
+                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{d.manageFee=='*'?'disabled':''}} data-filter="CARFORM" type="text" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -347,8 +351,8 @@
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收入单价(元/km)</label><br>
-                            <div class="layui-input-inline">
-                                <input {{d.pricePerMeliage=='*'?'disabled':''}} type="{{d.pricePerMeliage == '*'?'text':'number'}}" name="pricePerMeliage" style="width: 80%;display:inline-block;border-right:0;" autocomplete="off" class="layui-input"><span class="price_unit">元/km</span>
+                            <div class="layui-input-inline" style="position: relative;">
+                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{d.pricePerMeliage=='*'?'disabled':''}} type="text" name="pricePerMeliage" autocomplete="off" class="layui-input"><span class="price_unit">元/km</span>
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -613,7 +617,7 @@
                         <label class="layui-form-label text_left form_label">{{item.key}}：</label>
                         <div class="layui-row">
                             <div class="layui-col-md6">
-                                <input {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="{{item.val == '*'?'text':'number'}}" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="text" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5">
                                 <select {{item.val == '*' ? 'disabled' : ''}} data-type="prePay" data-index="{{index}}" class="fee_unit_select" name="unit">
@@ -642,7 +646,7 @@
                         <label class="layui-form-label text_left form_label">{{item.key}}：</label>
                         <div class="layui-row">
                             <div class="layui-col-md6">
-                                <input {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="{{item.val == '*'?'text':'number'}}" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="text" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5">
                                 <select {{item.val == '*' ? 'disabled' : ''}} data-type="arrivePay" data-index="{{index}}" class="fee_unit_select" name="unit">
@@ -671,7 +675,7 @@
                         <label class="layui-form-label text_left form_label">{{item.key}}：</label>
                         <div class="layui-row">
                             <div class="layui-col-md6">
-                                <input {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="{{item.val == '*'?'text':'number'}}" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="text" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5">
                                 <select {{item.val == '*' ? 'disabled' : ''}} data-type="tailPay" data-index="{{index}}" class="fee_unit_select" name="unit">

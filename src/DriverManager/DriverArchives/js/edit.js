@@ -194,6 +194,13 @@ layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
             if(province!='请选择省份'&&city!='请选择市级'){
                 accountCity = province+'-'+city;
             }
+            console.log($(".driveLicenceTypeClass").find("input").val())
+            // 证件类型
+            data.field.driveLicenceType = $(".driveLicenceTypeClass").find("input").val();
+            if(!data.field.driveLicenceType) {
+                layer.msg("请选择驾照类型", {icon: 2});
+                return false;
+            }
             // 押金状态
             if(data.field.depositStatus=='1'&&data.field.depositTradeNumber==''){
                 $('#depositTradeNumber').focus();
@@ -328,4 +335,7 @@ layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
             }
         }
     });
+    setTimeout(function () {
+        $(".driveLicenceTypeClass").find("input").removeAttr("readonly");
+    },200);
 });

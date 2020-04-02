@@ -156,7 +156,7 @@
                     <div class="layui-row layui-col-space10 layui-form-item">
                         <div class="layui-col-md6 layui-text-align">
                             <div>
-                                <div class="layui-upload-drag-title">正面<span class="sample-graph boxZoomImg"  src="../../images/front.png"><img src="../../images/front.png" class="layui-hide"/>查看示例图</span></div>
+                                <div class="layui-upload-drag-title">正面<span class="sample-graph boxZoomImg"  src="../../images/idcard01.jpg"><img src="../../images/idcard01.jpg" class="layui-hide"/>查看示例图</span></div>
                                 <div class="layui-upload-drag" id="idLicenceFrontImgDiv">
                                     {{# if(d.detail.idLicenceFrontImg == ''){ }}
                                     <i class="upload-bg"></i>
@@ -172,7 +172,7 @@
                             </div>
                         </div>
                         <div class="layui-col-md6 layui-text-align">
-                            <div class="layui-upload-drag-title">背面<span class="sample-graph boxZoomImg"  src="../../images/back.png"><img src="../../images/back.png" class="layui-hide"/>查看示例图</span></div>
+                            <div class="layui-upload-drag-title">背面<span class="sample-graph boxZoomImg"  src="../../images/idcard02.jpg"><img src="../../images/idcard02.jpg" class="layui-hide"/>查看示例图</span></div>
                             <div class="layui-upload-drag" id="idLicenceBackImgDiv">
                                 {{# if(d.detail.idLicenceBackImg == ''){ }}
                                 <i class="upload-bg"></i>
@@ -192,7 +192,7 @@
                     <div>驾驶证</div>
                     <div class="layui-row layui-col-space10 layui-form-item">
                         <div class="layui-col-md6 layui-text-align">
-                            <div class="layui-upload-drag-title">正本<span class="sample-graph boxZoomImg"  src="../../images/front.png"><img src="../../images/front.png" class="layui-hide"/>查看示例图</span></div>
+                            <div class="layui-upload-drag-title">正本<span class="sample-graph boxZoomImg"  src="../../images/license01.jpg"><img src="../../images/license01.jpg" class="layui-hide"/>查看示例图</span></div>
                             <div class="layui-upload-drag" id="driveLicenceFrontImgDiv">
                                 {{# if(d.detail.driveLicenceFrontImg == ''){ }}
                                 <i class="upload-bg"></i>
@@ -207,7 +207,7 @@
                             {{# } }}
                         </div>
                         <div class="layui-col-md6 layui-text-align">
-                            <div class="layui-upload-drag-title">副本<span class="sample-graph boxZoomImg"  src="../../images/back.png"><img src="../../images/back.png" class="layui-hide"/>查看示例图</span></div>
+                            <div class="layui-upload-drag-title">副本<span class="sample-graph boxZoomImg"  src="../../images/license02.jpg"><img src="../../images/license02.jpg" class="layui-hide"/>查看示例图</span></div>
                             <div class="layui-upload-drag" id="driveLicenceBackImgDiv">
                                 {{# if(d.detail.driveLicenceBackImg == ''){ }}
                                 <i class="upload-bg"></i>
@@ -250,7 +250,7 @@
             <div class="layui-row layui-col-space10 layui-form-item">
                 <div class="layui-col-md6 layui-text-align">
                     <div>
-                        <div class="layui-upload-drag-title">正本<span class="sample-graph boxZoomImg"  src="../../images/front.png"><img src="../../images/front.png" class="layui-hide"/>查看示例图</span></div>
+                        <div class="layui-upload-drag-title">正本<span class="sample-graph boxZoomImg"  src="../../images/certificate.jpg"><img src="../../images/certificate.jpg" class="layui-hide"/>查看示例图</span></div>
                         <div class="layui-upload-drag" id="qualificationsFrontImgDiv">
                             {{# if(d.detail.qualificationsFrontImg == ''){ }}
                             <i class="upload-bg"></i>
@@ -266,7 +266,7 @@
                     </div>
                 </div>
                 <div class="layui-col-md6 layui-text-align">
-                    <div class="layui-upload-drag-title">副本<span class="sample-graph boxZoomImg"  src="../../images/back.png"><img src="../../images/back.png" class="layui-hide"/>查看示例图</span></div>
+                    <div class="layui-upload-drag-title">副本<span class="sample-graph boxZoomImg"  src="certificate2.jpg"><img src="certificate2.jpg" class="layui-hide"/>查看示例图</span></div>
                     <div class="layui-upload-drag" id="qualificationsBackImgDiv">
                         {{# if(d.detail.qualificationsBackImg == ''){ }}
                         <i class="upload-bg"></i>
@@ -427,11 +427,14 @@
         <div class="layui-col-md4">
             <div class="layui-form-item">
                 <label class="layui-form-label">当前住址：</label>
-                <div class="layui-input-block">
+                <div style="position:absolute;top:12px;left:30px;line-height:15px;max-width:200px;" class="layui-input-block">
                     <span class="name-color" name="address" id="address">{{d.detail.address}}</span>
                 </div>
                 {{# if(d.check.address){ }}
-                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.address}}</div></div>
+                <div class="check">
+                    <label class="layui-form-label x-red">待审：</label> 
+                    <div style="position:absolute;top:12px;left:30px;line-height:15px;max-width:200px;" class="layui-input-block">{{d.check.address}}</div>
+                </div>
                 {{# } }}
             </div>
         </div>
@@ -537,7 +540,7 @@
         </div>
         <div class="layui-col-md4">
             <div class="layui-form-item">
-                <label class="layui-form-label">开户行地址：</label>
+                <label class="layui-form-label">开户支行：</label>
                 <div class="layui-input-block">
                     <span class="name-color" name="accountBankAddress" id="accountBankAddress">{{d.detail.accountBankAddress|| '--'}}</span>
                 </div>

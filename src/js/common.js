@@ -3,7 +3,7 @@ layui.define([], function(exports) {
         this.VERSION = '1.0.0';
         this.API_HOST = 'https://api.d.edipao.cn';
         if(location.href.indexOf('test.edipao.cn') > -1){
-            this.API_HOST = location.protocol + '//api.edipao.cn';
+            this.API_HOST = location.protocol + '//api.d.edipao.cn';
         }
         if(location.href.indexOf('wwwv2.edipao.cn') > -1){
             this.API_HOST = location.protocol + '//api.edipao.cn';
@@ -32,6 +32,15 @@ layui.define([], function(exports) {
             }).fail(function() {
               layui.layer.msg('网络异常，请重试');
             });
+    }
+
+    Common.prototype.exportLog = function(options){
+        var that = this;
+        that.request({
+            method: "POST",
+            url: "/admin/log/export-log/add",
+            data: options
+        });
     }
 
     Common.prototype.codeMiddleware = function(res){

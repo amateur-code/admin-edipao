@@ -62,7 +62,7 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
     , done: function (res) {
         //上传完毕回调
         if (res) {
-            if(res.message != "success"){
+            if(res.code != 0){
                 layer.msg(res.message, {icon: 2});
                 if(res.data && res.data.length){
                     res.data.forEach(function (item, index) {
@@ -86,7 +86,11 @@ layui.use(['form', 'table', 'jquery','layer', 'upload', 'laytpl'], function () {
                     });
                 }
             }else{
-                layer.alert("导入成功");
+                if(res.message){
+                    layer.alert(res.message, {icon: 2})
+                }else{
+                    layer.alert("导入成功");
+                }
                 if(!res.data.excelImportResultList) res.data.excelImportResultList = [];
                 renderTable(res.data.excelImportResultList);
             }

@@ -1,3 +1,4 @@
+var verifyFilter = false;
 // 获取所有司机状态 --同步
 var driverStatusData = {};
 // 	获取所有司机类型 -- 同步
@@ -20,6 +21,9 @@ var approvalFlagData={
     '0':'未审核',
     '1':'已审核'
 }
+var operationData = [
+    {key: 1, value: "待审核"},
+]
 var driveLicenceTypeData = {};
 // 获取城市数据
 var provinceList = [];
@@ -205,7 +209,7 @@ layui.config({
             }
         },*/
         {
-            title: '操作', width: 320, fixed: 'right',toolbar: '#rowBtns'
+            title: '操作',field: "operation", width: 320, fixed: 'right',toolbar: '#rowBtns'
         }
     ];
 
@@ -226,6 +230,7 @@ layui.config({
                     showList = JSON.parse(res.data);
                 }catch(e){}
                 layui.each(tableCols, function(index, item){
+                    if(item.field == "operation") return;
                     if(item.field && showList.indexOf(item.field) == -1){
                         item.hide = true;
                     }else{
@@ -260,12 +265,24 @@ layui.config({
             },
             parseData: function (res) {
                 edipao.codeMiddleware(res);
+                var data = [];
+                res.data = res.data || {};
+                res.data.driverInfoListDtoList = res.data.driverInfoListDtoList || [];
+                res.data.driverInfoListDtoList.forEach(function(item) {
+                    if(verifyFilter){
+                        if(item.approvalDisplay){
+                            data.push(item);
+                        }
+                    }else{
+                        data.push(item);
+                    }
+                });
                 if (res.code == 0) {
                     return {
                         "code": res.code,
                         "msg": res.message,
                         "count": res.data.totalSize,
-                        "data": res.data.driverInfoListDtoList
+                        "data": data
                     };
                 }
             },
@@ -273,6 +290,8 @@ layui.config({
             defaultToolbar: [],
             cols: [tableCols],
             done: function (res, curr, count) {
+                $(window).unbind("resize");
+                resizeTable();
                 if(res.data== null){
                     $('.layui-table-header').css('overflow-x','scroll')
                 }else{
@@ -282,6 +301,39 @@ layui.config({
             }
         });
     };
+    var resizeTime = null;
+    function resizeTable() {
+        var w = "90px";
+        var backw = "320px";
+        var backl = "-1px";
+        var l = "-215px";
+        var dur = 500;
+        if(resizeTime) clearTimeout(resizeTime);
+        resizeTime = setTimeout(function () {
+            $(".layui-table-main td[data-field=operation]").css("border-color","#ffffff").css("background","#ffffff").find(".layui-table-cell").css("width", w).html("");
+            $(".layui-table-box>.layui-table-header th[data-field=operation]").css("border", "none").css("color", "#f2f2f2");
+            var $fixed = $(".layui-table-fixed");
+            $fixed.removeClass("layui-hide").find(".layui-table-body").css("height", "auto");
+            $fixed.find(".layui-table-header").css("overflow", "visible")
+            $fixed.find(".layui-table-filter").css("left","60px");
+            $fixed.find("thead .layui-table-cell").css("position", "relative");
+            if(!$fixed.find(".opeartion_icon").length) $fixed.find("thead .layui-table-cell").append("<i class='layui-icon opeartion_icon layui-icon-prev'></i>");
+            $fixed.animate({"right": l}, dur, function () {
+                $(".opeartion_icon").unbind().on("click", function (e) {
+                    var $this = $(this);
+                    if($this.hasClass("layui-icon-prev")){
+                        $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", backw);
+                        $this.removeClass("layui-icon-prev").addClass("layui-icon-next");
+                        $fixed.animate({"right": backl}, dur);
+                    }else{
+                        $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", w);
+                        $this.removeClass("layui-icon-next").addClass("layui-icon-prev");
+                        $fixed.animate({"right": l}, dur);
+                    }
+                });
+            });
+        }, dur);
+    }
     // 查询
     var driverTypeFilter = [];
     layui.each(driverTypesData,function (index,item) {
@@ -342,7 +394,8 @@ layui.config({
         { field: 'depositStatus', type: 'radio',data:depositStatusFilter },
         { field: 'licenceWarn', type: 'radio', data:licenceWarnFilter },
         { field: 'status', type: 'radio',data:driverStatusFilter },
-        { field: 'approvalFlag', type: 'radio',data:approvalFlagFilter }
+        { field: 'approvalFlag', type: 'radio',data:approvalFlagFilter },
+        // { field: 'operation', type: 'radio',data:operationData }
     ]
     var where = {};
     tableFilterIns = tableFilter.render({
@@ -354,7 +407,13 @@ layui.config({
             where = {
                     loginStaffId: edipao.getLoginStaffId()
                 };
-
+            if(!filters.operation) {
+                verifyFilter = false;
+            }else{
+                // verifyFilter = true;
+                // where["pageSize"] = 60;
+            }
+            delete filters.operation;
             layui.each(filters,function(key, value){
                 if(key=='licenceWarn'){
                     // 证件预警 比如预警是30天, 今天是3月8号, 传值4月8日。
@@ -376,19 +435,21 @@ layui.config({
                     }else{
                         endCode = cityCode[value[key+'End-city']];
                     };
-
-                    var fieldValue = {
-                        'start': {
+                    var fieldValue = {};
+                    if(value[key+'Start-province']!=""&&value[key+'Start-province']!="请选择省份"){
+                        fieldValue.start = {
                             "code": startCode,
                             "province": value[key+'Start-province'],
                             "city": value[key+'Start-city']
-                        },
-                        'end': {
+                        }
+                    }
+                    if(value[key+'End-province']!=""&&value[key+'End-province']!="请选择省份"){
+                        fieldValue.end = {
                             "code": endCode,
                             "province": value[key+'End-province'],
                             "city": value[key+'End-city']
                         }
-                    };
+                    }
                     where['searchFieldDTOList['+ index +'].fieldValue'] = JSON.stringify(fieldValue);
                 }else if(key == 'drivingAge'||key == 'deposit'){
                     // 驾龄、押金
@@ -562,7 +623,7 @@ layui.config({
     function exportExcel() {
         var checkStatus = table.checkStatus('driverList');
         if(checkStatus.data.length > 0){
-            exportXlsx(checkStatus.data)
+            exportXlsx(checkStatus.data);
             return;
         }
         var param = where;
@@ -575,9 +636,10 @@ layui.config({
         }).done(function(res) {
             if (res.code == 0) {
                 if(res.data){
+                    res.data = res.data || {};
+                    res.data.driverInfoListDtoList = res.data.driverInfoListDtoList || [];
                     var data = res.data.driverInfoListDtoList;
                     exportXlsx(data)
-                    exportLog()
                 }
             }
         })
@@ -627,17 +689,18 @@ layui.config({
         excel.exportExcel({
             sheet1: exportData
         }, '司机档案.xlsx', 'xlsx');
+        var ids = [];
+        data.forEach(function(item){ids.push(item.id)});
+        exportLog(ids.join(","));
     }
     // 导出日志
-    function exportLog(){
-        edipao.request({
-            type: 'GET',
-            url: '/admin/log/export-log/add',
-            data: {'operationModule':'3','operationRemark':'导出档案'}
-        }).done(function(res) {
-            if (res.code == 0) {
-            }
-        })
+    function exportLog(ids){
+        var params = {
+            operationModule: 3,
+            operationRemark: "导出司机档案"
+        }
+        if(ids) params.dataPkList = ids;
+        edipao.exportLog(params);
     }
 
     // 获取今天之后几天的日期
@@ -662,13 +725,27 @@ layui.config({
 
     // 自定义验证规则
     form.verify({
-        provinceVerify: function(value) {
-            if(value==''||value=='请选择省份'){
+        provinceVerify: function(value, elem) {
+            var end;
+            var $form = $(elem.form);
+            if(elem.name.indexOf("Start") > -1){
+                end = $form.find("select[name=" + elem.name.replace("Start", "End") + "]").val();
+            }else{
+                end = $form.find("select[name=" + elem.name.replace("End", "Start") + "]").val();
+            }
+            if((value==''||value=='请选择省份')&&(end==''||end=='请选择省份')){
                 return '请选择省份';
             }
         },
-        cityVerify: function(value) {
-            if(value==''||value=='请选择市级'){
+        cityVerify: function(value, elem) {
+            var end;
+            var $form = $(elem.form);
+            if(elem.name.indexOf("Start") > -1){
+                end = $form.find("select[name=" + elem.name.replace("Start", "End") + "]").val();
+            }else{
+                end = $form.find("select[name=" + elem.name.replace("End", "Start") + "]").val();
+            }
+            if((value==''||value=='请选择省份')&&(end==''||end=='请选择省份')){
                 return '请选择市级';
             }
         }

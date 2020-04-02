@@ -56,7 +56,8 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 					filterName = filter.name || filter.field,
 					filterType = filter.type || "input",
 					filterData = filter.data || [],
-					filterUrl = filter.url || "";
+					filterUrl = filter.url || "",
+					radioItem = filter.radioItem || "";
 
 				//插入图标
 				var th = elem.next().find('.layui-table-header th[data-field="'+filterField+'"]');

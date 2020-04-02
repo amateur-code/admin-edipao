@@ -39,6 +39,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     //数据权限
     this.dataPermission = edipao.getDataPermission();
     window.dataPermission = this.dataPermission;
+    this.endParkTimer = null;
+    this.mapAddress = {};
   }
   Edit.prototype.getOrderJson = function(){
     return $.ajax({
@@ -80,7 +82,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     if(!_this.selectData){
       $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList()).done(function (res1, res2, res3, res4) {
         $('.customerList').append(returnOptions(res1[0].data));
-        if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions(res2[0].data));
+        // if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions2(res2[0].data));
+        // $(options.selector).append(returnOptions2(res2[0].data));
         $('.startParkList').append(returnOptions(res3[0].data));
         $('.startWarehouseList').append(returnOptions(res4[0].data));
         _this.selectData = [res1[0].data, res2[0].data, res3[0].data, res4[0].data];
@@ -88,13 +91,22 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       });
     } else {
       $('.customerList').append(returnOptions(_this.selectData[0]));
-      if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions(_this.selectData[1]));
+      // if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions2(_this.selectData[1]));
+      // $(options.selector).append(returnOptions2(_this.selectData[1]));
       $('.startParkList').append(returnOptions(_this.selectData[2]));
       $('.startWarehouseList').append(returnOptions(_this.selectData[3]));
       cb && cb();
     }
     
 
+    function returnOptions2(array){
+      var html = '';
+      html = '<option value="请选择">请选择</option>'
+      for(var i = 0; i < array.length; i ++){
+        html += '<option data-province=' + array[i].endProvince + ' data-city='+array[i].endCity+' data-lng=' +array[i].endLng+ ' data-lat=' +array[i].endLat+ ' data-address=' + array[i].endAddress + ' value="' + array[i].name + '">' + array[i].name + '</option>';
+      }
+      return html;
+    }
     function returnOptions(array){
       var html = '';
       html = '<option value="请选择">请选择</option>'
@@ -127,6 +139,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         data.endProvince = options.province;
         data.endCity = options.city;
       }
+      return [{code: 0, data: {}}]
       return edipao.request({
         url: "/admin/dictionary/getEndAddressList",
         method: "GET",
@@ -160,6 +173,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
 
   Edit.prototype.renderHiddenMap = function(map){
+    var that = this;
+    var myGeo = new Careland.Geocoder();
     $.each($('.location-end-name'), function(i, d){
       var _this = $(this);
       var ac = new Careland.Autocomplete({
@@ -169,7 +184,16 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       ac.setLocation(map);
       ac.setInputForm('seach-location-input' + i);
       ac.addEventListener("onConfirm",function(e){
-        console.log(e.item.poi.gbpoint)
+        // myGeo.getLocation(e.item.poi.point, function (data) {
+        //   that.setCitySelector({
+        //     selector: $("#end_city_selector" + i),
+        //     province: data.addressComponent.province,
+        //     city: data.addressComponent.city,
+        //     type: "end"
+        //   });
+        //   _this.next().val(e.item.poi.gbpoint.lat).next().val(e.item.poi.gbpoint.lng);
+        //   ac.hide();
+        // });
         _this.next().val(e.item.poi.gbpoint.lat).next().val(e.item.poi.gbpoint.lng);
         ac.hide();
       });
@@ -183,12 +207,51 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       ac.setLocation(map);
       ac.setInputForm('seach-location-input-start' + i);
       ac.addEventListener("onConfirm",function(e){
-        console.log(e.item.poi.gbpoint)
+        // myGeo.getLocation(e.item.poi.point, function (data) {
+        //   that.setCitySelector({
+        //     selector: $("#start_city_selector" + i),
+        //     province: data.addressComponent.province,
+        //     city: data.addressComponent.city,
+        //     type: "start"
+        //   });
+        //   _this.next().val(e.item.poi.gbpoint.lat).next().val(e.item.poi.gbpoint.lng);
+        //   ac.hide();
+        // });
         _this.next().val(e.item.poi.gbpoint.lat).next().val(e.item.poi.gbpoint.lng);
         ac.hide();
       });
     });
-
+  }
+  Edit.prototype.setCitySelector = function (options) {
+    if(!options.province || !options.city) return;
+    var _this = this;
+    var selector = options.selector;
+    var provinceSelector = selector.find("." + options.type + "Province");
+    var citySelector = selector.find("." + options.type + "City");
+    var filter = provinceSelector[0].dataset.filter;
+    removeEle(citySelector);
+    provinceList.some(function (item) {
+      if(item.name == options.province){
+        item.cityList.forEach(function (item) {
+          addEle(citySelector, item.name);
+        });
+        return true;
+      }
+    });
+    provinceSelector.val(options.province);
+    citySelector.val(options.city);
+    form.render("select");
+    //if(options.type == "end")_this.setEndAddressSelect(filter, options.province, options.city);
+    function addEle(ele, value) {
+      var optionStr = "";
+      optionStr = "<option value=" + value + " >" + value + "</option>";
+      ele.append(optionStr);
+    }
+    function removeEle(ele) {
+      ele.find("option").remove();
+      var optionStar = "<option value=" + "0" + ">" + "请选择" + "</option>";
+      ele.append(optionStar);
+    }
   }
   Edit.prototype.getStaffList = function(){
     var _this = this;
@@ -424,6 +487,16 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           id: 'seach-location-input-start' + i
         })
       })
+      $.each($('.end_city_selector'), function(i,d){
+        $(this).attr({
+          id: 'end_city_selector' + i
+        })
+      })
+      $.each($('.start_city_selector'), function(i,d){
+        $(this).attr({
+          id: 'start_city_selector' + i
+        })
+      })
       $.each($('.tempLicenseBackImageBox'), function(i,d){
         $(this).attr({
           id: 'tempLicenseBackImageBox' + i
@@ -483,10 +556,89 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           city: truckData.endCity,
           selector: "." + item.filter + "_endCity_select"
         });
+        _this.setEndParkSelect(
+          item.filter,
+          [
+            {
+              "endProvince": truckData.endProvince || "",
+              "endCity": truckData.endCity || "",
+              "endAddress": truckData.endAddress || "",
+              "endLng": truckData.endLng || "",
+              "endLat": truckData.endLat || "",
+              "code": truckData.endPark || "",
+              "name": truckData.endPark || "",
+            }
+          ]
+        );
       });
-      
       _this.bindInputLimit();
+      // _this.bindEndParkInput();
       _this.getMapAddress();
+    }
+  }
+  Edit.prototype.setEndParkSelect = function(filter, data){
+    data = data || [];
+    var _this = this;
+    var $form = $("." + filter);
+    var selector = $(".end_park_selector_" + filter);
+    var input = selector.find(".end_park_search_input");
+    var options = selector.find(".end_park_options");
+    input.unbind().on("input", function(e){
+      var text = e.target.value;
+      if(_this.endParkTimer) clearTimeout(_this.endParkTimer);
+      _this.endParkTimer = setTimeout(function () {
+        if(text.length < 1 || !text) {
+          return options.html(returnOptions2([]));
+        }
+        getEndPark(text).done(function (res) {
+          if(res.code == "0" && res.data){
+            res.data = res.data || [];
+            options.html(returnOptions2(res.data));
+          }
+        });
+      }, 300);
+    });
+    input.on("click", function (e) {
+      selector.find(".layui-form-select").addClass("layui-form-selected");
+    });
+    options.html(returnOptions2(data)).unbind().on("click", function(e){
+      var lat = e.target.dataset.lat||"";
+      var lng = e.target.dataset.lng||"";
+      var address = e.target.dataset.address||"";
+      var city = e.target.dataset.city||"";
+      var province = e.target.dataset.province||"";
+      var name = e.target.dataset.name||"";
+      if(lat == "null") lat == "";
+      if(lng == "null") lng == "";
+      if(address == "null") address == "";
+      // $form.find('.address-map .location-end-name').val(address).next().val(lat).next().val(lng);
+      input.val(name);
+      _this.setCitySelector({
+        selector: $form.find(".end_city_selector"),
+        province: province,
+        city: city,
+        type: "end"
+      });
+    });
+    function getEndPark(keyword) {
+      return edipao.request({
+        method: "GET",
+        url: "/admin/dictionary/getEndAddressList",
+        data: {
+          keyword: keyword
+        }
+      });
+    }
+    function returnOptions2(array){
+      if(array.length < 1){
+        return html = '<dd class="layui-select-tips" value="暂无数据">暂无数据</dd>'
+      }
+      var html = '';
+      html = '<dd class="layui-select-tips" value="请选择">请选择</dd>'
+      for(var i = 0; i < array.length; i ++){
+        html += '<dd data-name=' + array[i].name +  ' data-province=' + array[i].endProvince + ' data-city='+array[i].endCity+' data-lng=' +array[i].endLng+ ' data-lat=' +array[i].endLat+ ' data-address=' + array[i].endAddress + ' value="' + array[i].name + '">' + array[i].name + '</dd>';
+      }
+      return html;
     }
   }
   Edit.prototype.renderUpload = function(index){
@@ -711,7 +863,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             event.target.dataset.type = type;
             _this.openUpdateFee(e, event, layerIndex1);
           });
-          console.log($("#add_fee_item"))
           $("#add_fee_item").unbind().on("click", function(event){
             _this.openAddFeeItem(e, layerIndex1);
           });
@@ -1435,7 +1586,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     //初始将城市数据赋予
     $.each(provinceList, function(i, item) {
       if (provinceText == item.name) {
-        console.log(provinceList[i].cityList)
         for (var j = 0; j < provinceList[i].cityList.length; j++) {
           addEle(city, provinceList[i].cityList[j].name);
         }
@@ -1444,6 +1594,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     
     //选定省份后 将该省份的数据读取追加上
     form.on('select(startProvince)', function(data) {
+      var $form = $(data.elem.form);
       provinceText = data.value;
       $.each(provinceList, function(i, item) {
         if (provinceText == item.name) {
@@ -1451,13 +1602,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           return cityItem;
         }
       });
-      removeEle(city);
+      removeEle($form.find("select[name=startCity]"));
       // removeEle(district);
       $.each(provinceList[cityItem].cityList, function(i, item) {
         addEle(city, item.name);
       })
-      console.log(province)
-      console.log(provinceText)
       //重新渲染select 
       form.render('select');
     });
@@ -1472,7 +1621,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           return cityItem;
         }
       });
-      console.log(cityText)
       // $.each(provinceList[cityItem].cityList, function(i, item) {
       //   if (cityText == item.name) {
       //     for (var n = 0; n < item.areaList.length; n++) {
@@ -1529,6 +1677,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     //选定省份后 将该省份的数据读取追加上
     form.on('select(endProvince)', function(data) {
       var $productSelector = $("."+data.elem.dataset.filter+"_endCity_select");
+      var $form = $(data.elem.form);
       provinceText = data.value;
       $.each(provinceList, function(i, item) {
         if (provinceText == item.name) {
@@ -1537,15 +1686,31 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         }
       });
       removeEle($productSelector);
-      removeEle(city);
-      // removeEle(district);
+      removeEle($form.find("select[name=endCity]"));
       $.each(provinceList[cityItem].cityList, function(i, item) {
         addEle(city, item.name);
       })
       //重新渲染select 
       form.render('select');
     })
-
+    // form.on("select(endPark)", function (data) {
+    //   var lat = data.elem.selectedOptions[0].dataset.lat||"";
+    //   var lng = data.elem.selectedOptions[0].dataset.lng||"";
+    //   var address = data.elem.selectedOptions[0].dataset.address||"";
+    //   var city = data.elem.selectedOptions[0].dataset.city||"";
+    //   var province = data.elem.selectedOptions[0].dataset.province||"";
+    //   if(lat == "null") lat == "";
+    //   if(lng == "null") lng == "";
+    //   if(address == "null") address == "";
+    //   var $form = $(data.elem.form);
+    //   $form.find('.address-map .location-end-name').val(address).next().val(lat).next().val(lng);
+    //   _this.setCitySelector({
+    //     selector: $form.find(".end_city_selector"),
+    //     province: province,
+    //     city: city,
+    //     type: "end"
+    //   });
+    // });
     ////选定市或直辖县后 将对应的数据读取追加上
     form.on('select(endCity)', function(data) {
       cityText = data.value;
@@ -1555,18 +1720,21 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           return cityItem;
         }
       });
-      _this.setEndAddressSelect(data.elem.dataset.filter);
-      form.render('select');
+      //_this.setEndAddressSelect(data.elem.dataset.filter);
+      //form.render('select');
     });
   }
-  Edit.prototype.setEndAddressSelect = function (filter) {
+  Edit.prototype.setEndAddressSelect = function (filter, province, city) {
     //关联选择网点
     var _this = this;
-    var data = form.val(filter);
-    var province = data.endProvince;
-    var city = data.endCity;
+    if(!province || !city){
+      var data = form.val(filter);
+      province = data.endProvince || "";
+      city = data.endCity || "";
+    }
     var $selecter = $("."+filter+"_endCity_select");
     getEndAddressList().done(function (res) {
+      _this.selectData[1] = res.data;
       if(res.code == "0"){
         $selecter.html(returnOptions(res.data));
         $selecter.removeAttr("disabled");
@@ -1578,7 +1746,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       var html = '';
       html = '<option value="请选择">请选择</option>';
       for(var i = 0; i < array.length; i ++){
-        html += '<option value="' + array[i].name + '">' + array[i].name + '</option>';
+          html += '<option data-lng=' +array[i].endLng+ ' data-lat=' +array[i].endLat+ ' data-address=' + array[i].endAddress + ' value="' + array[i].name + '">' + array[i].name + '</option>';
       }
       return html;
     }
@@ -1594,7 +1762,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           endProvince: province,
           endCity: city
         }
-    })
+    });
   }
   }
   Edit.prototype.getMapAddress = function(){
@@ -1631,9 +1799,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             $(this).parents('.address-map').find('input').val($(this).text())
             $('.addressList') && $('.addressList').remove();
           })
-
       });
-      
     })
     $('.getAddressList').blur(function(){
       setTimeout(function(){
@@ -1670,6 +1836,16 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         }
       });
     }
+  }
+  Edit.prototype.bindEndParkInput = function () {
+    var _this = this;
+    $(".end_park_selector").each(function (index, item) {
+      var $this = $(item);
+      var filter = item.dataset.filter;
+      $this.find(".end_park_search_input").on("click", function (e) {
+        $this.find(".layui-form-select").addClass("layui-form-selected");
+      });
+    });
   }
   Edit.prototype.bindEvents = function(){
     var _this = this;
@@ -1755,7 +1931,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
               $(".driver_item").unbind().on("click", function (e) {
                 var index = e.currentTarget.dataset.index;
                 if(index != "none") {
-                  console.log(_this.driverInfoListDto, index)
                   var data = _this.driverInfoListDto[index*1];
                   var driverData = {
                     driverId: data.id,
@@ -1835,7 +2010,16 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             id: 'seach-location-input-start' + i
           })
         })
-        
+        $.each($('.end_city_selector'), function(i,d){
+          $(this).attr({
+            id: 'end_city_selector' + i
+          })
+        })
+        $.each($('.start_city_selector'), function(i,d){
+          $(this).attr({
+            id: 'start_city_selector' + i
+          })
+        })
         $.each($('.tempLicenseBackImageBox'), function(i,d){
           $(this).attr({
             id: 'tempLicenseBackImageBox' + i
@@ -1847,6 +2031,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         form.render();
         _this.setStartSelectCity();
         _this.setEndSelectCity();
+        _this.bindInputLimit();
+        _this.getMapAddress();
+        // _this.bindEndParkInput();
+        _this.setEndParkSelect(filterStr, []);
         _this.setConfigData(function(){
           form.render('select');
         }, {
@@ -1854,13 +2042,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           province: '',
           city: '',
           selector: "." + filterStr + "_endCity_select"
-        });
-        _this.getMapAddress();
-        $(".vinCode_input").unbind().on("input", function (e) {
-          if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);
-        });
-        $(".productCode_input").unbind().on("input", function (e) {
-          if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);
         });
         $(".product_code").unbind().on("blur", function (e) {
           _this.getProductInfo(e);
@@ -1953,13 +2134,15 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
 
   Edit.prototype.showMap = function(){
+    var _this = this;
     $('.selectMapLocation').unbind('click').on('click', function(e){
       var field = e.target.dataset.field;
       $('#seachLocation').val('');
       $('#select-address').text('');
+      _this.mapAddress = {};
       var _t = $(this);
-      var address = '';
-      var height = $(document).scrollTop()
+      var address = "";
+      var height = $(document).scrollTop();
       $('html,body').animate({scrollTop:0},100);
       layer.open({
         type: 1,
@@ -1971,7 +2154,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         scrollbar: false,
         zIndex: 9991, //层优先级
         cancel: function () {
-          address = '';
           $('#seachLocation').val('');
           $('#select-address').text('');
         },
@@ -1980,13 +2162,19 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             layer.msg("请选择地址");
             return false;
           }
-          console.log(address, field)
+          // _this.setCitySelector({
+          //   selector: _t.parents("form").find("." + field + "_city_selector"),
+          //   province: address.province,
+          //   city: address.city,
+          //   type: field
+          // });
+          console.log(address, _this.mapAddress);
+          if(!address) address = _this.mapAddress;
           if(field == "start"){
             _t.parents('.address-map').find('.location-start-name').val(address.name).next().val(address.lat).next().val(address.lng);
           }else{
             _t.parents('.address-map').find('.location-end-name').val(address.name).next().val(address.lat).next().val(address.lng);
           }
-          //address = '';
           $('#seachLocation').val('');
           $('#select-address').text('');
         },
@@ -1997,7 +2185,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           map.enableAutoResize();      
           map.load();
           regionMapView(map, $(this));
-          
         },
         end: function(){
           $('html,body').animate({scrollTop:height},100);
@@ -2009,7 +2196,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           var myGeo = new Careland.Geocoder();
 
           var layer = new Careland.Layer('point', 'layer');
-          var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'https://www.d.edipao.cn/admin/images/center.png',fontColor:'#000'});
+          var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:location.origin+'/images/center.png',fontColor:'#000'});
           layer.setStyle(style);
           map.addLayer(layer);
 
@@ -2032,16 +2219,28 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             layer.clear();
             //创建文本标注点
             var marker = new Careland.Marker('image');
-            marker.setPoint(e.item.poi.point);
-            layer.add(marker);
-            marker.openInfoWindow(mapInfoWin);
-            address = {
-              name: e.item.poi.name,
-              address: e.item.poi.address,
-              lat: e.item.poi.pointGb.lat,
-              lng: e.item.poi.pointGb.lng,
-            }
-            map.centerAndZoom(e.item.poi.point, 15);
+            myGeo.getLocation(e.item.poi.point,function(data){
+              _this.mapAddress = {
+                name: data.address,
+                address: data.address,
+                lat: edipao.kcodeToGb(data.kcode).lat,
+                lng: edipao.kcodeToGb(data.kcode).lng,
+                province: data.addressComponent.province,
+                city: data.addressComponent.city,
+              }
+              address = {
+                name: data.address,
+                address: data.address,
+                lat: edipao.kcodeToGb(data.kcode).lat,
+                lng: edipao.kcodeToGb(data.kcode).lng,
+                province: data.addressComponent.province,
+                city: data.addressComponent.city,
+              }
+              marker.setPoint(data.point);
+              layer.add(marker);
+              marker.openInfoWindow(mapInfoWin);
+              map.centerAndZoom(data.point, 15);
+            });
           });
 
           $('#regionMapPoint').off('click').on('click', function(){
@@ -2065,8 +2264,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
               });
               poiSearch.search(searchTxt);
           })
-
-            
           map.addEventListener('click', function(point){
               var point = point;
               if(!point || typeof (point) != "object"){
@@ -2092,12 +2289,13 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         mapInfoWin.setContent('当前地址：' + data.address);
         mapInfoWin.redraw();
         marker.openInfoWindow(mapInfoWin);
-        console.log(data)
         address = {
           name: data.address,
           address: data.address,
           lat: edipao.kcodeToGb(data.kcode).lat,
           lng: edipao.kcodeToGb(data.kcode).lng,
+          province: data.addressComponent.province,
+          city: data.addressComponent.city,
         }
       }
     })

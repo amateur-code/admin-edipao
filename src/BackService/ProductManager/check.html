@@ -104,7 +104,7 @@
                 <div class="layui-fluid">
                     <div class="layui-row">
                         <div class="layui-col-xs4">
-                            单价:  <span>{{d.detail.unitPrice}}</span>
+                            单价:  <span>{{d.detail.unitPrice}}{{d.detail.supplierType == "unloadCar"?'元/次':'元/升'}}</span>
                             {{# if(d.check.unitPrice){ }}
                             <div><span class="x-red">待审：</span>{{d.check.unitPrice}}</div>
                             {{# } }}

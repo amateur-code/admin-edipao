@@ -60,8 +60,9 @@ layui.config({
                 return '请选择司机类型';
             }
         },
-        driveLicenceTypeVerify: function(value) {
-            if(value==''){
+        driveLicenceTypeVerify: function(value, elem) {
+            var inputVal = $(elem).parent().find("input").val();
+            if(value==''&&inputVal==''){
                 return '请选择驾照类型';
             }
         },
@@ -124,7 +125,7 @@ layui.config({
         },
         accountBankAddressVerify: function(value) {
             if(value.length>300){
-                return '开户行地址不能超过300个字符';
+                return '开户支行不能超过300个字符';
             }
         },
         idLicenceFrontImgVerify:function(value) {
@@ -174,7 +175,7 @@ layui.config({
         },
         accountBankAddressVerify:function(value) {
             if (value == '') {
-                return '请输入开户行地址';
+                return '请输入开户支行';
             }
         }
     });

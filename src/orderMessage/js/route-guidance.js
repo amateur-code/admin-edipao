@@ -164,6 +164,10 @@ layui.config({
                 limit: _t.pageSize,
                 jump: function(obj, first){
                     _t.pageNo = obj.curr;
+                    _t.where = Object.assign(_t.request, {
+                        pageNo: obj.curr,
+                        pageSize: _t.pageSize
+                    });
                     if(first) return;
                     _t.tableRender();
                 }

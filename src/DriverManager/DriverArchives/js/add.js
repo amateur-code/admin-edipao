@@ -15,6 +15,8 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
     // 监听提交
     form.on('submit(add)',
         function(data) {
+            console.log(data)
+
             var wishJourneyVal = []
             $('.wishJourney').each(function () {
                 var startVal1 = $(this).find('.start select[name="province"]').val();
@@ -56,6 +58,8 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
             if(province!='请选择省份'&&city!='请选择市级'){
                 accountCity = province+'-'+city;
             }
+            // 证件类型
+            data.field.driveLicenceType = $(".driveLicenceTypeClass").find("input").val() || data.field.driveLicenceType;
             // 押金状态
             if(data.field.depositStatus=='1'&&data.field.depositTradeNumber==''){
                 $('#depositTradeNumber').focus();
@@ -157,4 +161,7 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
            }
             return false;
         });
+    setTimeout(function () {
+        $(".driveLicenceTypeClass").find("input").removeAttr("readonly");
+    },200);
 });

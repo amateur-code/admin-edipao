@@ -184,7 +184,6 @@
                 'mode' : 'self',//过滤模式
                 'filters' : filtersHeader,//过滤项配置
                 'done': function(filters){
-                    console.log(filters)
                     var index = 0,  
                         where = {
                             loginStaffId: edipao.getLoginStaffId()
@@ -275,6 +274,8 @@
                 url: '/admin/permission/role/list',
                 data: tableWhere
             }).then(function(res) {
+                delete tableWhere.pageSize;
+                delete tableWhere.pageNo;
                 if (res.code == 0) {
                     exportXlsx(res.data.roleDTOList)
                 }
@@ -297,9 +298,20 @@
                 })
                 data.push(dataItem)
             })
+            
             excel.exportExcel({sheet1: data}, '权限管理.xlsx', 'xlsx');
+            var ids = [];
+            list.forEach(function (item) {ids.push(item.roleId)});
+            exportLog(ids.join(","));
         }
-
+        function exportLog(ids){
+            var params = {
+                operationModule: 7,
+                operationRemark: "导出权限数据"
+            }
+            if(ids) params.dataPkList = ids;
+            edipao.exportLog(params);
+        }
         table.on('tool(list)', handleEvent);
         table.on('toolbar(list)', handleEvent);
         table.on('checkbox(list)', handleEvent);
