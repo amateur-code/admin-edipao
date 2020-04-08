@@ -264,6 +264,7 @@
             }).then(function(res) {
                 if (res.code == 0) {
                     exportXlsx(res.data.tradeRecordRespList);
+                    return;
                     var data = [], list = res.data.tradeRecordRespList;
                     list = [{}].concat(list);
                     layui.each(list, function(index2, item2) {
@@ -272,8 +273,10 @@
                             if(item.field && item.hide != true){
                                 if(index2 == 0){
                                     dataItem[item.field] = item.title; 
+                                }else if(item.field == "tradeStatus"){
+                                    dataItem[item.field] = item2["tradeStatusDesc"];
                                 }else{
-                                    dataItem[item.field] = item2[item.field] || '--'
+                                    dataItem[item.field] = item2[item.field] || '--';
                                 }
                             } 
                         })
@@ -292,6 +295,8 @@
                     if(item.field && item.hide != true){
                         if(index2 == 0){
                             dataItem[item.field] = item.title; 
+                        }else if(item.field == "tradeStatus"){
+                            dataItem[item.field] = item2["tradeStatusDesc"];
                         }else{
                             dataItem[item.field] = item2[item.field] || '--'
                         }

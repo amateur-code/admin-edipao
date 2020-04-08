@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" class="x-admin-sm">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>司机档案</title>
+	<meta name="renderer" content="webkit|ie-comp|ie-stand" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="viewport"
+		content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+	<meta http-equiv="Expires" content="-1" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<link rel="stylesheet" href="../../css/font.css" />
+	<link rel="stylesheet" href="../../css/xadmin.css?VERSION" />
+	<link rel="stylesheet" href="./css/all.css?VERSION">
+	<script type="text/javascript" src="../../js/jquery.min.js"></script>
+	<script src="../../lib/layui/layui.js" charset="utf-8"></script>
+	<script src="../../js/common.js?VERSION"></script>
+	<!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<style>
+		.dot-add .layui-upload-drag-title {
+			width: 180px;
+			text-align: center;
+			margin: auto;
+			position: relative;
+		}
+
+		.dot-add .layui-upload-drag {
+			margin: auto;
+			width: 180px;
+			height: 130px;
+			padding: 0;
+			position: relative;
+		}
+
+		.dot-add .layui-upload-drag p {
+			width: 100%;
+			position: absolute;
+			bottom: 0px;
+			background: rgba(0, 0, 0, 0.35);
+			color: #fff;
+			text-align: center;
+		}
+
+		.dot-add .layui-text-align {
+			text-align: center;
+		}
+
+		.dot-add .sample-graph {
+			color: #3490e9;
+			cursor: pointer;
+			text-decoration: underline;
+			margin-left: 10px;
+			position: absolute;
+			right: 0px;
+		}
+
+		.dot-add .wishJourney-btn-add {
+			color: #3490e9;
+			margin-left: 20px;
+			-moz-user-select: none;
+			/*火狐*/
+			-webkit-user-select: none;
+			/*webkit浏览器*/
+			-ms-user-select: none;
+			/*IE10*/
+			-khtml-user-select: none;
+			/*早期浏览器*/
+			user-select: none;
+			cursor: pointer;
+		}
+
+		.dot-add .check-line {
+			color: #3490e9;
+			-moz-user-select: none;
+			/*火狐*/
+			-webkit-user-select: none;
+			/*webkit浏览器*/
+			-ms-user-select: none;
+			/*IE10*/
+			-khtml-user-select: none;
+			/*早期浏览器*/
+			user-select: none;
+			cursor: pointer;
+			text-decoration: underline;
+		}
+
+		.dot-add .tips {
+			font-family: "微软雅黑", sans-serif;
+			font-weight: 400;
+			font-style: normal;
+			color: #f59a23;
+		}
+
+		.dot-add .layui-form-item {
+			position: relative;
+		}
+
+		.dot-add .layui-input-block {
+			/*margin-left: 0px;*/
+			line-height: 38px;
+		}
+
+		.upload-bg {
+			width: 180px;
+			height: 130px;
+			display: block;
+			background: url("../../images/upload-bg.svg") no-repeat center;
+		}
+
+		.x-city {
+			float: left;
+		}
+
+		.dot-add .remove-btn {
+			color: #ee5b22;
+			text-decoration: underline;
+			margin-left: 20px;
+			line-height: 32px;
+			-moz-user-select: none;
+			/*火狐*/
+			-webkit-user-select: none;
+			/*webkit浏览器*/
+			-ms-user-select: none;
+			/*IE10*/
+			-khtml-user-select: none;
+			/*早期浏览器*/
+			user-select: none;
+			cursor: pointer;
+		}
+
+		.dot-add .no-data {
+			color: #aaaaaa;
+		}
+
+		.dot-add .name-color {
+			color: #3490e9;
+		}
+
+		.dot-add .layui-form-label {
+			width: 110px;
+		}
+
+		.dot-add .check {
+			position: absolute;
+			bottom: -25px;
+			width: 100%;
+		}
+
+		.dot-add .layui-card-header {
+			font-weight: bold;
+		}
+
+		#wishJourneyCheck {
+			position: relative;
+			top: -20px;
+		}
+
+		.wishJourneyCheck-label {
+			position: absolute;
+			padding: 9px 15px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="layui-fluid dot-add">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md12">
+				<form class="layui-form" id="view"></form>
+			</div>
+		</div>
+	</div>
+	<script id="preview" type="text/html">
+		<div class="layui-card layui-form">
+			<div class="layui-card-header">基础信息</div>
+			<div class="layui-card-body layui-row layui-col-space10">
+				<div class="layui-col-md4">
+					<div class="layui-form-item">
+						<label class="layui-form-label">网点名称：</label>
+						<div class="layui-input-block">
+							<span class="name-color" id="name">{{d.detail.name}}</span>
+						</div>
+						{{# if(d.check.name){ }}
+						<div class="check"><label class="layui-form-label x-red">待审：</label>
+							<div class="layui-input-block">{{d.check.name}}</div>
+						</div>
+						{{# } }}
+					</div>
+				</div>
+				<div class="layui-col-md4">
+					<div class="layui-form-item">
+						<label class="layui-form-label">所在省市：</label>
+						<div class="layui-input-block">
+							<span class="name-color" name="phone" id="phone">{{d.detail.phone}}</span>
+						</div>
+						{{# if(d.check.phone){ }}
+						<div class="check"><label class="layui-form-label x-red">待审：</label>
+							<div class="layui-input-block">{{d.check.phone}}</div>
+						</div>
+						{{# } }}
+					</div>
+				</div>
+				<div class="layui-col-md4">
+					<div class="layui-form-item">
+						<label class="layui-form-label">详细地址：</label>
+						<div class="layui-input-block">
+							<span class="name-color" name="idNum" id="idNum">{{d.detail.idNum}}</span>
+						</div>
+						{{# if(d.check.idNum){ }}
+						<div class="check"><label class="layui-form-label x-red">待审：</label>
+							<div class="layui-input-block">{{d.check.idNum}}</div>
+						</div>
+						{{# } }}
+					</div>
+				</div>
+				<div class="layui-col-md4">
+					<div class="layui-form-item">
+						<label class="layui-form-label">地址代码：</label>
+						<div class="layui-input-block">
+							<span class="name-color" name="dotType" id="dotType">{{d.detail.dotType}}</span>
+						</div>
+						{{# if(d.check.dotType){ }}
+						<div class="check"><label class="layui-form-label x-red">待审：</label>
+							<div class="layui-input-block">{{d.check.dotType}}</div>
+						</div>
+						{{# } }}
+					</div>
+				</div>
+				<div class="layui-col-md4">
+					<div class="layui-form-item">
+						<label class="layui-form-label">联系人：</label>
+						<div class="layui-input-block">
+							<span class="name-color" name="dotLicenceType" id="dotLicenceType">{{d.detail.dotLicenceType}}</span>
+						</div>
+						{{# if(d.check.dotLicenceType){ }}
+						<div class="check"><label class="layui-form-label x-red">待审：</label>
+							<div class="layui-input-block">{{d.check.dotLicenceType}}</div>
+						</div>
+						{{# } }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="fee_container" class="layui-card layui-form">
+			<div class="layui-card-header">费用结构</div>
+
+			<div class="layui-card-body layui-row layui-col-space10">
+				<div class="layui-col-md4">
+					<div class="layui-form-item">
+						<label class="layui-form-label">发车仓库：</label>
+						<div class="layui-input-block">
+							<span class="name-color" name="deposit" id="deposit">{{d.detail.deposit}}</span>
+						</div>
+						{{# if(d.check.deposit){ }}
+						<div class="check"><label class="layui-form-label x-red">待审：</label>
+							<div class="layui-input-block">{{d.check.deposit}}</div>
+						</div>
+						{{# } }}
+					</div>
+				</div>
+				<div class="layui-col-md4">
+					<div class="layui-form-item">
+						<label class="layui-form-label">运费模板：</label>
+						<div class="layui-input-block">
+							<span class="name-color" name="deposit" id="deposit">{{d.detail.deposit}}</span>
+							&nbsp;&nbsp;
+							<span class="name-color view_fee">查看费用结构</span>
+						</div>
+						{{# if(d.check.deposit){ }}
+						<div class="check"><label class="layui-form-label x-red">待审：</label>
+							<div class="layui-input-block">{{d.check.deposit}}</div>
+						</div>
+						{{# } }}
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		<div class="layui-card layui-form">
+			<div class="layui-card-header">其他信息</div>
+			<div class="layui-card-body layui-row layui-col-space10">
+				<div class="layui-col-md4">
+					<div class="layui-form-item">
+						<label class="layui-form-label">备注：</label>
+						<div class="layui-input-block">
+							<span class="name-color" name="deposit" id="deposit">{{d.detail.deposit}}</span>
+						</div>
+						{{# if(d.check.deposit){ }}
+						<div class="check"><label class="layui-form-label x-red">待审：</label>
+							<div class="layui-input-block">{{d.check.deposit}}</div>
+						</div>
+						{{# } }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</script>
+	<script src="js/view.js?VERSION"></script>
+</body>
+
+</html>

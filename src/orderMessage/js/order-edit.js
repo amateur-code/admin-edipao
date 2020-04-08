@@ -1,3 +1,24 @@
+function num(obj) {
+  var fa = ''
+      if (obj.classList.contains('allowMinus')) { //或者$(this).hasClass('allowMinus')
+      obj.value.substring(0, 1) === '-' && (fa = '-')
+      }
+      if (obj.value !== '' && obj.value.substr(0, 1) === '.') {
+        obj.value = "";
+      }
+      obj.value = obj.value.replace(/^0*(0\.|[1-9])/, '$1');//解决 粘贴不生效
+      console.log(obj.value)
+      obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
+      obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+      obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+      obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数
+      if (obj.value.indexOf(".") < 0 && obj.value !== "") {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+        if (obj.value.substr(0, 1) === '0' && obj.value.length === 2) {
+          obj.value = obj.value.substr(1, obj.value.length);
+        }
+      }
+      obj.value = fa + obj.value
+}
 layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function () {
   var form = layui.form;
   var layer = layui.layer;
@@ -97,8 +118,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       $('.startWarehouseList').append(returnOptions(_this.selectData[3]));
       cb && cb();
     }
-    
-
     function returnOptions2(array){
       var html = '';
       html = '<option value="请选择">请选择</option>'
@@ -311,6 +330,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     });
   }
   Edit.prototype.setFeeList = function(flag, type, newObj){
+    return;
     //保存费用项
     var _this = this;
     if(flag){
@@ -434,6 +454,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     laytpl($("#income_info_tpl").html()).render(data, function(html){
       $("#income_info").html(html);
       form.render();
+    });
+    laytpl($("#fee_form_tpl").html()).render({}, function (html) {
+      $("#form_fee_container").html(html);
     });
     if(data.driverId){
       form.val("form_dispatch", data);
@@ -631,10 +654,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     }
     function returnOptions2(array){
       if(array.length < 1){
-        return html = '<dd class="layui-select-tips" value="暂无数据">暂无数据</dd>'
+        return html = '<dd class="layui-select-tips disabled" value="暂无数据">暂无数据</dd>'
       }
       var html = '';
-      html = '<dd class="layui-select-tips" value="请选择">请选择</dd>'
+      html = '<dd class="layui-select-tips disabled" value="请选择">请选择</dd>'
       for(var i = 0; i < array.length; i ++){
         html += '<dd data-name=' + array[i].name +  ' data-province=' + array[i].endProvince + ' data-city='+array[i].endCity+' data-lng=' +array[i].endLng+ ' data-lat=' +array[i].endLat+ ' data-address=' + array[i].endAddress + ' value="' + array[i].name + '">' + array[i].name + '</dd>';
       }
@@ -1162,20 +1185,23 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     ascriptionData.followOperatorPhone = ascriptionData.followOperator[1];
     ascriptionData.followOperator = ascriptionData.followOperator[0];
 
-
+    var startLatLngError = false;
+    var startLatLngErrorTruck = [];
+    var endLatLngError = false;
+    var endLatLngErrorTruck = [];
     var dispatchData = form.val("form_dispatch");
-    _this.prePay = _this.prePay.map(function (item, index) {
-      item.val = dispatchData["prePay_" + index] || 0;
-      return item;
-    });
-    _this.arrivePay = _this.arrivePay.map(function (item, index) {
-      item.val = dispatchData["arrivePay_" + index] || 0;
-      return item;
-    });
-    _this.tailPay = _this.tailPay.map(function (item, index) {
-      item.val = dispatchData["tailPay_" + index] || 0;
-      return item;
-    });
+    // _this.prePay = _this.prePay.map(function (item, index) {
+    //   item.val = dispatchData["prePay_" + index] || 0;
+    //   return item;
+    // });
+    // _this.arrivePay = _this.arrivePay.map(function (item, index) {
+    //   item.val = dispatchData["arrivePay_" + index] || 0;
+    //   return item;
+    // });
+    // _this.tailPay = _this.tailPay.map(function (item, index) {
+    //   item.val = dispatchData["tailPay_" + index] || 0;
+    //   return item;
+    // });
 
     var totalIncome = 0;
     var totalManageFee = 0;
@@ -1193,6 +1219,14 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       if(itemData.endCity == "0" || itemData.endCity == "请选择") itemData.endCity = "";
       if(itemData.endProvince == "0" || itemData.endProvince == "请选择") itemData.endProvince = "";
       if(itemData.settleWay == "0" || itemData.settleWay == "请选择") itemData.settleWay = "";
+      if(!itemData.startLat || !item.startLng || itemData.startLat == "" || itemData.startLat*1 == 0 || itemData.startLng == "" || itemData.startLng*1 == 0){
+        startLatLngError = true;
+        startLatLngErrorTruck.push(itemData.vinCode);
+      }
+      if(!itemData.endLat || !itemData.endLng || itemData.endLat == "" || itemData.endLat*1 == 0 || itemData.endLng == "" || itemData.endLng*1 == 0){
+        endLatLngError = true;
+        endLatLngErrorTruck.push(itemData.vinCode);
+      }
       var truckItem = {
         truckId: itemData.id||0,
         masterFlag: itemData.masterFlag == "on" ? "否" : "是",
@@ -1252,6 +1286,14 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
       truckUpdateReqList.push(truckItem);
     });
+    // if(startLatLngError){
+    //   layer.msg("车辆 " + startLatLngErrorTruck.join(",") + " 发车地址经纬度无效", {icon: 2});
+    //   return;
+    // }
+    if(endLatLngError){
+      layer.msg("车辆 " + endLatLngErrorTruck.join(",") + " 收车地址经纬度无效", {icon: 2});
+      return;
+    }
     data.id = _this.orderId;
     data.loginStaffId = _this.user.staffId || "";
     data.orderNo = _this.orderNo || "";
@@ -1280,34 +1322,34 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       data.totalManageFee = totalManageFee || 0;
     }
 
-    var pres = JSON.parse(JSON.stringify(_this.prePay));
-    var arrives = JSON.parse(JSON.stringify(_this.arrivePay));
-    var tails = JSON.parse(JSON.stringify(_this.tailPay));
+    // var pres = JSON.parse(JSON.stringify(_this.prePay));
+    // var arrives = JSON.parse(JSON.stringify(_this.arrivePay));
+    // var tails = JSON.parse(JSON.stringify(_this.tailPay));
     
-    //费用项
-    if(_this.dataPermission.canViewOrderCost != "Y"){
-      pres = _this.orderDataBackUp.prePayFeeItems;
-      arrives = _this.orderDataBackUp.arrivePayFeeItems;
-      tails = _this.orderDataBackUp.tailPayFeeItems;
-    }
-    var feeItemErrorFlag = false;
-    pres.forEach(function(item){
-      if(item.key == "油")item.unit = "升";
-      if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
-    });
-    arrives.forEach(function(item){
-      if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
-    });
-    tails.forEach(function(item){
-      if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
-    });
-    if(feeItemErrorFlag){
-      layer.msg("收费项金额不正确", {icon: 2});
-      return;
-    }
-    data.prePay = JSON.stringify(pres);
-    data.arrivePay = JSON.stringify(arrives);
-    data.tailPay = JSON.stringify(tails);
+    // //费用项
+    // if(_this.dataPermission.canViewOrderCost != "Y"){
+    //   pres = _this.orderDataBackUp.prePayFeeItems;
+    //   arrives = _this.orderDataBackUp.arrivePayFeeItems;
+    //   tails = _this.orderDataBackUp.tailPayFeeItems;
+    // }
+    // var feeItemErrorFlag = false;
+    // pres.forEach(function(item){
+    //   if(item.key == "油")item.unit = "升";
+    //   if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
+    // });
+    // arrives.forEach(function(item){
+    //   if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
+    // });
+    // tails.forEach(function(item){
+    //   if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
+    // });
+    // if(feeItemErrorFlag){
+    //   layer.msg("收费项金额不正确", {icon: 2});
+    //   return;
+    // }
+    // data.prePay = JSON.stringify(pres);
+    // data.arrivePay = JSON.stringify(arrives);
+    // data.tailPay = JSON.stringify(tails);
 
     data.truckUpdateReqList = truckUpdateReqList || "";
     if(data.orderType == 1){

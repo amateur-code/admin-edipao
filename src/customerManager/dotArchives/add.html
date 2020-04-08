@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en"  class="x-admin-sm">
+<head>
+  <meta charset="UTF-8">
+  <title>网点档案</title>
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+  <meta http-equiv="Expires" CONTENT="-1">
+  <meta http-equiv="Cache-Control" CONTENT="no-cache">
+  <meta http-equiv="Pragma" CONTENT="no-cache">
+  <link rel="stylesheet" href="../../css/font.css">
+  <link rel="stylesheet" href="../../lib/layAutoComplete/layuiAutocomplete.css">
+  <link rel="stylesheet" href="../../css/xadmin.css?VERSION">
+  <link rel="stylesheet" href="./css/all.css?VERSION">
+	<link rel="stylesheet" href="./css/add.css?VERSION">
+  <script src="../../js/jquery.min.js"></script>
+  <script src="../../lib/layui/layui.js" charset="utf-8"></script>
+  <script src="https://mapapi.careland.com.cn/api/?key=6012dcd6278a2d4db3840604&v=1.3"></script>
+  <script src="../../js/common.js?VERSION"></script>
+	<script src="./js/area.js?VERSION"></script>
+	<script src="./js/xcity.js?VERSION"></script>
+	<script src="./js/dotCommon.js?VERSION"></script>
+  <script src="./js/add.js?VERSION"></script>
+  <!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="layui-fluid dot-add">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <form class="layui-form">
+        <div class="layui-card layui-form">
+          <div class="layui-card-header">基础信息</div>
+          <div class="layui-card-body layui-row layui-col-space10">
+            <div class="layui-col-md4">
+              <div class="layui-form-item">
+                <div><span class="x-red">*</span>网点名称</div>
+                <div class="layui-input-block">
+                  <input type="text" name="name" id="name" lay-verify="nameVerify" placeholder="请输入网点名称" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+            </div>
+            <div class="layui-col-md4">
+              <div class="layui-form-item">
+                <div><span class="x-red">*</span>所在省市</div>
+                <div class="layui-input-block layui-row x-city" id="accountCity">
+                  <div class="layui-col-md6" style="margin:0;width:50%;">
+                      <select name="province" class="province" lay-verify="required" lay-search lay-filter="province">
+                          <option value="">省份</option>
+                      </select>
+                  </div>
+                  <div class="layui-col-md6" style="margin:0;width:50%;">
+                      <select name="city" class="city" lay-verify="required" lay-search lay-filter="city">
+                          <option value="">地级市</option>
+                      </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="layui-col-md4">
+              <div class="layui-form-item">
+                <div><span class="x-red">*</span>详细地址</div>
+                <div class="layui-input-block layui-row">
+                  <div id="map"></div>
+                  <div class="layui-col-md8">
+                    <input type="text" id="detailAddress" name="detailAddress" lay-verify="addressVerify" autocomplete="off" class="layui-input" placeholder="请选择地址">
+                  </div>
+                  <div class="layui-col-md3">
+                    <button type="button" class="layui-btn" id="openMap">选择</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="layui-col-md4">
+              <div class="layui-form-item">
+                <div><span class="x-red">*</span>地址代码</div>
+                <div class="layui-input-block">
+                  <input type="text" name="addressCode" id="addressCode" lay-verify="required|codeVerify" placeholder="请输入地址代码" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+            </div>
+            <div class="layui-col-md4">
+              <div class="layui-form-item">
+                <div>联系人</div>
+                <div class="layui-input-block layui-row">
+                  <div class="layui-col-md4" style="margin:0;">
+                    <input type="text" name="contactName" id="contacName" placeholder="请输入联系人姓名" autocomplete="off" class="layui-input">
+                  </div>
+                  <div class="layui-col-md8" style="margin:0;">
+                    <input type="text" name="contactPhone" id="contactPhone" lay-verify="phone" placeholder="请输入联系人手机号" autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="fee_container" class="layui-card layui-form" >
+          <div class="layui-card-header">费用结构</div>
+        </div>
+        <div class="layui-card layui-form" >
+          <div class="layui-card-header">其他信息</div>
+          <div class="layui-card-body layui-row layui-col-space10">
+            <div class="layui-col-md12">
+              <div class="layui-form-item">
+                <div>备注</div>
+                <div class="layui-input-block">
+                  <textarea name="remark" placeholder="请输入备注" class="layui-textarea"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="layui-form-item layui-text-align">
+              <button class="layui-btn layui-bg-gray" lay-filter="cancel" id="addCancel" type="button">
+                  &emsp;取消&emsp;
+              </button>
+              <button class="layui-btn layui-bg-blue" lay-filter="submit" lay-submit>
+                  &emsp;确认&emsp;
+              </button>
+          </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script id="fee_template" type="text/html">
+	<div class="layui-card-body layui-row layui-col-space10 fee_row {{'fee_row' + d.index}}">
+		<div class="layui-col-md4">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label"><span class="x-red">*</span>发车仓库</label>
+					<div class="layui-input-inline">
+            <select name="province" class="province" lay-verify="required" lay-search lay-filter="province">
+              <option class="layui-select-tips" disabled value="">请选择</option>
+            </select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="layui-col-md4">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label"><span class="x-red">*</span>运费模板</label>
+					<div class="layui-input-inline">
+            <select name="province" class="province" lay-verify="required" lay-search lay-filter="province">
+              <option class="layui-select-tips" disabled value="">请选择</option>
+            </select>
+            <span class="name-color view_fee float-right">查看费用结构</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="layui-col-md4">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					{{# if(d.first){ }}
+					<button id="add_fee" class="layui-btn layui-btn-normal" type="button">
+						&emsp;+添加&emsp;
+					</button>
+					{{# }else{ }}
+					<button data-filter="{{'fee_row' + d.index}}" type="button" class="layui-btn layui-btn-danger fee_remove">
+						&emsp;移除&emsp;
+					</button>
+					{{# } }}
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<script id="selectMapDialog" type="text/html">
+  <div class="select-map-dialog">
+      <div id="select-map"></div>
+      <div style="padding-top: 10px;text-align: center;">当前选择地址：<span id="select-detailAddress"></span></div>
+      <div class="select-location">
+          <input class="location-name" name="keyword" id="seachLocation" autocomplete="off" placeholder="请输入位置" value=""/>
+          <button type="button" class="layui-btn layui-btn-sm select-btn" id="regionMapPoint">搜索</button>
+      </div>
+  </div>
+</script>
+</body>
+</html>

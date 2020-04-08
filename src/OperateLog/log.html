@@ -89,7 +89,7 @@
             cols: [
                 [ //表头
                     { field: 'operationTime', title: '时间', width: 200,templet: function(d){
-                        return  util.toDateString(d.operationTime, 'yyyy-MM-dd HH:mm:ss')
+                        return  util.toDateString(d.operationTime.replace(/-/g, "/"), 'yyyy-MM-dd HH:mm:ss')
                     } },
                     { field: 'operationStaffName', title: '操作人', width: 100 },
                     { field: 'operationType', title: '操作类型' , width: 200},

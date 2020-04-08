@@ -111,6 +111,7 @@
   white-space: nowrap;
 }
 .btn_container{
+  margin-top: 50px;
   margin-bottom: 20px;
 }
 .no_border{
@@ -232,4 +233,37 @@
 .end_park_search_input{
   position: absolute;
   z-index: 100;
+}
+.form_fee{
+  .layui-form-item{
+    .layui-inline{
+      margin-right: 0;
+    }
+    .relative{
+      position: relative;
+      .blue{
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: -3px;
+      }
+    }
+  }
+  input:read-only{
+    pointer-events: none;
+    background-color: #eeeeee;
+  }
+}
+.relative{
+  position: relative;
+  .input_unit{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 8px;
+    color: #666666;
+    &+input{
+      padding-right: 20px;
+    }
+  }
 }

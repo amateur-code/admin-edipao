@@ -128,9 +128,17 @@
             edipao.tokenExpired()
         }
 
+        
+        
         // 打开页面初始
         xadmin.init();
         var user = layui.sessionData('user');
+
+        if(location.href.indexOf("test.edipao.cn") > -1){
+            user.funcPermissionDTOList.unshift({resourceId: 500, pid: 50, name: "网点档案", url: "./customerManager/dotArchives/list.html", icon: "#", type: 1})
+            user.funcPermissionDTOList.unshift({resourceId: 50, pid: 0, name: "客户管理", url: "#", icon: "#", type: 0})
+        }
+
         if (user) {
             $('#userName').html(user.name)
             laytpl(navTpl.innerHTML).render({ list: user.funcPermissionDTOList }, function(html) {

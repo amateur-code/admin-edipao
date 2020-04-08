@@ -318,23 +318,26 @@
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <label class="layui-form-label text_left form_label"><span class="red">*</span>客户里程(公里)</label><br>
-                            <div class="layui-input-inline">
+                            <label class="layui-form-label text_left form_label"><span class="red">*</span>客户里程</label><br>
+                            <div class="layui-input-inline relative">
+                                <span class="input_unit">km</span>
                                 <input type="text" name="customerMileage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
-                            <label class="layui-form-label text_left form_label"><span class="red">*</span>收入金额(元)</label><br>
-                            <div class="layui-input-inline">
-                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{d.income=='*'?'disabled':''}} data-filter="CARFORM" type="text" name="income" autocomplete="off" class="layui-input car_income">
+                            <label class="layui-form-label text_left form_label"><span class="red">*</span>收入金额</label><br>
+                            <div class="layui-input-inline relative">
+                                <span class="input_unit">元</span>
+                                <input onkeyup="num(this)" {{d.income=='*'?'disabled':''}} data-filter="CARFORM" type="text" name="income" autocomplete="off" class="layui-input car_income">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                            <label class="layui-form-label text_left form_label"><span class="red">*</span>管理费(元)</label><br>
-                            <div class="layui-input-inline">
-                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{d.manageFee=='*'?'disabled':''}} data-filter="CARFORM" type="text" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
+                            <label class="layui-form-label text_left form_label"><span class="red">*</span>管理费</label><br>
+                            <div class="layui-input-inline relative">
+                                <span class="input_unit">元</span>
+                                <input onkeyup="num(this)" {{d.manageFee=='*'?'disabled':''}} data-filter="CARFORM" type="text" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -350,9 +353,10 @@
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
-                            <label class="layui-form-label text_left form_label"><span class="red">*</span>收入单价(元/km)</label><br>
-                            <div class="layui-input-inline" style="position: relative;">
-                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{d.pricePerMeliage=='*'?'disabled':''}} type="text" name="pricePerMeliage" autocomplete="off" class="layui-input"><span class="price_unit">元/km</span>
+                            <label class="layui-form-label text_left form_label"><span class="red">*</span>收入单价</label><br>
+                            <div class="layui-input-inline relative">
+                                <span class="input_unit">元/km</span>
+                                <input onkeyup="num(this)" {{d.pricePerMeliage=='*'?'disabled':''}} type="text" name="pricePerMeliage" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -481,19 +485,169 @@
                     </div>
                     <div id="fee_list_container"></div>
                 </div>
-                <div id="btn_container" class="btn_container">
-                    <div class="layui-row">
-                        <div class="layui-col-md1 text_center layui-col-md-offset5">
-                            <div id="btn_cancel" class="layui-btn layui-btn-primary">取消</div>
-                        </div>
-                        <div class="layui-col-md1 text_center">
-                            <div id="btn_confirm" class="layui-btn layui-btn-normal">确认</div>
+                
+            </form>
+        </div>
+        <div id="form_fee_container" class="layui-row layui-col-space15 page_block">
+                
+        </div>
+    </div>
+    <script id="fee_form_tpl" type="text/html">
+        <form lay-filter="form_fee" class="layui-form form_fee">
+            <div class="page-header border-bottom">
+                <div class="layui-row">
+                    <div class="layui-col-md6">
+                        <div class="title">运费信息</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form_item_container">
+                <div class="layui-form-item layui-row">
+                    <div class="layui-inline layui-col-md3">
+                        <label class="layui-form-label text_left form_label">承运公里数</label><br>
+                        <div class="layui-input-inline relative">
+                            <span class="input_unit">km</span>
+                            <input disabled type="text" name="" lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>
+            <div class="form_item_container">
+                <div class="layui-form-item layui-row layui-col-space30">
+                    <div class="layui-inline layui-col-md4">
+                        <label class="layui-form-label text_left form_label">应给油</label><br>
+                        <div class="layui-input-inline layui-row">
+                            <div class="layui-col-md7 relative">
+                                <span class="input_unit">升</span>
+                                <input type="text" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-col-md5">
+                                <div class="blue">规定：20.00 升/百公里</div>
+                                <div class="blue">实际：20.00 升/百公里</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md4">
+                        <label class="layui-form-label text_left form_label"><span class="red">*</span>油</label><br>
+                        <div class="layui-input-inline layui-row">
+                            <div class="layui-col-md7 relative">
+                                <span class="input_unit">升</span>
+                                <input type="text" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-col-md5">
+                                <div class="blue">油箱容量：200升</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md4">
+                        <label class="layui-form-label text_left form_label"><span class="red">*</span>油转现</label><br>
+                        <div class="layui-input-inline layui-row  layui-col-space14">
+                            <div class="layui-col-md4 relative">
+                                <span class="input_unit">升</span>
+                                <input readonly type="text" name="" autocomplete="off" class="layui-input">
+                                <span class="blue">x</span>
+                            </div>
+                            <div class="layui-col-md4 relative">
+                                <span class="input_unit">元/升</span>
+                                <input readonly type="text" name="" autocomplete="off" class="layui-input">
+                                <span class="blue">=</span>
+                            </div>
+                            <div class="layui-col-md4 relative">
+                                <span class="input_unit">元</span>
+                                <input readonly type="text" name="" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form_item_container">
+                <div class="layui-form-item layui-row layui-col-space30">
+                    <div class="layui-inline layui-col-md4">
+                        <label class="layui-form-label text_left form_label"><span class="red">*</span>现金</label><br>
+                        <div class="layui-input-inline layui-row">
+                            <div class="layui-col-md7 relative">
+                                <span class="input_unit">元</span>
+                                <input type="text" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-col-md5">
+                                <div class="blue">规定：3.00 元/km</div>
+                                <div class="blue">实际：20.00 元/km</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form_item_container">
+                <div class="layui-form-item layui-row layui-col-space30">
+                    <div class="layui-inline layui-col-md4">
+                        <label class="layui-form-label text_left form_label">总现金</label><br>
+                        <div class="layui-input-inline layui-row">
+                            <div class="layui-col-md7 relative">
+                                <span class="input_unit">元</span>
+                                <input readonly type="text" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-col-md5">
+                                <div class="blue">现金+油转现</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form_item_container">
+                <div class="layui-form-item layui-row layui-col-space30">
+                    <div class="layui-inline layui-col-md4">
+                        <label class="layui-form-label text_left form_label"><span class="red">*</span>预付现金</label><br>
+                        <div class="layui-input-inline layui-row">
+                            <div class="layui-col-md7 relative">
+                                <span class="input_unit">元</span>
+                                <input type="text" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-col-md5">
+                                <div class="blue">规定：50.00%</div>
+                                <div class="blue">实际：20.00%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md4">
+                        <label class="layui-form-label text_left form_label"><span class="red">*</span>到付现金</label><br>
+                        <div class="layui-input-inline layui-row">
+                            <div class="layui-col-md7 relative">
+                                <span class="input_unit">元</span>
+                                <input type="text" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-col-md5">
+                                <div class="blue">规定：50.00%</div>
+                                <div class="blue">实际：20.00%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md4">
+                        <label class="layui-form-label text_left form_label"><span class="red">*</span>尾款现金</label><br>
+                        <div class="layui-input-inline layui-row">
+                            <div class="layui-col-md7 relative">
+                                <span class="input_unit">元</span>
+                                <input readonly type="text" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-col-md5">
+                                <div class="blue">规定：50.00%</div>
+                                <div class="blue">实际：20.00%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="btn_container" class="btn_container">
+                <div class="layui-row">
+                    <div class="layui-col-md1 text_center layui-col-md-offset5">
+                        <div id="btn_cancel" class="layui-btn layui-btn-primary">取消</div>
+                    </div>
+                    <div class="layui-col-md1 text_center">
+                        <div id="btn_confirm" class="layui-btn layui-btn-normal">确认</div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </script>
     <script id="form_ascription_tpl" type="text/html">
         <form lay-filter="form_ascription" class="layui-form">
             <!-- 头部 -->
@@ -617,7 +771,7 @@
                         <label class="layui-form-label text_left form_label">{{item.key}}：</label>
                         <div class="layui-row">
                             <div class="layui-col-md6">
-                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="text" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input onkeyup="num(this)" {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="text" name="{{'prePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5">
                                 <select {{item.val == '*' ? 'disabled' : ''}} data-type="prePay" data-index="{{index}}" class="fee_unit_select" name="unit">
@@ -646,7 +800,7 @@
                         <label class="layui-form-label text_left form_label">{{item.key}}：</label>
                         <div class="layui-row">
                             <div class="layui-col-md6">
-                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="text" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input onkeyup="num(this)" {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="text" name="{{'arrivePay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5">
                                 <select {{item.val == '*' ? 'disabled' : ''}} data-type="arrivePay" data-index="{{index}}" class="fee_unit_select" name="unit">
@@ -675,7 +829,7 @@
                         <label class="layui-form-label text_left form_label">{{item.key}}：</label>
                         <div class="layui-row">
                             <div class="layui-col-md6">
-                                <input oninput="value = (value.match(/^\d*(\.?\d{0,2})/g)[0]) || null" {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="text" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input onkeyup="num(this)" {{item.val == '*' ? 'disabled' : ''}} value="{{item.val}}" type="text" name="{{'tailPay_' + index}}" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5">
                                 <select {{item.val == '*' ? 'disabled' : ''}} data-type="tailPay" data-index="{{index}}" class="fee_unit_select" name="unit">
