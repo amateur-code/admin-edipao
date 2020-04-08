@@ -312,7 +312,7 @@ layui.config({
         resizeTime = setTimeout(function () {
             $(".layui-table-main td[data-field=operation]").css("border-color","#ffffff").css("background","#ffffff").find(".layui-table-cell").css("width", w).html("");
             $(".layui-table-box>.layui-table-header th[data-field=operation]").css("border", "none").css("color", "#f2f2f2");
-            var $fixed = $(".layui-table-fixed");
+            var $fixed = $(".layui-table-fixed.layui-table-fixed-r");
             $fixed.removeClass("layui-hide").find(".layui-table-body").css("height", "auto");
             $fixed.find(".layui-table-header").css("overflow", "visible")
             $fixed.find(".layui-table-filter").css("left","60px");

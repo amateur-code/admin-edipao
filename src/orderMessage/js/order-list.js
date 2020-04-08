@@ -19,11 +19,11 @@ var provinceList = [];
 var cityCode = {};
 
 layui.config({
-    base: '../lib/'
+    base: '../../lib/'
 }).extend({
     excel: 'layui_exts/excel.min',
     tableFilter: 'TableFilter/tableFilter',
-}).use(['form', 'jquery','layer', 'upload', 'table','laytpl', 'excel'], function () {
+}).use(['form', 'jquery','layer', 'upload', 'table','laytpl', 'excel', 'tableFilter'], function () {
     var tableName = "orderMessage-order-list";
     var mainTable;
     var table = layui.table;
@@ -33,9 +33,9 @@ layui.config({
     var layer = layui.layer;
     var upload = layui.upload;
     var laytpl = layui.laytpl;
-    var tableFilter = layui.tableFilter;
     var excel = layui.excel;
     var edipao = layui.edipao;
+    var tableFilter = layui.tableFilter;
     var user = JSON.parse(sessionStorage.user);
     var orderDTOList = [];
     var orderData = {};
@@ -1357,7 +1357,7 @@ layui.config({
             method.timer = setTimeout(function () {
                 $(".layui-table-main td[data-field=operation]").css("border-color","#ffffff").css("background","#ffffff").find(".layui-table-cell").css("width", w).html("");
                 $(".layui-table-box>.layui-table-header th[data-field=operation]").css("border", "none").css("color", "#f2f2f2");
-                var $fixed = $(".layui-table-fixed");
+                var $fixed = $(".layui-table-fixed.layui-table-fixed-r");
                 $fixed.removeClass("layui-hide").find(".layui-table-body").css("height", "auto");
                 $fixed.find(".layui-table-header").css("overflow", "visible")
                 $fixed.find(".layui-table-filter").css("left","60px");
@@ -1381,7 +1381,7 @@ layui.config({
         }
     }
     var tableCols = [
-        {type: 'checkbox'},
+        {type: 'checkbox', fixed: 'left'},
         {field: 'orderNo', title: '业务单号', sort: false,minWidth:105, templet: function(d){
             return d.orderNo ? d.orderNo : '- -';
         }},
@@ -1460,27 +1460,27 @@ layui.config({
         {field: 'dispatchTime', title: '调度时间', sort: false, width: 200, templet: function(d){
             return d.dispatchTime ? d.dispatchTime : '- -';
         }},
-        {field: 'openOperator', title: '开单员', sort: false,width: 200, templet: function(d){
+        {field: 'openOperator', title: '开单员', sort: false,width: 145, templet: function(d){
             d.openOperator = d.openOperator || "";
             d.openOperatorPhone = d.openOperatorPhone || "";
             return (d.openOperator || d.openOperatorPhone) ? d.openOperator + d.openOperatorPhone : '- -';
         }},
-        {field: 'dispatchOperator', title: '调度员', sort: false,minWidth:100, templet: function(d){
+        {field: 'dispatchOperator', title: '调度员', sort: false,minWidth:145, templet: function(d){
             d.dispatchOperator = d.dispatchOperator || "";
             d.dispatchOperatorPhone = d.dispatchOperatorPhone || "";
             return (d.dispatchOperator || d.dispatchOperatorPhone) ? d.dispatchOperator + d.dispatchOperatorPhone : '- -';
         }},
-        {field: 'fetchOperator', title: '提车员', sort: false,minWidth:100, templet: function(d){
+        {field: 'fetchOperator', title: '提车员', sort: false,minWidth:145, templet: function(d){
             d.fetchOperator = d.fetchOperator || "";
             d.fetchOperatorPhone = d.fetchOperatorPhone || "";
             return (d.fetchOperator || d.fetchOperatorPhone) ? d.fetchOperator + d.fetchOperatorPhone : '- -';
         }},
-        {field: 'deliveryOperator', title: '发运员', sort: false,minWidth:100, templet: function(d){
+        {field: 'deliveryOperator', title: '发运员', sort: false,minWidth:145, templet: function(d){
             d.deliveryOperator = d.deliveryOperator || "";
             d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
             return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
         }},
-        {field: 'driverName', title: '司机姓名', sort: false,minWidth:100, templet: function (d) {
+        {field: 'driverName', title: '司机姓名', sort: false,minWidth:130, templet: function (d) {
             var driverName = "<a class='table_a pointer blue list_driver_name' data-id="+ d.driverId +">{{}}</a>";
             if(d.driverName){
                 driverName = driverName.replace("{{}}", d.driverName);
@@ -1490,15 +1490,15 @@ layui.config({
             return driverName;
         }},
         {
-            field: 'driverPhone', title: '司机手机', sort: false,minWidth:100, templet: function (d) {
+            field: 'driverPhone', title: '司机手机', sort: false,minWidth:120, templet: function (d) {
                 return d.driverPhone || "- -";
             }
         },
-        {field: 'driverIdCard', title: '司机身份证', sort: false,width: 120, hide: false, templet: function(d){
+        {field: 'driverIdCard', title: '司机身份证', sort: false,width: 160, hide: false, templet: function(d){
             return d.driverIdCard ? d.driverIdCard : '- -';
         }},
         {
-            field: 'prePayAmount', title: '预付款金额', sort: false,width: 120, hide: false, templet: function (d) {
+            field: 'prePayAmount', title: '预付款金额', sort: false,width: 140, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
@@ -1529,7 +1529,7 @@ layui.config({
             }
         },
         {
-            field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 120, hide: false, templet: function (d) {
+            field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 140, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
@@ -1561,7 +1561,7 @@ layui.config({
             }
         },
         {
-            field: 'tailPayAmount', title: '尾款金额', sort: false,width: 120, hide: false, templet: function (d) {
+            field: 'tailPayAmount', title: '尾款金额', sort: false,width: 140, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
@@ -1627,7 +1627,7 @@ layui.config({
             }
             return status;
         }},
-        {field: 'startAuditStatus', title: '发车单审核状态', sort: false,width: 130, hide: false, templet: function(d){
+        {field: 'startAuditStatus', title: '发车照片', sort: false,width: 130, hide: false, templet: function(d){
             var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + " data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + "  data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='6' data-order="+ d.orderNo +"  data-type='1' data-key='startImages' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
@@ -1663,7 +1663,7 @@ layui.config({
             }
             return status;
         }},
-        {field: 'returnAuditStatus', title: '交车单审核状态', sort: false,width: 120, hide: false, templet: function(d){
+        {field: 'returnAuditStatus', title: '回单审核', sort: false,width: 120, hide: false, templet: function(d){
             var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='3' data-order="+ d.orderNo +" data-type='2' data-key='returnImages' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";

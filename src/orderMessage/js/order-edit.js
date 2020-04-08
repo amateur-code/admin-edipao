@@ -1546,29 +1546,29 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
               none: "暂无数据"
           }
           , cols: [[
-              {field: 'name', title: '司机姓名', sort: false,},
-              {field: 'phone', title: '司机手机', sort: false,},
-              {field: 'driverType', title: '司机类型', sort: false,},
-              {field: 'driveLicenceType', title: '驾照类型', sort: false},
-              {field: 'drivingAge', title: '驾龄', sort: false},
-              {field: 'wishJourney', title: '意向路线', sort: false, templet: function (d) {
-                var data = d.wishJourney;
-                var arr = [];
-                try {
-                  data = JSON.parse(data);
-                } catch (error) {return "";}
-                if(data.length){
-                  data.forEach(function (item) {
-                    arr.push(data[0].start.province + data[0].start.city + "-" + data[0].end.province + data[0].end.city)
-                  });
-                  return arr.join("，");
-                }else{
-                  return "";
-                }
-              }},
-              {field: 'oftenJourney', title: '熟手', sort: false},
-              {field: 'status', title: '状态', sort: false,width:150,},
-              {field: 'location', title: '当前位置', sort: false},
+            {field: 'name', title: '司机姓名', sort: false,width: 100},
+            {field: 'phone', title: '司机手机', sort: false,width: 120},
+            {field: 'driverType', title: '司机类型', sort: false,width: 100},
+            {field: 'driveLicenceType', title: '驾照类型', sort: false,width: 100},
+            {field: 'drivingAge', title: '驾龄', sort: false,width: 100},
+            {field: 'wishJourney', title: '意向路线', sort: false,width: 180, templet: function (d) {
+              var data = d.wishJourney;
+              var arr = [];
+              try {
+                data = JSON.parse(data);
+              } catch (error) {return "";}
+              if(data.length){
+                data.forEach(function (item) {
+                  arr.push(data[0].start.province + data[0].start.city + "-" + data[0].end.province + data[0].end.city)
+                });
+                return arr.join("，");
+              }else{
+                return "";
+              }
+            }},
+            {field: 'oftenJourney', title: '熟手', sort: false,width: 100},
+            {field: 'status', title: '状态', sort: false,width:150,},
+            {field: 'location', title: '当前位置', sort: false,width: 100},
           ]]
         });
       },
