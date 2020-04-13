@@ -31,7 +31,7 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
     },
   });
   $("#accountCity").xcity();
-
+  var myGeo = new Careland.Geocoder();
   var point = new Careland.Point(411067452, 81446126); //创建坐标点
   var map = new Careland.Map("map", point, 12); //实例化地图对象
   map.enableAutoResize(); //启用自动适应容器尺寸变化
@@ -41,13 +41,21 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
   ac.setLocation(map);
   ac.setInputForm("detailAddress");
   ac.addEventListener("onConfirm", function (e) {
-    detailAddress = {
-      address: e.item.poi.address + e.item.poi.name,
-      lat: e.item.poi.pointGb.lat,
-      lng: e.item.poi.pointGb.lng,
-    };
-    $("#detailAddress").val(detailAddress.address);
-    ac.hide();
+    myGeo.getLocation(e.item.poi.point, function (data) {
+      console.log(data)
+      detailAddress = {
+        address: data.address,
+        lat: edipao.kcodeToGb(data.kcode).lat,
+        lng: edipao.kcodeToGb(data.kcode).lng,
+        area: data.addressComponent.district
+      };
+      $("#detailAddress").val(detailAddress.address);
+      $("#endLat").val(detailAddress.lat);
+      $("#endLng").val(detailAddress.lng);
+      $("#endDistrict").val(detailAddress.area);
+      ac.hide();
+    });
+
   });
 
   $("#openMap").on("click", function () {
@@ -63,6 +71,9 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
       btn2: function () {
         if (detailAddress) {
           $("#detailAddress").val(detailAddress.address);
+          $("#endLat").val(detailAddress.lat);
+          $("#endLng").val(detailAddress.lng);
+          $("#endDistrict").val(detailAddress.area);
         }
       },
       success: function () {
@@ -71,8 +82,6 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
         var map = new Careland.Map("select-map", point, 15);
         map.enableAutoResize();
         map.load();
-
-        var myGeo = new Careland.Geocoder();
 
         var layer = new Careland.Layer("point", "layer");
         var style = new Careland.PointStyle({
@@ -93,21 +102,25 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
         ac.setLocation(map);
         ac.setInputForm("seachLocation");
         ac.addEventListener("onConfirm", function (e) {
-          mapInfoWin.setContent("当前地址：" + e.item.poi.name);
-          mapInfoWin.redraw();
-          layer.clear();
-          var marker = new Careland.Marker("image");
-          marker.setPoint(e.item.poi.point);
-          layer.add(marker);
-          marker.openInfoWindow(mapInfoWin);
-          detailAddress = {
-            address: e.item.poi.address + e.item.poi.name,
-            lat: e.item.poi.pointGb.lat,
-            lng: e.item.poi.pointGb.lng,
-          };
-          $("#seachLocation").val(detailAddress.address);
-          $("#select-address").text(detailAddress.address);
-          map.centerAndZoom(e.item.poi.point, 15);
+          myGeo.getLocation(e.item.poi.point, function (data) {
+            mapInfoWin.setContent("当前地址：" + e.item.poi.name);
+            mapInfoWin.redraw();
+            layer.clear();
+            var marker = new Careland.Marker("image");
+            marker.setPoint(e.item.poi.point);
+            layer.add(marker);
+            marker.openInfoWindow(mapInfoWin);
+            console.log(data)
+            detailAddress = {
+              address: data.address,
+              lat: edipao.kcodeToGb(data.kcode).lat,
+              lng: edipao.kcodeToGb(data.kcode).lng,
+              area: data.addressComponent.district
+            };
+            $("#seachLocation").val(detailAddress.address);
+            $("#select-address").text(detailAddress.address);
+            map.centerAndZoom(e.item.poi.point, 15);
+          });
         });
 
         $("#regionMapPoint")
@@ -125,14 +138,15 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
                     e.event.defaultPrevented = true;
                     layer.clear();
                     myGeo.getLocation(e.point, function (data) {
+                      console.log(data);
                       mapInfoWin.setContent("当前地址：" + data.address);
                       mapInfoWin.redraw();
                       marker.openInfoWindow(mapInfoWin);
-                      console.log(data);
                       detailAddress = {
                         address: data.address,
                         lat: edipao.kcodeToGb(data.kcode).lat,
                         lng: edipao.kcodeToGb(data.kcode).lng,
+                        area: data.addressComponent.district
                       };
                       $("#seachLocation").val(detailAddress.address);
                       $("#select-address").text(detailAddress.address);
@@ -163,6 +177,7 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
               address: data.address,
               lat: edipao.kcodeToGb(data.kcode).lat,
               lng: edipao.kcodeToGb(data.kcode).lng,
+              area: data.addressComponent.district
             };
             $("#seachLocation").val(detailAddress.address);
             $("#select-address").text(detailAddress.address);

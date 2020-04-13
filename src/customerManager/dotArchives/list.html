@@ -76,7 +76,7 @@
     {{# if(permissionList.indexOf('修改') != -1){ }}
     <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>
     {{# } }}
-    {{# if(d.approvalDisplay){ }}
+    {{# if(d.needApproval * 1 == 1){ }}
     <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="verify">审核</a>
     {{# } }}
     <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="info">查看</a>

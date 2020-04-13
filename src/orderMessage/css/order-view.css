@@ -1,19 +1,45 @@
 .layui-input {
   display: inline !important;
   width: auto !important;
-}
-.layui-input {
   overflow-y: visible;
   border: none !important;
   color: #3490E9 !important;
   white-space: pre-line !important;
-}
-.textarea_span {
-  top: -20px;
 }
 .car_image {
   max-width: 400px;
 }
 .red {
   color: red;
+}
+.text_right {
+  text-align: right !important;
+}
+.layui-inline {
+  margin-right: 0 !important;
+}
+.layui-row {
+  position: relative;
+  overflow: hidden !important;
+}
+.form_item_container .layui-col-md4 {
+  padding-right: 10px !important;
+}
+.form_item_container .layui-row {
+  height: auto;
+  overflow: visible !important;
+}
+.form_item_container .form_span {
+  position: absolute;
+  left: 0;
+  display: inline-block;
+  width: 110px;
+  text-align: right;
+}
+.form_item_container .form_span + span {
+  display: inline-block;
+  margin-left: 120px;
+}
+#form_fee_list {
+  padding-top: 20px;
 }

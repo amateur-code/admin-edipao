@@ -15,6 +15,17 @@ var orderTypeData = [
 var operationData = [
     {key: 1, value: "待审核"},
 ]
+var feeData = [
+    {key: 1, value: "未支付"},
+    {key: 2, value: "已支付"},
+    {key: 3, value: "待我处理"},
+]
+var picData = [
+    {key: 1, value: "未上传"},
+    {key: 2, value: "未审核"},
+    {key: 3, value: "已审核"},
+    {key: 3, value: "待我审核"},
+]
 var provinceList = [];
 var cityCode = {};
 
@@ -78,7 +89,7 @@ layui.config({
         { field: 'warehouseNo', type: 'input' },
         { field: 'vinCode', type: 'input' },
         { field: 'tempLicense', type: 'input' },
-        { field: 'orderStatus', type: 'radio', data: orderStatusData },
+        { field: 'orderStatus', type: 'checkbox', data: orderStatusData },
         { field: 'orderType', type: 'radio', data:orderTypeData },
         { field: 'customerFullName', type: 'input' },
         { field: 'startWarehouse', type: 'input' },
@@ -99,9 +110,12 @@ layui.config({
         { field: 'driverName', type: 'input' },
         { field: 'driverPhone', type: 'input' },
         { field: 'driverIdCard', type: 'input' },
-        { field: 'prePayAmount', type: 'numberslot' },
+        { field: 'prePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'arrivePayAmount', type: 'numberslot' },
         { field: 'tailPayAmount', type: 'numberslot' },
+        { field: 'fetchStatus', type: 'checkbox', data: picData },
+        { field: 'startAuditStatus', type: 'checkbox', data: picData },
+        { field: 'returnAuditStatus', type: 'checkbox', data: picData },
         // { field: 'operation', type: 'radio', data: operationData },
     ]
     initPermission();
@@ -237,16 +251,22 @@ layui.config({
                         where['searchFieldDTOList['+ index +'].fieldValue'] = value.city;
                     }
                 }else if(key == 'prePayAmount'||key == 'arrivePayAmount'||key == "tailPayAmount"){
-                    // 驾龄、押金
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
-                    where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
-                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+                    where['searchFieldDTOList['+ index +'].fieldMinValue'] = value.slot[0];
+                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value.slot[1];
+                    where['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
+                }else if(key == "orderStatus"){
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+                }else if(key == "fetchStatus" || key == "startAuditStatus" || key == "returnAuditStatus"){
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                 }else{
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldValue'] = value;
                 }
                 index++;
-            })
+            });
             mainTable.reload( { where: where, page: { curr: 1 }});
         }
     });
@@ -988,7 +1008,11 @@ layui.config({
                     operationRemark: "导出订单数据",
                 }
                 var ids = [];
-                data.forEach(function (item) {ids.push(item.id)});
+                data.forEach(function (item) {
+                    if (!ids.includes(item.id)) {
+                        ids.push(item.id);
+                    }
+                });
                 params.dataPkList = ids.join(",");
                 edipao.exportLog(params);
                 var exportData = [];
@@ -1424,7 +1448,7 @@ layui.config({
                 }
             }
         },
-        {field: 'customerFullName', title: '客户全称', sort: true, width: 120, templet: function(d){
+        {field: 'customerFullName', title: '客户全称', sort: false, width: 120, templet: function(d){
             return d.customerFullName ? d.customerFullName : '- -';
         }},
         {field: 'startWarehouse', title: '发车仓库', sort: false, width: 400, templet: function(d){

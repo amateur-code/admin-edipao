@@ -98,6 +98,16 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 							})
 						}
 					}
+					if(filterType == "checkbox-numberslot"){
+						filterBox.find('form').append('<ul style="height:auto;"></ul>');
+						if(!filterUrl){
+							layui.each(filterData, function(i, item){
+								filterBox.find('ul').append('<li><input type="checkbox" name="'+filterName+'['+item.key+']" value="'+item.key+'" title="'+item.value+'" lay-skin="primary"></li>');
+							})
+						}
+						filterBox.find('form').append('<input type="search" name="'+filterName+'-min" lay-verType="tips" placeholder="输入最小值" class="layui-input">');
+						filterBox.find('form').append('<input type="search" name="'+filterName+'-max" lay-verType="tips" placeholder="输入最大值" class="layui-input">');
+					}
 					if(filterType == "radio"){
 						filterBox.find('form').append('<ul class="radio"></ul>');
 						if(!filterUrl){
@@ -240,7 +250,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 					searchInput.focus().select();
 
 					//处理异步filterData
-					if((filterType == 'checkbox' || filterType == 'radio') && filterUrl){
+					if((filterType == 'checkbox' || filterType == 'radio' || filterType == "checkbox-numberslot") && filterUrl){
 						var filterBoxUl = filterBox.find('.layui-table-filter-box ul');
 						filterBoxUl.append('<div class="loading"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></div>');
 						$.getJSON(filterUrl + "?_t=" + new Date().getTime(), function(res, status, xhr){
@@ -291,7 +301,6 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						if(filterType == 'contract'){
 							data.field[filterName] = [data.field[filterName+'-name'],data.field[filterName+'-phone']]
 						}
-
 						// 如果城市
 						if(filterType == "city"){
 							var NEWfield = {};
@@ -313,9 +322,30 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 								province: data.field[filterName+"_province"],
 								city: data.field[filterName+"_city"],
 							};
-							data.field[filterName] = NEWfield
+							data.field[filterName] = NEWfield;
 						}
 
+						if(filterType == "checkbox-numberslot"){
+							var checked = [];
+							var slot = [];
+							for(var key in data.field){
+								if(key.indexOf(filterName + "[") > -1){
+									checked.push(data.field[key]);
+								}
+							}
+							if(data.field[filterName+'-min'] || data.field[filterName+'-max']){
+								slot = [data.field[filterName+'-min'],data.field[filterName+'-max']];
+							}
+							if(checked.length > 0 || slot.length > 0){
+								data.field[filterName] = {
+									checked: checked,
+									slot: slot,
+								};
+							}else{
+								layer.msg("请先选择过滤项！", {icon:2});
+								return false;
+							}
+						}
 						//过滤项写入缓存
 						tableFilter.cache[elemId][filterName] = data.field[filterName];
 
@@ -508,10 +538,20 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 		if(filterType == "city"){
 			layui.each(form_val[filterName], function(i, value){
 				form_val[i] = value;
-			})
+			});
 			delete form_val[filterName];
 		}
-		console.log(form_val)
+		if(filterType == "checkbox-numberslot"){
+			form_val[filterName] && layui.each(form_val[filterName].checked, function(i, value){
+				form_val[filterName + "["+value+"]"] = true;
+			});
+			if(form_val[filterName] && form_val[filterName].slot && form_val[filterName].slot.length == 2){
+				form_val[filterName + "-min"] = form_val[filterName].slot[0];
+				form_val[filterName + "-max"] = form_val[filterName].slot[1];
+			}
+			delete form_val[filterName];
+		}
+		console.log(form_val);
 		return form_val;
 	}
 

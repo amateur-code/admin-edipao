@@ -13,20 +13,38 @@ layui.config({
       edipao = layui.edipao,
       tableIns,tableFilterIns;
       permissionList = edipao.getMyPermission();
-      permissionList.push("新增");
-  var showList = [ "name", "name","name","name","name","name","name"];
+      permissionList.push("新增","修改","删除");
+  var showList = [ "company", "endProvince","name","name","name","name","name"];
   var exportHead={};// 导出头部
   var tableCols = [
     { checkbox: true },
-    { field: 'name', title: '网点名称',width: 100,},
-    { field: 'name', title: '所在省市',width: 100,},
-    { field: 'name', title: '详细地址',width: 100,},
-    { field: 'name', title: '地址代码',width: 100,},
-    { field: 'name', title: '联系人',width: 100,},
-    { field: 'name', title: '备注',width: 100,},
-    { field: 'name', title: '发运趟数',width: 100,},
-    { field: 'name', title: '状态',width: 100,},
-    {title: '操作',field: "operation", width: 320, fixed: 'right',toolbar: '#rowBtns'}
+    { field: 'company', title: '网点名称',width: 200, templet: function (d) {
+        return d.company ? d.company : "- -";
+    }},
+    { field: 'endProvince', title: '所在省市',width: 130, templet: function (d) {
+        if(!d.endProvince && !d.endCity) return "- -";
+        return d.endProvince + d.endCity;
+    }},
+    { field: 'endAddress', title: '详细地址',width: 400, templet: function (d) {
+        return d.endAddress ? d.endAddress : "- -";
+    }},
+    { field: 'addrCode', title: '地址代码',width: 130, templet: function (d) {
+        return d.addrCode ? d.addrCode : "- -";
+    }},
+    { field: 'connectorName', title: '联系人',width: 150, templet: function (d) {
+        if(!d.connectorName && !d.connectorPhone) return "- -";
+        return d.connectorName + d.connectorPhone;
+    }},
+    { field: 'remark', title: '备注',width: 400, templet: function (d) {
+        return d.remark ? d.remark : "- -";
+    }},
+    { field: 'name', title: '发运趟数',width: 100, templet: function (d) {
+        return d.endAddress ? d.endAddress : "- -";
+    }},
+    { field: 'statusDesc', title: '状态',width: 100, templet: function (d) {
+        return d.statusDesc ? d.statusDesc : "- -";
+    }},
+    {title: '操作', field: "operation", width: 320, fixed: 'right',toolbar: '#rowBtns'}
   ]
   function DataNull (data) {
     if(data == null||data == ''){
@@ -40,10 +58,9 @@ layui.config({
   }
   List.prototype.init = function(){
     var _this = this;
-    _this.renderTable();
+    // _this.renderTable();
     _this.setTableFilter();
     _this.bindTableEvents();
-    return;
     edipao.request({
       type: 'GET',
       url: '/admin/table/show-field/get',
@@ -87,21 +104,21 @@ layui.config({
     tableIns = table.render({
       elem: '#dotList',
       id: "dotList",
-      url: edipao.API_HOST + '/admin/driver/info/list',
+      url: edipao.API_HOST + '/admin/customer/truckNetwork/list',
       page: true,
       where: {
           loginStaffId: edipao.getLoginStaffId()
       },
       request: {
-          pageName: 'pageNumber', //页码的参数名称
+          pageName: 'pageNo', //页码的参数名称
           limitName: 'pageSize' //每页数据量的参数名
       },
       parseData: function (res) {
           edipao.codeMiddleware(res);
           var data = [];
           res.data = res.data || {};
-          res.data.driverInfoListDtoList = res.data.driverInfoListDtoList || [];
-          res.data.driverInfoListDtoList.forEach(function(item) {
+          res.data.receiveTruckNetworkRespList = res.data.receiveTruckNetworkRespList || [];
+          res.data.receiveTruckNetworkRespList.forEach(function(item) {
               data.push(item);
           });
           if (res.code == 0) {
@@ -179,7 +196,7 @@ layui.config({
               layer.alert('你没有访问权限', {icon: 2});
               break;
           case 'add':
-              top.xadmin.add_tab('新增网点', '/customerManager/dotArchives/add.html');
+            xadmin.open('新增网点', './add.html');
               break;
           case 'export':
               _this.exportExcel();
@@ -188,27 +205,26 @@ layui.config({
               xadmin.open('表格设置', './table-set.html?tableKey=' + _this.tableKey, 600, 600);
               break;
           case 'edit':
-              xadmin.open('修改网点', './edit.html?id=' + data.id)
+              xadmin.open('修改网点', './add.html?action=edit&id=' + data.id)
               break;
           case 'audit':
-              xadmin.open('审核网点', './audit.html?id=' + data.id)
+              xadmin.open('审核网点', './audit.html?action=verify&id=' + data.id)
               break;
           case 'info':
-              xadmin.open('查看网点', './view.html?id=' + data.id)
+              xadmin.open('查看网点', './view.html?action=view&id=' + data.id)
               break;
           case 'del':
               layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function(index) {
                   edipao.request({
-                      url: '/admin/driver/info/del',
-                      type: 'GET',
-                      dataType: "JSON",
+                      url: '/admin/customer/truckNetwork/del',
+                      type: 'POST',
                       data: {
-                          driverId:data.id
+                          id:data.id
                       }
                   }).then(function(res){
                       if(res.code == 0){
-                          layer.msg('删除成功')
-                          location.reload();
+                          layer.msg('删除成功');
+                          tableIns.reload();
                       }else{
                           layer.msg(res.message)
                       }
@@ -231,14 +247,13 @@ layui.config({
   }
   List.prototype.setTableFilter = function () {
     var filters = [
+      { field: 'company', type: 'input' },
+      { field: 'endProvince', type: 'input' },
+      { field: 'endAddress', type: 'input' },
+      { field: 'addrCode', type: 'input' },
+      { field: 'connectorName', type: 'input' },
       { field: 'name', type: 'input' },
-      { field: 'name', type: 'input' },
-      { field: 'name', type: 'input' },
-      { field: 'name', type: 'input' },
-      { field: 'name', type: 'input' },
-      { field: 'name', type: 'input' },
-      { field: 'name', type: 'input' },
-      { field: 'name', type: 'input' },
+      { field: 'statusDesc', type: 'input' },
     ];
     var where = {};
     tableFilterIns = tableFilter.render({
@@ -282,8 +297,8 @@ layui.config({
         if (res.code == 0) {
             if(res.data){
                 res.data = res.data || {};
-                res.data.driverInfoListDtoList = res.data.driverInfoListDtoList || [];
-                var data = res.data.driverInfoListDtoList;
+                res.data.receiveTruckNetworkRespList = res.data.receiveTruckNetworkRespList || [];
+                var data = res.data.receiveTruckNetworkRespList;
                 exportXlsx(data)
             }
         }

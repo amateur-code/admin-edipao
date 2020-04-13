@@ -3,14 +3,14 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       edipao = layui.edipao,
       tableKey = edipao.urlGet().tableKey;
   var dotTableHeaderList = [
-    { field: 'name', title: '网点名称'},
-    { field: 'name', title: '所在省市'},
-    { field: 'name', title: '详细地址'},
-    { field: 'name', title: '地址代码'},
-    { field: 'name', title: '联系人'},
-    { field: 'name', title: '备注'},
+    { field: 'company', title: '网点名称'},
+    { field: 'endProvince', title: '所在省市'},
+    { field: 'endAddress', title: '详细地址'},
+    { field: 'addrCode', title: '地址代码'},
+    { field: 'connectorName', title: '联系人'},
+    { field: 'remark', title: '备注'},
     { field: 'name', title: '发运趟数'},
-    { field: 'name', title: '状态'},
+    { field: 'statusDesc', title: '状态'},
   ];
   var tableHeaderList = dotTableHeaderList;
   laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){

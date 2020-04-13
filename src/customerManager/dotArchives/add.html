@@ -31,7 +31,7 @@
 <div class="layui-fluid dot-add">
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md12">
-      <form class="layui-form">
+      <form class="layui-form" lay-filter="main_form">
         <div class="layui-card layui-form">
           <div class="layui-card-header">基础信息</div>
           <div class="layui-card-body layui-row layui-col-space10">
@@ -39,7 +39,7 @@
               <div class="layui-form-item">
                 <div><span class="x-red">*</span>网点名称</div>
                 <div class="layui-input-block">
-                  <input type="text" name="name" id="name" lay-verify="nameVerify" placeholder="请输入网点名称" autocomplete="off" class="layui-input">
+                  <input type="text" name="company" lay-verify="nameVerify" placeholder="请输入网点名称" autocomplete="off" class="layui-input">
                 </div>
               </div>
             </div>
@@ -48,12 +48,12 @@
                 <div><span class="x-red">*</span>所在省市</div>
                 <div class="layui-input-block layui-row x-city" id="accountCity">
                   <div class="layui-col-md6" style="margin:0;width:50%;">
-                      <select name="province" class="province" lay-verify="required" lay-search lay-filter="province">
+                      <select name="endProvince" class="province" lay-verify="required" lay-search lay-filter="province">
                           <option value="">省份</option>
                       </select>
                   </div>
                   <div class="layui-col-md6" style="margin:0;width:50%;">
-                      <select name="city" class="city" lay-verify="required" lay-search lay-filter="city">
+                      <select id="endCity" name="endCity" class="city" lay-verify="required" lay-search lay-filter="city">
                           <option value="">地级市</option>
                       </select>
                   </div>
@@ -66,7 +66,10 @@
                 <div class="layui-input-block layui-row">
                   <div id="map"></div>
                   <div class="layui-col-md8">
-                    <input type="text" id="detailAddress" name="detailAddress" lay-verify="addressVerify" autocomplete="off" class="layui-input" placeholder="请选择地址">
+                    <input type="text" id="detailAddress" name="endAddress" lay-verify="addressVerify" autocomplete="off" class="layui-input" placeholder="请选择地址">
+                    <input type="text" id="endLat" name="endLat" autocomplete="off" class="layui-input" style="width: 0;height: 0;opacity:0;">
+                    <input type="text" id="endLng" name="endLng" autocomplete="off" class="layui-input" style="width: 0;height: 0;opacity:0;">
+                    <input type="text" id="endDistrict" name="endDistrict" autocomplete="off" class="layui-input" style="width: 0;height: 0;opacity:0;">
                   </div>
                   <div class="layui-col-md3">
                     <button type="button" class="layui-btn" id="openMap">选择</button>
@@ -78,7 +81,7 @@
               <div class="layui-form-item">
                 <div><span class="x-red">*</span>地址代码</div>
                 <div class="layui-input-block">
-                  <input type="text" name="addressCode" id="addressCode" lay-verify="required|codeVerify" placeholder="请输入地址代码" autocomplete="off" class="layui-input">
+                  <input type="text" name="addrCode" id="addrCode" lay-verify="required|codeVerify" placeholder="请输入地址代码" autocomplete="off" class="layui-input">
                 </div>
               </div>
             </div>
@@ -87,10 +90,10 @@
                 <div>联系人</div>
                 <div class="layui-input-block layui-row">
                   <div class="layui-col-md4" style="margin:0;">
-                    <input type="text" name="contactName" id="contacName" placeholder="请输入联系人姓名" autocomplete="off" class="layui-input">
+                    <input type="text" name="connectorName" id="connectorName" placeholder="请输入联系人姓名" autocomplete="off" class="layui-input">
                   </div>
                   <div class="layui-col-md8" style="margin:0;">
-                    <input type="text" name="contactPhone" id="contactPhone" lay-verify="phone" placeholder="请输入联系人手机号" autocomplete="off" class="layui-input">
+                    <input type="text" name="connectorPhone" id="connectorPhone" placeholder="请输入联系人手机号" autocomplete="off" class="layui-input">
                   </div>
                 </div>
               </div>
@@ -132,8 +135,15 @@
 				<div class="layui-inline">
 					<label class="layui-form-label"><span class="x-red">*</span>发车仓库</label>
 					<div class="layui-input-inline">
-            <select name="province" class="province" lay-verify="required" lay-search lay-filter="province">
-              <option class="layui-select-tips" disabled value="">请选择</option>
+            <select {{d.first ? 'disabled' : ''}} name="{{'startWarehouse' + d.index}}" class="province" lay-verify="required" lay-search lay-filter="startWarehouse">
+              <option class="layui-select-tips" value="">请选择</option>
+              {{# if(d.first){ }}
+              <option selected value="不限">不限</option>
+              {{# }else{ }}
+                {{#  layui.each(d.startParks, function(index, item){ }}
+                <option {{d.feeItem && item.code == d.feeItem.startWarehouse?'selected':''}} value="{{item.code}}">{{item.name}}</option>
+                {{#  }); }}
+              {{# } }}
             </select>
 					</div>
 				</div>
@@ -144,10 +154,17 @@
 				<div class="layui-inline">
 					<label class="layui-form-label"><span class="x-red">*</span>运费模板</label>
 					<div class="layui-input-inline">
-            <select name="province" class="province" lay-verify="required" lay-search lay-filter="province">
-              <option class="layui-select-tips" disabled value="">请选择</option>
+            <select {{d.first ? 'disabled' : ''}} name="{{'feeId' + d.index}}" class="province {{'feeId' + d.index}}" lay-verify="required" lay-search lay-filter="feeId">
+              <option class="layui-select-tips" value="">请选择</option>
+              {{# if(d.first){ }}
+              <option selected value="{{d.commonTpl.feeId}}">通用费用模板</option>
+              {{# }else{ }}
+                {{#  layui.each(d.feeTpls, function(index, item){ }}
+                <option {{d.feeItem && item.feeId == d.feeItem.feeId?'selected':''}} value="{{item.feeId}}">{{item.name}}</option>
+                {{#  }); }}
+              {{# } }}
             </select>
-            <span class="name-color view_fee float-right">查看费用结构</span>
+            <span data-name="{{'feeId' + d.index}}" class="name-color view_fee float-right">查看费用结构</span>
 					</div>
 				</div>
 			</div>

@@ -25,23 +25,24 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       var _this = this;
       if(_this.action != "verify"){
         $("#verify_container").remove();
-        laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
-          $("#form_income_container").after(html);
-          _this.getOrder().done(function (res) {
-            if(res.code == "0"){
-              Object.keys(res.data).forEach(function (key) {
-                res.data[key] = res.data[key] || "- -";
-              });
+        _this.getOrder().done(function (res) {
+          if(res.code == "0"){
+            Object.keys(res.data).forEach(function (key) {
+              res.data[key] = res.data[key] || "- -";
+            });
+            _this.updateData.orderData = res.data;
+            laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
+              $("#form_income_container").after(html);
               _this.orderData = res.data;
               _this.setData(res.data);
               _this.bindEvents();
               if(_this.action == "verify"){
                 _this.getUpdate();
               }
-            }else{
-              layer.msg(res.message, {icon: 5,anim: 6});
-            }
-          });
+            });
+          }else{
+            layer.msg(res.message, {icon: 5,anim: 6});
+          }
         });
       }else{
         $(".page_title_text").text("订单审核");
@@ -58,28 +59,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
                 updateData.forEach(function (item) {
                   _this.updateData[item.name] = item.value;
                 });
-
-                if(_this.updateData.prePayFeeItems){
-                  try {
-                    _this.updateData.prePayFeeItems = JSON.parse(_this.updateData.prePayFeeItems)||[];
-                  } catch (error) {
-                    _this.updateData.prePayFeeItems = [];
-                  }
-                }
-                if(_this.updateData.tailPayFeeItems){
-                  try {
-                    _this.updateData.tailPayFeeItems = JSON.parse(_this.updateData.tailPayFeeItems)||[];
-                  } catch (error) {
-                    _this.updateData.tailPayFeeItems = [];
-                  }
-                }
-                if(_this.updateData.arrivePayFeeItems){
-                  try {
-                    _this.updateData.arrivePayFeeItems = JSON.parse(_this.updateData.arrivePayFeeItems)||[];
-                  } catch (error) {
-                    _this.updateData.arrivePayFeeItems = [];
-                  }
-                }
                 if(_this. dataPermission.canViewOrderIncome != "Y"){
                   if(_this.updateData.totalIncome) _this.updateData.totalIncome = "*";
                   if(_this.updateData.totalManageFee) _this.updateData.totalManageFee = "*";
@@ -88,19 +67,20 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
                 _this.updateData = {};
               }
             }
-            laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
-              $("#form_income_container").after(html);
-              if(res2.code == "0"){
-                Object.keys(res2.data).forEach(function (key) {
-                  res2.data[key] = res2.data[key] || "- -";
-                });
-                _this.orderData = res2.data;
-                _this.setData(res2.data);
-                _this.bindEvents();
-              }else{
-                layer.msg(res2.message, {icon: 5,anim: 6});
-              }
-            });
+            if(res2.code == "0"){
+              Object.keys(res2.data).forEach(function (key) {
+                res2.data[key] = res2.data[key] || "- -";
+              });
+              _this.updateData.orderData = res2.data;
+              laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
+                $("#form_income_container").after(html);
+              });
+              _this.orderData = res2.data;
+              _this.setData(res2.data);
+              _this.bindEvents();
+            }else{
+              layer.msg(res2.message, {icon: 5,anim: 6});
+            }
           }
         });
       }
@@ -147,35 +127,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     setFeeList: function () {
       //保存费用项
       var _this = this;
-      if(_this.dataPermission.canViewOrderCost != "Y"){
-        _this.orderData.prePayAmount = "*";
-        if(_this.updateData.prePayAmount) _this.updateData.prePayAmount = "*";
-        _this.orderData.arrivePayAmount = "*";
-        if(_this.updateData.arrivePayAmount) _this.updateData.arrivePayAmount = "*";
-        _this.orderData.tailPayAmount = "*";
-        if(_this.updateData.tailPayAmount) _this.updateData.tailPayAmount = "*";
-
-        _this.prePay.forEach(function (item) {
-          item.val = "*";
-        });
-        _this.updateData.prePayFeeItems && _this.updateData.prePayFeeItems.forEach(function (item) {
-          item.val = "*";
-        });
-
-        _this.arrivePay.forEach(function (item) {
-          item.val = "*";
-        });
-        _this.updateData.arrivePayFeeItems && _this.updateData.arrivePayFeeItems.forEach(function (item) {
-          item.val = "*";
-        });
-
-        _this.tailPay.forEach(function (item) {
-          item.val = "*";
-        });
-        _this.updateData.tailPayFeeItems && _this.updateData.tailPayFeeItems.forEach(function (item) {
-          item.val = "*";
-        });
-      }
+      return;
       laytpl($("#fee_list_tpl").html()).render({
         prePay: _this.prePay,
         tailPay: _this.tailPay,
@@ -214,7 +166,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           });
         }
       } catch (error) {
-        console.log(error)
         _this.prePay = [];
       }
       try {
@@ -312,7 +263,11 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           if(!item[key])item[key] = "- -";
         });
         laytpl(imageStr).render(item, function (imageHtml) {
-          laytpl(carFormHtml).render(data.truckDTOList[index], function (html) {
+          var truck = data.truckDTOList[index];
+          Object.keys(truck).forEach(function (key) {
+            truck[key] = truck[key] || "- -";
+          });
+          laytpl(carFormHtml).render(truck, function (html) {
             var filterStr = "form_car_" + index;
             _this.carFormList.push(filterStr);
             html = html.replace(/CARFORM/g, filterStr);
@@ -325,9 +280,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         });
       });
       form.render();
-      _this.carFormList.forEach(function (item, index) {
-        form.val(item, data.truckDTOList[index]);
-      });
     },
     getOrder: function () {
       //获取订单详情

@@ -183,11 +183,11 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">网点名称：</label>
 						<div class="layui-input-block">
-							<span class="name-color" id="name">{{d.detail.name}}</span>
+							<span class="name-color" id="name">{{d.detail.company}}</span>
 						</div>
-						{{# if(d.check.name){ }}
+						{{# if(d.check.company){ }}
 						<div class="check"><label class="layui-form-label x-red">待审：</label>
-							<div class="layui-input-block">{{d.check.name}}</div>
+							<div class="layui-input-block">{{d.check.company}}</div>
 						</div>
 						{{# } }}
 					</div>
@@ -196,11 +196,17 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">所在省市：</label>
 						<div class="layui-input-block">
-							<span class="name-color" name="phone" id="phone">{{d.detail.phone}}</span>
+							<span class="name-color" name="phone" id="phone">{{d.detail.endProvince + d.detail.endCity}}</span>
 						</div>
-						{{# if(d.check.phone){ }}
+						{{# if(d.check.endProvince || d.check.endCity){ }}
 						<div class="check"><label class="layui-form-label x-red">待审：</label>
-							<div class="layui-input-block">{{d.check.phone}}</div>
+							{{# if(d.check.endProvince){ }}
+							<div class="layui-input-block">{{d.check.endProvince + d.detail.endCity}}</div>
+							{{# }else if(d.check.endCity){ }}
+							<div class="layui-input-block">{{d.detail.endProvince + d.check.endCity}}</div>
+							{{# }else{ }}
+							<div class="layui-input-block">{{d.check.endProvince + d.check.endCity}}</div>
+							{{# } }}
 						</div>
 						{{# } }}
 					</div>
@@ -209,11 +215,11 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">详细地址：</label>
 						<div class="layui-input-block">
-							<span class="name-color" name="idNum" id="idNum">{{d.detail.idNum}}</span>
+							<span class="name-color" name="idNum" id="idNum">{{d.detail.endAddress}}</span>
 						</div>
-						{{# if(d.check.idNum){ }}
+						{{# if(d.check.endAddress){ }}
 						<div class="check"><label class="layui-form-label x-red">待审：</label>
-							<div class="layui-input-block">{{d.check.idNum}}</div>
+							<div class="layui-input-block">{{d.check.endAddress}}</div>
 						</div>
 						{{# } }}
 					</div>
@@ -222,11 +228,11 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">地址代码：</label>
 						<div class="layui-input-block">
-							<span class="name-color" name="dotType" id="dotType">{{d.detail.dotType}}</span>
+							<span class="name-color" name="dotType" id="dotType">{{d.detail.addrCode}}</span>
 						</div>
-						{{# if(d.check.dotType){ }}
+						{{# if(d.check.addrCode){ }}
 						<div class="check"><label class="layui-form-label x-red">待审：</label>
-							<div class="layui-input-block">{{d.check.dotType}}</div>
+							<div class="layui-input-block">{{d.check.addrCode}}</div>
 						</div>
 						{{# } }}
 					</div>
@@ -235,11 +241,17 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">联系人：</label>
 						<div class="layui-input-block">
-							<span class="name-color" name="dotLicenceType" id="dotLicenceType">{{d.detail.dotLicenceType}}</span>
+							<span class="name-color" name="dotLicenceType" id="dotLicenceType">{{d.detail.connectorName + d.detail.connectorPhone}}</span>
 						</div>
-						{{# if(d.check.dotLicenceType){ }}
+						{{# if(d.check.connectorName || d.check.connectorPhone){ }}
 						<div class="check"><label class="layui-form-label x-red">待审：</label>
-							<div class="layui-input-block">{{d.check.dotLicenceType}}</div>
+							{{# if(d.check.connectorName){ }}
+							<div class="layui-input-block">{{d.check.connectorName + d.detail.connectorPhone}}</div>
+							{{# }else if(d.check.connectorPhone){ }}
+							<div class="layui-input-block">{{d.detail.connectorName + d.check.connectorPhone}}</div>
+							{{# }else{ }}
+							<div class="layui-input-block">{{d.check.connectorName + d.check.connectorPhone}}</div>
+							{{# } }}
 						</div>
 						{{# } }}
 					</div>
@@ -288,11 +300,11 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">备注：</label>
 						<div class="layui-input-block">
-							<span class="name-color" name="deposit" id="deposit">{{d.detail.deposit}}</span>
+							<span class="name-color" name="deposit" id="deposit">{{d.detail.remark}}</span>
 						</div>
-						{{# if(d.check.deposit){ }}
+						{{# if(d.check.remark){ }}
 						<div class="check"><label class="layui-form-label x-red">待审：</label>
-							<div class="layui-input-block">{{d.check.deposit}}</div>
+							<div class="layui-input-block">{{d.check.remark}}</div>
 						</div>
 						{{# } }}
 					</div>
