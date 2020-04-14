@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en"  class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>车型配置</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Expires" CONTENT="-1">
+    <meta http-equiv="Cache-Control" CONTENT="no-cache">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../lib/layAutoComplete/layuiAutocomplete.css">
+    <link rel="stylesheet" href="../../css/xadmin.css?VERSION">
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../lib/layui/layui.js" charset="utf-8"></script>
+    <script src="../../js/common.js?VERSION"></script>
+    <script src="js/carTypeCommon.js?VERSION"></script>
+    <script src="js/edit.js?VERSION"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+
+        .cartype-add .layui-text-align{
+            text-align: center;
+        }
+        .cartype-add .layui-input-block{
+            margin-left: 0px;
+        }
+        .cartype-add .layui-card-header{
+            font-weight: bold;
+        }
+        .look-up{
+            color: #3490e9;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid cartype-add">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <form class="layui-form" lay-filter="carTypeEdit">
+                <div class="layui-card layui-form">
+                    <div class="layui-card-header">基础信息</div>
+                    <div class="layui-card-body layui-row layui-col-space10">
+                        <div class="layui-col-md4">
+                            <div class="layui-form-item">
+                                <div><span class="x-red">*</span>车型名称 </div>
+                                <div class="layui-input-block">
+                                    <input type="text" name="modelName" id="modelName" lay-verify="modelNameVerify" placeholder="请输入车型名称" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4">
+                            <div class="layui-form-item">
+                                <div><span class="x-red">*</span>要求驾照</div>
+                                <div class="layui-input-block">
+                                    <select name="certificateCode" id="certificateCode" lay-verify="certificateCodeVerify">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4">
+                            <div class="layui-form-item">
+                                <div><span class="x-red">*</span>是否背车</div>
+                                <div class="layui-input-block">
+                                    <select name="orderType" id="orderType" lay-verify="orderTypeVerify">
+                                        <option value="1" selected>背车</option>
+                                        <option value="0">不背车</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4">
+                            <div class="layui-form-item">
+                                <div><span class="x-red">*</span>车型代码
+                                    <span class="look-up" onclick="modelCodeLook()">查看对照表</span>
+                                </div>
+                                <div class="layui-input-block">
+                                    <textarea placeholder="请输入车型代码，多个车型使用英文逗号隔离，如1,2" lay-verify="modelCodeVerify" class="layui-textarea" name="modelCode" id="modelCode"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4">
+                            <div class="layui-form-item">
+                                <div><span class="x-red">*</span>驱动形式代码
+                                    <span class="look-up"  onclick="driveWayCodeLook()">查看对照表</span>
+                                </div>
+                                <div class="layui-input-block">
+                                    <textarea placeholder="请输入驱动形式代码，多个驱动形式代码用英文逗号隔离，如0,1,2" lay-verify="driveWayCodeVerify" class="layui-textarea" name="driveWayCode" id="driveWayCode"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4">
+                            <div class="layui-form-item">
+                                <div><span class="x-red">*</span>功率代码
+                                    <span class="look-up"  onclick="powerCodeLook()">查看对照表</span>
+                                </div>
+                                <div class="layui-input-block">
+                                    <textarea placeholder="请输入功率代码，多个功率代码使用英文逗号隔离，如1N,4N" lay-verify="powerCodeVerify" class="layui-textarea" name="powerCode" id="powerCode"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4">
+                            <div class="layui-form-item">
+                                <div><span class="x-red">*</span>状态</div>
+                                <div class="layui-input-block">
+                                    <select name="status" id="status" lay-verify="statusVerify">
+                                        <option value="1">有效</option>
+                                        <option value="2">无效</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <div>备注</div>
+                                <div class="layui-input-block">
+                                    <textarea placeholder="请输入备注说明" lay-verify="remarkVerify" class="layui-textarea" name="remark" id="remark"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item layui-text-align">
+                            <button  class="layui-btn layui-bg-gray" lay-filter="cancel" lay-submit="" id="addCancel">
+                                &emsp;取消&emsp;
+                            </button>
+                            <button  class="layui-btn layui-bg-blue" lay-filter="add" lay-submit="">
+                                &emsp;确认&emsp;
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

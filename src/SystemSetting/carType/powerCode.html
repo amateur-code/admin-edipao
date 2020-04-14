@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>功率代码</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <meta http-equiv="Expires" CONTENT="-1">
+    <meta http-equiv="Cache-Control" CONTENT="no-cache">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css?VERSION">
+    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../lib/layui/layui.js" charset="utf-8"></script>
+    <script src="../../js/common.js?VERSION"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .list{
+            float: left;
+        }
+    </style>
+</head>
+<body  style="width:100%;height:100%;">
+<div  style="width:100%;height:100%;overflow: auto">
+    <div class="layui-fluid">
+        <div class="layui-row" style="width: 1915px">
+            <div class="list">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <table id="list1" lay-filter="list1"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="list">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <table id="list2" lay-filter="list2"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="list">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <table id="list3" lay-filter="list3"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="list">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <table id="list4" lay-filter="list4"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="list">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <table id="list5" lay-filter="list5"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+layui.use(['jquery', 'table', 'layer'], function () {
+    var $ = layui.jquery,
+        table = layui.table,
+        edipao = layui.edipao;
+
+    function getDictItemList (type) {
+        var val = []
+        edipao.request({
+            type: 'GET',
+            url: '/admin/sys/dict/getDictItemList',
+            async: false,
+            data: { dictType: type },
+        }).done(res => {
+            if (res.code == 0) {
+                if (res.data) {
+                    val = res.data.dictItemRespList || [];
+                }
+            } else {
+                layer.msg(res.message, { icon: 5, anim: 6 });
+            }
+        });
+        return val
+    }
+
+    // 大柴
+    var dachaiData = getDictItemList('sys.dachai.refenceTable')
+    // 锡柴
+    var xichaiData = getDictItemList('sys.xichai.refenceTable')
+    // 潍柴
+    var weichaiData = getDictItemList('sys.weichai.refenceTable')
+    // 东风康明斯
+    var dongfengkangmingsiData = getDictItemList('sys.dongfengkangmingsi.refenceTable')
+    // 玉柴
+    var yuchaiData = getDictItemList('sys.yuchai.refenceTable')
+
+    var tableCols1 = [
+        [
+            { colspan: 4, title: '大柴（用"1-3"表示）', align: "center" }
+        ],
+        [
+            { field: 'dictLabel', title: '功率' },
+            { field: 'dictValue', title: '代码' },
+            { field: 'dictLabel1', title: '功率' },
+            { field: 'dictValue1', title: '代码' }
+        ]
+    ];
+    var newDachaiData = equallyData(dachaiData)
+    renderTable('list1', tableCols1, newDachaiData);
+
+
+    var tableCols2 = [
+        [
+            { colspan: 4, title: '锡柴（用"4-6"表示）', align: "center" }
+        ],
+        [
+            { field: 'dictLabel', title: '功率' },
+            { field: 'dictValue', title: '代码' },
+            { field: 'dictLabel1', title: '功率' },
+            { field: 'dictValue1', title: '代码' }
+        ]
+    ];
+    var newXichaiData = equallyData(xichaiData)
+    renderTable('list2', tableCols2, newXichaiData);
+    var tableCols3 = [
+        [
+            { colspan: 4, title: '潍柴（用"7-9"表示）', align: "center" }
+        ],
+        [
+            { field: 'dictLabel', title: '功率' },
+            { field: 'dictValue', title: '代码' },
+            { field: 'dictLabel1', title: '功率' },
+            { field: 'dictValue1', title: '代码' }
+        ]
+    ];
+    var newWeichaiData = equallyData(weichaiData)
+    renderTable('list3', tableCols3, newWeichaiData);
+    var tableCols4 = [
+        [
+            { colspan: 4, title: '东风康明斯（用"K或M"表示）', align: "center" }
+        ],
+        [
+            { field: 'dictLabel', title: '功率' },
+            { field: 'dictValue', title: '代码' },
+            { field: 'dictLabel1', title: '功率' },
+            { field: 'dictValue1', title: '代码' }
+        ]
+    ];
+    var newDongfengkangmingsiData = equallyData(dongfengkangmingsiData)
+    renderTable('list4', tableCols4, newDongfengkangmingsiData);
+    var tableCols5 = [
+        [
+            { colspan: 4, title: '玉柴（用"Y或C"表示）', align: "center" }
+        ],
+        [
+            { field: 'dictLabel', title: '功率' },
+            { field: 'dictValue', title: '代码' },
+            { field: 'dictLabel1', title: '功率' },
+            { field: 'dictValue1', title: '代码' }
+        ]
+    ];
+    var newYuchaiData = equallyData(yuchaiData)
+    renderTable('list5', tableCols5, newYuchaiData);
+
+
+    function renderTable (id, cols, data) {
+        table.render({
+            elem: '#' + id,
+            page: false,
+            width:'350',
+            defaultToolbar: [],
+            cols: cols,
+            limit:data.length,
+            data: data
+        });
+    };
+
+    function equallyData (arr) {
+        var len = arr.length;
+        var val = []
+        if(len>1){
+            var equally =Math.ceil(len/2)
+            for(var i=0;i<equally;i++){
+                var keyValue = {}
+                keyValue['dictLabel'] = arr[i].dictLabel
+                keyValue['dictValue'] = arr[i].dictValue
+                if(i+equally<len){
+                    keyValue['dictLabel1'] = arr[i+equally].dictLabel
+                    keyValue['dictValue1'] = arr[i+equally].dictValue
+                }
+                val.push(keyValue)
+            }
+        }else{
+            val = arr
+        }
+        return val
+    }
+});
+</script>
+</body>
+</html>
