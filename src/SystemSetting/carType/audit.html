@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en"  class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>司机档案</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Expires" CONTENT="-1">
+    <meta http-equiv="Cache-Control" CONTENT="no-cache">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css?VERSION">
+    <link rel="stylesheet" href="../../lib/jqboxImg/boxImg.css">
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../lib/layui/layui.js" charset="utf-8"></script>
+    <script src="../../lib/jqboxImg/boxImg.js"></script>
+    <script src="../../js/common.js?VERSION"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .cartype-add .layui-text-align{
+            text-align: center;
+        }
+        .cartype-add .layui-form-item {
+            position: relative;
+        }
+
+        .cartype-add .layui-input-block {
+            /*margin-left: 0px;*/
+            line-height: 38px;
+        }
+
+        .cartype-add .name-color {
+            color: #3490e9;
+        }
+
+        .cartype-add .layui-form-label {
+            width: 110px;
+        }
+
+        .cartype-add .check {
+            position: absolute;
+            bottom: -25px;
+            width: 100%;
+        }
+        .cartype-add .layui-card-header {
+            font-weight: bold;
+        }
+        .look-up{
+            color: #3490e9;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid cartype-add">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-form" id="info" style="margin-bottom: 15px">
+
+            </div>
+            <form>
+                <div class="layui-card layui-form" >
+                    <div class="layui-card-header">审核</div>
+                    <div class="layui-card-body layui-row layui-col-space10">
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label"  style="width: 80px"><span class="x-red">*</span>审核结果：</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" name="checkResult" value="pass" title="通过" checked>
+                                    <input type="radio" name="checkResult" value="reject" title="驳回">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md12">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" style="width: 80px">审核备注：</label>
+                                <div class="layui-input-block">
+                                    <textarea placeholder="请输入审核备注" lay-verify="checkRemarkVerify" class="layui-textarea" name="checkRemark" id="checkRemark"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item layui-text-align">
+                            <button  class="layui-btn layui-bg-gray" lay-filter="cancel" lay-submit="" id="addCancel">
+                                &emsp;取消&emsp;
+                            </button>
+                            <button  class="layui-btn layui-bg-blue" lay-filter="add" lay-submit="">
+                                &emsp;确认&emsp;
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script id="preview" type="text/html">
+<div class="layui-card layui-form">
+    <div class="layui-card-header">基础信息</div>
+    <div class="layui-card-body layui-row layui-col-space10">
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">车型名称：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" id="modelName">{{d.detail.modelName}}</span>
+                </div>
+                {{# if(d.check.modelName){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label>
+                    <div class="layui-input-block">{{d.check.modelName}}</div>
+                </div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">要求驾照：</label>
+                <div class="layui-input-block">
+                    <span class="name-color"
+                          id="certificateCode">{{d.detail.certificateCode}}</span>
+                </div>
+                {{# if(d.check.certificateCode){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label>
+                    <div class="layui-input-block">{{d.check.certificateCode}}</div>
+                </div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否背车：</label>
+                <div class="layui-input-block">
+                    <span class="name-color"  id="orderType">{{d.detail.orderType}}</span>
+                </div>
+                {{# if(d.check.orderType){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label>
+                    <div class="layui-input-block">{{d.check.orderType}}</div>
+                </div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">车型代码：</label>
+                <div class="layui-input-block">
+                    <span class="name-color"  id="modelCode">{{d.detail.modelCode}}</span>
+                    <span class="look-up" onclick="modelCodeLook()">查看对照表</span>
+                </div>
+                {{# if(d.check.modelCode){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label>
+                    <div class="layui-input-block">{{d.check.modelCode}}</div>
+                </div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">驱动形式代码：</label>
+                <div class="layui-input-block">
+                    <span class="name-color"  id="driveWayCode">{{d.detail.driveWayCode}}</span>
+                    <span class="look-up"  onclick="driveWayCodeLook()">查看对照表</span>
+                </div>
+                {{# if(d.check.driveWayCode){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label>
+                    <div class="layui-input-block">{{d.check.driveWayCode}}</div>
+                </div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">功率代码：</label>
+                <div class="layui-input-block">
+                    <span class="name-color"  id="powerCode">{{d.detail.powerCode}}</span>
+                    <span class="look-up"  onclick="powerCodeLook()">查看对照表</span>
+                </div>
+                {{# if(d.check.powerCode){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label>
+                    <div class="layui-input-block">{{d.check.powerCode}}</div>
+                </div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" id="status">{{d.detail.status}}</span>
+                </div>
+                {{# if(d.check.status){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label>
+                    <div class="layui-input-block">{{d.check.status}}</div>
+                </div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md12">
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" id="remark">{{d.detail.remark}}</span>
+                </div>
+                {{# if(d.check.remark){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label>
+                    <div class="layui-input-block">{{d.check.remark}}</div>
+                </div>
+                {{# } }}
+            </div>
+        </div>
+    </div>
+</div>
+</script>
+<script src="js/info.js?VERSION"></script>
+<script src="js/audit.js?VERSION"></script>
+</body>
+</html>
