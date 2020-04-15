@@ -38,8 +38,8 @@ layui.config({
     { field: 'remark', title: '备注',width: 400, templet: function (d) {
         return d.remark ? d.remark : "- -";
     }},
-    { field: 'name', title: '发运趟数',width: 100, templet: function (d) {
-        return d.endAddress ? d.endAddress : "- -";
+    { field: 'transportOrderNum', title: '发运趟数',width: 100, templet: function (d) {
+        return d.transportOrderNum ? d.transportOrderNum : "- -";
     }},
     { field: 'statusDesc', title: '状态',width: 100, templet: function (d) {
         return d.statusDesc ? d.statusDesc : "- -";
@@ -252,7 +252,7 @@ layui.config({
       { field: 'endAddress', type: 'input' },
       { field: 'addrCode', type: 'input' },
       { field: 'connectorName', type: 'input' },
-      { field: 'name', type: 'input' },
+      { field: 'transportOrderNum', type: 'numberslot' },
       { field: 'statusDesc', type: 'input' },
     ];
     var where = {};
