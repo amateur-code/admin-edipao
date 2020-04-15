@@ -29,8 +29,7 @@
         }
 
         .cartype-add .layui-input-block {
-            /*margin-left: 0px;*/
-            line-height: 38px;
+            padding: 7px 15px 1px 30px;
         }
 
         .cartype-add .name-color {
@@ -42,8 +41,8 @@
         }
 
         .cartype-add .check {
-            position: absolute;
-            bottom: -25px;
+            /*  position: absolute;
+              bottom: -25px;*/
             width: 100%;
         }
         .cartype-add .layui-card-header {
@@ -54,6 +53,12 @@
             cursor: pointer;
             text-decoration: underline;
             margin-left: 20px;
+        }
+        .remark{
+            width: 90%;
+            display: inline-block;
+            word-wrap: break-word;
+            word-break: break-all;
         }
     </style>
 </head>
@@ -102,113 +107,123 @@
 <script id="preview" type="text/html">
 <div class="layui-card layui-form">
     <div class="layui-card-header">基础信息</div>
-    <div class="layui-card-body layui-row layui-col-space10">
-        <div class="layui-col-md4">
-            <div class="layui-form-item">
-                <label class="layui-form-label">车型名称：</label>
-                <div class="layui-input-block">
-                    <span class="name-color" id="modelName">{{d.detail.modelName}}</span>
+    <div class="layui-card-body  layui-col-space10">
+        <div class="layui-row">
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">车型名称：</label>
+                    <div class="layui-input-block">
+                        <span class="name-color" id="modelName">{{d.detail.modelName}}</span>
+                    </div>
+                    {{# if(d.check.modelName){ }}
+                    <div class="check"><label class="layui-form-label x-red">待审：</label>
+                        <div class="layui-input-block">{{d.check.modelName}}</div>
+                    </div>
+                    {{# } }}
                 </div>
-                {{# if(d.check.modelName){ }}
-                <div class="check"><label class="layui-form-label x-red">待审：</label>
-                    <div class="layui-input-block">{{d.check.modelName}}</div>
-                </div>
-                {{# } }}
             </div>
-        </div>
-        <div class="layui-col-md4">
-            <div class="layui-form-item">
-                <label class="layui-form-label">要求驾照：</label>
-                <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">要求驾照：</label>
+                    <div class="layui-input-block">
                     <span class="name-color"
                           id="certificateCode">{{d.detail.certificateCode}}</span>
+                    </div>
+                    {{# if(d.check.certificateCode){ }}
+                    <div class="check"><label class="layui-form-label x-red">待审：</label>
+                        <div class="layui-input-block">{{d.check.certificateCode}}</div>
+                    </div>
+                    {{# } }}
                 </div>
-                {{# if(d.check.certificateCode){ }}
-                <div class="check"><label class="layui-form-label x-red">待审：</label>
-                    <div class="layui-input-block">{{d.check.certificateCode}}</div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">是否背车：</label>
+                    <div class="layui-input-block">
+                        <span class="name-color"  id="orderType">{{d.detail.orderType}}</span>
+                    </div>
+                    {{# if(d.check.orderType){ }}
+                    <div class="check"><label class="layui-form-label x-red">待审：</label>
+                        <div class="layui-input-block">{{d.check.orderType}}</div>
+                    </div>
+                    {{# } }}
                 </div>
-                {{# } }}
             </div>
         </div>
-        <div class="layui-col-md4">
-            <div class="layui-form-item">
-                <label class="layui-form-label">是否背车：</label>
-                <div class="layui-input-block">
-                    <span class="name-color"  id="orderType">{{d.detail.orderType}}</span>
+        <div class="layui-row">
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">车型代码：</label>
+                    <div class="layui-input-block">
+                        <span class="name-color"  id="modelCode">{{d.detail.modelCode}}</span>
+                        <span class="look-up" onclick="modelCodeLook()">查看对照表</span>
+                    </div>
+                    {{# if(d.check.modelCode){ }}
+                    <div class="check"><label class="layui-form-label x-red">待审：</label>
+                        <div class="layui-input-block">{{d.check.modelCode}}</div>
+                    </div>
+                    {{# } }}
                 </div>
-                {{# if(d.check.orderType){ }}
-                <div class="check"><label class="layui-form-label x-red">待审：</label>
-                    <div class="layui-input-block">{{d.check.orderType}}</div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">驱动形式代码：</label>
+                    <div class="layui-input-block">
+                        <span class="name-color"  id="driveWayCode">{{d.detail.driveWayCode}}</span>
+                        <span class="look-up"  onclick="driveWayCodeLook()">查看对照表</span>
+                    </div>
+                    {{# if(d.check.driveWayCode){ }}
+                    <div class="check"><label class="layui-form-label x-red">待审：</label>
+                        <div class="layui-input-block">{{d.check.driveWayCode}}</div>
+                    </div>
+                    {{# } }}
                 </div>
-                {{# } }}
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">功率代码：</label>
+                    <div class="layui-input-block">
+                        <span class="name-color"  id="powerCode">{{d.detail.powerCode}}</span>
+                        <span class="look-up"  onclick="powerCodeLook()">查看对照表</span>
+                    </div>
+                    {{# if(d.check.powerCode){ }}
+                    <div class="check"><label class="layui-form-label x-red">待审：</label>
+                        <div class="layui-input-block">{{d.check.powerCode}}</div>
+                    </div>
+                    {{# } }}
+                </div>
             </div>
         </div>
-        <div class="layui-col-md4">
-            <div class="layui-form-item">
-                <label class="layui-form-label">车型代码：</label>
-                <div class="layui-input-block">
-                    <span class="name-color"  id="modelCode">{{d.detail.modelCode}}</span>
-                    <span class="look-up" onclick="modelCodeLook()">查看对照表</span>
+        <div class="layui-row">
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">状态：</label>
+                    <div class="layui-input-block">
+                        <span class="name-color"  id="status">{{d.detail.status}}</span>
+                    </div>
+                    {{# if(d.check.status){ }}
+                    <div class="check"><label class="layui-form-label x-red">待审：</label>
+                        <div class="layui-input-block">{{d.check.status}}</div>
+                    </div>
+                    {{# } }}
                 </div>
-                {{# if(d.check.modelCode){ }}
-                <div class="check"><label class="layui-form-label x-red">待审：</label>
-                    <div class="layui-input-block">{{d.check.modelCode}}</div>
-                </div>
-                {{# } }}
             </div>
         </div>
-        <div class="layui-col-md4">
-            <div class="layui-form-item">
-                <label class="layui-form-label">驱动形式代码：</label>
-                <div class="layui-input-block">
-                    <span class="name-color"  id="driveWayCode">{{d.detail.driveWayCode}}</span>
-                    <span class="look-up"  onclick="driveWayCodeLook()">查看对照表</span>
+        <div class="layui-row">
+            <div class="layui-col-md12">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">备注：</label>
+                    <div class="layui-input-block">
+                        <span class="name-color remark"  id="remark">{{d.detail.remark}}</span>
+                    </div>
+                    {{# if(d.check.remark){ }}
+                    <div class="check"><label class="layui-form-label x-red">待审：</label>
+                        <div class="layui-input-block">
+                            <span class="remark">{{d.check.remark}}</span>
+                        </div>
+                    </div>
+                    {{# } }}
                 </div>
-                {{# if(d.check.driveWayCode){ }}
-                <div class="check"><label class="layui-form-label x-red">待审：</label>
-                    <div class="layui-input-block">{{d.check.driveWayCode}}</div>
-                </div>
-                {{# } }}
-            </div>
-        </div>
-        <div class="layui-col-md4">
-            <div class="layui-form-item">
-                <label class="layui-form-label">功率代码：</label>
-                <div class="layui-input-block">
-                    <span class="name-color"  id="powerCode">{{d.detail.powerCode}}</span>
-                    <span class="look-up"  onclick="powerCodeLook()">查看对照表</span>
-                </div>
-                {{# if(d.check.powerCode){ }}
-                <div class="check"><label class="layui-form-label x-red">待审：</label>
-                    <div class="layui-input-block">{{d.check.powerCode}}</div>
-                </div>
-                {{# } }}
-            </div>
-        </div>
-        <div class="layui-col-md4">
-            <div class="layui-form-item">
-                <label class="layui-form-label">状态：</label>
-                <div class="layui-input-block">
-                    <span class="name-color" id="status">{{d.detail.status}}</span>
-                </div>
-                {{# if(d.check.status){ }}
-                <div class="check"><label class="layui-form-label x-red">待审：</label>
-                    <div class="layui-input-block">{{d.check.status}}</div>
-                </div>
-                {{# } }}
-            </div>
-        </div>
-        <div class="layui-col-md12">
-            <div class="layui-form-item">
-                <label class="layui-form-label">备注：</label>
-                <div class="layui-input-block">
-                    <span class="name-color" id="remark">{{d.detail.remark}}</span>
-                </div>
-                {{# if(d.check.remark){ }}
-                <div class="check"><label class="layui-form-label x-red">待审：</label>
-                    <div class="layui-input-block">{{d.check.remark}}</div>
-                </div>
-                {{# } }}
             </div>
         </div>
     </div>
