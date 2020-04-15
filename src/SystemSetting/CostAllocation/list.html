@@ -79,20 +79,25 @@
   {{# if(permissionList.indexOf('导出') != -1){ }}
   <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
   {{# } }}
+  <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
+
 </div>
 </script>
 <script type="text/html" id="rowBtns">
 {{# if(permissionList.indexOf('修改') != -1){ }}
 <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>
 {{# } }}
-{{# if(permissionList.indexOf('审核') != -1){ }}
-<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">审核</a>
+{{# if(d.showApprovalBtn){ }}
+<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="audit">审核</a>
 {{# } }}
 <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="preview">查看</a>
 {{# if(permissionList.indexOf('删除') != -1){ }}
 <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
 {{# } }}
 <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="log">日志</a>
+</script>
+<script type="text/html" id="stffList">
+<a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.receiveCarNetworkCount}}</a>
 </script>
 <script type="text/javascript">
 layui.config({
@@ -106,9 +111,9 @@ layui.config({
         tableKey = 'SystemSetting-CostAllocation-list',
         tableCols = [ //表头
             { checkbox: true },
-            { field: 'name', title: '费用名称', width: 200 },
-            { field: 'receiveCarNetworkCount', title: '关联网点数', width: 200 },
-            { field: 'remark', title: '备注', width: 200 },
+            { field: 'name', title: '费用名称', width: 300 },
+            { field: 'receiveCarNetworkCount', title: '关联网点数', templet: '#stffList', width: 400 },
+            { field: 'remark', title: '备注', width: 300 },
             { field: 'status', title: '状态', width: 200, align: 'center' },
             { title: '操作', field: "operation", toolbar: '#rowBtns', width: 350, fixed: "right" }
         ],
@@ -180,20 +185,6 @@ layui.config({
     }
 
     function renderTable () {
-        // tableWhere.pageNo = 1;
-        // tableWhere.pageSize = 10000;
-        // edipao.request({
-        //     type: 'post',
-        //     url: '/admin/fee/list',
-        //     data: tableWhere
-        // }).then(function (res) {
-        //     if (res.code == 0) {
-        //         console.log(res)
-        //         // exportXlsx(res.data.staffDtoList);
-        //     }
-        // })
-
-
         tableIns = table.render({
             id: 'list',
             elem: '#list',
@@ -277,7 +268,7 @@ layui.config({
     function handleEvent (obj) {
         var data = obj.data;
         // console.log(obj,permissionList)
-        obj.event == 'permission' && permissionList.indexOf('授权') == -1 && (obj.event = 'reject');
+        // obj.event == 'audit' && permissionList.indexOf('审核') == -1 && (obj.event = 'reject');
         obj.event == 'edit' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
         obj.event == 'delete' && permissionList.indexOf('删除') == -1 && (obj.event = 'reject');
         obj.event == 'add' && permissionList.indexOf('新增') == -1 && (obj.event = 'reject');
@@ -287,25 +278,29 @@ layui.config({
             case 'reject':
                 layer.alert('你没有访问权限', { icon: 2 });
                 break;
-            case 'permission':
-                xadmin.open('授权', './add-role.html?id=' + data.feeId, 600)
+            case 'audit':
+                xadmin.open('审核', './audit.html?id=' + data.feeId, 1100);
                 break;
             case 'edit':
-                xadmin.open('修改员工', './edit.html?id=' + data.feeId, 600)
+                xadmin.open('费用修改', './edit.html?id=' + data.feeId, 1100);
                 break;
             case 'preview':
-                xadmin.open('员工信息', './preview.html?id=' + data.feeId)
+                xadmin.open('费用信息', './preview.html?id=' + data.feeId);
+                break;
+            case 'staffList':
+                xadmin.open('关联网点', './staff-list.html?id=' + data.feeId);
                 break;
             case 'delete':
                 layer.confirm('确定删除吗？', { icon: 3, title: '提示' }, function (index) {
                     edipao.request({
+                        type: 'POST',
                         url: '/admin/fee/delete',
                         data: {
                             feeId: data.feeId
                         }
                     }).then(function (res) {
                         if (res.code == 0) {
-                            layer.msg('删除成功')
+                            layer.msg('删除成功');
                             location.reload();
                         } else {
                             layer.msg(res.message)
@@ -314,16 +309,16 @@ layui.config({
                 });
                 break;
             case 'log':
-                xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.feeId + '&type=5');
+                xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.feeId + '&type=8');
                 break;
             case 'add':
-                xadmin.open('添加员工', './add.html', 600)
+                xadmin.open('添加费用配置', './add.html', 1100);
                 break;
             case 'export':
                 exportData();
                 break;
             case 'tableSet':
-                xadmin.open('表格设置', './table-set.html', 600)
+                xadmin.open('表格设置', './table-set.html', 600);
                 break;
         }
         ;
@@ -343,7 +338,7 @@ layui.config({
             data: tableWhere
         }).then(function (res) {
             if (res.code == 0) {
-                exportXlsx(res.data.staffDtoList);
+                exportXlsx(res.data.feeDTOList);
             }
         })
     }
@@ -374,7 +369,7 @@ layui.config({
 
     function exportLog (ids) {
         var params = {
-            operationModule: 5,
+            operationModule: 8,
             operationRemark: "导出费用数据"
         }
         if (ids) params.dataPkList = ids;

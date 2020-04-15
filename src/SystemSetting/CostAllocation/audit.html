@@ -1,0 +1,355 @@
+<!doctype html>
+<html class="x-admin-sm">
+
+<head>
+  <meta charset="UTF-8">
+  <title>E地跑运营平台</title>
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+  <meta http-equiv="Expires" CONTENT="-1">
+  <meta http-equiv="Cache-Control" CONTENT="no-cache">
+  <meta http-equiv="Pragma" CONTENT="no-cache">
+  <link rel="stylesheet" href="../../css/font.css">
+  <link rel="stylesheet" href="../../css/xadmin.css">
+  <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
+  <script type="text/javascript" src="../../js/jquery.min.js"></script>
+  <script type="text/javascript" src="../../lib/layui/layui.js"></script>
+  <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+  <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+  <!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  <script>
+  // 是否开启刷新记忆tab功能
+  // var is_remember = false;
+  </script>
+  <style type="text/css">
+    .layui-col-xs4 {
+      padding: 20px;
+    }
+
+    .layui-col-xs4 > span {
+      color: #1E9FFF;
+    }
+  </style>
+</head>
+
+<body>
+<div class="layui-fluid">
+  <form class="layui-form" lay-filter="auditStaff">
+    <div class="layui-row" id="view"></div>
+    <div class="layui-card">
+      <div class="layui-card-header">审核</div>
+      <div class="layui-card-body">
+        <div class="layui-fluid">
+
+          <div class="layui-form-item">
+            <label class="layui-form-label"><span class="x-red">*</span>审核结果</label>
+            <div class="layui-input-block">
+              <input type="radio" name="approvalResult" value="通过" title="通过" checked>
+              <input type="radio" name="approvalResult" value="驳回" title="驳回">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">审核备注</label>
+            <div class="layui-input-block">
+              <textarea type="text" id="approvalRemark" lay-verify="approvalRemark" name="approvalRemark"
+                        placeholder="请输入内容"
+                        class="layui-textarea"></textarea>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+            </label>
+            <button class="layui-btn" lay-filter="audit" lay-submit>
+              确定
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<script id="auditInfo" type="text/html">
+<div class="layui-card">
+  <div class="layui-card-header">基本信息</div>
+  <div class="layui-card-body">
+    <div class="layui-fluid">
+      <div class="layui-row">
+        <div class="layui-col-xs4">
+          费用名称: <span>{{d.detail.name}}</span>
+          {{# if(d.detail.nameFlag =='1'){ }}
+          <div><span class="x-red">待审：</span>{{d.detail.nameStr}}</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          状态： <span>{{d.detail.status}}</span>
+          {{# if(d.detail.statusFlag =='1'){ }}
+          <div><span class="x-red">待审：</span>{{d.detail.statusStr}}</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          备注： <span>{{d.detail.remark}}</span>
+          {{# if(d.detail.remarkFlag =='1'){ }}
+          <div><span class="x-red">待审：</span>{{d.detail.remarkStr}}</div>
+          {{# } }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layui-card">
+  <div class="layui-card-header">费用架构</div>
+  <div class="layui-card-body">
+    {{# if(d.detail.feeItemJson == 0){ }}
+    <div class="no-data"><label class="layui-form-label">暂无数据</label></div>
+    {{# } else { }}
+    <div class="layui-fluid">
+      {{# layui.each(d.detail.feeItemJson, function(index, item){ }}
+      <div>{{item.carModel}}</div>
+      <div class="layui-row">
+        <div class="layui-col-xs4">
+          运费: <span>{{item.freightUnitPrice}} 元/km</span>
+          {{# if(item.freightUnitPriceFlag =='1'){ }}
+          <div><span class="x-red">待审：</span>{{item.freightUnitPriceStr}}</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          油： <span>{{item.oilUnitPrice}} 升/百公里</span>
+          {{# if(item.oilUnitPriceFlag =='1'){ }}
+          <div><span class="x-red">待审：</span>{{item.oilUnitPriceStr}}</div>
+          {{# } }}
+        </div>
+      </div>
+      <div class="layui-row">
+        <div class="layui-col-xs4">
+          预付款: <span>{{item.prePayRatio}}</span>
+          {{# if(item.prePayRatioFlag =='1'){ }}
+          <div><span class="x-red">待审：</span>{{item.prePayRatioStr}}</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          到付款： <span>{{item.arrivePayRatio}}</span>
+          {{# if(item.arrivePayRatioFlag =='1'){ }}
+          <div><span class="x-red">待审：</span>{{item.arrivePayRatioStr}}</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          尾款： <span>{{item.tailPayRatio}}</span>
+          {{# if(item.tailPayRatioFlag =='1'){ }}
+          <div><span class="x-red">待审：</span>{{item.tailPayRatioStr}}</div>
+          {{# } }}
+        </div>
+      </div>
+      {{# }) }}
+      {{# } }}
+    </div>
+  </div>
+</div>
+
+
+</script>
+<script type="text/javascript">
+layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, laytpl, form) {
+    var xadmin = layui.xadmin;
+    edipao = layui.edipao;
+    var params = edipao.urlGet();
+    var detail = {};
+
+    //只保留2位小数，如：2，会在2后面补上00.即2.00
+    function toDecimal2 (x) {
+        var f = parseFloat(x);
+        if (isNaN(f)) {
+            return false;
+        }
+        var f = Math.round(x * 100) / 100;
+        var s = f.toString();
+        var rs = s.indexOf('.');
+        if (rs < 0) {
+            rs = s.length;
+            s += '.';
+        }
+        while (s.length <= rs + 2) {
+            s += '0';
+        }
+        return s;
+    }
+
+//自定义验证规则
+    form.verify({
+        approvalRemark: function (value) {
+            if (value.length > 300) {
+                return '费用名称不能超过300个字符';
+            }
+        }
+    });
+
+    // 小数转换为百分数并保留两位小数
+    // function toPercent (point) {
+    //     var str = Number(point * 100).toFixed(2);
+    //     return str;
+    // }
+    //
+    // // 百分比转换小数保留两位小数
+    // function toPoint (percent) {
+    //     var str = percent.replace("%", "");
+    //     str = (str / 100).toFixed(2);
+    //     return str;
+    // }
+
+    var resData;
+    edipao.request({
+        type: 'POST',
+        url: '/admin/fee/get',
+        data: {
+            feeId: params.id
+        }
+    }).done(function (res) {
+        if (res.code == 0) {
+            // res.data.approvalResult = res.data.approvalResult == '0 ' ? '通过' : '驳回';
+            form.val("auditStaff", res.data);
+            resData = JSON.parse(res.data.feeItemJson);
+            resData.forEach(item => {
+                item.freightUnitPrice = toDecimal2(item.freightUnitPrice);
+                item.oilUnitPrice = toDecimal2(item.oilUnitPrice);
+                item.prePayRatio = toDecimal2(item.prePayRatio);
+                item.arrivePayRatio = toDecimal2(item.arrivePayRatio);
+                item.tailPayRatio = toDecimal2(item.tailPayRatio)
+            });
+            res.data.feeItemJson = resData;
+            detail = res.data;
+            detail.nameFlag = '0';
+            detail.nameStr = '0';
+            detail.remarkFlag = '0';
+            detail.remarkStr = '0';
+            detail.statusFlag = '0';
+            detail.statusStr = '0';
+            detail.feeItemJson.forEach(item => {
+                item.freightUnitPriceFlag = '0';
+                item.freightUnitPriceStr = '';
+                item.oilUnitPriceFlag = '0';
+                item.oilUnitPriceStr = '';
+                item.prePayRatioFlag = '0';
+                item.prePayRatioStr = '';
+                item.arrivePayRatioFlag = '0';
+                item.arrivePayRatioStr = '';
+                item.tailPayRatioFlag = '0';
+                item.tailPayRatioStr = '';
+            });
+            // 1显示审核，0不显示审核
+            if (detail.showApprovalBtn) {
+                waitCheck();
+            } else {
+                render();
+            }
+        } else {
+            layer.msg(res.message)
+        }
+    });
+
+    // 打开审核页面获取最近一次修改的数据
+
+    function waitCheck () {
+        edipao.request({
+            type: 'GET',
+            url: "/admin/log/last-modify/get",
+            data: {
+                operationModule: 8,
+                dataPk: params.id
+            }
+        }).then(function (res) {
+            if (res.code == 0) {
+                if (res.data) {
+                    var editData = JSON.parse(res.data.modifyAfterJson);
+                    var checks = editData;
+                    checks.forEach(item => {
+                        if (item.name == 'feeItemJson') {
+                            item.value = JSON.parse(item.value);
+                            detail.feeItemJson.forEach(val => {
+                                item.value.forEach(h => {
+                                    if (val.id == h.id) {
+                                        if (h.freightUnitPrice) {
+                                            val.freightUnitPriceFlag = '1';
+                                            val.freightUnitPriceStr = h.freightUnitPrice
+                                        }
+                                        if (h.oilUnitPrice) {
+                                            val.oilUnitPriceFlag = '1';
+                                            val.oilUnitPriceStr = h.oilUnitPrice
+                                        }
+                                        if (h.prePayRatio) {
+                                            val.prePayRatioFlag = '1';
+                                            val.prePayRatioStr = h.prePayRatio
+                                        }
+                                        if (h.arrivePayRatio) {
+                                            val.arrivePayRatioFlag = '1';
+                                            val.arrivePayRatioStr = h.arrivePayRatio
+                                        }
+                                        if (h.tailPayRatio) {
+                                            val.tailPayRatioFlag = '1';
+                                            val.tailPayRatioStr = h.tailPayRatio
+                                        }
+                                    }
+                                })
+                            })
+                        }
+                        if (item.name == 'remark') {
+                            detail.remarkFlag = '1';
+                            detail.remarkStr = item.value;
+                        }
+                        if (item.name == 'status') {
+                            detail.statusFlag = '1';
+                            detail.statusStr = item.value;
+                        }
+                        if (item.name == 'name') {
+                            detail.nameFlag = '1';
+                            detail.nameStr = item.value;
+                        }
+                    });
+                }
+                render()
+            }
+        })
+    }
+
+    function render () {
+        laytpl(auditInfo.innerHTML).render({ detail: detail }, function (html) {
+            document.getElementById('view').innerHTML = html;
+        })
+    }
+
+    form.on('submit(audit)', function (data) {
+        let approvalResult = data.field.approvalResult == '驳回' ? '1' : '0';
+        edipao.request({
+            type: 'POST',
+            url: '/admin/fee/approval',
+            data: {
+                feeId: params.id,
+                approvalResult: approvalResult,
+                approvalRemark: data.field.approvalRemark,
+            },
+        }).done(function (res) {
+            if (res.code == 0) {
+                layer.alert("审核成功", {
+                    icon: 6,
+                    end: function () {
+                        xadmin.close();
+                        xadmin.father_reload();
+                    }
+                });
+            } else {
+                layer.msg(res.message)
+            }
+        });
+        return false;
+    });
+
+})
+</script>
+</body>
+
+</html>
