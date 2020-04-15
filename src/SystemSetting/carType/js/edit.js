@@ -3,22 +3,43 @@ layui.use(['jquery', 'form'], function () {
         edipao = layui.edipao;
     form = layui.form;
 
-    // 获取详情
-    var params = edipao.urlGet();
+    // 获取所有驾照类型
     edipao.request({
         type: 'GET',
-        url: '/admin/sys/truckModel/detail',
-        data: {
-            id: params.id
-        }
-    }).done(function (res) {
+        dataType: "JSON",
+        url: '/admin/driver/info/licenceType',
+    }).done(res => {
         if (res.code == 0) {
-            form.val("carTypeEdit", res.data);
+            var driveLicenceTypeData = res.data.sort();
+            var optionLicence = "<option value=''>请选择</option>";
+            for (var i in driveLicenceTypeData) {
+                optionLicence += "<option value='" + driveLicenceTypeData[i] + "'>" + driveLicenceTypeData[i] + "</option>";
+            }
+            $("#certificateCode").html(optionLicence);
+            form.render('select');
+            getDetail()
         } else {
             layer.msg(res.message, { icon: 5, anim: 6 });
         }
-    })
+    });
+    // 获取详情
+    var params = edipao.urlGet();
 
+    function getDetail () {
+        edipao.request({
+            type: 'GET',
+            url: '/admin/sys/truckModel/detail',
+            data: {
+                id: params.id
+            }
+        }).done(function (res) {
+            if (res.code == 0) {
+                form.val("carTypeEdit", res.data);
+            } else {
+                layer.msg(res.message, { icon: 5, anim: 6 });
+            }
+        })
+    }
 
     // 监听提交
     form.on('submit(add)',
