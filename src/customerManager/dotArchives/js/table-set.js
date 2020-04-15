@@ -9,7 +9,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: 'addrCode', title: '地址代码'},
     { field: 'connectorName', title: '联系人'},
     { field: 'remark', title: '备注'},
-    { field: 'name', title: '发运趟数'},
+    { field: 'transportOrderNum', title: '发运趟数'},
     { field: 'statusDesc', title: '状态'},
   ];
   var tableHeaderList = dotTableHeaderList;

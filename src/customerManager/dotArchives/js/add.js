@@ -45,6 +45,7 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
           var feeList = JSON.parse(_this.detail.feeJson);
           $("#accountCity").xcity(_this.detail.endProvince, _this.detail.endCity);
           form.val("main_form", res3.data);
+          console.log(feeList)
           feeList.forEach(function (item, index) {
             if(index > 0){
               laytpl(feeTpl).render({
