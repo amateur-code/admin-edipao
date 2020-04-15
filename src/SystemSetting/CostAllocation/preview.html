@@ -83,33 +83,33 @@
         <div class="layui-col-xs4">
           运费: <span>{{item.freightUnitPrice}} 元/km</span>
           {{# if(item.freightUnitPriceFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{item.freightUnitPriceStr}}</div>
+          <div><span class="x-red">待审：</span>{{item.freightUnitPriceStr}} 元/km</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
           油： <span>{{item.oilUnitPrice}} 升/百公里</span>
           {{# if(item.oilUnitPriceFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{item.oilUnitPriceStr}}</div>
+          <div><span class="x-red">待审：</span>{{item.oilUnitPriceStr}} 升/百公里</div>
           {{# } }}
         </div>
       </div>
       <div class="layui-row">
         <div class="layui-col-xs4">
-          预付款: <span>{{item.prePayRatio}}</span>
+          预付款: <span>{{item.prePayRatio}}%</span>
           {{# if(item.prePayRatioFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{item.prePayRatioStr}}</div>
+          <div><span class="x-red">待审：</span>{{item.prePayRatioStr}}%</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
-          到付款： <span>{{item.arrivePayRatio}}</span>
+          到付款： <span>{{item.arrivePayRatio}}%</span>
           {{# if(item.arrivePayRatioFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{item.arrivePayRatioStr}}</div>
+          <div><span class="x-red">待审：</span>{{item.arrivePayRatioStr}}%</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
-          尾款： <span>{{item.tailPayRatio}}</span>
+          尾款： <span>{{item.tailPayRatio}}%</span>
           {{# if(item.tailPayRatioFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{item.tailPayRatioStr}}</div>
+          <div><span class="x-red">待审：</span>{{item.tailPayRatioStr}}%</div>
           {{# } }}
         </div>
       </div>
@@ -149,18 +149,18 @@ layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, layt
     }
 
     // 小数转换为百分数并保留两位小数
-    function toPercent (point) {
-        var str = Number(point * 100).toFixed(2);
-        return str;
-    }
+    // function toPercent (point) {
+    //     var str = Number(point * 100).toFixed(2);
+    //     return str;
+    // }
 
 
     // 百分比转换小数保留两位小数
-    function toPoint (percent) {
-        var str = percent.replace("%", "");
-        str = (str / 100).toFixed(2);
-        return str;
-    }
+    // function toPoint (percent) {
+    //     var str = percent.replace("%", "");
+    //     str = (str / 100).toFixed(2);
+    //     return str;
+    // }
 
     var resData;
     edipao.request({
@@ -175,9 +175,9 @@ layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, layt
             resData.forEach(item => {
                 item.freightUnitPrice = toDecimal2(item.freightUnitPrice);
                 item.oilUnitPrice = toDecimal2(item.oilUnitPrice);
-                item.prePayRatio = toPercent(item.prePayRatio);
-                item.arrivePayRatio = toPercent(item.arrivePayRatio);
-                item.tailPayRatio = toPercent(item.tailPayRatio)
+                item.prePayRatio = toDecimal2(item.prePayRatio);
+                item.arrivePayRatio = toDecimal2(item.arrivePayRatio);
+                item.tailPayRatio = toDecimal2(item.tailPayRatio)
             });
             res.data.feeItemJson = resData;
             detail = res.data;
@@ -223,31 +223,30 @@ layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, layt
         }).then(function (res) {
             if (res.code == 0) {
                 if (res.data) {
-                    var editData = JSON.parse(res.data.modifyAfterJson);
-                    var checks = editData;
-                    checks.forEach(item => {
+                    let editData = JSON.parse(res.data.modifyAfterJson);
+                    editData.forEach(item => {
                         if (item.name == 'feeItemJson') {
                             item.value = JSON.parse(item.value);
                             detail.feeItemJson.forEach(val => {
                                 item.value.forEach(h => {
                                     if (val.id == h.id) {
-                                        if (h.freightUnitPrice) {
+                                        if (h.freightUnitPrice != val.freightUnitPrice) {
                                             val.freightUnitPriceFlag = '1';
                                             val.freightUnitPriceStr = h.freightUnitPrice
                                         }
-                                        if (h.oilUnitPrice) {
+                                        if (h.oilUnitPrice != val.oilUnitPrice) {
                                             val.oilUnitPriceFlag = '1';
                                             val.oilUnitPriceStr = h.oilUnitPrice
                                         }
-                                        if (h.prePayRatio) {
+                                        if (h.prePayRatio != val.prePayRatio) {
                                             val.prePayRatioFlag = '1';
                                             val.prePayRatioStr = h.prePayRatio
                                         }
-                                        if (h.arrivePayRatio) {
+                                        if (h.arrivePayRatio != val.arrivePayRatio) {
                                             val.arrivePayRatioFlag = '1';
                                             val.arrivePayRatioStr = h.arrivePayRatio
                                         }
-                                        if (h.tailPayRatio) {
+                                        if (h.tailPayRatio != val.tailPayRatio) {
                                             val.tailPayRatioFlag = '1';
                                             val.tailPayRatioStr = h.tailPayRatio
                                         }
