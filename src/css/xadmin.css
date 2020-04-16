@@ -165,7 +165,7 @@ body{
     max-width: 220px;
     overflow: auto;
     overflow-x:hidden;
-    overflow: hidden;
+    /* overflow: hidden; */
 
     /*width: 0px;*/
 }
