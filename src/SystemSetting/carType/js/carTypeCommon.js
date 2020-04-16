@@ -2,15 +2,6 @@ layui.use(['jquery', 'form'], function () {
     var $ = layui.jquery,
         edipao = layui.edipao;
     form = layui.form;
-    // 获取所有驾照类型
-    var driveLicenceTypeData = parent.driveLicenceTypeData;
-    var optionLicence = "<option value=''>请选择</option>";
-    for (var i in driveLicenceTypeData) {
-        optionLicence += "<option value='" + driveLicenceTypeData[i] + "'>" + driveLicenceTypeData[i] + "</option>";
-    }
-    $("#certificateCode").html(optionLicence);
-    form.render('select');
-
 
     // 车型代码
     var modelCodeData = [];
@@ -53,7 +44,7 @@ layui.use(['jquery', 'form'], function () {
     //功率代码
     var powerData = []
 
-    function getPowerData(type){
+    function getPowerData (type) {
         edipao.request({
             type: 'GET',
             url: '/admin/sys/dict/getDictItemList',
@@ -71,6 +62,7 @@ layui.use(['jquery', 'form'], function () {
             }
         });
     }
+
     // 大柴
     getPowerData('sys.dachai.refenceTable')
     // 锡柴
@@ -107,10 +99,10 @@ layui.use(['jquery', 'form'], function () {
         modelCodeVerify: function (value) {
             if (value == '') {
                 return '请输入车型代码';
-            }else{
+            } else {
                 var arr = value.split(',');
-                var val = getCompVerify(arr,modelCodeData)
-                if(!val){
+                var val = getCompVerify(arr, modelCodeData)
+                if (!val) {
                     return '车型代码输入有误'
                 }
             }
@@ -118,10 +110,10 @@ layui.use(['jquery', 'form'], function () {
         driveWayCodeVerify: function (value) {
             if (value == '') {
                 return '请输入驱动形式代码';
-            }else{
+            } else {
                 var arr = value.split(',');
-                var val = getCompVerify(arr,driveWayCodeData)
-                if(!val){
+                var val = getCompVerify(arr, driveWayCodeData)
+                if (!val) {
                     return '驱动形式代码输入有误'
                 }
             }
@@ -129,10 +121,10 @@ layui.use(['jquery', 'form'], function () {
         powerCodeVerify: function (value) {
             if (value == '') {
                 return '请输入功率代码';
-            }else{
+            } else {
                 var arr = value.split(',');
-                var val = getCompVerify(arr,powerData)
-                if(!val){
+                var val = getCompVerify(arr, powerData)
+                if (!val) {
                     return '功率代码输入有误'
                 }
             }
@@ -143,23 +135,23 @@ layui.use(['jquery', 'form'], function () {
             }
         }
     });
-    function getCompVerify(val,arr){
+
+    function getCompVerify (val, arr) {
         var flag = true
         // 验证是否有重复数据
         var hash = {};
         layui.each(val, function (index, item) {
-            if(hash[item]) {
+            if (hash[item]) {
                 flag = false
-                return
+                return false
             }
             hash[item] = true;
         })
-
         // 和对照表数据进行对比
         layui.each(val, function (index, item) {
-            if(arr.indexOf(item)=='-1'){
+            if (arr.indexOf(item) == '-1') {
                 flag = false
-                return
+                return false
             }
         })
         return flag

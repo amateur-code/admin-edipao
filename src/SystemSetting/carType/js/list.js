@@ -10,8 +10,6 @@ var statusData={
     '1':'有效',
     '2':'失效'
 }
-// 驾照类型
-var driveLicenceTypeData = {};
 
 //config的设置是全局的
 layui.config({
@@ -30,30 +28,18 @@ layui.config({
         permissionList = edipao.getMyPermission();
         form = layui.form;
 
-
-    // 获取所有驾照类型
-    edipao.request({
-        type: 'GET',
-        dataType: "JSON",
-        async: false,
-        url: '/admin/driver/info/licenceType',
-    }).done(res=>{
-        if(res.code == 0){
-            driveLicenceTypeData = res.data.sort();
-        }else{
-            layer.msg(res.message, {icon: 5,anim: 6});
-        }
-    });
-
-
     var tableKey = 'SystemSetting-carType-list';
     var tableCols = [
         { checkbox: true },
         {
-            field: 'modelName', title: '车型名称',width: 100,
+            field: 'modelName', title: '车型名称',width: 200,
             templet: function (data) {
                 var val = data.modelName;
-                return DataNull(val)
+                if(val==''){
+                    return '--'
+                }else{
+                    return '<span title="'+val+'">'+val+'</span>'
+                }
             }
         },
         { field: 'certificateCode', title: '要求驾照',width: 100,
@@ -188,7 +174,7 @@ layui.config({
             done: function (res, curr, count) {
                 $(window).unbind("resize");
                 resizeTable();
-                if(res.data== null){
+                if(res.data== null||res.data.length == 0){
                     $('.layui-table-header').css('overflow-x','scroll')
                 }else{
                     $('.layui-table-header').css('overflow','hidden')
@@ -231,14 +217,28 @@ layui.config({
         }, dur);
     }
 
-
+    // 获取所有驾照类型
     var driveLicenceTypeFilter = [];
-    layui.each(driveLicenceTypeData,function (index,item) {
-        driveLicenceTypeFilter.push({
-            'key':item,
-            'value':item
-        });
+    edipao.request({
+        type: 'GET',
+        dataType: "JSON",
+        async: false,
+        url: '/admin/driver/info/licenceType',
+    }).done(res=>{
+        if(res.code == 0){
+            var data = res.data.sort();
+            layui.each(data,function (index,item) {
+                driveLicenceTypeFilter.push({
+                    'key':item,
+                    'value':item
+                });
+            });
+        }else{
+            layer.msg(res.message, {icon: 5,anim: 6});
+        }
     });
+
+
     var orderTypeFilter = [];
     layui.each(orderTypeData,function (index,item) {
         orderTypeFilter.push({
