@@ -267,6 +267,7 @@ layui.config({
                 }
                 index++;
             });
+            console.log(JSON.stringify(where))
             mainTable.reload( { where: where, page: { curr: 1 }});
         }
     });
@@ -1342,7 +1343,7 @@ layui.config({
                     layer.alert('你没有访问权限', {icon: 2});
                     return;
                 }else if (layEvent === 'edit') { //编辑
-                    xadmin.open('修改订单', './order-edit.html?action=edit&orderNo=' + data.orderNo + "&orderId=" + data.id);
+                    xadmin.open('修改订单', './order-edit.html?action=edit&orderNo=' + data.orderNo + "&orderId=" + data.id + "&feeId=" + data.feeId);
                 } else if (layEvent === 'verify') { //审核
                     xadmin.open('审核', './order-view.html?action=verify&orderNo=' + data.orderNo + "&orderId=" + data.id);
                 } else if (layEvent === 'view') { //查看

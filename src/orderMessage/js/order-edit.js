@@ -28,9 +28,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   var table = layui.table;
   function Edit(){
     var qs = edipao.urlGet();
-    this.orderNo = qs.orderNo;
+    this.orderNo = qs.orderNo && "OR00000025";
     this.orderId = qs.orderId;
-    this.feeId = qs.feeId || "FEE8ead80814370Uy641b70c";
+    this.feeId = qs.feeId && "FEE8ead80814370Uy641b70c";
     this.action = qs.action;
     this.user = JSON.parse(sessionStorage.user);
     this.carFormList = [];
@@ -42,6 +42,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     this.tailPay = [];
     this.orderData = null;
     this.orderDataBackUp = null;
+    this.originFeeRate = {};
     this.carsToAdd = [];
     this.carsToDel = [];
     this.cars = [];
@@ -101,14 +102,13 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.setConfigData = function(cb, options){
     var _this = this;
     if(!_this.selectData){
-      $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList(), getOrderFee()).done(function (res1, res2, res3, res4, res5) {
+      $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList()).done(function (res1, res2, res3, res4, res5) {
         $('.customerList').append(returnOptions(res1[0].data));
         // if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions2(res2[0].data));
         // $(options.selector).append(returnOptions2(res2[0].data));
         $('.startParkList').append(returnOptions(res3[0].data));
         $('.startWarehouseList').append(returnOptions(res4[0].data));
         _this.selectData = [res1[0].data, res2[0].data, res3[0].data, res4[0].data];
-        _this.orderFee = res5[0];
         cb && cb();
       });
     } else {
@@ -135,16 +135,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
 
       return html;
-    }
-    function getOrderFee(){
-      return edipao.request({
-        url: "/admin/order/getOrderFee",
-        method: "POST",
-        data: {
-          orderNo: _this.orderId,
-          feeId: _this.feeId,
-        }
-      });
     }
     // 获取客户名称
     function getCustomerList(){
@@ -370,9 +360,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       $("#income_info").html(html);
       form.render();
     });
-    laytpl($("#fee_form_tpl").html()).render({}, function (html) {
-      $("#form_fee_container").html(html);
-    });
     if(data.driverId){
       form.val("form_dispatch", data);
     }else{
@@ -389,7 +376,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         initial: true
       });
     });
-
+    var oilCapacity = 0;
+    var maxCustomerMileage = 0;
     _this.carFormList.forEach(function (item, index) {
       var itemStr = carFormHtml;
       var truckData;
@@ -403,13 +391,18 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         truckData.income = "*";
         truckData.manageFee = "*";
       }
-
+      oilCapacity = oilCapacity + truckData.oilCapacity * 1;
+      if(truckData.customerMileage > maxCustomerMileage) maxCustomerMileage = truckData.customerMileage;
       itemStr = itemStr.replace(/CARFORM/g, item.filter);
       laytpl(itemStr).render(truckData, function (html) {
         carFormStr += html;
         if(index == _this.carFormList.length - 1){
           $("#car_form_container").html(carFormStr);
           renderEnd();
+          _this.renderFee({
+            maxCustomerMileage: maxCustomerMileage,
+            oilCapacity: oilCapacity,
+          });
         }
       });
     });
@@ -513,6 +506,36 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       // _this.bindEndParkInput();
       _this.getMapAddress();
     }
+  }
+  Edit.prototype.getOrderFee = function (options) {
+    var _this = this;
+    return edipao.request({
+      url: "/admin/order/getOrderFee",
+      method: "POST",
+      data: {
+        orderNo: _this.orderNo,
+        feeId: _this.feeId,
+        oilCapacity: options.oilCapacity,
+      }
+    });
+  }
+  Edit.prototype.renderFee = function (options) {
+    var _this = this;
+    console.log(_this.orderData)
+    _this.getOrderFee(options).done(function (res) {
+      _this.originFeeRate = res.data;
+      if(res.code == "0"){
+        var data = {
+          maxCustomerMileage: options.maxCustomerMileage,
+          oilCapacity: options.oilCapacity,
+          orderData: _this.orderData,
+        };
+        Object.assign(data, _this.originFeeRate);
+        laytpl($("#fee_form_tpl").html()).render(data, function (html) {
+          $("#form_fee_container").html(html);
+        });
+      }
+    });
   }
   Edit.prototype.setEndParkSelect = function(filter, data){
     data = data || [];
@@ -969,6 +992,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         endLatLngErrorTruck.push(itemData.vinCode);
       }
       var truckItem = {
+        loginStaffId: _this.user.staffId,
         truckId: itemData.id||0,
         masterFlag: itemData.masterFlag == "on" ? "否" : "是",
         vinCode: itemData.vinCode||"",
@@ -1053,7 +1077,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     data.driverPhone = dispatchData.driverPhone || "";
     data.driverIdCard = dispatchData.driverIdCard || "";
     data.driverCertificate = dispatchData.driverCertificate || "";
-    data.driverMileage = (dispatchData.driverMileage*1).toFixed(2) || "";
+    if(data.driverMileage){
+      data.driverMileage = (dispatchData.driverMileage * 1).toFixed(2) || 100;
+    }else{
+      data.driverMileage = 100;
+    }
     
     if(_this. dataPermission.canViewOrderIncome != "Y"){
       data.totalIncome = _this.orderDataBackUp.totalIncome || "";
@@ -1563,6 +1591,15 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     })
   }
   Edit.prototype.bindInputLimit = function () {
+    var _this = this;
+    var $customerMileage = $(".customerMileage");
+    $customerMileage.unbind().on("input", function (e) {
+      var arr = [];
+      $customerMileage.each(function (index, item) {
+        arr.push(item.value*1);
+      });
+      $(".maxCustomerMileage").val(Math.max.apply(null,arr));
+    });
     $(".vinCode_input").on("input", function (e) {
       if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);
     });
@@ -1796,7 +1833,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           flag: false,
           province: '',
           city: '',
-          selector: "." + filterStr + "_endCity_select"
+          selector: "." + filterStr + "_endCity_select",
         });
         $(".product_code").unbind().on("blur", function (e) {
           _this.getProductInfo(e);
@@ -1923,7 +1960,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           //   city: address.city,
           //   type: field
           // });
-          console.log(address, _this.mapAddress);
           if(!address) address = _this.mapAddress;
           if(field == "start"){
             _t.parents('.address-map').find('.location-start-name').val(address.name).next().val(address.lat).next().val(address.lng);
