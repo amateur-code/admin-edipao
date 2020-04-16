@@ -4,6 +4,10 @@ layui.config({
   excel: 'layui_exts/excel.min',
   tableFilter: 'TableFilter/tableFilter'
 }).use(['jquery', 'table','layer','excel','tableFilter','form'], function () {
+	var statusData = [
+		{ key: "1", value: "有效" },
+		{ key: "2", value: "失效" },
+	]
   var table = layui.table,
       layer = layui.layer,
       tableFilter = layui.tableFilter,
@@ -12,8 +16,11 @@ layui.config({
       form = layui.form,
       edipao = layui.edipao,
       tableIns,tableFilterIns;
-      permissionList = edipao.getMyPermission();
-      permissionList.push("新增","修改","删除");
+			permissionList = edipao.getMyPermission();
+			console.log(permissionList)
+      // permissionList.push("新增","修改","删除", "审核");
+  window.form = form;
+  var where = {};
   var showList = [ "company", "endProvince","name","name","name","name","name"];
   var exportHead={};// 导出头部
   var tableCols = [
@@ -41,8 +48,15 @@ layui.config({
     { field: 'transportOrderNum', title: '发运趟数',width: 100, templet: function (d) {
         return d.transportOrderNum ? d.transportOrderNum : "- -";
     }},
-    { field: 'statusDesc', title: '状态',width: 100, templet: function (d) {
-        return d.statusDesc ? d.statusDesc : "- -";
+    { field: 'status', title: '状态',width: 100, templet: function (d) {
+				switch(d.status + ""){
+					case "1":
+						return "有效";
+					case "2":
+						return "失效";
+					default:
+						return "- -";
+				}
     }},
     {title: '操作', field: "operation", width: 320, fixed: 'right',toolbar: '#rowBtns'}
   ]
@@ -146,7 +160,7 @@ layui.config({
     });
     var resizeTime = null;
     function resizeTable() {
-        var w = "90px";
+        var w = "100px";
         var backw = "320px";
         var backl = "-1px";
         var l = "-215px";
@@ -207,8 +221,8 @@ layui.config({
           case 'edit':
               xadmin.open('修改网点', './add.html?action=edit&id=' + data.id)
               break;
-          case 'audit':
-              xadmin.open('审核网点', './audit.html?action=verify&id=' + data.id)
+          case 'verify':
+              xadmin.open('审核网点', './view.html?action=verify&id=' + data.id)
               break;
           case 'info':
               xadmin.open('查看网点', './view.html?action=view&id=' + data.id)
@@ -232,7 +246,7 @@ layui.config({
               });
               break;
           case 'log':
-              xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=3');
+              xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=10');
               break;
       };
     }
@@ -248,14 +262,13 @@ layui.config({
   List.prototype.setTableFilter = function () {
     var filters = [
       { field: 'company', type: 'input' },
-      { field: 'endProvince', type: 'input' },
+      { field: 'endProvince', type: 'provincecity' },
       { field: 'endAddress', type: 'input' },
       { field: 'addrCode', type: 'input' },
       { field: 'connectorName', type: 'input' },
       { field: 'transportOrderNum', type: 'numberslot' },
-      { field: 'statusDesc', type: 'input' },
+      { field: 'status', type: 'checkbox', data: statusData },
     ];
-    var where = {};
     tableFilterIns = tableFilter.render({
       'elem' : '#dotList',//table的选择器
       'mode' : 'self',//过滤模式
@@ -269,7 +282,12 @@ layui.config({
               if(key=='licenceWarn'){
                   where['searchFieldDTOList['+ index +'].fieldName'] = validityData[value];
                   where['searchFieldDTOList['+ index +'].fieldMaxValue'] = getDay(warnDataVal[value]);
-              }else{
+              }else if(key == "endProvince"){
+								where['searchFieldDTOList['+ index +'].fieldName'] = "endProvince";
+								where['searchFieldDTOList['+ index++ +'].fieldValue'] = value.province;
+								where['searchFieldDTOList['+ index +'].fieldName'] = "endCity";
+								where['searchFieldDTOList['+ index +'].fieldValue'] = value.city;
+							}else{
                   where['searchFieldDTOList['+ index +'].fieldName'] = key;
                   where['searchFieldDTOList['+ index +'].fieldValue'] = value;
               }
@@ -281,17 +299,17 @@ layui.config({
   }
   List.prototype.exportExcel = function(){
     var _this = this;
-    var checkStatus = table.checkStatus('driverList');
+    var checkStatus = table.checkStatus('dotList');
     if(checkStatus.data.length > 0){
         exportXlsx(checkStatus.data);
         return;
     }
     var param = where;
-    param['pageNumber']= 1;
-    param['pageSize'] =10000;
+    param['pageNo'] = 1;
+    param['pageSize'] =1000;
     edipao.request({
         type: 'GET',
-        url: '/admin/driver/info/list',
+        url: '/admin/customer/truckNetwork/list',
         data: param
     }).done(function(res) {
         if (res.code == 0) {
@@ -311,8 +329,22 @@ layui.config({
       layui.each(data, function(k, v){
           var exportObj={};
           layui.each(v,function (index,item) {
+						console.log(index, item)
               if(index && showList.indexOf(index) != -1){
                   switch(index) {
+											case "status":
+												switch(item + ""){
+													case "1":
+														exportObj[index] = "有效";
+														break;
+													case "2":
+														exportObj[index] = "失效";
+														break;
+													default:
+														exportObj[index] = "- -";
+														break;
+												}
+												break;
                       default:
                           exportObj[index] = DataNull(item);
                   }
@@ -331,7 +363,7 @@ layui.config({
     // 导出日志
     function exportLog(ids){
      var params = {
-        operationModule: 3,
+        operationModule: 10,
         operationRemark: "导出网点档案",
       }
       if(ids) params.dataPkList = ids;

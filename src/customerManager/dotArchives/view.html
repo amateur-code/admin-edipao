@@ -164,6 +164,12 @@
 			position: absolute;
 			padding: 9px 15px;
 		}
+		.red{
+			color: red;
+		}
+		.hide{
+			display: none !important;
+		}
 	</style>
 </head>
 
@@ -172,6 +178,39 @@
 		<div class="layui-row layui-col-space15">
 			<div class="layui-col-md12">
 				<form class="layui-form" id="view"></form>
+			</div>
+		</div>
+		<div id="verify" class="layui-row layui-col-space15 hide">
+			<div class="layui-col-md12">
+				<form class="layui-form layui-card" lay-filter="verify">
+					<div class="layui-card-header">审核结果</div>
+						<div class="layui-card-body layui-col-space10">
+							<div class="layui-form-item layui-row">
+								<div style="line-height:34px;" class="layui-col-md1"><span class="red">*</span>审核结果：</div>
+								<div class="layui-col-md1">
+										<input type="radio" name="approvalResult" value="pass" title="通过" checked>
+								</div>
+								<div class="layui-col-md1">
+										<input type="radio" name="approvalResult" value="reject" title="驳回">
+								</div>
+							</div>
+							<div class="layui-form-item layui-row">
+								<div style="line-height:34px;" class="layui-col-md1">审核备注：</div>
+								<div class="layui-col-md10">
+										<textarea name="approvalRemark"  placeholder="" class="layui-textarea"></textarea>
+								</div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item layui-row">
+					<div class="layui-col-md1 layui-col-md-offset5">
+							<div id="btn_cancel" class="layui-btn layui-btn-primary">取消</div>
+					</div>
+					<div class="layui-col-md1">
+							<div id="verify_submit" class="layui-btn layui-btn-normal">确认</div>
+					</div>
+				</div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -260,38 +299,61 @@
 		</div>
 		<div id="fee_container" class="layui-card layui-form">
 			<div class="layui-card-header">费用结构</div>
-
-			<div class="layui-card-body layui-row layui-col-space10">
-				<div class="layui-col-md4">
-					<div class="layui-form-item">
-						<label class="layui-form-label">发车仓库：</label>
-						<div class="layui-input-block">
-							<span class="name-color" name="deposit" id="deposit">{{d.detail.deposit}}</span>
+			{{# console.log(d.check) }}
+			{{# if(d.check.feeJson){ }}
+				<div class="layui-card-body layui-row layui-col-space10 red">
+					<div class="layui-col-md4">
+						<div class="layui-form-item" style="margin-bottom:0;">
+							待审：
 						</div>
-						{{# if(d.check.deposit){ }}
-						<div class="check"><label class="layui-form-label x-red">待审：</label>
-							<div class="layui-input-block">{{d.check.deposit}}</div>
-						</div>
-						{{# } }}
 					</div>
 				</div>
-				<div class="layui-col-md4">
-					<div class="layui-form-item">
-						<label class="layui-form-label">运费模板：</label>
-						<div class="layui-input-block">
-							<span class="name-color" name="deposit" id="deposit">{{d.detail.deposit}}</span>
-							&nbsp;&nbsp;
-							<span class="name-color view_fee">查看费用结构</span>
+				{{#  layui.each(d.check.feeJson, function(index, item){ }}
+				<div class="layui-card-body layui-row layui-col-space10">
+					<div class="layui-col-md4">
+						<div class="layui-form-item">
+							<label class="layui-form-label">发车仓库：</label>
+							<div class="layui-input-block">
+								<span class="name-color" name="deposit" id="deposit">{{item.startWarehouse}}</span>
+							</div>
 						</div>
-						{{# if(d.check.deposit){ }}
-						<div class="check"><label class="layui-form-label x-red">待审：</label>
-							<div class="layui-input-block">{{d.check.deposit}}</div>
+					</div>
+					<div class="layui-col-md4">
+						<div class="layui-form-item">
+							<label class="layui-form-label">运费模板：</label>
+							<div class="layui-input-block">
+								<span class="name-color" name="deposit" id="deposit">{{item.name}}</span>
+								&nbsp;&nbsp;
+								<span data-id="{{item.feeId}}" class="name-color view_fee">查看费用结构</span>
+							</div>
 						</div>
-						{{# } }}
 					</div>
 				</div>
-			</div>
-			
+				{{#  }); }}
+			{{# }else{ }}
+				{{#  layui.each(d.detail.feeJson, function(index, item){ }}
+				<div class="layui-card-body layui-row layui-col-space10">
+					<div class="layui-col-md4">
+						<div class="layui-form-item">
+							<label class="layui-form-label">发车仓库：</label>
+							<div class="layui-input-block">
+								<span class="name-color" name="deposit" id="deposit">{{item.startWarehouse}}</span>
+							</div>
+						</div>
+					</div>
+					<div class="layui-col-md4">
+						<div class="layui-form-item">
+							<label class="layui-form-label">运费模板：</label>
+							<div class="layui-input-block">
+								<span class="name-color" name="deposit" id="deposit">{{item.name}}</span>
+								&nbsp;&nbsp;
+								<span data-id="{{item.feeId}}" class="name-color view_fee">查看费用结构</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				{{#  }); }}
+			{{# } }}
 		</div>
 		<div class="layui-card layui-form">
 			<div class="layui-card-header">其他信息</div>

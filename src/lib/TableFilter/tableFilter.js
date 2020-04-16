@@ -212,7 +212,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 
 					if(filterType == "city"){
 						var val = tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
-						if(val&&JSON.stringify(val) != "{}"){
+						if(val && JSON.stringify(val) != "{}"){
 							// 必须引用xctiy.js 有值时赋值
 							$('#'+filterName+'Start').xcity(val[filterName+'Start-province'],val[filterName+'Start-city']);
 							$('#'+filterName+'End').xcity(val[filterName+'End-province'],val[filterName+'End-city']);
@@ -224,9 +224,9 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 					}
 					if(filterType == "province"){
 						var val = tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
-						if(val&&JSON.stringify(val) != "{}"){
+						if(val && JSON.stringify(val) != "{}" && val[filterName] && JSON.stringify(val[filterName]) != "{}"){
 							// 必须引用xctiy.js 有值时赋值
-							$('#'+filterName).xcity(val[filterName]);
+							$('#'+filterName).xcity(val[filterName][filterName]);
 						}else{
 							// 必须引用xctiy.js 初始化
 							$('#'+filterName).xcity();
@@ -234,9 +234,9 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 					}
 					if(filterType == "provincecity"){
 						var val = tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
-						if(val&&JSON.stringify(val) != "{}"){
+						if(val && JSON.stringify(val) != "{}" && val[filterName] && JSON.stringify(val[filterName]) != "{}"){
 							// 必须引用xctiy.js 有值时赋值
-							$('#'+filterName).xcity(val[filterName]+"_province",val[filterName]+"_city");
+							$('#'+filterName).xcity(val[filterName]["province"],val[filterName]["city"]);
 						}else{
 							// 必须引用xctiy.js 初始化
 							$('#'+filterName).xcity();
@@ -551,7 +551,6 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 			}
 			delete form_val[filterName];
 		}
-		console.log(form_val);
 		return form_val;
 	}
 

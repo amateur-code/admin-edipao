@@ -8,7 +8,6 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
     detailAddress;
 
   window.form = form;
-
   form.verify({
     nameVerify: function (value) {
       if (value == "") {

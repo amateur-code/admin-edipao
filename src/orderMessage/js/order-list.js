@@ -1270,6 +1270,7 @@ layui.config({
                     var data = [];
                     orderDTOList = res.data.orderDTOList;
                     orderDTOList.forEach(function(item){
+                        console.log(item.feeId)
                         if(item.orderType == 2 && item.masterFlag == "否"){
                             item.showBtn = 0;
                         }else{
@@ -1376,10 +1377,13 @@ layui.config({
         },
         resizeTable:function () {
             var dur = 500;
-            var w = "90px";
+            var w = "390px";
+            var backw = "100px";
+            var r = "-1px";
+            var backr = "-290px";
             if(method.timer) clearTimeout(method.timer);
             method.timer = setTimeout(function () {
-                $(".layui-table-main td[data-field=operation]").css("border-color","#ffffff").css("background","#ffffff").find(".layui-table-cell").css("width", w).html("");
+                $(".layui-table-main td[data-field=operation]").css("border-color","#ffffff").css("background","#ffffff").find(".layui-table-cell").css("width", backw).html("");
                 $(".layui-table-box>.layui-table-header th[data-field=operation]").css("border", "none").css("color", "#f2f2f2");
                 var $fixed = $(".layui-table-fixed.layui-table-fixed-r");
                 $fixed.removeClass("layui-hide").find(".layui-table-body").css("height", "auto");
@@ -1387,17 +1391,17 @@ layui.config({
                 $fixed.find(".layui-table-filter").css("left","60px");
                 $fixed.find("thead .layui-table-cell").css("position", "relative");
                 if(!$fixed.find(".opeartion_icon").length) $fixed.find("thead .layui-table-cell").append("<i class='layui-icon opeartion_icon layui-icon-prev'></i>");
-                $fixed.animate({"right": "-230px"}, 500, function () {
+                $fixed.animate({"right": backr}, 500, function () {
                     $(".opeartion_icon").unbind().on("click", function (e) {
                         var $this = $(this);
                         if($this.hasClass("layui-icon-prev")){
-                            $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", "320px");
+                            $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", w);
                             $this.removeClass("layui-icon-prev").addClass("layui-icon-next");
-                            $fixed.animate({"right": "-1px"}, 500);
+                            $fixed.animate({"right": r}, 500);
                         }else{
-                            $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", "90px");
+                            $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", backw);
                             $this.removeClass("layui-icon-next").addClass("layui-icon-prev");
-                            $fixed.animate({"right": "-230px"}, 500);
+                            $fixed.animate({"right": backr}, 500);
                         }
                     });
                 });
@@ -1758,7 +1762,7 @@ layui.config({
         "returnAuditStatus",
     ];
     var exportHead={};// 导出头部
-    var toolField = {title: '操作', field: "operation", toolbar: '#barDemo', align: 'left', fixed: 'right', width: 320};
+    var toolField = {title: '操作', field: "operation", toolbar: '#barDemo', align: 'left', fixed: 'right', width: 390};
 
     edipao.request({
         type: 'GET',

@@ -42,10 +42,14 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
         });
         if(_this.action == "edit"){
           _this.detail = res3.data;
-          var feeList = JSON.parse(_this.detail.feeJson);
+          try {
+            _this.detail.feeJson = JSON.parse(_this.detail.feeJson);
+          } catch (error) {
+            _this.detail.feeJson = [];
+          }
+          var feeList = _this.detail.feeJson;
           $("#accountCity").xcity(_this.detail.endProvince, _this.detail.endCity);
           form.val("main_form", res3.data);
-          console.log(feeList)
           feeList.forEach(function (item, index) {
             if(index > 0){
               laytpl(feeTpl).render({
@@ -83,11 +87,7 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
   Add.prototype.getDetail = function(){
     var _this = this;
     if(!_this.id){
-      return {
-        done: function (cb) {
-          cb({code: 0, data: {}});
-        }
-      }
+      return [{code:0, data:{}}]
     }else{
       return edipao.request({
         url: "/admin/customer/truckNetwork/detail",
@@ -121,9 +121,13 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
       layer.msg("请先选择运费模板！", {icon:2});
       return;
     }
+    xadmin.open('费用信息', '../../SystemSetting/CostAllocation/preview.html?id=' + feeId);
   }
   Add.prototype.bindEvents = function(){
     var _this = this;
+    form.on("select(feeId)", function (obj) {
+      $(obj.othis).next().val($(obj.elem.selectedOptions).text());
+    });
     $(".view_fee").unbind().on("click", this.handleViewFee);
     $("#addrCode").unbind().on("input", function (e) {
       if(e.target.value.length > 15) e.target.value = e.target.value.slice(0, 15);
@@ -153,6 +157,7 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
         feeJson.push({
           startWarehouse: data["startWarehouse" + index],
           feeId: data["feeId" + index],
+          name: data["feeName" + index],
         });
       });
       if(data.connectorName && !data.connectorPhone){
@@ -175,6 +180,10 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
         remark: data.remark || "",
         endDistrict: data.endDistrict || "",
         feeJson: JSON.stringify(feeJson),
+      }
+      if(!params.endLat || params.endLat * 1 == 0 || !params.endLng || params.endLat * 1 == 0){
+        layer.msg("网点地址经纬度无效，请重新选择！", {icon:2});
+        return false;
       }
       var url = "/admin/customer/truckNetwork/add";
       if(_this.action == "edit"){

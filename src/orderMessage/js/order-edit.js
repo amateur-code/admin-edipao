@@ -7,7 +7,6 @@ function num(obj) {
         obj.value = "";
       }
       obj.value = obj.value.replace(/^0*(0\.|[1-9])/, '$1');//解决 粘贴不生效
-      console.log(obj.value)
       obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
       obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
       obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
@@ -31,6 +30,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var qs = edipao.urlGet();
     this.orderNo = qs.orderNo;
     this.orderId = qs.orderId;
+    this.feeId = qs.feeId || "FEE8ead80814370Uy641b70c";
     this.action = qs.action;
     this.user = JSON.parse(sessionStorage.user);
     this.carFormList = [];
@@ -101,13 +101,14 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.setConfigData = function(cb, options){
     var _this = this;
     if(!_this.selectData){
-      $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList()).done(function (res1, res2, res3, res4) {
+      $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList(), getOrderFee()).done(function (res1, res2, res3, res4, res5) {
         $('.customerList').append(returnOptions(res1[0].data));
         // if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions2(res2[0].data));
         // $(options.selector).append(returnOptions2(res2[0].data));
         $('.startParkList').append(returnOptions(res3[0].data));
         $('.startWarehouseList').append(returnOptions(res4[0].data));
         _this.selectData = [res1[0].data, res2[0].data, res3[0].data, res4[0].data];
+        _this.orderFee = res5[0];
         cb && cb();
       });
     } else {
@@ -134,6 +135,16 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
 
       return html;
+    }
+    function getOrderFee(){
+      return edipao.request({
+        url: "/admin/order/getOrderFee",
+        method: "POST",
+        data: {
+          orderNo: _this.orderId,
+          feeId: _this.feeId,
+        }
+      });
     }
     // 获取客户名称
     function getCustomerList(){
@@ -331,107 +342,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
   Edit.prototype.setFeeList = function(flag, type, newObj){
     return;
-    //保存费用项
-    var _this = this;
-    if(flag){
-      var dispatchData = form.val("form_dispatch");
-      if(type == "prePay"){
-        _this.prePay = newObj;
-      }else{
-        _this.prePay = _this.prePay.map(function (item, index) {
-          item.val = dispatchData["prePay_" + index] || 0;
-          return item;
-        });
-      }
-      if(type == "arrivePay"){
-        _this.arrivePay = newObj;
-      }else{
-        _this.arrivePay = _this.arrivePay.map(function (item, index) {
-          item.val = dispatchData["arrivePay_" + index] || 0;
-          return item;
-        });
-      }
-      if(type == "tailPay"){
-        _this.tailPay = newObj;
-      }else{
-        _this.tailPay = _this.tailPay.map(function (item, index) {
-          item.val = dispatchData["tailPay_" + index] || 0;
-          return item;
-        });
-      }
-    }
-    if(_this.dataPermission.canViewOrderCost != "Y"){
-      _this.prePay.forEach(function (item) {
-        item.val = "*";
-      });
-      _this.arrivePay.forEach(function (item) {
-        item.val = "*";
-      });
-      _this.tailPay.forEach(function (item) {
-        item.val = "*";
-      });
-    }
-    
-    laytpl($("#fee_list_tpl").html()).render({
-      prePay: _this.prePay,
-      tailPay: _this.tailPay,
-      arrivePay: _this.arrivePay,
-      unitList: _this.feeUnitItemList
-    }, function (html) {
-      $("#fee_list_container").html(html);
-      form.render("select");
-      _this.bindFeeUnitSelect();
-    });
   }
-  Edit.prototype.bindFeeUnitSelect = function () {
-    var _this = this;
-    form.on("select", function (obj) {
-      var elem = obj.elem;
-      if(elem.name == "unit"){
-        var type = elem.dataset.type;
-        var index = elem.dataset.index * 1;
-        var value = elem.value;
-        _this[type][index].unit = value;
-      }else if(elem.name == "followOperatorPhone"){
-        var name = obj.elem.selectedOptions[0].dataset.name;
-        form.val("form_ascription", {followOperator: name});
-      }
-    });
-  }
+  
   Edit.prototype.setData = function(data){
     //渲染订单数据
     var _this =this;
-    try {
-      _this.prePay = JSON.parse(data.prePayFeeItems) || [];
-    } catch (error) {
-      _this.prePay = [];
-    }
-    try {
-      _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
-    } catch (error) {
-      _this.tailPay = [];
-    }
-    try {
-      _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
-    } catch (error) {
-      _this.arrivePay = [];
-    }
-
-    try {
-      _this.orderDataBackUp.prePayFeeItems = JSON.parse(data.prePayFeeItems) || [];
-    } catch (error) {
-      _this.orderDataBackUp.prePayFeeItems = [];
-    }
-    try {
-      _this.orderDataBackUp.tailPayFeeItems = JSON.parse(data.tailPayFeeItems) || [];
-    } catch (error) {
-      _this.orderDataBackUp.tailPayFeeItems = [];
-    }
-    try {
-      _this.orderDataBackUp.arrivePayFeeItems = JSON.parse(data.arrivePayFeeItems) || [];
-    } catch (error) {
-      _this.orderDataBackUp.arrivePayFeeItems = [];
-    }
     _this.setFeeList();
 
     laytpl($("#form_ascription_tpl").html()).render({orderData: _this.orderData, staffList: _this.staffList}, function (html) {
@@ -812,142 +727,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       })
     });
   }
-  Edit.prototype.openAddFee = function (e) {
-    //打开增加费用项弹窗
-    var _this = this;
-    var type = e.target.dataset.type;
-    var list = _this[type].map(function (item) {
-      return item.key;
-    });
-    var feeList = [];
-    _this.feeItemList.forEach(function(item){
-      if(list.includes(item.value)){
-        item.checked = true;
-        feeList.push(item);
-      }else{
-        item.checked = false;
-        feeList.push(item);
-      }
-    });
-    laytpl($("#fee_tpl").html()).render({feeList: feeList, type: type}, function(html){
-      var layerIndex1 = layer.open({
-        title: "增加费用",
-        type: 1,
-        area: '600px',
-        content: html,
-        btn:["确认", "取消"],
-        yes: function (e) {
-          var data = form.val("add_fee_form");
-          var dispatchData = form.val("form_dispatch");
-          if(type == "prePay"){
-            _this.prePay = _this.prePay.map(function (item, index) {
-              item.val = dispatchData["prePay_" + index] || 0;
-              return item;
-            });
-          }
-          if(type == "arrivePay"){
-            _this.arrivePay = _this.arrivePay.map(function (item, index) {
-              item.val = dispatchData["arrivePay_" + index] || 0;
-              return item;
-            });
-          }
-          if(type == "tailPay"){
-            _this.tailPay = _this.tailPay.map(function (item, index) {
-              item.val = dispatchData["tailPay_" + index] || 0;
-              return item;
-            });
-          }
-          var oldList = _this[type].map(function (item) {
-            return item.key;
-          });
-          var newList = Object.keys(data);
-          var newObj = [];
-          newList.forEach(function(item){
-            if(!oldList.includes(item)){
-              newObj.push({
-                key: item,
-                val: 0,
-                unit: _this.feeUnitItemList[0],
-              });
-            }else{
-              newObj.push(_this[type][oldList.indexOf(item)])
-            }
-          });
-          _this[type] = newObj;
-          _this.setFeeList(true, type, newObj);
-          $(".add_fee").unbind().on("click", function (e) {
-            _this.openAddFee(e);
-          });
-          layer.closeAll();
-        },
-        success:function () {
-          form.render("checkbox");
-          $(".edit_icon").unbind().on("click", function (event) {
-            event.target.dataset.type = type;
-            _this.openUpdateFee(e, event, layerIndex1);
-          });
-          $("#add_fee_item").unbind().on("click", function(event){
-            _this.openAddFeeItem(e, layerIndex1);
-          });
-        }
-      });
-    });
-  }
-  Edit.prototype.openAddFeeItem = function (event, layerIndex1) {
-    var _this = this;
-    laytpl($("#fee_item_tpl").html()).render({list: _this.feeUnitItemList}, function(html){
-      var layerIndex2 = layer.open({
-        title: "增加费用项",
-        type: 1,
-        area: '400px',
-        content: html,
-        btn:["确认", "取消"],
-        success: function () { form.render("select") },
-        yes: function (e) {
-          var data = form.val("add_fee_item_form");
-          if(!data.addFeeName){
-            layer.msg("请输入费用名称", {icon: 5,anim: 6});
-            return;
-          }
-          if(data.addFeeName.length > 16){
-            layer.msg("费用项名称不能超过16个字符", {icon: 5,anim: 6});
-            return;
-          }
-          if(_this.feeItemList.indexOf(data.addFeeName) > -1){
-            layer.msg("新增费用项名称不能与系统一致", {icon: 5,anim: 6});
-            return;
-          }
-          var loadIndex = layer.load(1);
-          _this.addFeeItem(data).done(function (res) {
-            if(res.code == "0"){
-              $('#addFeeName').val("");
-              layer.close(layerIndex1);
-              layer.close(layerIndex2);
-              layer.msg("添加成功");
-              // return;
-              _this.getFeeItemList().done(function (res) {
-                layer.close(loadIndex);
-                if(res.code == "0"){
-                  _this.feeItemList = res.data;
-                  setTimeout(function(){
-                    _this.openAddFee(event);
-                    layer.msg("添加成功");
-                  }, 500);
-                }else{
-                  layer.msg(res.message, {icon: 5,anim: 6});
-                }
-              });
-            }else{
-              layer.close(loadIndex);
-              layer.msg(res.message, {icon: 5,anim: 6});
-            }
-          }).fail(function () {
-            layer.close(loadIndex);
-          });
-        },
-      });
-    });
-  }
+
   Edit.prototype.handleAddCar = function (data, filter) {
     //添加车辆时
     var _this= this;
@@ -957,33 +737,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var indexTodel;
     var index = _this.carFormList.length - 1;
 
-    // upload.render({
-    //   elem: $('.tempLicense')[index],
-    //   url: edipao.API_HOST + '/admin/truck/upload/image',
-    //   data: {
-    //     loginStaffId: _this.user.staffId,
-    //     truckId: idToAdd,
-    //     type: 1,
-    //     index: 1
-    //   },
-    //   before: function () {
-    //     if(!form.val(filter).id){
-    //       layer.msg('请先选择车辆', {icon: 5,anim: 6});
-    //       return false;
-    //     }
-    //   },
-    //   done: function (res) {
-    //     if(res.code == 0){
-    //       _this.tempLicense[index] = {
-    //         image: res.data,
-    //         id: idToAdd
-    //       };
-    //       layer.msg("上传成功");
-    //     }else{
-    //       layer.msg(res.message, {icon: 5,anim: 6});
-    //     }
-    //   }
-    // });
     var delCarsFlag = _this.carsToDel.some(function (item, index) {
       if(item.id == data.id) {idTodel = item.id; indexTodel = index;}
       return item.id == data.id;
@@ -1108,16 +861,16 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
     }
     if(id != undefined){
-      edipao.request({
-        url: "/admin/truck/delTruck",
-        method: "post",
-        data: {
-          loginStaffId: _this.user.staffId,
-          truckId: id,
-          orderId: _this.orderId
-        }
-      }).done(function (res) {
-        if(res.code == 0){
+      // edipao.request({
+      //   url: "/admin/truck/delTruck",
+      //   method: "post",
+      //   data: {
+      //     loginStaffId: _this.user.staffId,
+      //     truckId: id,
+      //     orderId: _this.orderId
+      //   }
+      // }).done(function (res) {
+      //   if(res.code == 0){
           $("." + filter).remove();
           if(_this.carFormList.length == 0){
             layer.alert("订单中已没有车辆，订单将会被取消", { icon: 6 }, function() {
@@ -1134,10 +887,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
               });
             });
           }
-        }else{
-          layer.msg(res.message, {icon: 5,anim: 6});
-        }
-      });
+      //   }else{
+      //     layer.msg(res.message, {icon: 5,anim: 6});
+      //   }
+      // });
       return;
     }else{
       $("." + filter).remove();
@@ -1190,18 +943,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var endLatLngError = false;
     var endLatLngErrorTruck = [];
     var dispatchData = form.val("form_dispatch");
-    // _this.prePay = _this.prePay.map(function (item, index) {
-    //   item.val = dispatchData["prePay_" + index] || 0;
-    //   return item;
-    // });
-    // _this.arrivePay = _this.arrivePay.map(function (item, index) {
-    //   item.val = dispatchData["arrivePay_" + index] || 0;
-    //   return item;
-    // });
-    // _this.tailPay = _this.tailPay.map(function (item, index) {
-    //   item.val = dispatchData["tailPay_" + index] || 0;
-    //   return item;
-    // });
 
     var totalIncome = 0;
     var totalManageFee = 0;
@@ -1322,34 +1063,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       data.totalManageFee = totalManageFee || 0;
     }
 
-    // var pres = JSON.parse(JSON.stringify(_this.prePay));
-    // var arrives = JSON.parse(JSON.stringify(_this.arrivePay));
-    // var tails = JSON.parse(JSON.stringify(_this.tailPay));
-    
-    // //费用项
-    // if(_this.dataPermission.canViewOrderCost != "Y"){
-    //   pres = _this.orderDataBackUp.prePayFeeItems;
-    //   arrives = _this.orderDataBackUp.arrivePayFeeItems;
-    //   tails = _this.orderDataBackUp.tailPayFeeItems;
-    // }
-    // var feeItemErrorFlag = false;
-    // pres.forEach(function(item){
-    //   if(item.key == "油")item.unit = "升";
-    //   if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
-    // });
-    // arrives.forEach(function(item){
-    //   if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
-    // });
-    // tails.forEach(function(item){
-    //   if(!item.val || item.val * 1 == 0 || item.val * 1 < 0) feeItemErrorFlag = true;
-    // });
-    // if(feeItemErrorFlag){
-    //   layer.msg("收费项金额不正确", {icon: 2});
-    //   return;
-    // }
-    // data.prePay = JSON.stringify(pres);
-    // data.arrivePay = JSON.stringify(arrives);
-    // data.tailPay = JSON.stringify(tails);
 
     data.truckUpdateReqList = truckUpdateReqList || "";
     if(data.orderType == 1){

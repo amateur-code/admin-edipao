@@ -30,15 +30,11 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             Object.keys(res.data).forEach(function (key) {
               res.data[key] = res.data[key] || "- -";
             });
-            _this.updateData.orderData = res.data;
-            laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
+            laytpl($("#forms_tpl").html()).render({orderData: res.data}, function (html) {
               $("#form_income_container").after(html);
               _this.orderData = res.data;
               _this.setData(res.data);
               _this.bindEvents();
-              if(_this.action == "verify"){
-                _this.getUpdate();
-              }
             });
           }else{
             layer.msg(res.message, {icon: 5,anim: 6});
@@ -124,98 +120,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         xadmin.close();
       });
     },
-    setFeeList: function () {
-      //保存费用项
-      var _this = this;
-      return;
-      laytpl($("#fee_list_tpl").html()).render({
-        prePay: _this.prePay,
-        tailPay: _this.tailPay,
-        arrivePay: _this.arrivePay,
-        updateData: _this.updateData,
-        orderData: _this.orderData
-      }, function (html) {
-        $("#fee_list_container").html(html);
-      });
-    },
     setData: function (data) {
-      console.log(data)
+      var _this = this;
        //渲染订单数据
-      var _this =this;
-      data.prePayFeeItems = data.prePayFeeItems || "[]";
-      data.tailPayFeeItems = data.tailPayFeeItems || "[]";
-      data.arrivePayFeeItems = data.arrivePayFeeItems || "[]";
-      try {
-        _this.prePay = JSON.parse(data.prePayFeeItems) || [];
-        _this.updateData.prePayFeeItems = _this.updateData.prePayFeeItems || [];
-        if(_this.action == "verify" && _this.updateData.prePayFeeItems.length){
-          _this.prePay.forEach(function(before, index){
-            var delItem = before; //false标识被删除了
-            var flag = false;
-            flag = _this.updateData.prePayFeeItems.some(function (after) {
-              return before.key == after.key;
-            });
-            if(!flag){
-              _this.updateData.prePayFeeItems.splice(index, 0, {
-                key: delItem.key,
-                val: "移除",
-                unit: delItem.unit,
-                del: true,
-              });
-            }
-          });
-        }
-      } catch (error) {
-        _this.prePay = [];
-      }
-      try {
-        _this.tailPay = JSON.parse(data.tailPayFeeItems) || [];
-        _this.updateData.tailPayFeeItems = _this.updateData.tailPayFeeItems || [];
-        if(_this.action == "verify" && _this.updateData.tailPayFeeItems.length){
-          _this.tailPay.forEach(function(before, index){
-            var flag = false;
-            var delItem = before; //false标识被删除了
-            flag = _this.updateData.tailPayFeeItems.some(function (after) {
-              return before.key == after.key;
-            });
-            if(!flag){
-              _this.updateData.tailPayFeeItems.splice(index, 0, {
-                key: delItem.key,
-                val: "移除",
-                unit: delItem.unit,
-                del: true,
-              });
-            }
-          });
-        }
-      } catch (error) {
-        _this.tailPay = [];
-      }
-      try {
-        _this.arrivePay = JSON.parse(data.arrivePayFeeItems) || [];
-        _this.updateData.arrivePayFeeItems = _this.updateData.arrivePayFeeItems || [];
-        if(_this.action == "verify" && _this.updateData.arrivePayFeeItems.length){
-          _this.arrivePay.forEach(function(before, index){
-            var flag = false;
-            var delItem = before; //false标识被删除了
-            flag = _this.updateData.arrivePayFeeItems.some(function (after) {
-              return before.key == after.key;
-            });
-            if(!flag){
-              _this.updateData.arrivePayFeeItems.splice(index, 0, {
-                key: delItem.key,
-                val: "移除",
-                unit: delItem.unit,
-                del: true,
-              });
-            }
-          });
-        }
-      } catch (error) {
-        _this.arrivePay = [];
-      }
-      _this.setFeeList();
-
       if(_this. dataPermission.canViewOrderIncome != "Y"){
         data.totalIncome = "*";
         data.totalManageFee = "*";

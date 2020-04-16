@@ -10,7 +10,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: 'connectorName', title: '联系人'},
     { field: 'remark', title: '备注'},
     { field: 'transportOrderNum', title: '发运趟数'},
-    { field: 'statusDesc', title: '状态'},
+    { field: 'status', title: '状态'},
   ];
   var tableHeaderList = dotTableHeaderList;
   laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
