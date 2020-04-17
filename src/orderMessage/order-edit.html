@@ -481,8 +481,18 @@
                 
             </form>
         </div>
-        <div id="form_fee_container" class="layui-row layui-col-space15 page_block">
-                
+        <div style="background-color: #ffffff;">
+            <div id="form_fee_container" class="layui-row layui-col-space15 page_block"></div>
+            <div id="btn_container" class="btn_container">
+                <div class="layui-row">
+                    <div class="layui-col-md1 text_center layui-col-md-offset5">
+                        <div id="btn_cancel" class="layui-btn layui-btn-primary">取消</div>
+                    </div>
+                    <div class="layui-col-md1 text_center">
+                        <div id="btn_confirm" class="layui-btn layui-btn-normal">确认</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script id="fee_form_tpl" type="text/html">
@@ -500,7 +510,7 @@
                         <label class="layui-form-label text_left form_label">承运公里数</label><br>
                         <div class="layui-input-inline relative">
                             <span class="input_unit">km</span>
-                            <input onchange="num(this)" readonly type="text" value="{{d.maxCustomerMileage}}" name="maxCustomerMileage" lay-verify="required" autocomplete="off" class="layui-input maxCustomerMileage">
+                            <input onchange="num(this)" disabled type="text" value="{{d.feeDetail.maxCustomerMileage}}" name="maxCustomerMileage" lay-verify="required" autocomplete="off" class="layui-input maxCustomerMileage">
                         </div>
                     </div>
                 </div>
@@ -512,11 +522,12 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">升</span>
-                                <input value="{{d.orderData.oil}}" onkeyup="num(this)" type="text" name="" lay-verify="required" autocomplete="off" class="layui-input input_Fee">
+                                <input data-field="oil" value="{{d.feeDetail.oil}}" onkeyup="num(this)" type="text" name="oil" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5">
                                 <div class="blue">规定：{{d.oilUnitPrice}} 升/百公里</div>
-                                <div class="blue">实际：{{d.orderData.oilUnitPrice}} 升/百公里</div>
+                                <div class="blue">实际：{{d.feeDetail.oilUnitPrice}} 升/百公里</div>
+                                <input value="{{d.feeDetail.oilUnitPrice}}" type="text" name="oilUnitPrice" class="layui-input" style="width: 0;height: 0;opacity:0;">
                             </div>
                         </div>
                     </div>
@@ -525,11 +536,11 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">升</span>
-                                <input value="{{d.orderData.prePayOil}}" onkeyup="num(this)" type="text" name="" lay-verify="required" autocomplete="off" class="layui-input input_Fee">
+                                <input data-field="prePayOil" value="{{d.feeDetail.prePayOil}}" onkeyup="num(this)" type="text" name="prePayOil" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5">
-                                <div class="blue">油箱容量：{{d.oilCapacity}}升</div>
-                                <input value="{{d.oilCapacity}}" type="text" name="oilCapacity" class="layui-input" style="width: 0;height: 0;opacity:0;">
+                                <div class="blue">油箱容量：{{d.feeDetail.oilCapacity}}升</div>
+                                <input value="{{d.feeDetail.oilCapacity}}" type="text" name="oilCapacity" class="layui-input" style="width: 0;height: 0;opacity:0;">
                             </div>
                         </div>
                     </div>
@@ -538,17 +549,17 @@
                         <div class="layui-input-inline layui-row  layui-col-space14">
                             <div class="layui-col-md4 relative">
                                 <span class="input_unit">升</span>
-                                <input value="{{d.orderData.prePayOil}}" onchange="num(this)" readonly type="text" name="" autocomplete="off" class="layui-input">
+                                <input value="{{d.feeDetail.oil * 1 - d.feeDetail.prePayOil * 1}}" onchange="num(this)" disabled type="text" name="" autocomplete="off" class="layui-input">
                                 <span class="blue">x</span>
                             </div>
                             <div class="layui-col-md4 relative">
                                 <span class="input_unit">元/升</span>
-                                <input value="{{d.orderData.closestOilPrice}}" onchange="num(this)" readonly type="text" name="" autocomplete="off" class="layui-input">
+                                <input value="{{d.feeDetail.closestOilPrice}}" onchange="num(this)" disabled type="text" name="closestOilPrice" autocomplete="off" class="layui-input">
                                 <span class="blue">=</span>
                             </div>
                             <div class="layui-col-md4 relative">
                                 <span class="input_unit">元</span>
-                                <input value="{{d.orderData.oilAmount}}" onchange="num(this)" readonly type="text" name="" autocomplete="off" class="layui-input">
+                                <input value="{{d.feeDetail.oilAmount}}" onchange="num(this)" disabled type="text" name="oilAmount" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                     </div>
@@ -561,11 +572,12 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input value="{{d.orderData.amount}}" onkeyup="num(this)" type="text" name="amount" lay-verify="required" autocomplete="off" class="layui-input input_Fee">
+                                <input data-field="amount" value="{{d.feeDetail.amount}}" onkeyup="num(this)" type="text" name="amount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5">
                                 <div class="blue">规定：{{d.freightUnitPrice}} 元/km</div>
-                                <div class="blue">实际：{{d.orderData.freightUnitPrice}} 元/km</div>
+                                <div class="blue">实际：{{d.feeDetail.freightUnitPrice}} 元/km</div>
+                                <input value="{{d.feeDetail.freightUnitPrice}}" type="text" name="freightUnitPrice" class="layui-input" style="width: 0;height: 0;opacity:0;">
                             </div>
                         </div>
                     </div>
@@ -578,11 +590,21 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input value="{{d.orderData.totalAmount}}" onchange="num(this)" readonly type="text" name="totalAmount" lay-verify="required" autocomplete="off" class="layui-input input_Fee">
+                                <input value="{{d.feeDetail.totalAmount}}" onchange="num(this)" disabled type="text" name="totalAmount" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5">
                                 <div class="blue">现金+油转现</div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md3">
+                        <label class="layui-form-label text_left form_label">尾款账期</label><br>
+                        <div class="layui-input-inline layui-row">
+                            <select name="tailPayBillType" lay-verify="">
+                                <option value="1" {{d.feeDetail.tailPayBillType == '1' ? 'selected' : ''}}>现结</option>
+                                <option value="2" {{d.feeDetail.tailPayBillType == '2' ? 'selected' : ''}}>月结</option>
+                                <option value="3" {{d.feeDetail.tailPayBillType == '3' ? 'selected' : ''}}>账期</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -594,11 +616,12 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input value="{{d.orderData.prePayAmount}}" onkeyup="num(this)" type="text" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input data-field="prePayAmount" value="{{d.feeDetail.prePayAmount}}" onkeyup="num(this)" type="text" name="prePayAmount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5">
                                 <div class="blue">规定：{{d.prePayRatio}}%</div>
-                                <div class="blue">实际：{{d.orderData.prePayRatio}}%</div>
+                                <div class="blue">实际：{{d.feeDetail.prePayRatio}}%</div>
+                                <input value="{{d.feeDetail.prePayRatio}}" type="text" name="prePayRatio" class="layui-input" style="width: 0;height: 0;opacity:0;">
                             </div>
                         </div>
                     </div>
@@ -607,11 +630,12 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input value="{{d.orderData.arrivePayAmount}}" onkeyup="num(this)" type="text" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input data-field="arrivePayAmount" value="{{d.feeDetail.arrivePayAmount}}" onkeyup="num(this)" type="text" name="arrivePayAmount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5">
                                 <div class="blue">规定：{{d.arrivePayRatio}}%</div>
-                                <div class="blue">实际：{{d.orderData.arrivePayRatio}}%</div>
+                                <div class="blue">实际：{{d.feeDetail.arrivePayRatio}}%</div>
+                                <input value="{{d.feeDetail.arrivePayRatio}}" type="text" name="arrivePayRatio" class="layui-input" style="width: 0;height: 0;opacity:0;">
                             </div>
                         </div>
                     </div>
@@ -620,23 +644,14 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input value="{{d.orderData.tailPayAmount}}" onchange="num(this)" readonly type="text" name="" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input value="{{d.feeDetail.tailPayAmount}}" onchange="num(this)" disabled type="text" name="tailPayAmount" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5">
                                 <div class="blue">规定：{{d.tailPayRatio}}%</div>
-                                <div class="blue">实际：{{d.orderData.tailPayRatio}}%</div>
+                                <div class="blue">实际：{{d.feeDetail.tailPayRatio}}%</div>
+                                <input value="{{d.feeDetail.tailPayRatio}}" type="text" name="tailPayRatio" class="layui-input" style="width: 0;height: 0;opacity:0;">
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div id="btn_container" class="btn_container">
-                <div class="layui-row">
-                    <div class="layui-col-md1 text_center layui-col-md-offset5">
-                        <div id="btn_cancel" class="layui-btn layui-btn-primary">取消</div>
-                    </div>
-                    <div class="layui-col-md1 text_center">
-                        <div id="btn_confirm" class="layui-btn layui-btn-normal">确认</div>
                     </div>
                 </div>
             </div>

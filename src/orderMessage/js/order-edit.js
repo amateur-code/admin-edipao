@@ -37,9 +37,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     this.carFormListBackUp = [];
     this.feeItemList = [];
     this.feeUnitItemList = ["元", "升"];
-    this.prePay = [];
-    this.arrivePay = [];
-    this.tailPay = [];
     this.orderData = null;
     this.orderDataBackUp = null;
     this.originFeeRate = {};
@@ -51,6 +48,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     this.driverInfoListDto = [];
     this.staffList = [];
     this.driverTimer = null;
+    this.feeInputTimer = null;
+		this.feeDetail = {};
+		this.maxCustomerMileage = "";
+		this.oilCapacity = 0;
     this.loadingIndex = "";
     this.formList = [
       "form_ascription",
@@ -79,7 +80,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.orderDataBackUp = JSON.parse(JSON.stringify(res.data));
         _this.orderData = res.data;
         _this.setData(res.data);
-        _this.bindEvents();
 
         // 默认地图初始化
         var point = new Careland.Point(419364916, 143908009);
@@ -397,11 +397,14 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       laytpl(itemStr).render(truckData, function (html) {
         carFormStr += html;
         if(index == _this.carFormList.length - 1){
+					_this.maxCustomerMileage = maxCustomerMileage;
+					_this.oilCapacity = oilCapacity;
           $("#car_form_container").html(carFormStr);
           renderEnd();
           _this.renderFee({
             maxCustomerMileage: maxCustomerMileage,
             oilCapacity: oilCapacity,
+            cb: _this.bindEvents.bind(_this),
           });
         }
       });
@@ -519,22 +522,114 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
     });
   }
-  Edit.prototype.renderFee = function (options) {
-    var _this = this;
-    console.log(_this.orderData)
+  Edit.prototype.renderFee = function (options, feeDetail) {
+		var _this = this;
+    if(feeDetail){
+      feeDetail.prePayRatio = orderData.prePayRatio*100;
+      feeDetail.arrivePayRatio = orderData.arrivePayRatio*100;
+      feeDetail.tailPayRatio = orderData.tailPayRatio*100;
+      _this.originFeeRate.feeDetail = feeDetail;
+      laytpl($("#fee_form_tpl").html()).render(_this.originFeeRate, function (html) {
+        $("#form_fee_container").html(html);
+        _this.bindFeeInput();
+        if(_this.dataPermission.canViewOrderCost != "Y"){
+          $(".input_fee").attr("readonly", "readonly");
+        }
+        form.render();
+        options.cb && options.cb();
+      });
+      return;
+    }
     _this.getOrderFee(options).done(function (res) {
-      _this.originFeeRate = res.data;
       if(res.code == "0"){
-        var data = {
-          maxCustomerMileage: options.maxCustomerMileage,
-          oilCapacity: options.oilCapacity,
-          orderData: _this.orderData,
-        };
-        Object.assign(data, _this.originFeeRate);
-        laytpl($("#fee_form_tpl").html()).render(data, function (html) {
+        _this.originFeeRate = res.data;
+        _this.originFeeRate.prePayRatio = _this.originFeeRate.prePayRatio * 100;
+        _this.originFeeRate.arrivePayRatio = _this.originFeeRate.arrivePayRatio * 100;
+        _this.originFeeRate.tailPayRatio = _this.originFeeRate.tailPayRatio * 100;
+        _this.feeDetail.oilCapacity = options.oilCapacity || 100;
+        _this.feeDetail.maxCustomerMileage = options.maxCustomerMileage;
+        _this.feeDetail.oil = _this.orderData.oil;
+        _this.feeDetail.oilUnitPrice = _this.orderData.oilUnitPrice;
+        _this.feeDetail.prePayOil = _this.orderData.prePayOil;
+        _this.feeDetail.closestOilPrice = _this.orderData.closestOilPrice;
+        _this.feeDetail.oilAmount = _this.orderData.oilAmount;
+        _this.feeDetail.amount = _this.orderData.amount;
+        _this.feeDetail.totalAmount = _this.orderData.totalAmount;
+        _this.feeDetail.freightUnitPrice = _this.orderData.freightUnitPrice;
+        _this.feeDetail.prePayAmount = _this.orderData.prePayAmount;
+        _this.feeDetail.arrivePayAmount = _this.orderData.arrivePayAmount;
+        _this.feeDetail.prePayRatio = _this.orderData.prePayRatio*100;
+        _this.feeDetail.arrivePayRatio = _this.orderData.arrivePayRatio*100;
+        _this.feeDetail.tailPayRatio = _this.orderData.tailPayRatio*100;
+        _this.feeDetail.tailPayAmount = _this.orderData.tailPayAmount;
+        _this.feeDetail.tailPayBillType = _this.orderData.tailPayBillType;
+				_this.originFeeRate.feeDetail = _this.feeDetail;
+				if(_this.dataPermission.canViewOrderCost != "Y"){
+					Object.keys(_this.originFeeRate).forEach(function(key){
+						console.log(typeof _this.originFeeRate[key])
+						if(typeof _this.originFeeRate[key] == "string" || typeof _this.originFeeRate[key] == "number"){
+							_this.originFeeRate[key] = "****";
+						}else{
+							Object.keys(_this.originFeeRate[key]).forEach(function (key2) {
+								_this.originFeeRate[key][key2] = "****";
+							});
+						}
+					});
+				}
+        laytpl($("#fee_form_tpl").html()).render(_this.originFeeRate, function (html) {
           $("#form_fee_container").html(html);
+          _this.bindFeeInput();
+          if(_this.dataPermission.canViewOrderCost != "Y"){
+            $(".input_fee").attr("readonly", "readonly");
+          }
+          form.render();
+          options.cb && options.cb();
         });
       }
+    });
+  }
+  Edit.prototype.bindFeeInput = function () {
+    var _this = this;
+    $(".input_fee").unbind().on("input", function (e) {
+      if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
+      _this.feeInputTimer = setTimeout(function () {
+        var field = e.target.dataset.field;
+        var value = e.target.value * 1;
+        if(!value || value == 0){
+          return;
+        }
+        var feeFormData = form.val("form_fee");
+        feeFormData[field] = value;
+        delete feeFormData.maxCustomerMileage;
+        Object.assign(feeFormData, {
+          oilCapacity: _this.feeDetail.oilCapacity,
+          closestOilPrice: _this.feeDetail.closestOilPrice,
+        });
+        _this.getCalOrderFee(feeFormData).done(function (res) {
+          if(res.code == "0"){
+            Object.assign(_this.feeDetail, res.data);
+            _this.renderFee("", _this.feeDetail);
+          }
+        });
+      }, 300);
+    });
+  }
+  Edit.prototype.getCalOrderFee = function(data){
+    var _this = this;
+    data.orderNo = _this.orderNo;
+    data.feeId = _this.feeId;
+    delete data.freightUnitPrice;
+    delete data.oilUnitPrice;
+    delete data.tailPayRatio;
+    delete data.prePayRatio;
+    delete data.arrivePayRatio;
+    delete data.amount;
+    delete data.totalAmount;
+    delete data.oilAmount;
+    return edipao.request({
+      url: "/admin/order/calOrderFee",
+      method: "POST",
+      data: data,
     });
   }
   Edit.prototype.setEndParkSelect = function(filter, data){
@@ -779,7 +874,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         layer.closeAll();
         $(".layui-table-view[lay-id=cars_table]").remove();
         $(".layui-layer-content").html("");
-        
       },1500);
       return;
     }else if(addCarsFlag){
@@ -788,7 +882,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         layer.closeAll();
         $(".layui-table-view[lay-id=cars_table]").remove();
         $(".layui-layer-content").html("");
-
       },1500);
       return;
     }else{
@@ -1077,12 +1170,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     data.driverPhone = dispatchData.driverPhone || "";
     data.driverIdCard = dispatchData.driverIdCard || "";
     data.driverCertificate = dispatchData.driverCertificate || "";
-    if(data.driverMileage){
-      data.driverMileage = (dispatchData.driverMileage * 1).toFixed(2) || 100;
-    }else{
-      data.driverMileage = 100;
-    }
-    
+		data.driverMileage = (_this.maxCustomerMileage * 1).toFixed(2);
+    data.oilCapacity = _this.oilCapacity;
     if(_this. dataPermission.canViewOrderIncome != "Y"){
       data.totalIncome = _this.orderDataBackUp.totalIncome || "";
       data.totalManageFee = _this.orderDataBackUp.totalManageFee || "";
@@ -1090,8 +1179,41 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       data.totalIncome = totalIncome || 0;
       data.totalManageFee = totalManageFee || 0;
     }
-
-
+		if(_this.dataPermission.canViewOrderCost != "Y"){
+			data.prePayAmount = _this.orderDataBackUp.prePayAmount;
+			data.arrivePayAmount = _this.orderDataBackUp.arrivePayAmount;
+			data.tailPayAmount = _this.orderDataBackUp.tailPayAmount;
+			data.oil = _this.orderDataBackUp.oil;
+			data.prePayOil = _this.orderDataBackUp.prePayOil;
+			data.oilAmount = _this.orderDataBackUp.oilAmount;
+			data.amount = _this.orderDataBackUp.amount;
+			data.totalAmount = _this.orderDataBackUp.totalAmount;
+			data.freightUnitPrice = _this.orderDataBackUp.freightUnitPrice;
+			data.oilUnitPrice = _this.orderDataBackUp.oilUnitPrice;
+			data.prePayRatio = _this.orderDataBackUp.prePayRatio;
+			data.arrivePayRatio = _this.orderDataBackUp.arrivePayRatio;
+			data.tailPayRatio = _this.orderDataBackUp.tailPayRatio;
+			data.tailPayBillType = _this.orderDataBackUp.tailPayBillType;
+		}else{
+      var feeFormData = form.val("form_fee");
+      console.log(feeFormData);
+      data.driverMileage = (_this.maxCustomerMileage * 1).toFixed(2);
+      data.oilCapacity = feeFormData.oilCapacity;
+			data.prePayAmount = feeFormData.prePayAmount;
+			data.arrivePayAmount = feeFormData.arrivePayAmount;
+			data.tailPayAmount = feeFormData.tailPayAmount;
+			data.oil = feeFormData.oil;
+			data.prePayOil = feeFormData.prePayOil;
+			data.oilAmount = feeFormData.oilAmount;
+			data.amount = feeFormData.amount;
+			data.totalAmount = feeFormData.totalAmount;
+			data.freightUnitPrice = feeFormData.freightUnitPrice;
+			data.oilUnitPrice = feeFormData.oilUnitPrice;
+			data.prePayRatio = feeFormData.prePayRatio;
+			data.arrivePayRatio = feeFormData.arrivePayRatio;
+			data.tailPayRatio = feeFormData.tailPayRatio;
+			data.tailPayBillType = feeFormData.tailPayBillType;
+		}
     data.truckUpdateReqList = truckUpdateReqList || "";
     if(data.orderType == 1){
       if(truckUpdateReqList[0].masterFlag == "否"){
@@ -1598,7 +1720,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       $customerMileage.each(function (index, item) {
         arr.push(item.value*1);
       });
-      $(".maxCustomerMileage").val(Math.max.apply(null,arr));
+			$(".maxCustomerMileage").val(Math.max.apply(null,arr));
+			_this.maxCustomerMileage = Math.max.apply(null,arr);
     });
     $(".vinCode_input").on("input", function (e) {
       if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);

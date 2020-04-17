@@ -21,7 +21,7 @@ layui
       tableIns,
       tableFilterIns;
     window.permissionList = edipao.getMyPermission();
-    permissionList.push("审核");
+    console.log(permissionList)
     window.form = form;
     var where = {};
     var showList = ["company", "endProvince", "name", "name", "name", "name", "name"];
@@ -193,11 +193,11 @@ layui
         defaultToolbar: [],
         cols: [tableCols],
         done: function (res, curr, count) {
-          $(window).unbind("resize");
-          resizeTable();
-          if (res.data == null) {
+          if (!res.data || res.data == null || res.data.length < 1) {
             $(".layui-table-header").css("overflow-x", "scroll");
           } else {
+            $(window).unbind("resize");
+            resizeTable();
             $(".layui-table-header").css("overflow", "hidden");
           }
           tableFilterIns && tableFilterIns.reload(); // 搜索
@@ -257,7 +257,7 @@ layui
         obj.event == "add" && permissionList.indexOf("新增") == -1 && (obj.event = "reject");
         obj.event == "edit" && permissionList.indexOf("修改") == -1 && (obj.event = "reject");
         obj.event == "del" && permissionList.indexOf("删除") == -1 && (obj.event = "reject");
-        obj.event == "verify" && permissionList.indexOf("审核") == -1 && (obj.event = "reject");
+        // obj.event == "verify" && permissionList.indexOf("审核") == -1 && (obj.event = "reject");
         obj.event == "export" && permissionList.indexOf("导出") == -1 && (obj.event = "reject");
 
         switch (obj.event) {
@@ -378,6 +378,8 @@ layui
               var data = res.data.receiveTruckNetworkRespList;
               exportXlsx(data);
             }
+          }else{
+
           }
         });
       function exportXlsx(data) {

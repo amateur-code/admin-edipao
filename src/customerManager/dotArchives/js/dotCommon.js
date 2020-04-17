@@ -61,7 +61,7 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
     layer.open({
       type: 1,
       title: "选择地址",
-      area: ["900px", $(window).height() - 50 + "px"],
+      area: ['900px', '500px'],
       content: selectMapDialog.innerHTML,
       btn: ["取消", "确定"],
       btnAlign: "c",
@@ -74,6 +74,7 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
           $("#endLng").val(detailAddress.lng);
           $("#endDistrict").val(detailAddress.area);
         }
+        $('#select-address').text('');
       },
       success: function () {
         //凯立德地图API功能

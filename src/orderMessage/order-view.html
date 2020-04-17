@@ -124,10 +124,12 @@
                             <span class="layui-form-span form_span">车辆vin码：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.vinCode}}</span>
                         </div>
+                        {{# if(d.updateData.vinCode){ }}
                         <div class="layui-row">
                             <span class="layui-form-span form_span red">待审：</span>
-                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.vinCode}}</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.check.vinCode}}</span>
                         </div>
+                        {{# } }}
                     </div>
                     <div class="layui-inline layui-col-md4">
                         <div class="layui-row">
@@ -547,11 +549,11 @@
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">承运公里数：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}</span>
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}km</span>
                             {{# if(d.driverMileage){ }}
                             <div class="check">
                                 <span class="x-red">待审：</span>
-                                <span class="">{{d.driverMileage}}</span>
+                                <span class="">{{d.driverMileage}}km</span>
                             </div>
                             {{# } }}
                         </div>
@@ -559,31 +561,31 @@
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">应给油：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}升</span>
-                            {{# if(d.driverMileage){ }}
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.oil}}升</span>
+                            {{# if(d.oil){ }}
                             <div class="check">
                                 <span class="x-red">待审：</span>
-                                <span class="">{{d.driverMileage}}</span>
+                                <span class="">{{d.oil}}升</span>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">油：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}升</span>
-                            {{# if(d.driverMileage){ }}
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.prePayOil}}升</span>
+                            {{# if(d.prePayOil){ }}
                             <div class="check">
                                 <span class="x-red">待审：</span>
-                                <span class="">{{d.driverMileage}}</span>
+                                <span class="">{{d.prePayOil}}升</span>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">油转现：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}元</span>
-                            {{# if(d.driverMileage){ }}
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.oilAmount}}元</span>
+                            {{# if(d.oilAmount){ }}
                             <div class="check">
                                 <span class="x-red">待审：</span>
-                                <span class="">{{d.driverMileage}}</span>
+                                <span class="">{{d.oilAmount}}元</span>
                             </div>
                             {{# } }}
                         </div>
@@ -591,11 +593,11 @@
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">现金：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}元</span>
-                            {{# if(d.driverMileage){ }}
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.amount}}元</span>
+                            {{# if(d.amount){ }}
                             <div class="check">
                                 <span class="x-red">待审：</span>
-                                <span class="">{{d.driverMileage}}</span>
+                                <span class="">{{d.amount}}元</span>
                             </div>
                             {{# } }}
                         </div>
@@ -603,11 +605,11 @@
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">总现金：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}元</span>
-                            {{# if(d.driverMileage){ }}
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.totalAmount}}元</span>
+                            {{# if(d.totalAmount){ }}
                             <div class="check">
                                 <span class="x-red">待审：</span>
-                                <span class="">{{d.driverMileage}}</span>
+                                <span class="">{{d.totalAmount}}元</span>
                             </div>
                             {{# } }}
                         </div>
@@ -615,31 +617,31 @@
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">预付现金：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}元</span>
-                            {{# if(d.driverMileage){ }}
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.prePayAmount}}元</span>
+                            {{# if(d.prePayAmount){ }}
                             <div class="check">
                                 <span class="x-red">待审：</span>
-                                <span class="">{{d.driverMileage}}</span>
+                                <span class="">{{d.prePayAmount}}元</span>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">到付现金：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}元</span>
-                            {{# if(d.driverMileage){ }}
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.arrivePayAmount}}元</span>
+                            {{# if(d.arrivePayAmount){ }}
                             <div class="check">
                                 <span class="x-red">待审：</span>
-                                <span class="">{{d.driverMileage}}</span>
+                                <span class="">{{d.arrivePayAmount}}元</span>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">尾款现金：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}元</span>
-                            {{# if(d.driverMileage){ }}
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.tailPayAmount}}元</span>
+                            {{# if(d.tailPayAmount){ }}
                             <div class="check">
                                 <span class="x-red">待审：</span>
-                                <span class="">{{d.driverMileage}}</span>
+                                <span class="">{{d.tailPayAmount}}</span>
                             </div>
                             {{# } }}
                         </div>

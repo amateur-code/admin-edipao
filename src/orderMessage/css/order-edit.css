@@ -102,8 +102,7 @@
   white-space: nowrap;
 }
 .btn_container {
-  margin-top: 50px;
-  margin-bottom: 20px;
+  padding-bottom: 20px;
 }
 .no_border {
   border: none !important;
@@ -241,11 +240,7 @@
           transform: translateY(-50%);
   right: -3px;
 }
-.form_fee input:-moz-read-only {
-  pointer-events: none;
-  background-color: #eeeeee;
-}
-.form_fee input:read-only {
+.form_fee input:disabled {
   pointer-events: none;
   background-color: #eeeeee;
 }

@@ -4,7 +4,10 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
   var $ = layui.jquery;
   var edipao= layui.edipao;
   var form= layui.form;
-
+  var feeKeys = [
+    "amount", "arrivePayAmount","arrivePayRatio","closestOilPrice","freightUnitPrice","oil","oilAmount","totalAmount",
+    "oilCapacity","oilUnitPrice","prePayAmount","prePayRatio","prePayOil","tailPayAmount","tailPayRatio",
+  ]
   function View() {
     var qs = edipao.urlGet();
     this.orderNo = qs.orderNo;
@@ -28,7 +31,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         _this.getOrder().done(function (res) {
           if(res.code == "0"){
             Object.keys(res.data).forEach(function (key) {
-              res.data[key] = res.data[key] || "- -";
+              if(feeKeys.indexOf(key) < 0){
+                res.data[key] = res.data[key] || "- -";
+              }
             });
             laytpl($("#forms_tpl").html()).render({orderData: res.data}, function (html) {
               $("#form_income_container").after(html);
@@ -65,7 +70,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             }
             if(res2.code == "0"){
               Object.keys(res2.data).forEach(function (key) {
-                res2.data[key] = res2.data[key] || "- -";
+                if(feeKeys.indexOf(key) < 0){
+                  res2.data[key] = res2.data[key] || "- -";
+                }
               });
               _this.updateData.orderData = res2.data;
               laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
@@ -170,7 +177,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           if(!item[key])item[key] = "- -";
         });
         laytpl(imageStr).render(item, function (imageHtml) {
-          var truck = data.truckDTOList[index];
+          var truck = item;
+          truck.updateData = {};
           Object.keys(truck).forEach(function (key) {
             truck[key] = truck[key] || "- -";
           });
