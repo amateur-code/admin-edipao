@@ -42,7 +42,8 @@
           <span class="x-red">*</span>费用名称
         </label>
         <div class="layui-input-inline">
-          <input type="text" id="name" name="name" lay-verify="required|name" autocomplete="off" class="layui-input">
+          <input type="text" id="name" name="name" lay-verify="required|name"
+                 autocomplete="off" class="layui-input">
         </div>
       </div>
       <div class="layui-form-item layui-form-text">
@@ -50,7 +51,7 @@
           备注
         </label>
         <div class="layui-input-block">
-          <textarea type="text" id="remark" name="remark" lay-verify="required|remark" placeholder="请输入内容"
+          <textarea type="text" id="remark" name="remark" lay-verify="remark" placeholder="请输入内容"
                     class="layui-textarea"></textarea>
         </div>
       </div>
@@ -67,15 +68,19 @@
           <label class="layui-form-label">运费</label>
           <div class="layui-input-inline">
             <input type="text" id="freightUnitPrice{{item.id}}" name="freightUnitPrice" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+                   lay-verify="required|numberOne"
+                   onkeyup="clearNoNum(this)" class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">元/公里</div>
         </div>
         <div class="layui-inline">
           <label class="layui-form-label">油</label>
           <div class="layui-input-inline">
-            <input type="text" name="oilUnitPrice" id="oilUnitPrice{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+            <input type="text" name="oilUnitPrice"
+                   id="oilUnitPrice{{item.id}}" autocomplete="off"
+                   lay-verify="required|numberOne"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">升/百公里</div>
         </div>
@@ -83,8 +88,13 @@
         <div class="layui-inline">
           <label class="layui-form-label">预付款</label>
           <div class="layui-input-inline">
-            <input type="text" name="prePayRatio" id="prePayRatio{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+            <input type="text" name="prePayRatio"
+                   id="prePayRatio{{item.id}}" autocomplete="off"
+                   lay-verify="required|numberTwo"
+                   onkeyup="clearNoNumOne(this)"
+                   onblur="preblur(this)"
+                   value="0"
+                   class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
@@ -92,7 +102,11 @@
           <label class="layui-form-label">到付款</label>
           <div class="layui-input-inline">
             <input type="text" name="arrivePayRatio" id="arrivePayRatio{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+                   lay-verify="required|numberTwo"
+                   onkeyup="clearNoNumOne(this)"
+                   onblur="arriveblur(this)"
+                   value="0"
+                   class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
@@ -100,7 +114,10 @@
           <label class="layui-form-label">尾款</label>
           <div class="layui-input-inline">
             <input type="text" name="tailPayRatio" id="tailPayRatio{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+                   lay-verify="required|numberTwo"
+                   disabled
+                   value="100"
+                   class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
@@ -113,7 +130,8 @@
           <label class="layui-form-label">运费</label>
           <div class="layui-input-inline">
             <input type="text" id="freightUnitPriceB{{item.id}}" name="freightUnitPrice" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+                   lay-verify="required|numberOne"
+                   onkeyup="clearNoNum(this)" class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">元/公里</div>
         </div>
@@ -121,7 +139,9 @@
           <label class="layui-form-label">油</label>
           <div class="layui-input-inline">
             <input type="text" name="oilUnitPrice" id="oilUnitPriceB{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+                   lay-verify="required|numberOne"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">升/百公里</div>
         </div>
@@ -130,7 +150,11 @@
           <label class="layui-form-label">预付款</label>
           <div class="layui-input-inline">
             <input type="text" name="prePayRatio" id="prePayRatioB{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+                   lay-verify="required|numberTwo"
+                   onkeyup="clearNoNumOne(this)"
+                   onblur="preblurB(this)"
+                   value="0"
+                   class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
@@ -138,15 +162,22 @@
           <label class="layui-form-label">到付款</label>
           <div class="layui-input-inline">
             <input type="text" name="arrivePayRatio" id="arrivePayRatioB{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+                   lay-verify="required|numberTwo"
+                   onkeyup="clearNoNumOne(this)"
+                   onblur="arriveblurB(this)"
+                   value="0"
+                   class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
         <div class="layui-inline">
           <label class="layui-form-label">尾款</label>
           <div class="layui-input-inline">
-            <input type="text" name="tailPayRatio" id="tailPayRatioB{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+            <input type="text" name="tailPayRatio"
+                   id="tailPayRatioB{{item.id}}" autocomplete="off"
+                   lay-verify="required|numberTwo"
+                   value="100"
+                   disabled class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
@@ -160,7 +191,8 @@
           <label class="layui-form-label">运费</label>
           <div class="layui-input-inline">
             <input type="text" id="freightUnitPriceB{{item.id}}" name="freightUnitPrice" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+                   lay-verify="required|numberOne"
+                   onkeyup="clearNoNum(this)" class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">元/公里</div>
         </div>
@@ -168,7 +200,8 @@
           <label class="layui-form-label">油</label>
           <div class="layui-input-inline">
             <input type="text" name="oilUnitPrice" id="oilUnitPriceB{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+                   lay-verify="required|numberOne"
+                   onkeyup="clearNoNum(this)" class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">升/百公里</div>
         </div>
@@ -177,7 +210,11 @@
           <label class="layui-form-label">预付款</label>
           <div class="layui-input-inline">
             <input type="text" name="prePayRatio" id="prePayRatioB{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+                   lay-verify="required|numberTwo"
+                   onkeyup="clearNoNumOne(this)"
+                   onblur="preblurB(this)"
+                   value="0"
+                   class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
@@ -185,15 +222,22 @@
           <label class="layui-form-label">到付款</label>
           <div class="layui-input-inline">
             <input type="text" name="arrivePayRatio" id="arrivePayRatioB{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+                   lay-verify="required|numberTwo"
+                   onkeyup="clearNoNumOne(this)"
+                   onblur="arriveblurB(this)"
+                   value="0"
+                   class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
         <div class="layui-inline">
           <label class="layui-form-label">尾款</label>
           <div class="layui-input-inline">
-            <input type="text" name="tailPayRatio" id="tailPayRatioB{{item.id}}" autocomplete="off"
-                   lay-verify="required|number" class="layui-input">
+            <input type="text" name="tailPayRatio"
+                   id="tailPayRatioB{{item.id}}" autocomplete="off"
+                   lay-verify="required|numberTwo"
+                   value="100"
+                   disabled class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
@@ -212,168 +256,330 @@
 </form>
 </script>
 <script type="text/javascript">
-layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element, laytpl) {
-    var xadmin = layui.xadmin,
-        edipao = layui.edipao;
-    //自定义验证规则
-    form.verify({
-        name: function (value) {
-            if (value.length > 50) {
-                return '费用名称不能超过50个字符';
-            }
-        },
-        remark: function (value) {
-            if (value.length > 300) {
-                return '费用名称不能超过300个字符';
-            }
-        },
-        number: function (value) {
-            if (value.length > 0) {
-                if (!value.replace(/[^\d\.]/g, '')) {
-                    return '输入格式有误';
-                }
-            }
-        },
-        freightUnitPrice: function (value) {
-            if (value.length > 15) {
-                return '运费不能超过15个字符';
-            }
-        },
-        oilUnitPrice: function (value) {
-            if (value.length > 15) {
-                return '油不能超过15个字符';
-            }
-        },
-        prePayRatio: function (value) {
-            if (value.length > 15) {
-                return '预付款不能超过15个字符';
-            }
-        },
-        arrivePayRatio: function (value) {
-            if (value.length > 15) {
-                return '到付款不能超过15个字符';
-            }
-        },
-        tailPayRatio: function (value) {
-            if (value.length > 15) {
-                return '尾款不能超过15个字符';
-            }
-        },
-    });
-// 获取所有车型
-    var cx;
-    edipao.request({
-        type: 'GET',
-        url: '/admin/sys/truckModel/getAllTruckModel',
-    }).done(function (res) {
-        if (res.code == 0) {
-            var getTpl = feeInfo.innerHTML;
-            view = document.getElementById('view');
-            cx = res.data.truckModelList;
-            laytpl(getTpl).render(res.data, function (html) {
-                view.innerHTML = html;
-            });
-        } else {
-            layer.msg(res.message)
-        }
-    });
-    //只保留2位小数，如：2，会在2后面补上00.即2.00
-    function toDecimal2 (x) {
-        var f = parseFloat(x);
-        if (isNaN(f)) {
-            return false;
-        }
-        var f = Math.round(x * 100) / 100;
-        var s = f.toString();
-        var rs = s.indexOf('.');
-        if (rs < 0) {
-            rs = s.length;
-            s += '.';
-        }
-        while (s.length <= rs + 2) {
-            s += '0';
-        }
-        return s;
+// 输入框只能输入数字并保留两位小数
+function clearNoNum (obj) {
+  obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
+  obj.value = obj.value.replace(/^\./g, ""); //验证第一个字符是数字
+  obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+  obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+  obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数
+  if (obj.value.indexOf(".") < 0 && obj.value != "") {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+    obj.value = parseFloat(obj.value);
+  }
+}
+// 输入框只能输入0.00-100.00之间的数字并保留两位小数
+function clearNoNumOne (obj) {
+  obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
+  obj.value = obj.value.replace(/^\./g, ""); //验证第一个字符是数字
+  obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+  obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+  obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数
+  if (obj.value.indexOf(".") < 0 && obj.value != "") {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+    if (Number(obj.value) > 100) {
+      obj.value = 100;
+    } else if (Number(obj.value) <= 0) {
+      obj.value = 0;
     }
-    form.on('submit(add)', function (data) {
-        var feeItemJson = [];
-        cx.forEach((item, index) => {
-            if (item.orderType == 1) {
-                let freightUnitPrice = $('#freightUnitPrice' + item.id).val();
-                let oilUnitPrice = $('#oilUnitPrice' + item.id).val();
-                let prePayRatio = $('#prePayRatio' + item.id).val();
-                let arrivePayRatio = $('#arrivePayRatio' + item.id).val();
-                let tailPayRatio = $('#tailPayRatio' + item.id).val();
+    obj.value = parseFloat(obj.value);
+    // obj.value = Number(obj.value);
+  }
+}
+// 背车预付款id前段
+let prePayRatio = 'prePayRatio'
+// 不背车预付款id前段
+let prePayRatioB = 'prePayRatioB'
+// 背车到付款id前段
+let arrivePayRatio = 'arrivePayRatio'
+// 不背车到付款id前段
+let arrivePayRatioB = 'arrivePayRatioB'
+// 背车尾款id前段
+let tailPayRatio = 'tailPayRatio'
+// 不背车尾款id前段
+let tailPayRatioB = 'tailPayRatioB'
 
-                let freightUnitPriceB = $('#freightUnitPriceB' + item.id).val();
-                let oilUnitPriceB = $('#oilUnitPriceB' + item.id).val();
-                let prePayRatioB = $('#prePayRatioB' + item.id).val();
-                let arrivePayRatioB = $('#arrivePayRatioB' + item.id).val();
-                let tailPayRatioB = $('#tailPayRatioB' + item.id).val();
-                feeItemJson.push({
-                        id: index + '100000',
-                        orderType: item.orderType,
-                        carModel: item.modelName + '(背车)',
-                        freightUnitPrice: toDecimal2(freightUnitPrice),
-                        oilUnitPrice: toDecimal2(oilUnitPrice),
-                        prePayRatio: toDecimal2(prePayRatio),
-                        arrivePayRatio: toDecimal2(arrivePayRatio),
-                        tailPayRatio: toDecimal2(tailPayRatio),
-                    },
-                    {
-                        id: index + '200000',
-                        orderType: item.orderType,
-                        carModel: item.modelName + '(不背车)',
-                        freightUnitPrice: toDecimal2(freightUnitPriceB),
-                        oilUnitPrice: toDecimal2(oilUnitPriceB),
-                        prePayRatio: toDecimal2(prePayRatioB),
-                        arrivePayRatio: toDecimal2(arrivePayRatioB),
-                        tailPayRatio: toDecimal2(tailPayRatioB),
-                    }
-                )
-            } else {
-                let freightUnitPriceB = $('#freightUnitPriceB' + item.id).val();
-                let oilUnitPriceB = $('#oilUnitPriceB' + item.id).val();
-                let prePayRatioB = $('#prePayRatioB' + item.id).val();
-                let arrivePayRatioB = $('#arrivePayRatioB' + item.id).val();
-                let tailPayRatioB = $('#tailPayRatioB' + item.id).val();
-                feeItemJson.push({
-                    id: index + '300000',
-                    orderType: item.orderType,
-                    carModel: item.modelName + '(不背车)',
-                    freightUnitPrice: toDecimal2(freightUnitPriceB),
-                    oilUnitPrice: toDecimal2(oilUnitPriceB),
-                    prePayRatio: toDecimal2(prePayRatioB),
-                    arrivePayRatio: toDecimal2(arrivePayRatioB),
-                    tailPayRatio: toDecimal2(tailPayRatioB),
-                })
-            }
+// 背车预付款 onblur 事件
+function preblur (val) {
+  // 拿到并截取 预付款 后段id
+  let str = val.id.substr(prePayRatio.length)
+  // 拿到 到付款 输入框中的值
+  let one = $('#arrivePayRatio' + str).val()
+  // 声明变量存储 到付款 的值
+  let totalNum;
 
+  // 清楚上一次校验的内容
+  $('#jyk' + str).remove()
+  // 判断预付款的值能输入的区间赋值给预付款输入框
+  if ((val.value > 0 || val.value == 0) && (val.value < 100 - one || val.value == 100 - one)) {
+    $('#prePayRatio' + str).val(val.value)
+  } else if (val.value != 100 - one) {
+    // val.value = 0.00
+    $('#prePayRatio' + str).after("<span id='jyk" + str + "' style='color: #f22; position: absolute;top:25px;'>预付款加到付款的值应等于100</span>")
+  }
+  // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
+  if ((100 - val.value - one > 0 || 100 - val.value - one == 0) && (100 - val.value - one < 100 || 100 - val.value - one == 100)) {
+    totalNum = 100 - val.value - one
+    $('#tailPayRatio' + str).val(totalNum)
+  }
+}
 
-        });
+// 不背车预付款 onblur 事件
+function preblurB (val) {
+  // 拿到并截取 预付款 后段id
+  let str = val.id.substr(prePayRatioB.length)
+  // 拿到 到付款 输入框中的值
+  let one = $('#arrivePayRatioB' + str).val()
+  // 声明变量存储 到付款 的值
+  let totalNum;
 
-        edipao.request({
-            url: '/admin/fee/add',
-            data: {
-                name: data.field.name,
-                remark: data.field.remark,
-                feeItemJson: JSON.stringify(feeItemJson)
-            },
-        }).done(function (res) {
-            if (res.code == 0) {
-                layer.alert("添加费用配置成功", {
-                    icon: 6,
-                    end: function () {
-                        xadmin.close();
-                        xadmin.father_reload();
-                    }
-                });
-            } else {
-                layer.msg(res.message)
-            }
-        });
-        return false;
+  // 清楚上一次校验的内容
+  $('#jykB' + str).remove()
+  // 判断预付款的值能输入的区间赋值给预付款输入框
+  if ((val.value > 0 || val.value == 0) && (val.value < 100 - one || val.value == 100 - one)) {
+    $('#prePayRatioB' + str).val(val.value)
+  } else if (val.value != 100 - one) {
+    // val.value = 0.00
+    $('#prePayRatioB' + str).after("<span id='jykB" + str + "' style='color: #f22; position: absolute;top:25px;'>预付款加到付款的值应等于100</span>")
+  }
+  // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
+  if ((100 - val.value - one > 0 || 100 - val.value - one == 0) && (100 - val.value - one < 100 || 100 - val.value - one == 100)) {
+    totalNum = 100 - val.value - one
+    $('#tailPayRatioB' + str).val(totalNum)
+  }
+}
+
+// 背车到付款 onblur 事件
+function arriveblur (val) {
+  // 拿到并截取 到付款 后段id
+  let str = val.id.substr(arrivePayRatio.length)
+  // 拿到 预付款 输入框中的值
+  let one = $('#prePayRatio' + str).val()
+  // 声明变量存储 到付款 的值
+  let totalNum;
+
+  // 清楚上一次校验的内容
+  $('#dfk' + str).remove()
+  // 判断到付款的值能输入的区间并转换小数点后两位赋值给到付款输入框
+  if ((val.value > 0 || val.value == 0) && (val.value < 100 - one || val.value == 100 - one)) {
+    $('#arrivePayRatio' + str).val(val.value)
+  } else if (val.value != 100 - one) {
+    // val.value = 0.00
+    $('#arrivePayRatio' + str).after("<span id='dfk" + str + "' style='color: #f22; position: absolute;top:25px;'>预付款加到付款的值应等于100</span>")
+  }
+  // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
+  if ((100 - val.value - one > 0 || 100 - val.value - one == 0) && (100 - val.value - one < 100 || 100 - val.value - one == 100)) {
+    totalNum = 100 - val.value - one
+    $('#tailPayRatio' + str).val(totalNum)
+  }
+}
+
+// 不背车到付款 onblur 事件
+function arriveblurB (val) {
+  // 拿到并截取 到付款 后段id
+  let str = val.id.substr(arrivePayRatioB.length)
+  // 拿到 预付款 输入框中的值
+  let one = $('#prePayRatioB' + str).val()
+  // 声明变量存储 到付款 的值
+  let totalNum;
+
+  // 清楚上一次校验的内容
+  $('#dfkB' + str).remove()
+  // 判断到付款的值能输入的区间并转换小数点后两位赋值给到付款输入框
+  if ((val.value > 0 || val.value == 0) && (val.value < 100 - one || val.value == 100 - one)) {
+    $('#arrivePayRatioB' + str).val(val.value)
+  } else if (val.value != 100 - one) {
+    // val.value = 0.00
+    $('#arrivePayRatioB' + str).after("<span id='dfkB" + str + "' style='color: #f22; position: absolute;top:25px;'>预付款加到付款的值应等于100</span>")
+  }
+  // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
+  if ((100 - val.value - one > 0 || 100 - val.value - one == 0) && (100 - val.value - one < 100 || 100 - val.value - one == 100)) {
+    totalNum = 100 - val.value - one
+    $('#tailPayRatioB' + str).val(totalNum)
+  }
+}
+
+layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element, laytpl) {
+  var xadmin = layui.xadmin,
+    edipao = layui.edipao;
+
+  //自定义验证规则
+  form.verify({
+    name: function (value) {
+      if (value.length > 50) {
+        return '费用名称不能超过50个字符';
+      }
+    },
+    remark: function (value) {
+      if (value.length > 300) {
+        return '费用备注不能超过300个字符';
+      }
+    },
+    numberOne: function (value) {
+      if (value.length > 0) {
+        if (value >= 0) {
+        } else if (value < 0) {
+          return '输入值必须大于等于0';
+        } else {
+          return '输入有误，请重新输入';
+        }
+      }
+    },
+    // 校验0-100保留两位小数
+    numberTwo: function (value) {
+      if (value.length > 0) {
+        if (value >= 0 && value <= 100) {
+
+        } else if (value > 100) {
+          return '输入数值不能大于100';
+        } else if (value < 0) {
+          return '输入数值不能小于0';
+        } else {
+          return '输入格式有误,请输入0-100的数值';
+        }
+        // if (!value.replace(/^(\d|[1-9]\d|100)(\.\d{1,2})?$/)) {
+        //   return '输入格式有误';
+        // }
+      }
+    },
+    freightUnitPrice: function (value) {
+      if (value.length > 15) {
+        return '运费不能超过15个字符';
+      }
+    },
+    oilUnitPrice: function (value) {
+      if (value.length > 15) {
+        return '油不能超过15个字符';
+      }
+    },
+    prePayRatio: function (value) {
+      if (value.length > 15) {
+        return '预付款不能超过15个字符';
+      }
+    },
+    arrivePayRatio: function (value) {
+      if (value.length > 15) {
+        return '到付款不能超过15个字符';
+      }
+    },
+    tailPayRatio: function (value) {
+      if (value.length > 15) {
+        return '尾款不能超过15个字符';
+      }
+    },
+  });
+// 获取所有车型
+  var cx;
+  edipao.request({
+    type: 'GET',
+    url: '/admin/sys/truckModel/getAllTruckModel',
+  }).done(function (res) {
+    if (res.code == 0) {
+      cx = res.data.truckModelList;
+      console.log(cx)
+      let getTpl = feeInfo.innerHTML;
+      view = document.getElementById('view');
+      laytpl(getTpl).render(res.data, function (html) {
+        view.innerHTML = html;
+      });
+    } else {
+      layer.msg(res.message)
+    }
+  });
+
+  //只保留2位小数，如：2，会在2后面补上00.即2.00
+  function toDecimal2 (x) {
+    var f = parseFloat(x);
+    if (isNaN(f)) {
+      return false;
+    }
+    var f = Math.round(x * 100) / 100;
+    var s = f.toString();
+    var rs = s.indexOf('.');
+    if (rs < 0) {
+      rs = s.length;
+      s += '.';
+    }
+    while (s.length <= rs + 2) {
+      s += '0';
+    }
+    return s;
+  }
+
+  form.on('submit(add)', function (data) {
+    let feeItemJson = [];
+    cx.forEach((item, index) => {
+      if (item.orderType == 1) {
+        let freightUnitPrice = $('#freightUnitPrice' + item.id).val();
+        let oilUnitPrice = $('#oilUnitPrice' + item.id).val();
+        let prePayRatio = $('#prePayRatio' + item.id).val();
+        let arrivePayRatio = $('#arrivePayRatio' + item.id).val();
+        let tailPayRatio = $('#tailPayRatio' + item.id).val();
+
+        let freightUnitPriceB = $('#freightUnitPriceB' + item.id).val();
+        let oilUnitPriceB = $('#oilUnitPriceB' + item.id).val();
+        let prePayRatioB = $('#prePayRatioB' + item.id).val();
+        let arrivePayRatioB = $('#arrivePayRatioB' + item.id).val();
+        let tailPayRatioB = $('#tailPayRatioB' + item.id).val();
+        feeItemJson.push({
+            id: index + '100000',
+            orderType: item.orderType,
+            carModel: item.modelName + '(背车)',
+            freightUnitPrice: toDecimal2(freightUnitPrice),
+            oilUnitPrice: toDecimal2(oilUnitPrice),
+            prePayRatio: toDecimal2(prePayRatio),
+            arrivePayRatio: toDecimal2(arrivePayRatio),
+            tailPayRatio: toDecimal2(tailPayRatio),
+          }, {
+            id: index + '200000',
+            orderType: item.orderType,
+            carModel: item.modelName + '(不背车)',
+            freightUnitPrice: toDecimal2(freightUnitPriceB),
+            oilUnitPrice: toDecimal2(oilUnitPriceB),
+            prePayRatio: toDecimal2(prePayRatioB),
+            arrivePayRatio: toDecimal2(arrivePayRatioB),
+            tailPayRatio: toDecimal2(tailPayRatioB),
+          }
+        )
+      } else {
+        let freightUnitPriceB = $('#freightUnitPriceB' + item.id).val();
+        let oilUnitPriceB = $('#oilUnitPriceB' + item.id).val();
+        let prePayRatioB = $('#prePayRatioB' + item.id).val();
+        let arrivePayRatioB = $('#arrivePayRatioB' + item.id).val();
+        let tailPayRatioB = $('#tailPayRatioB' + item.id).val();
+        feeItemJson.push({
+          id: index + '300000',
+          orderType: item.orderType,
+          carModel: item.modelName + '(不背车)',
+          freightUnitPrice: toDecimal2(freightUnitPriceB),
+          oilUnitPrice: toDecimal2(oilUnitPriceB),
+          prePayRatio: toDecimal2(prePayRatioB),
+          arrivePayRatio: toDecimal2(arrivePayRatioB),
+          tailPayRatio: toDecimal2(tailPayRatioB),
+        })
+      }
     });
+
+    edipao.request({
+      url: '/admin/fee/add',
+      data: {
+        name: data.field.name,
+        remark: data.field.remark,
+        feeItemJson: JSON.stringify(feeItemJson)
+      },
+    }).done(function (res) {
+      if (res.code == 0) {
+        layer.alert("添加费用配置成功", {
+          icon: 6,
+          end: function () {
+            xadmin.close();
+            xadmin.father_reload();
+          }
+        });
+      } else {
+        layer.msg(res.message)
+      }
+    });
+    return false;
+  });
 
 })
 </script>

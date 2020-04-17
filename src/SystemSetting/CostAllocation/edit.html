@@ -56,7 +56,8 @@
               备注
             </label>
             <div class="layui-input-block">
-              <textarea type="text" id="remark" lay-verify="required|remark" name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
+              <textarea type="text" id="remark" lay-verify="remark" name="remark" placeholder="请输入内容"
+                        class="layui-textarea"></textarea>
             </div>
           </div>
         </div>
@@ -83,16 +84,25 @@
     <div class="layui-inline">
       <label class="layui-form-label">运费</label>
       <div class="layui-input-inline">
-        <input type="text" id="freightUnitPrice{{item.id}}" name="freightUnitPrice" autocomplete="off"
-               lay-verify="required|number" class="layui-input" value="{{item.freightUnitPrice}}">
+        <input type="text" id="freightUnitPrice{{item.id}}"
+               name="freightUnitPrice" autocomplete="off"
+               lay-verify="required|numberOne"
+               class="layui-input"
+               onkeyup="clearNoNum(this)"
+               value="{{item.freightUnitPrice}}">
       </div>
       <div class="layui-form-mid layui-word-aux">元/公里</div>
     </div>
     <div class="layui-inline">
       <label class="layui-form-label">油</label>
       <div class="layui-input-inline">
-        <input type="text" name="oilUnitPrice" id="oilUnitPrice{{item.id}}" autocomplete="off"
-               lay-verify="required|number" class="layui-input" value="{{item.oilUnitPrice}}">
+        <input type="text" name="oilUnitPrice"
+               id="oilUnitPrice{{item.id}}"
+               autocomplete="off"
+               lay-verify="required|numberOne"
+               onkeyup="clearNoNum(this)"
+               class="layui-input"
+               value="{{item.oilUnitPrice}}">
       </div>
       <div class="layui-form-mid layui-word-aux">升/百公里</div>
     </div>
@@ -101,7 +111,11 @@
       <label class="layui-form-label">预付款</label>
       <div class="layui-input-inline">
         <input type="text" name="prePayRatio" id="prePayRatio{{item.id}}" autocomplete="off"
-               lay-verify="required|number" class="layui-input" value="{{item.prePayRatio}}">
+               lay-verify="required|numberTwo"
+               class="layui-input"
+               onblur="preblur(this)"
+               onkeyup="clearNoNumOne(this)"
+               value="{{item.prePayRatio}}">
       </div>
       <div class="layui-form-mid layui-word-aux">%</div>
     </div>
@@ -109,15 +123,23 @@
       <label class="layui-form-label">到付款</label>
       <div class="layui-input-inline">
         <input type="text" name="arrivePayRatio" id="arrivePayRatio{{item.id}}" autocomplete="off"
-               lay-verify="required|number" class="layui-input" value="{{item.arrivePayRatio}}">
+               lay-verify="required|numberTwo"
+               class="layui-input"
+               onblur="arriveblur(this)"
+               onkeyup="clearNoNumOne(this)"
+               value="{{item.arrivePayRatio}}">
       </div>
       <div class="layui-form-mid layui-word-aux">%</div>
     </div>
     <div class="layui-inline">
       <label class="layui-form-label">尾款</label>
       <div class="layui-input-inline">
-        <input type="text" name="tailPayRatio" id="tailPayRatio{{item.id}}" autocomplete="off"
-               lay-verify="required|number" class="layui-input" value="{{item.tailPayRatio}}">
+        <input type="text" name="tailPayRatio"
+               id="tailPayRatio{{item.id}}"
+               disabled autocomplete="off"
+               lay-verify="required|numberTwo"
+               class="layui-input"
+               value="{{item.tailPayRatio}}">
       </div>
       <div class="layui-form-mid layui-word-aux">%</div>
     </div>
@@ -127,137 +149,236 @@
 {{# }) }}
 </script>
 <script type="text/javascript">
-layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element, laytpl) {
-    var xadmin = layui.xadmin;
-    edipao = layui.edipao;
-    var params = edipao.urlGet();
+// 输入框只能输入数字并保留两位小数
+function clearNoNum (obj) {
+  // if(obj.value<=0&&obj.)
+  obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
+  obj.value = obj.value.replace(/^\./g, ""); //验证第一个字符是数字
+  obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+  obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+  obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数
+  if (obj.value.indexOf(".") < 0 && obj.value != "") {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+    obj.value = parseFloat(obj.value);
+  }
+}
 
-    //只保留2位小数，如：2，会在2后面补上00.即2.00
-    function toDecimal2 (x) {
-        var f = parseFloat(x);
-        if (isNaN(f)) {
-            return false;
-        }
-        var f = Math.round(x * 100) / 100;
-        var s = f.toString();
-        var rs = s.indexOf('.');
-        if (rs < 0) {
-            rs = s.length;
-            s += '.';
-        }
-        while (s.length <= rs + 2) {
-            s += '0';
-        }
-        return s;
+// 输入框只能输入0.00-100.00之间的数字并保留两位小数
+function clearNoNumOne (obj) {
+  obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
+  obj.value = obj.value.replace(/^\./g, ""); //验证第一个字符是数字
+  obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+  obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+  obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数
+  if (obj.value.indexOf(".") < 0 && obj.value != "") {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+    if (Number(obj.value) > 100) {
+      obj.value = 100;
+    } else if (Number(obj.value) <= 0) {
+      obj.value = 0;
     }
+    obj.value = parseFloat(obj.value);
+    // obj.value = Number(obj.value);
+  }
+}
 
-    // 转换百分数保留两位小数
-    // function toPercent (point) {
-    //     var str = Number(point * 100).toFixed(2);
-    //     return str;
-    // }
+// 预付款id前段
+let prePayRatio = 'prePayRatio'
+// 到付款id前段
+let arrivePayRatio = 'arrivePayRatio'
+// 尾款id前段
+let tailPayRatio = 'tailPayRatio'
 
-// 百分比转换小数
-//     function toPoint (percent) {
-//         var str = percent.replace("%", "");
-//         str = (str / 100);
-//         return str;
-//     }
+// 预付款 onblur 事件
+function preblur (val) {
+  // 拿到并截取 预付款 后段id
+  let str = val.id.substr(prePayRatio.length)
+  // 拿到 到付款 输入框中的值
+  let one = $('#arrivePayRatio' + str).val()
+  // 声明变量存储 到付款 的值
+  let totalNum;
 
-    var resData;
-    edipao.request({
-        type: 'POST',
-        url: '/admin/fee/get',
-        data: {
-            feeId: params.id,
+  // 清楚上一次校验的内容
+  $('#jy' + str).remove()
+  // 判断预付款的值能输入的区间赋值给预付款输入框
+  if ((val.value > 0 || val.value == 0) && (val.value < 100 - one || val.value == 100 - one)) {
+    $('#prePayRatio' + str).val(val.value)
+  } else if (val.value != 100 - one) {
+    // val.value = 0.00
+    $('#prePayRatio' + str).after("<span id='jy" + str + "' style='color: #f22; position: absolute;top:25px;'>预付款加到付款的值应等于100</span>")
+  }
+  // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
+  if ((100 - val.value - one > 0 || 100 - val.value - one == 0) && (100 - val.value - one < 100 || 100 - val.value - one == 100)) {
+    totalNum = 100 - val.value - one
+    $('#tailPayRatio' + str).val(totalNum)
+  }
+}
+
+// 到付款 onblur 事件
+function arriveblur (val) {
+  // 拿到并截取 到付款 后段id
+  let str = val.id.substr(arrivePayRatio.length)
+  // 拿到 预付款 输入框中的值
+  let one = $('#prePayRatio' + str).val()
+  // 声明变量存储 到付款 的值
+  let totalNum;
+
+  // 清楚上一次校验的内容
+  $('#dfk' + str).remove()
+  // 判断到付款的值能输入的区间并转换小数点后两位赋值给到付款输入框
+  if ((val.value > 0 || val.value == 0) && (val.value < 100 - one || val.value == 100 - one)) {
+    $('#arrivePayRatio' + str).val(val.value)
+  } else if (val.value != 100 - one) {
+    // val.value = 0.00
+    $('#arrivePayRatio' + str).after("<span id='dfk" + str + "' style='color: #f22; position: absolute;top:25px;'>预付款加到付款的值应等于100</span>")
+  }
+  // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
+  if ((100 - val.value - one > 0 || 100 - val.value - one == 0) && (100 - val.value - one < 100 || 100 - val.value - one == 100)) {
+    totalNum = 100 - val.value - one
+    $('#tailPayRatio' + str).val(totalNum)
+  }
+}
+
+layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element, laytpl) {
+  var xadmin = layui.xadmin;
+  edipao = layui.edipao;
+  var params = edipao.urlGet();
+
+  //只保留2位小数，如：2，会在2后面补上00.即2.00
+  function toDecimal2 (x) {
+    var f = parseFloat(x);
+    if (isNaN(f)) {
+      return false;
+    }
+    var f = Math.round(x * 100) / 100;
+    var s = f.toString();
+    var rs = s.indexOf('.');
+    if (rs < 0) {
+      rs = s.length;
+      s += '.';
+    }
+    while (s.length <= rs + 2) {
+      s += '0';
+    }
+    return s;
+  }
+
+  let resData;
+  edipao.request({
+    type: 'POST',
+    url: '/admin/fee/get',
+    data: {
+      feeId: params.id,
+    }
+  }).done(function (res) {
+    if (res.code == 0) {
+      // res.data.status = res.data.status;
+      form.val("editStaff", res.data);
+      resData = JSON.parse(res.data.feeItemJson);
+      console.log(resData)
+      resData.forEach((item, index) => {
+        if (item.id == undefined) {
+          item.id = index + '400000'
         }
-    }).done(function (res) {
-        if (res.code == 0) {
-            // res.data.status = res.data.status;
-            form.val("editStaff", res.data);
-            resData = JSON.parse(res.data.feeItemJson);
-            resData.forEach(item => {
-                item.freightUnitPrice = toDecimal2(item.freightUnitPrice);
-                item.oilUnitPrice = toDecimal2(item.oilUnitPrice);
-                item.prePayRatio = toDecimal2(item.prePayRatio);
-                item.arrivePayRatio = toDecimal2(item.arrivePayRatio);
-                item.tailPayRatio = toDecimal2(item.tailPayRatio);
-            });
-            var getTpl = feeedit.innerHTML;
-            view = document.getElementById('view');
-            laytpl(getTpl).render(resData, function (html) {
-                view.innerHTML = html;
-            });
+        item.freightUnitPrice = toDecimal2(item.freightUnitPrice);
+        item.oilUnitPrice = toDecimal2(item.oilUnitPrice);
+        item.prePayRatio = toDecimal2(item.prePayRatio);
+        item.arrivePayRatio = toDecimal2(item.arrivePayRatio);
+        item.tailPayRatio = toDecimal2(item.tailPayRatio);
+      });
+      var getTpl = feeedit.innerHTML;
+      view = document.getElementById('view');
+      laytpl(getTpl).render(resData, function (html) {
+        view.innerHTML = html;
+      });
+    } else {
+      layer.msg(res.message)
+    }
+  })
+
+  //自定义验证规则
+  form.verify({
+    name: function (value) {
+      if (value.length > 50) {
+        return '费用名称不能超过50个字符';
+      }
+    },
+    remark: function (value) {
+      if (value.length > 300) {
+        return '费用名称不能超过300个字符';
+      }
+    },
+    numberOne: function (value) {
+      if (value.length > 0) {
+        if (value >= 0) {
+        } else if (value < 0) {
+          return '输入值必须大于等于0';
         } else {
-            layer.msg(res.message)
+          return '输入有误，请重新输入';
         }
-    })
+      }
+    },
+    // 校验0-100保留两位小数
+    numberTwo: function (value) {
+      if (value.length > 0) {
+        if (value >= 0 && value <= 100) {
 
-    //自定义验证规则
-    form.verify({
-        name: function (value) {
-            if (value.length > 50) {
-                return '费用名称不能超过50个字符';
-            }
-        },
-        remark: function (value) {
-            if (value.length > 300) {
-                return '费用名称不能超过300个字符';
-            }
-        },
-        number: function (value) {
-            if (value.length > 0) {
-                if (!value.replace(/[^\d\.]/g, '')) {
-                    return '输入格式有误';
-                }
-            }
-        },
-    });
+        } else if (value > 100) {
+          return '输入数值不能大于100';
+        } else if (value < 0) {
+          return '输入数值不能小于0';
+        } else {
+          return '输入格式有误,请输入0-100的数值';
+        }
+        // if (!value.replace(/^(\d|[1-9]\d|100)(\.\d{1,2})?$/)) {
+        //   return '输入格式有误';
+        // }
+      }
+    }
+  });
 
-    form.on('submit(update)', function (data) {
-        var feeItemJson = [];
-        resData.forEach(item => {
-            let freightUnitPrice = $('#freightUnitPrice' + item.id).val();
-            let oilUnitPrice = $('#oilUnitPrice' + item.id).val();
-            let prePayRatio = $('#prePayRatio' + item.id).val();
-            let arrivePayRatio = $('#arrivePayRatio' + item.id).val();
-            let tailPayRatio = $('#tailPayRatio' + item.id).val();
-            feeItemJson.push({
-                id: item.id,
-                orderType: item.orderType,
-                carModel: item.carModel,
-                freightUnitPrice: toDecimal2(freightUnitPrice),
-                oilUnitPrice: toDecimal2(oilUnitPrice),
-                prePayRatio: toDecimal2(prePayRatio),
-                arrivePayRatio: toDecimal2(arrivePayRatio),
-                tailPayRatio: toDecimal2(tailPayRatio),
-            })
-        });
-        edipao.request({
-            type: 'POST',
-            url: '/admin/fee/update',
-            data: {
-                feeId: params.id,
-                status: data.field.status,
-                name: data.field.name,
-                remark: data.field.remark,
-                feeItemJson: JSON.stringify(feeItemJson)
-            },
-        }).done(function (res) {
-            if (res.code == 0) {
-                layer.alert("更新费用成功", {
-                    icon: 6,
-                    end: function () {
-                        xadmin.close();
-                        xadmin.father_reload();
-                    }
-                });
-            } else {
-                layer.msg(res.message)
-            }
-        });
-        return false;
+  form.on('submit(update)', function (data) {
+    var feeItemJson = [];
+    resData.forEach(item => {
+      let freightUnitPrice = $('#freightUnitPrice' + item.id).val();
+      let oilUnitPrice = $('#oilUnitPrice' + item.id).val();
+      let prePayRatio = $('#prePayRatio' + item.id).val();
+      let arrivePayRatio = $('#arrivePayRatio' + item.id).val();
+      let tailPayRatio = $('#tailPayRatio' + item.id).val();
+      feeItemJson.push({
+        id: item.id,
+        orderType: item.orderType,
+        carModel: item.carModel,
+        freightUnitPrice: toDecimal2(freightUnitPrice),
+        oilUnitPrice: toDecimal2(oilUnitPrice),
+        prePayRatio: toDecimal2(prePayRatio),
+        arrivePayRatio: toDecimal2(arrivePayRatio),
+        tailPayRatio: toDecimal2(tailPayRatio),
+      })
     });
+    edipao.request({
+      type: 'POST',
+      url: '/admin/fee/update',
+      data: {
+        feeId: params.id,
+        status: data.field.status,
+        name: data.field.name,
+        remark: data.field.remark,
+        feeItemJson: JSON.stringify(feeItemJson)
+      },
+    }).done(function (res) {
+      if (res.code == 0) {
+        layer.alert("更新费用成功", {
+          icon: 6,
+          end: function () {
+            xadmin.close();
+            xadmin.father_reload();
+          }
+        });
+      } else {
+        layer.msg(res.message)
+      }
+    });
+    return false;
+  });
 })
 </script>
 </body>

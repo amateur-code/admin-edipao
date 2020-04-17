@@ -47,20 +47,22 @@
   <div class="layui-card-body">
     <div class="layui-fluid">
       <div class="layui-row">
-        <div class="layui-col-xs4">
+        <div class="layui-col-xs6">
           费用名称: <span>{{d.detail.name}}</span>
           {{# if(d.detail.nameFlag =='1'){ }}
           <div><span class="x-red">待审：</span>{{d.detail.nameStr}}</div>
           {{# } }}
         </div>
-        <div class="layui-col-xs4">
+        <div class="layui-col-xs6">
           状态： <span>{{d.detail.status}}</span>
           {{# if(d.detail.statusFlag =='1'){ }}
           <div><span class="x-red">待审：</span>{{d.detail.statusStr}}</div>
           {{# } }}
         </div>
-        <div class="layui-col-xs4">
-          备注： <span>{{d.detail.remark}}</span>
+      </div>
+      <div class="layui-row" style="word-break: break-all;">
+        <div class="layui-col-xs12">
+          <span>备注： {{d.detail.remark}}</span>
           {{# if(d.detail.remarkFlag =='1'){ }}
           <div><span class="x-red">待审：</span>{{d.detail.remarkStr}}</div>
           {{# } }}
@@ -123,161 +125,150 @@
 </script>
 <script type="text/javascript">
 layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, laytpl, form) {
-    var xadmin = layui.xadmin;
-    edipao = layui.edipao;
-    var params = edipao.urlGet();
-    var detail = {};
+  var xadmin = layui.xadmin;
+  edipao = layui.edipao;
+  var params = edipao.urlGet();
+  var detail = {};
 
 
-    //只保留2位小数，如：2，会在2后面补上00.即2.00
-    function toDecimal2 (x) {
-        var f = parseFloat(x);
-        if (isNaN(f)) {
-            return false;
-        }
-        var f = Math.round(x * 100) / 100;
-        var s = f.toString();
-        var rs = s.indexOf('.');
-        if (rs < 0) {
-            rs = s.length;
-            s += '.';
-        }
-        while (s.length <= rs + 2) {
-            s += '0';
-        }
-        return s;
+  //只保留2位小数，如：2，会在2后面补上00.即2.00
+  function toDecimal2 (x) {
+    var f = parseFloat(x);
+    if (isNaN(f)) {
+      return false;
     }
+    var f = Math.round(x * 100) / 100;
+    var s = f.toString();
+    var rs = s.indexOf('.');
+    if (rs < 0) {
+      rs = s.length;
+      s += '.';
+    }
+    while (s.length <= rs + 2) {
+      s += '0';
+    }
+    return s;
+  }
 
-    // 小数转换为百分数并保留两位小数
-    // function toPercent (point) {
-    //     var str = Number(point * 100).toFixed(2);
-    //     return str;
-    // }
+  var resData;
+  edipao.request({
+    type: 'POST',
+    url: '/admin/fee/get',
+    data: {
+      feeId: params.id
+    }
+  }).done(function (res) {
+    if (res.code == 0) {
+      resData = JSON.parse(res.data.feeItemJson);
+      resData.forEach(item => {
+        item.freightUnitPrice = toDecimal2(item.freightUnitPrice);
+        item.oilUnitPrice = toDecimal2(item.oilUnitPrice);
+        item.prePayRatio = toDecimal2(item.prePayRatio);
+        item.arrivePayRatio = toDecimal2(item.arrivePayRatio);
+        item.tailPayRatio = toDecimal2(item.tailPayRatio)
+      });
+      res.data.feeItemJson = resData;
+      detail = res.data;
+      detail.nameFlag = '0';
+      detail.nameStr = '0';
+      detail.remarkFlag = '0';
+      detail.remarkStr = '0';
+      detail.statusFlag = '0';
+      detail.statusStr = '0';
+      detail.feeItemJson.forEach((item, index) => {
+        if (item.id == undefined) {
+          item.id = index + '400000'
+        }
+        item.freightUnitPriceFlag = '0';
+        item.freightUnitPriceStr = '';
+        item.oilUnitPriceFlag = '0';
+        item.oilUnitPriceStr = '';
+        item.prePayRatioFlag = '0';
+        item.prePayRatioStr = '';
+        item.arrivePayRatioFlag = '0';
+        item.arrivePayRatioStr = '';
+        item.tailPayRatioFlag = '0';
+        item.tailPayRatioStr = '';
+      });
+      // 1显示审核，0不显示审核
+      if (detail.showApprovalBtn) {
+        waitCheck();
+      } else {
+        render();
+      }
+    } else {
+      layer.msg(res.message)
+    }
+  });
 
+  // 打开审核页面获取最近一次修改的数据
 
-    // 百分比转换小数保留两位小数
-    // function toPoint (percent) {
-    //     var str = percent.replace("%", "");
-    //     str = (str / 100).toFixed(2);
-    //     return str;
-    // }
-
-    var resData;
+  function waitCheck () {
     edipao.request({
-        type: 'POST',
-        url: '/admin/fee/get',
-        data: {
-            feeId: params.id
+      type: 'GET',
+      url: "/admin/log/last-modify/get",
+      data: {
+        operationModule: 8,
+        dataPk: params.id
+      }
+    }).then(function (res) {
+      if (res.code == 0) {
+        if (res.data) {
+          let editData = JSON.parse(res.data.modifyAfterJson);
+          editData.forEach(item => {
+            if (item.name == 'feeItemJson') {
+              item.value = JSON.parse(item.value);
+              detail.feeItemJson.forEach(val => {
+                item.value.forEach(h => {
+                  if (val.id == h.id) {
+                    if (h.freightUnitPrice != val.freightUnitPrice) {
+                      val.freightUnitPriceFlag = '1';
+                      val.freightUnitPriceStr = h.freightUnitPrice
+                    }
+                    if (h.oilUnitPrice != val.oilUnitPrice) {
+                      val.oilUnitPriceFlag = '1';
+                      val.oilUnitPriceStr = h.oilUnitPrice
+                    }
+                    if (h.prePayRatio != val.prePayRatio) {
+                      val.prePayRatioFlag = '1';
+                      val.prePayRatioStr = h.prePayRatio
+                    }
+                    if (h.arrivePayRatio != val.arrivePayRatio) {
+                      val.arrivePayRatioFlag = '1';
+                      val.arrivePayRatioStr = h.arrivePayRatio
+                    }
+                    if (h.tailPayRatio != val.tailPayRatio) {
+                      val.tailPayRatioFlag = '1';
+                      val.tailPayRatioStr = h.tailPayRatio
+                    }
+                  }
+                })
+              })
+            }
+            if (item.name == 'remark') {
+              detail.remarkFlag = '1';
+              detail.remarkStr = item.value;
+            }
+            if (item.name == 'status') {
+              detail.statusFlag = '1';
+              detail.statusStr = item.value;
+            }
+            if (item.name == 'name') {
+              detail.nameFlag = '1';
+              detail.nameStr = item.value;
+            }
+          });
         }
-    }).done(function (res) {
-        if (res.code == 0) {
-            resData = JSON.parse(res.data.feeItemJson);
-            resData.forEach(item => {
-                item.freightUnitPrice = toDecimal2(item.freightUnitPrice);
-                item.oilUnitPrice = toDecimal2(item.oilUnitPrice);
-                item.prePayRatio = toDecimal2(item.prePayRatio);
-                item.arrivePayRatio = toDecimal2(item.arrivePayRatio);
-                item.tailPayRatio = toDecimal2(item.tailPayRatio)
-            });
-            res.data.feeItemJson = resData;
-            detail = res.data;
-            detail.nameFlag = '0';
-            detail.nameStr = '0';
-            detail.remarkFlag = '0';
-            detail.remarkStr = '0';
-            detail.statusFlag = '0';
-            detail.statusStr = '0';
-            detail.feeItemJson.forEach(item => {
-                item.freightUnitPriceFlag = '0';
-                item.freightUnitPriceStr = '';
-                item.oilUnitPriceFlag = '0';
-                item.oilUnitPriceStr = '';
-                item.prePayRatioFlag = '0';
-                item.prePayRatioStr = '';
-                item.arrivePayRatioFlag = '0';
-                item.arrivePayRatioStr = '';
-                item.tailPayRatioFlag = '0';
-                item.tailPayRatioStr = '';
-            });
-            // 1显示审核，0不显示审核
-            if (detail.showApprovalBtn) {
-                waitCheck();
-            } else {
-                render();
-            }
-        } else {
-            layer.msg(res.message)
-        }
-    });
+        render()
+      }
+    })
+  }
 
-    // 打开审核页面获取最近一次修改的数据
-
-    function waitCheck () {
-        edipao.request({
-            type: 'GET',
-            url: "/admin/log/last-modify/get",
-            data: {
-                operationModule: 8,
-                dataPk: params.id
-            }
-        }).then(function (res) {
-            if (res.code == 0) {
-                if (res.data) {
-                    let editData = JSON.parse(res.data.modifyAfterJson);
-                    editData.forEach(item => {
-                        if (item.name == 'feeItemJson') {
-                            item.value = JSON.parse(item.value);
-                            detail.feeItemJson.forEach(val => {
-                                item.value.forEach(h => {
-                                    if (val.id == h.id) {
-                                        if (h.freightUnitPrice != val.freightUnitPrice) {
-                                            val.freightUnitPriceFlag = '1';
-                                            val.freightUnitPriceStr = h.freightUnitPrice
-                                        }
-                                        if (h.oilUnitPrice != val.oilUnitPrice) {
-                                            val.oilUnitPriceFlag = '1';
-                                            val.oilUnitPriceStr = h.oilUnitPrice
-                                        }
-                                        if (h.prePayRatio != val.prePayRatio) {
-                                            val.prePayRatioFlag = '1';
-                                            val.prePayRatioStr = h.prePayRatio
-                                        }
-                                        if (h.arrivePayRatio != val.arrivePayRatio) {
-                                            val.arrivePayRatioFlag = '1';
-                                            val.arrivePayRatioStr = h.arrivePayRatio
-                                        }
-                                        if (h.tailPayRatio != val.tailPayRatio) {
-                                            val.tailPayRatioFlag = '1';
-                                            val.tailPayRatioStr = h.tailPayRatio
-                                        }
-                                    }
-                                })
-                            })
-                        }
-                        if (item.name == 'remark') {
-                            detail.remarkFlag = '1';
-                            detail.remarkStr = item.value;
-                        }
-                        if (item.name == 'status') {
-                            detail.statusFlag = '1';
-                            detail.statusStr = item.value;
-                        }
-                        if (item.name == 'name') {
-                            detail.nameFlag = '1';
-                            detail.nameStr = item.value;
-                        }
-                    });
-                }
-                render()
-            }
-        })
-    }
-
-    function render () {
-        laytpl(staffinfo.innerHTML).render({ detail: detail }, function (html) {
-            document.getElementById('view').innerHTML = html;
-        })
-    }
+  function render () {
+    laytpl(staffinfo.innerHTML).render({ detail: detail }, function (html) {
+      document.getElementById('view').innerHTML = html;
+    })
+  }
 })
 </script>
 </body>
