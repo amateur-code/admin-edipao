@@ -226,6 +226,12 @@ layui.config({
         let item = { field: el.field };
         if (el.field == 'receiveCarNetworkCount') {
           item.type = 'numberslot'
+        } else if(el.field == 'status'){
+          item.type = 'checkbox'
+          item.data  = [
+            { "key":"1", "value":"有效"},
+            { "key":"0", "value":"无效"}
+          ]
         }
         if (el.field != "operation") {
           filtersHeader.push(item)
@@ -246,6 +252,8 @@ layui.config({
           if (key == 'receiveCarNetworkCount') {
             where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
             where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+          } else if(key == 'status'){
+            where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
           } else {
             where['searchFieldDTOList[' + index + '].fieldValue'] = value;
           }
