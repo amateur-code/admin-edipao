@@ -299,7 +299,7 @@
 		</div>
 		<div id="fee_container" class="layui-card layui-form">
 			<div class="layui-card-header">费用结构</div>
-			{{# console.log(d.check) }}
+			{{# console.log(d) }}
 			{{# if(d.check.feeJson){ }}
 				<div class="layui-card-body layui-row layui-col-space10 red">
 					<div class="layui-col-md4">
@@ -358,18 +358,16 @@
 		<div class="layui-card layui-form">
 			<div class="layui-card-header">其他信息</div>
 			<div class="layui-card-body layui-row layui-col-space10">
-				<div class="layui-col-md4">
-					<div class="layui-form-item">
-						<label class="layui-form-label">备注：</label>
-						<div class="layui-input-block">
-							<span class="name-color" name="deposit" id="deposit">{{d.detail.remark}}</span>
-						</div>
-						{{# if(d.check.remark){ }}
-						<div class="check"><label class="layui-form-label x-red">待审：</label>
-							<div class="layui-input-block">{{d.check.remark}}</div>
-						</div>
-						{{# } }}
+				<div class="layui-form-item">
+					<label class="layui-form-label">备注：</label>
+					<div class="layui-input-block">
+						<span class="name-color" name="deposit" id="deposit">{{d.detail.remark}}</span>
 					</div>
+					{{# if(d.check.remark){ }}
+					<div class="check"><label class="layui-form-label x-red">待审：</label>
+						<div class="layui-input-block">{{d.check.remark}}</div>
+					</div>
+					{{# } }}
 				</div>
 			</div>
 		</div>

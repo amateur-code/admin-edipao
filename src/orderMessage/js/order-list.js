@@ -55,6 +55,7 @@ layui.config({
     window.dataPermission = dataPermission;
     var permissionList = edipao.getMyPermission();
     window.permissionList = permissionList;
+    var loadLayer = layer.load(2);
     var exportHead = {};
     var where = {
         loginStaffId: user.staffId,
@@ -267,7 +268,6 @@ layui.config({
                 }
                 index++;
             });
-            console.log(JSON.stringify(where))
             mainTable.reload( { where: where, page: { curr: 1 }});
         }
     });
@@ -1293,6 +1293,7 @@ layui.config({
                     }
                 }
                 , done: function (res) {//表格渲染完成的回调
+                    layer.close(loadLayer);
                     $(window).unbind("resize");
                     method.resizeTable();
                     method.bindUpload();

@@ -31,12 +31,12 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
           if(!res.data.connectorName && !res.data.connectorPhone){
             res.data.connectorName = "- -";
           }
+          _this.detail = res.data;
           try {
             _this.detail.feeJson = JSON.parse(_this.detail.feeJson);
           } catch (error) {
             _this.detail.feeJson = [];
           }
-          _this.detail = res.data;
           try {
             _this.check = JSON.parse(res2.data.modifyAfterJson).newMap;
           } catch (error) {}

@@ -31,7 +31,7 @@ layui
       {
         field: "company",
         title: "网点名称",
-        width: 200,
+        width: 300,
         templet: function (d) {
           return d.company ? d.company : "- -";
         },
@@ -344,6 +344,9 @@ layui
               where["searchFieldDTOList[" + index++ + "].fieldValue"] = value.province;
               where["searchFieldDTOList[" + index + "].fieldName"] = "endCity";
               where["searchFieldDTOList[" + index + "].fieldValue"] = value.city;
+            } else if(key == "status"){
+              where['searchFieldDTOList['+ index +'].fieldName'] = key;
+              where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
             } else {
               where["searchFieldDTOList[" + index + "].fieldName"] = key;
               where["searchFieldDTOList[" + index + "].fieldValue"] = value;

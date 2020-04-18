@@ -30,15 +30,11 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         $("#verify_container").remove();
         _this.getOrder().done(function (res) {
           if(res.code == "0"){
-            Object.keys(res.data).forEach(function (key) {
-              if(feeKeys.indexOf(key) < 0){
-                res.data[key] = res.data[key] || "- -";
-              }
-            });
+            _this.parseData(res.data);
+            _this.orderData = res.data;
             laytpl($("#forms_tpl").html()).render({orderData: res.data}, function (html) {
               $("#form_income_container").after(html);
-              _this.orderData = res.data;
-              _this.setData(res.data);
+              _this.setData(_this.orderData);
               _this.bindEvents();
             });
           }else{
@@ -69,23 +65,37 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
               }
             }
             if(res2.code == "0"){
-              Object.keys(res2.data).forEach(function (key) {
-                if(feeKeys.indexOf(key) < 0){
-                  res2.data[key] = res2.data[key] || "- -";
-                }
-              });
+              _this.parseData(res2.data);
+              _this.orderData = res2.data;
               _this.updateData.orderData = res2.data;
               laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
                 $("#form_income_container").after(html);
               });
-              _this.orderData = res2.data;
-              _this.setData(res2.data);
+              _this.setData(_this.orderData);
               _this.bindEvents();
             }else{
               layer.msg(res2.message, {icon: 5,anim: 6});
             }
           }
         });
+      }
+    },
+    parseData: function (data) {
+      Object.keys(data).forEach(function (key) {
+        if(feeKeys.indexOf(key) < 0){
+          data[key] = data[key] || "- -";
+        }
+      });
+      switch(data.tailPayBillType * 1){
+        case 1:
+          data.tailPayBillType = "现结";
+          break;
+        case 2:
+          data.tailPayBillType = "月结";
+          break;
+        case 3:
+          data.tailPayBillType = "账期";
+          break;
       }
     },
     getUpdate: function (cb) {
