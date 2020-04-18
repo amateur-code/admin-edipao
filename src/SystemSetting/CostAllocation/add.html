@@ -26,6 +26,14 @@
   // 是否开启刷新记忆tab功能
   // var is_remember = false;
   </script>
+  <style type="text/css">
+    .w40 {
+      width: 40px;
+    }
+    .bgc {
+      background-color: #ccc;
+    }
+  </style>
 </head>
 
 <body>
@@ -67,11 +75,13 @@
         <div class="layui-inline">
           <label class="layui-form-label">运费</label>
           <div class="layui-input-inline">
-            <input type="text" id="freightUnitPrice{{item.id}}" name="freightUnitPrice" autocomplete="off"
+            <input type="text" id="freightUnitPrice{{item.id}}"
+                   name="freightUnitPrice" autocomplete="off"
                    lay-verify="required|numberOne"
+                   placeholder="0.00"
                    onkeyup="clearNoNum(this)" class="layui-input">
           </div>
-          <div class="layui-form-mid layui-word-aux">元/公里</div>
+          <div class="layui-form-mid layui-word-aux w40">元/公里</div>
         </div>
         <div class="layui-inline">
           <label class="layui-form-label">油</label>
@@ -79,6 +89,7 @@
             <input type="text" name="oilUnitPrice"
                    id="oilUnitPrice{{item.id}}" autocomplete="off"
                    lay-verify="required|numberOne"
+                   placeholder="0.00"
                    onkeyup="clearNoNum(this)"
                    class="layui-input">
           </div>
@@ -91,12 +102,12 @@
             <input type="text" name="prePayRatio"
                    id="prePayRatio{{item.id}}" autocomplete="off"
                    lay-verify="required|numberTwo"
+                   placeholder="0.00"
                    onkeyup="clearNoNumOne(this)"
                    onblur="preblur(this)"
-                   value="0"
                    class="layui-input">
           </div>
-          <div class="layui-form-mid layui-word-aux">%</div>
+          <div class="layui-form-mid layui-word-aux w40">%</div>
         </div>
         <div class="layui-inline">
           <label class="layui-form-label">到付款</label>
@@ -105,7 +116,7 @@
                    lay-verify="required|numberTwo"
                    onkeyup="clearNoNumOne(this)"
                    onblur="arriveblur(this)"
-                   value="0"
+                   placeholder="0.00"
                    class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
@@ -116,8 +127,8 @@
             <input type="text" name="tailPayRatio" id="tailPayRatio{{item.id}}" autocomplete="off"
                    lay-verify="required|numberTwo"
                    disabled
-                   value="100"
-                   class="layui-input">
+                   placeholder="100.00"
+                   class="layui-input bgc">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
@@ -131,16 +142,20 @@
           <div class="layui-input-inline">
             <input type="text" id="freightUnitPriceB{{item.id}}" name="freightUnitPrice" autocomplete="off"
                    lay-verify="required|numberOne"
-                   onkeyup="clearNoNum(this)" class="layui-input">
+                   placeholder="0.00"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
           </div>
-          <div class="layui-form-mid layui-word-aux">元/公里</div>
+          <div class="layui-form-mid layui-word-aux w40">元/公里</div>
         </div>
         <div class="layui-inline">
           <label class="layui-form-label">油</label>
           <div class="layui-input-inline">
-            <input type="text" name="oilUnitPrice" id="oilUnitPriceB{{item.id}}" autocomplete="off"
+            <input type="text" name="oilUnitPrice"
+                   id="oilUnitPriceB{{item.id}}" autocomplete="off"
                    lay-verify="required|numberOne"
                    onkeyup="clearNoNum(this)"
+                   placeholder="0.00"
                    class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">升/百公里</div>
@@ -153,10 +168,10 @@
                    lay-verify="required|numberTwo"
                    onkeyup="clearNoNumOne(this)"
                    onblur="preblurB(this)"
-                   value="0"
+                   placeholder="0.00"
                    class="layui-input">
           </div>
-          <div class="layui-form-mid layui-word-aux">%</div>
+          <div class="layui-form-mid layui-word-aux w40">%</div>
         </div>
         <div class="layui-inline">
           <label class="layui-form-label">到付款</label>
@@ -165,7 +180,7 @@
                    lay-verify="required|numberTwo"
                    onkeyup="clearNoNumOne(this)"
                    onblur="arriveblurB(this)"
-                   value="0"
+                   placeholder="0.00"
                    class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
@@ -176,8 +191,8 @@
             <input type="text" name="tailPayRatio"
                    id="tailPayRatioB{{item.id}}" autocomplete="off"
                    lay-verify="required|numberTwo"
-                   value="100"
-                   disabled class="layui-input">
+                   placeholder="100.00"
+                   disabled class="layui-input bgc">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
@@ -192,16 +207,20 @@
           <div class="layui-input-inline">
             <input type="text" id="freightUnitPriceB{{item.id}}" name="freightUnitPrice" autocomplete="off"
                    lay-verify="required|numberOne"
-                   onkeyup="clearNoNum(this)" class="layui-input">
+                   onkeyup="clearNoNum(this)"
+                   placeholder="0.00"
+                   class="layui-input">
           </div>
-          <div class="layui-form-mid layui-word-aux">元/公里</div>
+          <div class="layui-form-mid layui-word-aux 40">元/公里</div>
         </div>
         <div class="layui-inline">
           <label class="layui-form-label">油</label>
           <div class="layui-input-inline">
             <input type="text" name="oilUnitPrice" id="oilUnitPriceB{{item.id}}" autocomplete="off"
                    lay-verify="required|numberOne"
-                   onkeyup="clearNoNum(this)" class="layui-input">
+                   placeholder="0.00"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">升/百公里</div>
         </div>
@@ -213,10 +232,10 @@
                    lay-verify="required|numberTwo"
                    onkeyup="clearNoNumOne(this)"
                    onblur="preblurB(this)"
-                   value="0"
+                   placeholder="0.00"
                    class="layui-input">
           </div>
-          <div class="layui-form-mid layui-word-aux">%</div>
+          <div class="layui-form-mid layui-word-aux w40">%</div>
         </div>
         <div class="layui-inline">
           <label class="layui-form-label">到付款</label>
@@ -225,7 +244,7 @@
                    lay-verify="required|numberTwo"
                    onkeyup="clearNoNumOne(this)"
                    onblur="arriveblurB(this)"
-                   value="0"
+                   placeholder="0.00"
                    class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
@@ -236,8 +255,8 @@
             <input type="text" name="tailPayRatio"
                    id="tailPayRatioB{{item.id}}" autocomplete="off"
                    lay-verify="required|numberTwo"
-                   value="100"
-                   disabled class="layui-input">
+                   placeholder="100.00"
+                   disabled class="layui-input bgc">
           </div>
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>

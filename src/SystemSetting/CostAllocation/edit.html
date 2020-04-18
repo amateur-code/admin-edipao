@@ -26,6 +26,14 @@
   // 是否开启刷新记忆tab功能
   // var is_remember = false;
   </script>
+  <style type="text/css">
+    .w40{
+      width: 40px;
+    }
+    .bgc {
+      background-color: #ccc;
+    }
+  </style>
 </head>
 
 <body>
@@ -91,7 +99,7 @@
                onkeyup="clearNoNum(this)"
                value="{{item.freightUnitPrice}}">
       </div>
-      <div class="layui-form-mid layui-word-aux">元/公里</div>
+      <div class="layui-form-mid layui-word-aux w40">元/公里</div>
     </div>
     <div class="layui-inline">
       <label class="layui-form-label">油</label>
@@ -117,7 +125,7 @@
                onkeyup="clearNoNumOne(this)"
                value="{{item.prePayRatio}}">
       </div>
-      <div class="layui-form-mid layui-word-aux">%</div>
+      <div class="layui-form-mid layui-word-aux w40">%</div>
     </div>
     <div class="layui-inline">
       <label class="layui-form-label">到付款</label>
@@ -138,7 +146,7 @@
                id="tailPayRatio{{item.id}}"
                disabled autocomplete="off"
                lay-verify="required|numberTwo"
-               class="layui-input"
+               class="layui-input bgc"
                value="{{item.tailPayRatio}}">
       </div>
       <div class="layui-form-mid layui-word-aux">%</div>

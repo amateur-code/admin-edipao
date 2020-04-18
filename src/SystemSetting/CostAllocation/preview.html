@@ -34,6 +34,10 @@
     .layui-col-xs4 > span {
       color: #1E9FFF;
     }
+
+    .colorb {
+      color: #1E9FFF;
+    }
   </style>
 </head>
 
@@ -48,23 +52,23 @@
     <div class="layui-fluid">
       <div class="layui-row">
         <div class="layui-col-xs6">
-          费用名称: <span>{{d.detail.name}}</span>
+          费用名称：<span style="color: #1E9FFF;">{{d.detail.name}}</span>
           {{# if(d.detail.nameFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{d.detail.nameStr}}</div>
+          <div><span class="x-red">待审：</span><span class="colorb">{{d.detail.nameStr}}</span></div>
           {{# } }}
         </div>
         <div class="layui-col-xs6">
-          状态： <span>{{d.detail.status}}</span>
+          状态：<span style="color: #1E9FFF;">{{d.detail.status}}</span>
           {{# if(d.detail.statusFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{d.detail.statusStr}}</div>
+          <div><span class="x-red">待审：</span><span class="colorb">{{d.detail.statusStr}}</span></div>
           {{# } }}
         </div>
       </div>
       <div class="layui-row" style="word-break: break-all;">
         <div class="layui-col-xs12">
-          <span>备注： {{d.detail.remark}}</span>
+          备注：<span style="color: #1E9FFF;">{{d.detail.remark}}</span>
           {{# if(d.detail.remarkFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{d.detail.remarkStr}}</div>
+          <div><span class="x-red">待审：</span><span class="colorb">{{d.detail.remarkStr}}</span></div>
           {{# } }}
         </div>
       </div>
@@ -83,35 +87,35 @@
       <div>{{item.carModel}}</div>
       <div class="layui-row">
         <div class="layui-col-xs4">
-          运费: <span>{{item.freightUnitPrice}} 元/km</span>
+          运费：<span>{{item.freightUnitPrice}} 元/km</span>
           {{# if(item.freightUnitPriceFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{item.freightUnitPriceStr}} 元/km</div>
+          <div><span class="x-red">待审：</span><span class="colorb">{{item.freightUnitPriceStr}} 元/km</span></div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
-          油： <span>{{item.oilUnitPrice}} 升/百公里</span>
+          油：<span>{{item.oilUnitPrice}} 升/百公里</span>
           {{# if(item.oilUnitPriceFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{item.oilUnitPriceStr}} 升/百公里</div>
+          <div><span class="x-red">待审：</span><span class="colorb">{{item.oilUnitPriceStr}} 升/百公里</span></div>
           {{# } }}
         </div>
       </div>
       <div class="layui-row">
         <div class="layui-col-xs4">
-          预付款: <span>{{item.prePayRatio}}%</span>
+          预付款：<span>{{item.prePayRatio}}%</span>
           {{# if(item.prePayRatioFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{item.prePayRatioStr}}%</div>
+          <div><span class="x-red">待审：</span><span class="colorb">{{item.prePayRatioStr}}%</span></div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
-          到付款： <span>{{item.arrivePayRatio}}%</span>
+          到付款：<span>{{item.arrivePayRatio}}%</span>
           {{# if(item.arrivePayRatioFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{item.arrivePayRatioStr}}%</div>
+          <div><span class="x-red">待审：</span><span class="colorb">{{item.arrivePayRatioStr}}%</span></div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
-          尾款： <span>{{item.tailPayRatio}}%</span>
+          尾款：<span>{{item.tailPayRatio}}%</span>
           {{# if(item.tailPayRatioFlag =='1'){ }}
-          <div><span class="x-red">待审：</span>{{item.tailPayRatioStr}}%</div>
+          <div><span class="x-red">待审：</span><span class="colorb">{{item.tailPayRatioStr}}%</span></div>
           {{# } }}
         </div>
       </div>
