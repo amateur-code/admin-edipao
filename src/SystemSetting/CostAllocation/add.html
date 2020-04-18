@@ -493,7 +493,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
   }).done(function (res) {
     if (res.code == 0) {
       cx = res.data.truckModelList;
-      console.log(cx)
       let getTpl = feeInfo.innerHTML;
       view = document.getElementById('view');
       laytpl(getTpl).render(res.data, function (html) {

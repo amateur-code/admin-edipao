@@ -262,7 +262,6 @@ layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, layt
       if (res.code == 0) {
         if (res.data) {
           var editData = JSON.parse(res.data.modifyAfterJson);
-          console.log(editData)
           editData.forEach(item => {
             if (item.name == 'feeItemJson') {
               item.value = JSON.parse(item.value);

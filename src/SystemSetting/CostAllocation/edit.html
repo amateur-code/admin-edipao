@@ -281,7 +281,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
       // res.data.status = res.data.status;
       form.val("editStaff", res.data);
       resData = JSON.parse(res.data.feeItemJson);
-      console.log(resData)
       resData.forEach((item, index) => {
         if (item.id == undefined) {
           item.id = index + '400000'
