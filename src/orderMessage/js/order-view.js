@@ -19,14 +19,15 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     this.tailPay = [];
     this.orderData = null;
     this.carFormList = [];
-    this.updateData = {};
+		this.updateData = {};
+		this.truckUpdateData = {};
     this.dataPermission = edipao.getDataPermission();
     window.dataPermission = this.dataPermission;
   }
   $.extend(View.prototype, {
     init: function () {
       var _this = this;
-      if(_this.action != "verify"){
+      if(_this.action != "verify" && _this.action != "feeVerify"){
         $("#verify_container").remove();
         _this.getOrder().done(function (res) {
           if(res.code == "0"){
@@ -43,12 +44,14 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         });
       }else{
         $(".page_title_text").text("订单审核");
-        $.when(_this.getUpdate(), _this.getOrder()).done(function (res1, res2) {
+        $.when(_this.getUpdate(), _this.getOrder(), _this.getTruckUpdate()).done(function (res1, res2, res3) {
           res1 = res1[0];
           res2 = res2[0];
-          if(res1.code == "0" && res2.code == "0"){
+          res3 = res3[0];
+          res3.data = res3.data || {};
+          if(res1.code == "0" && (res2.code == "0" || res3.code == "0")){
             var updateData;
-            if(!res1.data || !res1.data.modifyAfterJson){
+            if(!res1.data){
               updateData = {};
             }else{
               try {
@@ -63,23 +66,42 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
               } catch (error) {
                 _this.updateData = {};
               }
-            }
-            if(res2.code == "0"){
-              _this.parseData(res2.data);
-              _this.orderData = res2.data;
-              _this.updateData.orderData = res2.data;
-              laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
-                $("#form_income_container").after(html);
-              });
-              _this.setData(_this.orderData);
-              _this.bindEvents();
-            }else{
-              layer.msg(res2.message, {icon: 5,anim: 6});
-            }
+						}
+						_this.parseTruckData(res3.data);
+						_this.truckUpdateData = res3.data;
+            _this.parseData(res2.data);
+            _this.orderData = res2.data;
+            _this.updateData.orderData = res2.data;
+            laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
+              $("#form_income_container").after(html);
+            });
+            _this.setData(_this.orderData);
+            _this.bindEvents();
           }
         });
       }
-    },
+		},
+		parseTruckData: function (data) {
+			Object.keys(data).forEach(function (key) {
+				var item = data[key];
+				Object.keys(item).forEach(function (key2) {
+					if(feeKeys.indexOf(key2) < 0){
+						item[key2] = item[key2] || "- -";
+					}
+				});
+				switch(item.settleWay * 1){
+					case 1:
+						item.settleWay = "现结";
+						break;
+					case 2:
+						item.settleWay = "月结";
+						break;
+					case 3:
+						item.settleWay = "账期";
+						break;
+				}
+			});
+		},
     parseData: function (data) {
       Object.keys(data).forEach(function (key) {
         if(feeKeys.indexOf(key) < 0){
@@ -98,6 +120,18 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           break;
       }
     },
+    getTruckUpdate: function () {
+      var _this = this;
+      return edipao.request({
+        url: "/admin/log/order/waybill/last-modify/get",
+        method: "GET",
+        data:{
+          loginStaffId: _this.user.staffId,
+          operationModule: 12,
+          orderId: _this.orderId,
+        }
+      });
+    },
     getUpdate: function (cb) {
       var _this = this;
       return edipao.request({
@@ -114,9 +148,16 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       var _this = this;
       $("#verify_submit").unbind().on("click", function (e) {
         var data = form.val("verify_form");
-        console.log(data)
+        var url = "/admin/order/approval/order";
+        if(_this.action == "feeVerify"){
+          url = "/admin/order/approval/orderFee";
+        }
+        if(data.approvalResult * 1 == 1 && !data.approvalRemark){
+          layer.msg("请填写审核备注！", {icon: 2});
+          return;
+        }
         edipao.request({
-          url: "/admin/order/approval/order",
+          url: url,
           method: "POST",
           data: {
             loginStaffId: _this.user.staffId,
@@ -157,6 +198,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       var carFormHtml = $("#car_info_tpl").html();
       var imageStr = $("#image_tpl").html();
       data.truckDTOList.forEach(function (item, index) {
+				var truck = item;
+				var updateData = _this.truckUpdateData[truck.id] || {};
         if(_this. dataPermission.canViewOrderIncome != "Y"){
           item.pricePerMeliage = "*";
           item.manageFee = "*";
@@ -175,23 +218,35 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         }
         
         item.connector = item.connectorName + item.connectorPhone;
-        if(!item.returnImages) item.returnImages = "";
-        item.returnImages = item.returnImages.split(",");
-        if(!item.fetchImages) item.fetchImages = "";
-        item.fetchImages = item.fetchImages.split(",");
-        if(!item.startImages) item.startImages = "";
-        item.startImages = item.startImages.split(",");
-        if(!item.startBillImage) item.startBillImage = "";
-        item.startBillImage = item.startBillImage.split(",");
+        if(!item.returnImages) item.returnImages = [];
+        else item.returnImages = item.returnImages.split(",");
+        if(!item.fetchImages) item.fetchImages = [];
+        else item.fetchImages = item.fetchImages.split(",");
+        if(!item.startImages) item.startImages = [];
+        else item.startImages = item.startImages.split(",");
+        if(!item.startBillImage) item.startBillImage = [];
+				else item.startBillImage = item.startBillImage.split(",");
+        if(!item.tempLicenseBackImage) item.tempLicenseBackImage = [];
+				else item.tempLicenseBackImage = item.tempLicenseBackImage.split(",");
+
+				if(!updateData.returnImages) updateData.returnImages = [];
+        else updateData.returnImages = updateData.returnImages.split(",");
+        if(!updateData.fetchImages) updateData.fetchImages = [];
+        else updateData.fetchImages = updateData.fetchImages.split(",");
+        if(!updateData.startImages) updateData.startImages = [];
+        else updateData.startImages = updateData.startImages.split(",");
+        if(!updateData.startBillImage) updateData.startBillImage = [];
+				else updateData.startBillImage = updateData.startBillImage.split(",");
+        if(!updateData.tempLicenseBackImage) updateData.tempLicenseBackImage = [];
+				else updateData.tempLicenseBackImage = updateData.tempLicenseBackImage.split(",");
         Object.keys(item).forEach(function (key) {
           if(!item[key])item[key] = "- -";
-        });
+				});
+				truck.updateData = updateData;
         laytpl(imageStr).render(item, function (imageHtml) {
-          var truck = item;
-          truck.updateData = {};
           Object.keys(truck).forEach(function (key) {
             truck[key] = truck[key] || "- -";
-          });
+					});
           laytpl(carFormHtml).render(truck, function (html) {
             var filterStr = "form_car_" + index;
             _this.carFormList.push(filterStr);
@@ -200,7 +255,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             carFormStr += html;
             if(index == data.truckDTOList.length -1){
               $("#car_form_container").html(carFormStr);
-            }
+						}
+						zoomImg();
           });
         });
       });

@@ -667,40 +667,6 @@
             <div class="form_item_container">
                 <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md3">
-                        <label class="layui-form-label text_left form_label">调度员</label><br>
-                        <div class="layui-input-inline">
-                            <div class="layui-row">
-                                <div class="layui-col-md8">
-                                    <select name="dispatchOperator" lay-search>
-                                        {{#  layui.each(d.staffList, function(index, item){ }}
-                                            <option data-name="{{item.name}}" value="{{item.name + ',' + item.phone}}">{{item.name + item.phone}}</option>
-                                        {{#  }); }}
-                                    </select>
-                                </div>
-                                <div class="layui-col-md3">
-                                    <button data-field="dispatchOperator" type="button" class="select_operator_btn layui-btn layui-btn-sm layui-btn-fluid">选择</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layui-inline layui-col-md3 layui-col-md-offset1">
-                        <label class="layui-form-label text_left form_label">提车员</label><br>
-                        <div class="layui-input-inline">
-                            <div class="layui-row">
-                                <div class="layui-col-md8">
-                                    <select name="fetchOperator" lay-search>
-                                        {{#  layui.each(d.staffList, function(index, item){ }}
-                                            <option data-name="{{item.name}}" value="{{item.name + ',' + item.phone}}">{{item.name + item.phone}}</option>
-                                        {{#  }); }}
-                                    </select>
-                                </div>
-                                <div class="layui-col-md3">
-                                    <button data-field="fetchOperator" type="button" class="select_operator_btn layui-btn layui-btn-sm layui-btn-fluid">选择</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                         <label class="layui-form-label text_left form_label">发运员</label><br>
                         <div class="layui-input-inline">
                             <div class="layui-row">
@@ -717,9 +683,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="layui-form-item layui-row">
-                    <div class="layui-inline layui-col-md3">
+                    <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                         <label class="layui-form-label text_left form_label">跟单员</label><br>
                         <div class="layui-input-inline">
                             <div class="layui-row">
@@ -743,6 +707,25 @@
                         </div>
                     </div>
                 </div>
+                <!-- <div class="layui-form-item layui-row">
+                    <div class="layui-inline layui-col-md3">
+                        <label class="layui-form-label text_left form_label">短驳司机</label><br>
+                        <div class="layui-input-inline">
+                            <div class="layui-row">
+                                <div class="layui-col-md8">
+                                    <select name="followOperator" lay-search>
+                                        {{#  layui.each(d.driverList, function(index, item){ }}
+                                            <option data-name="{{item.name}}" value="{{item.name + ',' + item.phone}}">{{item.name + item.phone}}</option>
+                                        {{#  }); }}
+                                    </select>
+                                </div>
+                                <div class="layui-col-md3">
+                                    <button data-field="followOperator" type="button" class="select_driver_btn layui-btn layui-btn-sm layui-btn-fluid">选择</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
             </div>
         </form>
     </script>

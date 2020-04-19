@@ -22,8 +22,6 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "transportAssignTime", title: "运输商指派时间" },
       { field: "dispatchTime", title: "调度时间" },
       { field: "openOperator", title: "开单员" },
-      { field: "dispatchOperator", title: "调度员" },
-      { field: "fetchOperator", title: "提车员" },
       { field: "deliveryOperator", title: "发运员" },
       { field: "driverName", title: "司机姓名" },
       { field: "driverPhone", title: "司机手机" },

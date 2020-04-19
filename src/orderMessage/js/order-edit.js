@@ -28,7 +28,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   var table = layui.table;
   function Edit(){
     var qs = edipao.urlGet();
-    this.orderNo = qs.orderNo && "OR00000025";
+    this.orderNo = qs.orderNo || "OR00000025";
     this.orderId = qs.orderId;
     this.feeId = qs.feeId && "FEE8ead80814370Uy641b70c";
     this.action = qs.action;
@@ -47,6 +47,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     this.tempLicense = [];
     this.driverInfoListDto = [];
     this.staffList = [];
+    this.driverList = [];
     this.driverTimer = null;
     this.feeInputTimer = null;
 		this.feeDetail = {};
@@ -74,7 +75,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.init = function(){
     var _this = this;
     _this.loadingIndex = layer.load(1);
-    $.when(this.getStaffList(), this.getFeeItemList(), this.getFeeItemUnitList(), this.getOrder()).done(function (res1, res2, res3, res4) {
+    $.when(this.getStaffList(), this.getFeeItemList(), this.getFeeItemUnitList(), this.getOrder(), this.getDriverList()).done(function (res1, res2, res3, res4) {
       res = res4[0];
       if(res.code == "0"){
         _this.orderDataBackUp = JSON.parse(JSON.stringify(res.data));
@@ -273,6 +274,19 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       ele.append(optionStar);
     }
   }
+  Edit.prototype.getDriverList = function () {
+    var _this = this;
+    return edipao.request({
+      url: "/admin/driver/info/list",
+      method: "GET",
+      data: {
+        pageNumber: 1,
+        pageSize: 9999
+      }
+    }).done(function(res){
+      _this.driverList = res.data.driverInfoListDtoList;
+    });
+  }
   Edit.prototype.getStaffList = function(){
     var _this = this;
     return edipao.request({
@@ -339,7 +353,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var _this =this;
     _this.setFeeList();
 
-    laytpl($("#form_ascription_tpl").html()).render({orderData: _this.orderData, staffList: _this.staffList}, function (html) {
+    laytpl($("#form_ascription_tpl").html()).render({orderData: _this.orderData, staffList: _this.staffList, driverList: _this.driverList}, function (html) {
       $("#form_ascription_container").html(html);
       data.dispatchOperator = data.dispatchOperator + "," + data.dispatchOperatorPhone;
       data.followOperator = data.followOperator + "," + data.followOperatorPhone;
@@ -522,12 +536,12 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
     });
   }
-  Edit.prototype.renderFee = function (options, feeDetail) {
+  Edit.prototype.renderFee = function (options, feeDetail, cb) {
 		var _this = this;
     if(feeDetail){
-      feeDetail.prePayRatio = feeDetail.prePayRatio*100;
-      feeDetail.arrivePayRatio = feeDetail.arrivePayRatio*100;
-      feeDetail.tailPayRatio = feeDetail.tailPayRatio*100;
+      feeDetail.prePayRatio = (feeDetail.prePayRatio*100).toFixed(2);
+      feeDetail.arrivePayRatio = (feeDetail.arrivePayRatio*100).toFixed(2);
+      feeDetail.tailPayRatio = (feeDetail.tailPayRatio*100).toFixed(2);
       _this.originFeeRate.feeDetail = feeDetail;
       laytpl($("#fee_form_tpl").html()).render(_this.originFeeRate, function (html) {
         $("#form_fee_container").html(html);
@@ -543,9 +557,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     _this.getOrderFee(options).done(function (res) {
       if(res.code == "0"){
         _this.originFeeRate = res.data;
-        _this.originFeeRate.prePayRatio = _this.originFeeRate.prePayRatio * 100;
-        _this.originFeeRate.arrivePayRatio = _this.originFeeRate.arrivePayRatio * 100;
-        _this.originFeeRate.tailPayRatio = _this.originFeeRate.tailPayRatio * 100;
+        _this.originFeeRate.prePayRatio = (_this.originFeeRate.prePayRatio * 100).toFixed(2);
+        _this.originFeeRate.arrivePayRatio = (_this.originFeeRate.arrivePayRatio * 100).toFixed(2);
+        _this.originFeeRate.tailPayRatio = (_this.originFeeRate.tailPayRatio * 100).toFixed(2);
         _this.feeDetail.oilCapacity = options.oilCapacity || 100;
         _this.feeDetail.maxCustomerMileage = options.maxCustomerMileage;
         _this.feeDetail.oil = _this.orderData.oil;
@@ -558,9 +572,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.feeDetail.freightUnitPrice = _this.orderData.freightUnitPrice;
         _this.feeDetail.prePayAmount = _this.orderData.prePayAmount;
         _this.feeDetail.arrivePayAmount = _this.orderData.arrivePayAmount;
-        _this.feeDetail.prePayRatio = _this.orderData.prePayRatio*100;
-        _this.feeDetail.arrivePayRatio = _this.orderData.arrivePayRatio*100;
-        _this.feeDetail.tailPayRatio = _this.orderData.tailPayRatio*100;
+        _this.feeDetail.prePayRatio = (_this.orderData.prePayRatio*100).toFixed(2);
+        _this.feeDetail.arrivePayRatio = (_this.orderData.arrivePayRatio*100).toFixed(2);
+        _this.feeDetail.tailPayRatio = (_this.orderData.tailPayRatio*100).toFixed(2);
         _this.feeDetail.tailPayAmount = _this.orderData.tailPayAmount;
         _this.feeDetail.tailPayBillType = _this.orderData.tailPayBillType;
 				_this.originFeeRate.feeDetail = _this.feeDetail;
@@ -596,7 +610,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         var field = e.target.dataset.field;
         var value = e.target.value * 1;
         if(!value || value == 0){
-          return;
+          value = 0;
         }
         var feeFormData = form.val("form_fee");
         feeFormData[field] = value;
@@ -605,10 +619,19 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           oilCapacity: _this.feeDetail.oilCapacity,
           closestOilPrice: _this.feeDetail.closestOilPrice,
         });
+        delete feeFormData.tailPayAmount;
         _this.getCalOrderFee(feeFormData).done(function (res) {
           if(res.code == "0"){
             Object.assign(_this.feeDetail, res.data);
-            _this.renderFee("", _this.feeDetail);
+            _this.renderFee({
+              cb: function () {
+                var $input = $(".input_fee[name="+field+"]");
+                $input.focus();
+                $input[0].setSelectionRange && $input[0].setSelectionRange($input.val().length, $input.val().length);
+              }
+            }, _this.feeDetail);
+          }else{
+            e.target.value = _this.feeDetail[field];
           }
         });
       }, 300);
@@ -618,12 +641,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var _this = this;
     data.orderNo = _this.orderNo;
     data.feeId = _this.feeId;
-    delete data.freightUnitPrice;
-    delete data.oilUnitPrice;
     delete data.tailPayRatio;
     delete data.prePayRatio;
     delete data.arrivePayRatio;
-    delete data.amount;
     delete data.totalAmount;
     delete data.oilAmount;
     return edipao.request({
@@ -1041,14 +1061,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     }
     delete orderData.truckDTOList;
     var ascriptionData = form.val("form_ascription");
-    ascriptionData.dispatchOperator = ascriptionData.dispatchOperator.split(",");
-    ascriptionData.fetchOperator = ascriptionData.fetchOperator.split(",");
     ascriptionData.deliveryOperator = ascriptionData.deliveryOperator.split(",");
     ascriptionData.followOperator = ascriptionData.followOperator.split(",");
-    ascriptionData.dispatchOperatorPhone = ascriptionData.dispatchOperator[1];
-    ascriptionData.dispatchOperator = ascriptionData.dispatchOperator[0];
-    ascriptionData.fetchOperatorPhone = ascriptionData.fetchOperator[1];
-    ascriptionData.fetchOperator = ascriptionData.fetchOperator[0];
     ascriptionData.deliveryOperatorPhone = ascriptionData.deliveryOperator[1];
     ascriptionData.deliveryOperator = ascriptionData.deliveryOperator[0];
     ascriptionData.followOperatorPhone = ascriptionData.followOperator[1];
@@ -1156,10 +1170,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     data.loginStaffId = _this.user.staffId || "";
     data.orderNo = _this.orderNo || "";
     data.orderType = carsLength > 1 ? 2 : 1;
-    data.fetchOperator = ascriptionData.fetchOperator||"";
-    data.fetchOperatorPhone = ascriptionData.fetchOperatorPhone || "";
-    data.dispatchOperator = ascriptionData.dispatchOperator || "";
-    data.dispatchOperatorPhone = ascriptionData.dispatchOperatorPhone || "";
     data.deliveryOperator = ascriptionData.deliveryOperator || "";
     data.deliveryOperatorPhone = ascriptionData.deliveryOperatorPhone || "";
     data.followOperator = ascriptionData.followOperator||"";
@@ -1355,7 +1365,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
     });
   }
-  Edit.prototype.openSelectDriverTable = function () {
+  Edit.prototype.openSelectDriverTable = function (ascription) {
     var _this = this;
     var index = layer.open({
       type:1,
@@ -1396,7 +1406,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
               driverIdCard: data.idNum,
               driverCertificate: data.driveLicenceType,
             }
-            form.val("form_dispatch", driverData);
+            if(ascription){
+              form.val("form_ascription");
+            }else{
+              form.val("form_dispatch", driverData);
+            }
             //$(".layui-layer-content").html("");
             $(".layui-table-view[lay-id=drivers_table]").remove();
             layer.close(index);
@@ -1867,6 +1881,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       if(!$(e.target).hasClass("driver_item")){
         $('#match_driver_list').hide();
       }
+    });
+    $(".select_driver_btn").unbind().on("click", function (e) {
+      _this.openSelectDriverTable(true);
     });
     $("#select_driver_btn").unbind().on("click", function () {
       $('#match_driver_list').hide();

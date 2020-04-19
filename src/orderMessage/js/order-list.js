@@ -28,7 +28,8 @@ var picData = [
 ]
 var provinceList = [];
 var cityCode = {};
-
+var loadLayer = null;
+var paying = false;
 layui.config({
     base: '../../lib/'
 }).extend({
@@ -105,8 +106,6 @@ layui.config({
         { field: 'transportAssignTime', type: 'timeslot' },
         { field: 'dispatchTime', type: 'timeslot' },
         { field: 'openOperator', type: 'contract' },
-        { field: 'dispatchOperator', type: 'contract' },
-        { field: 'fetchOperator', type: 'contract' },
         { field: 'deliveryOperator', type: 'contract' },
         { field: 'driverName', type: 'input' },
         { field: 'driverPhone', type: 'input' },
@@ -209,14 +208,6 @@ layui.config({
             if(filters.openOperator){
                 filters.openOperatorPhone =  filters.openOperator[1];
                 filters.openOperator =  filters.openOperator[0];
-            }
-            if(filters.dispatchOperator){
-                filters.dispatchOperatorPhone =  filters.dispatchOperator[1];
-                filters.dispatchOperator =  filters.dispatchOperator[0];
-            }
-            if(filters.fetchOperator){
-                filters.fetchOperatorPhone =  filters.fetchOperator[1];
-                filters.fetchOperator =  filters.fetchOperator[0];
             }
             if(filters.deliveryOperator){
                 filters.deliveryOperatorPhone =  filters.deliveryOperator[1];
@@ -376,7 +367,9 @@ layui.config({
                 title: "上传",
                 btn: ["确定", "取消"],
                 yes: function () {
+                    loadLayer = layer.load(2);
                     method.uploadPics({id: orderId,uploadData: uploadData}, function (res) {
+                        layer.close(loadLayer);
                         if(res.code == "0"){
                             layer.msg("上传成功", {icon: 1});
                             table.reload("orderList");
@@ -459,6 +452,7 @@ layui.config({
                 });
             });
             if(emptyFlag){
+                layer.close(loadLayer);
                 layer.msg("请先上传图片",{icon: 2});
                 return;
             }
@@ -533,6 +527,7 @@ layui.config({
                     if(flag.length > 0){
                         if(res1){
                             if(res1.code != 0){
+                                layer.close(loadLayer);
                                 successFlag = false;
                                 layer.msg(res1.message);
                             }
@@ -543,6 +538,7 @@ layui.config({
                     if(flag.length > 1){
                         if(res2){
                             if(res2.code != 0){
+                                layer.close(loadLayer);
                                 successFlag = false;
                                 layer.msg(res2.message);
                             }
@@ -553,6 +549,7 @@ layui.config({
                     if(flag.length > 2){
                         if(res3){
                             if(res3.code != 0){
+                                layer.close(loadLayer);
                                 successFlag = false;
                                 layer.msg(res3.message);
                             }
@@ -626,6 +623,9 @@ layui.config({
                                 form.render();
                             },
                             yes: function () {
+                                if(paying) return;
+                                paying = true;
+                                var loadIndex = layer.load(1);
                                 var data = form.val("arrive_fee_verify_form");
                                 edipao.request({
                                     url: "/admin/order/approval/pay",
@@ -638,6 +638,8 @@ layui.config({
                                         approvalRemark: data.remark
                                     }
                                 }).done(function (res) {
+                                    setTimeout(function () { paying = false; }, 1500);
+                                    layer.close(loadIndex);
                                     if(res.code == "0"){
                                         layer.msg("提交成功", {icon: 1,anim: 6});
                                         table.reload("orderList");
@@ -645,6 +647,9 @@ layui.config({
                                     }else{
                                         //layer.alert(res.message);
                                     }
+                                }).fail(function () {
+                                    layer.close(loadIndex);
+                                    setTimeout(function () { paying = false; }, 1500);
                                 });
                             }
                         });
@@ -706,6 +711,8 @@ layui.config({
                                 form.render();
                             },
                             yes: function () {
+                                if(paying) return;
+                                paying = true;
                                 var loadIndex = layer.load(1);
                                 edipao.request({
                                     url: "/admin/order/approval/pay",
@@ -716,6 +723,7 @@ layui.config({
                                         approvalResult: 0
                                     }
                                 }).done(function (res) {
+                                    setTimeout(function () { paying = false; }, 1500);
                                     layer.close(loadIndex);
                                     if(res.code == "0"){
                                         layer.msg("提交成功", {icon: 1,anim: 6});
@@ -725,6 +733,7 @@ layui.config({
                                         //layer.alert(res.message);
                                     }
                                 }).fail(function(){
+                                    setTimeout(function () { paying = false; }, 1500);
                                     layer.close(loadIndex);
                                 });
                             }
@@ -788,6 +797,8 @@ layui.config({
                                 form.render();
                             },
                             yes: function () {
+                                if(paying) return;
+                                paying = true;
                                 var loadIndex = layer.load(1);
                                 edipao.request({
                                     url: "/admin/order/approval/pay",
@@ -798,6 +809,7 @@ layui.config({
                                         approvalResult: 0
                                     }
                                 }).done(function (res) {
+                                    setTimeout(function () { paying = false; }, 1500);
                                     layer.close(loadIndex);
                                     if(res.code == "0"){
                                         layer.msg("提交成功", {icon: 1,anim: 6});
@@ -807,6 +819,7 @@ layui.config({
                                         //layer.alert(res.message);
                                     }
                                 }).fail(function () {
+                                    setTimeout(function () { paying = false; }, 1500);
                                     layer.close(loadIndex);
                                 });
                             }
@@ -1034,10 +1047,6 @@ layui.config({
                         var arrivePayApprovalBtn = item.arrivePayApprovalBtn;
                         var openOperator = item.openOperator ? item.openOperator : '';
                         var openOperatorPhone = item.openOperatorPhone ? item.openOperatorPhone : '';
-                        var dispatchOperator = item.dispatchOperator ? item.dispatchOperator : '';
-                        var dispatchOperatorPhone = item.dispatchOperatorPhone ? item.dispatchOperatorPhone : '';
-                        var fetchOperator = item.fetchOperator ? item.fetchOperator : '';
-                        var fetchOperatorPhone = item.fetchOperatorPhone ? item.fetchOperatorPhone : '';
                         var deliveryOperator = item.deliveryOperator ? item.deliveryOperator : '';
                         var deliveryOperatorPhone = item.deliveryOperatorPhone ? item.deliveryOperatorPhone : '';
                         if(showList.indexOf(i) > -1){
@@ -1083,12 +1092,6 @@ layui.config({
                                     break;
                                 case 'openOperator':
                                     value = openOperator + '' + openOperatorPhone;
-                                    break;
-                                case 'dispatchOperator':
-                                    value = dispatchOperator + '' + dispatchOperatorPhone;
-                                    break;
-                                case 'fetchOperator':
-                                    value = fetchOperator + '' + fetchOperatorPhone;
                                     break;
                                 case 'deliveryOperator':
                                     value = deliveryOperator + '' + deliveryOperatorPhone;
@@ -1347,6 +1350,8 @@ layui.config({
                     xadmin.open('修改订单', './order-edit.html?action=edit&orderNo=' + data.orderNo + "&orderId=" + data.id + "&feeId=" + data.feeId);
                 } else if (layEvent === 'verify') { //审核
                     xadmin.open('审核', './order-view.html?action=verify&orderNo=' + data.orderNo + "&orderId=" + data.id);
+                }else if(layEvent == "feeVerify"){
+                    xadmin.open('审核运费', './order-view.html?action=feeVerify&orderNo=' + data.orderNo + "&orderId=" + data.id + "&feeId=" + data.feeId);
                 } else if (layEvent === 'view') { //查看
                     xadmin.open('查看订单', './order-view.html?orderNo=' + data.orderNo + "&orderId=" + data.id);
                 } else if (layEvent === 'cancel') { //取消
@@ -1495,16 +1500,6 @@ layui.config({
             d.openOperatorPhone = d.openOperatorPhone || "";
             return (d.openOperator || d.openOperatorPhone) ? d.openOperator + d.openOperatorPhone : '- -';
         }},
-        {field: 'dispatchOperator', title: '调度员', sort: false,minWidth:145, templet: function(d){
-            d.dispatchOperator = d.dispatchOperator || "";
-            d.dispatchOperatorPhone = d.dispatchOperatorPhone || "";
-            return (d.dispatchOperator || d.dispatchOperatorPhone) ? d.dispatchOperator + d.dispatchOperatorPhone : '- -';
-        }},
-        {field: 'fetchOperator', title: '提车员', sort: false,minWidth:145, templet: function(d){
-            d.fetchOperator = d.fetchOperator || "";
-            d.fetchOperatorPhone = d.fetchOperatorPhone || "";
-            return (d.fetchOperator || d.fetchOperatorPhone) ? d.fetchOperator + d.fetchOperatorPhone : '- -';
-        }},
         {field: 'deliveryOperator', title: '发运员', sort: false,minWidth:145, templet: function(d){
             d.deliveryOperator = d.deliveryOperator || "";
             d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
@@ -1528,7 +1523,7 @@ layui.config({
             return d.driverIdCard ? d.driverIdCard : '- -';
         }},
         {
-            field: 'prePayAmount', title: '预付款金额', sort: false,width: 140, hide: false, templet: function (d) {
+            field: 'prePayAmount', title: '预付款金额', sort: false,width: 170, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
@@ -1555,11 +1550,12 @@ layui.config({
                 if(dataPermission.canViewOrderCost != "Y"){
                     return "* " + payStatus;
                 }
+                payStatus = verifyStr3.replace("{{}}", "-申请支付");
                 return d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus;
             }
         },
         {
-            field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 140, hide: false, templet: function (d) {
+            field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 170, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
@@ -1591,7 +1587,7 @@ layui.config({
             }
         },
         {
-            field: 'tailPayAmount', title: '尾款金额', sort: false,width: 140, hide: false, templet: function (d) {
+            field: 'tailPayAmount', title: '尾款金额', sort: false,width: 170, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
@@ -1750,8 +1746,6 @@ layui.config({
         "transportAssignTime",
         "dispatchTime",
         "openOperator",
-        "dispatchOperator",
-        "fetchOperator",
         "deliveryOperator",
         "driverName",
         "driverPhone",
