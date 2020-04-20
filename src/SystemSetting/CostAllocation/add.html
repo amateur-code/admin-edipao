@@ -28,7 +28,7 @@
   </script>
   <style type="text/css">
     .w40 {
-      width: 40px;
+      width: 45px;
     }
     .bgc {
       background-color: #ccc;
@@ -135,7 +135,7 @@
       </div>
     </div>
     <div class="layui-card-body">
-      <div>车型：{{item.modelName}}(不背车)</div>
+      <div>车型：{{item.modelName}}</div>
       <div class="layui-form-item">
         <div class="layui-inline">
           <label class="layui-form-label">运费</label>
@@ -200,7 +200,7 @@
     </div>
     {{# } else { }}
     <div class="layui-card-body">
-      <div>车型：{{item.modelName}}(不背车)</div>
+      <div>车型：{{item.modelName}}</div>
       <div class="layui-form-item">
         <div class="layui-inline">
           <label class="layui-form-label">运费</label>
@@ -549,7 +549,7 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
           }, {
             id: index + '200000',
             orderType: item.orderType,
-            carModel: item.modelName + '(不背车)',
+            carModel: item.modelName,
             freightUnitPrice: toDecimal2(freightUnitPriceB),
             oilUnitPrice: toDecimal2(oilUnitPriceB),
             prePayRatio: toDecimal2(prePayRatioB),
@@ -566,7 +566,7 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
         feeItemJson.push({
           id: index + '300000',
           orderType: item.orderType,
-          carModel: item.modelName + '(不背车)',
+          carModel: item.modelName,
           freightUnitPrice: toDecimal2(freightUnitPriceB),
           oilUnitPrice: toDecimal2(oilUnitPriceB),
           prePayRatio: toDecimal2(prePayRatioB),
