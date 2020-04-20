@@ -16,9 +16,9 @@ var operationData = [
     {key: 1, value: "待审核"},
 ]
 var feeData = [
-    {key: 1, value: "未支付"},
-    {key: 2, value: "已支付"},
-    {key: 3, value: "待我处理"},
+    {key: 1, value: "待支付"},
+    {key: 2, value: "支付中"},
+    {key: 3, value: "支付成功"}
 ]
 var picData = [
     {key: 1, value: "未上传"},
@@ -26,6 +26,7 @@ var picData = [
     {key: 3, value: "已审核"},
     {key: 3, value: "待我审核"},
 ]
+
 var provinceList = [];
 var cityCode = {};
 var loadLayer = null;
@@ -92,7 +93,8 @@ layui.config({
         { field: 'vinCode', type: 'input' },
         { field: 'tempLicense', type: 'input' },
         { field: 'orderStatus', type: 'checkbox', data: orderStatusData },
-        { field: 'orderType', type: 'radio', data:orderTypeData },
+        { field: 'orderType', type: 'checkbox', data:orderTypeData },
+        { field: "", type: "checkbox"},
         { field: 'customerFullName', type: 'input' },
         { field: 'startWarehouse', type: 'input' },
         { field: 'startPark', type: 'input' },
@@ -110,9 +112,11 @@ layui.config({
         { field: 'driverName', type: 'input' },
         { field: 'driverPhone', type: 'input' },
         { field: 'driverIdCard', type: 'input' },
+        { field: 'pricePerMeliage', type: 'numberslot' },
+        { field: 'income', type: 'numberslot' },
         { field: 'prePayAmount', type: 'checkbox-numberslot', data: feeData },
-        { field: 'arrivePayAmount', type: 'numberslot' },
-        { field: 'tailPayAmount', type: 'numberslot' },
+        { field: 'arrivePayAmount', type: 'checkbox-numberslot', data: feeData },
+        { field: 'tailPayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'fetchStatus', type: 'checkbox', data: picData },
         { field: 'startAuditStatus', type: 'checkbox', data: picData },
         { field: 'returnAuditStatus', type: 'checkbox', data: picData },
@@ -229,7 +233,7 @@ layui.config({
                     value = value.split(" 至 ");
                     where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
                     where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
-                }else if(key=='startCity'||key=='endCity'){
+                }else if(key=='startCity'||key=='endCity'){ 
                     if(value.city == "全部") value.city = "";
                     if(key == "startCity"){
                         where['searchFieldDTOList['+ index +'].fieldName'] = "startProvince";
@@ -243,11 +247,17 @@ layui.config({
                         where['searchFieldDTOList['+ index +'].fieldValue'] = value.city;
                     }
                 }else if(key == 'prePayAmount'||key == 'arrivePayAmount'||key == "tailPayAmount"){
-                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
-                    where['searchFieldDTOList['+ index +'].fieldMinValue'] = value.slot[0];
-                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value.slot[1];
-                    where['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
-                }else if(key == "orderStatus"){
+                    if(value.slot.length > 0){
+                        where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                        where['searchFieldDTOList['+ index +'].fieldMinValue'] = value.slot[0];
+                        where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value.slot[1];
+                        if(value.checked.length > 0) index++;
+                    }
+                    if(value.checked.length > 0){
+                        where['searchFieldDTOList['+ index +'].fieldName'] = key.replace("Amount", "Status");
+                        where['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
+                    }
+                }else if(key == "orderStatus" || key == "orderType"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                 }else if(key == "fetchStatus" || key == "startAuditStatus" || key == "returnAuditStatus"){
@@ -1429,8 +1439,7 @@ layui.config({
         {field: 'tempLicense', title: '临牌号', sort: false,minWidth:100,minWidth:100, templet: function(d){
             return d.tempLicense ? d.tempLicense : '- -';
         }},
-        {
-            field: 'orderType', title: '订单类型', sort: false,minWidth:100, templet: function (d) {
+        {field: 'orderType', title: '订单类型', sort: false,minWidth:100, templet: function (d) {
                 if (d.orderType == 1) {
                     return "单车单";
                 } else if (d.orderType == 2) {
@@ -1438,10 +1447,19 @@ layui.config({
                 } else {
                     return "非法类型";
                 }
-            }
-        },
-        {
-            field: 'orderStatus', title: '订单状态', sort: false,minWidth:100, templet: function (d) {
+        }},
+        // {field: 'masterFlag', title: '上下车', sort: false,minWidth:100, templet: function (d) {
+        //         if(d.orderType * 1 == 1){
+        //             return "单车";
+        //         }else{
+        //             if (d.masterFlag == "是") {
+        //                 return "下车";
+        //             } else {
+        //                 return "上车";
+        //             }
+        //         }
+        // }},
+        {field: 'orderStatus', title: '订单状态', sort: false,minWidth:100, templet: function (d) {
                 if (d.orderStatus == 1) {
                     return "待调度";
                 } else if (d.orderStatus == 2) {
@@ -1457,8 +1475,7 @@ layui.config({
                 } else {
                     return "非法状态";
                 }
-            }
-        },
+        }},
         {field: 'customerFullName', title: '客户全称', sort: false, width: 120, templet: function(d){
             return d.customerFullName ? d.customerFullName : '- -';
         }},
@@ -1514,16 +1531,19 @@ layui.config({
             }
             return driverName;
         }},
-        {
-            field: 'driverPhone', title: '司机手机', sort: false,minWidth:120, templet: function (d) {
+        {field: 'driverPhone', title: '司机手机', sort: false,minWidth:120, templet: function (d) {
                 return d.driverPhone || "- -";
-            }
-        },
+        }},
         {field: 'driverIdCard', title: '司机身份证', sort: false,width: 160, hide: false, templet: function(d){
             return d.driverIdCard ? d.driverIdCard : '- -';
         }},
-        {
-            field: 'prePayAmount', title: '预付款金额', sort: false,width: 170, hide: false, templet: function (d) {
+        // {field: 'pricePerMeliage', title: '收入单价', sort: false,width: 100, hide: false, templet: function(d){
+        //     return d.pricePerMeliage ? d.pricePerMeliage+"元" : '- -';
+        // }},
+        // {field: 'income', title: '收入', sort: false,width: 100, hide: false, templet: function(d){
+        //     return d.income ? d.income+"元" : '- -';
+        // }},
+        {field: 'prePayAmount', title: '预付款金额', sort: false,width: 200, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
@@ -1552,10 +1572,8 @@ layui.config({
                 }
                 payStatus = verifyStr3.replace("{{}}", "-申请支付");
                 return d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus;
-            }
-        },
-        {
-            field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 170, hide: false, templet: function (d) {
+        }},
+        {field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 200, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
@@ -1572,7 +1590,6 @@ layui.config({
                     payStatus = "";
                 } else {
                     payStatus = " - 非法状态";
-
                 }
                 if(d.orderStatus == 6){
                     payStatus = "";
@@ -1584,10 +1601,8 @@ layui.config({
                     return "* " + payStatus;
                 }
                 return d.arrivePayAmount + "元" + payStatus;
-            }
-        },
-        {
-            field: 'tailPayAmount', title: '尾款金额', sort: false,width: 170, hide: false, templet: function (d) {
+        }},
+        {field: 'tailPayAmount', title: '尾款金额', sort: false,width: 200, hide: false, templet: function (d) {
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
@@ -1615,8 +1630,7 @@ layui.config({
                     return "* " + payStatus;
                 }
                 return d.tailPayAmount + "元" + payStatus;
-            }
-        },
+        }},
         {field: 'fetchStatus', title: '提车照片', sort: false,width: 120, hide: false, templet: function(d){
             var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='5' data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";

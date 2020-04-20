@@ -286,6 +286,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 
 					//点击确认开始过滤
 					form.on('submit(tableFilter)', function(data){
+						console.log(data.field)
 						//重构复选框结果
 						if(filterType == "checkbox"){
 							var NEWfield = [];
@@ -300,6 +301,15 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						}
 						if(filterType == 'contract'){
 							data.field[filterName] = [data.field[filterName+'-name'],data.field[filterName+'-phone']]
+						}
+						if(filterType == "timeslot"){
+							var time = data.field[filterName].split(" 至 ");
+							var startTime = time[0];
+							var endTime = time[1];
+							if(startTime.indexOf("00:00:00") > -1 && endTime.indexOf("00:00:00") > -1){
+								endTime = endTime.replace("00:00:00", "23:59:59");
+							}
+							data.field[filterName] = startTime + " 至 " + endTime;
 						}
 						// 如果城市
 						if(filterType == "city"){

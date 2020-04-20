@@ -13,7 +13,7 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
       if (value == "") {
         return "请输入网点名称";
       } else {
-        if (value.length > 30) {
+        if (value.length > 50) {
           return "网点名称格式无效";
         }
       }
@@ -26,6 +26,10 @@ layui.use(["jquery", "form", "laydate", "layer", "laytpl"], function () {
     codeVerify: function (value) {
       if (value == "") {
         return "请输入地址代码";
+      } else {
+        if (value.length > 15) {
+          return "地址代码格式无效";
+        }
       }
     },
   });

@@ -30,7 +30,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var qs = edipao.urlGet();
     this.orderNo = qs.orderNo || "OR00000025";
     this.orderId = qs.orderId;
-    this.feeId = qs.feeId && "FEE8ead80814370Uy641b70c";
+    this.feeId = qs.feeId || "FEE8ead80814370Uy641b70c";
     this.action = qs.action;
     this.user = JSON.parse(sessionStorage.user);
     this.carFormList = [];
@@ -1276,10 +1276,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
   Edit.prototype.veriftParams = function (data) {
     //校验必传参数
+    var orderType = data.orderType;
     var flag = true;
     data.truckUpdateReqList.some(function (item) {
-      if(!item.tempLicense){
-        layer.msg("临牌号为必填项", {icon: 2});
+      if(!item.tempLicense && item.masterFlag == "是"){
+        layer.msg("主车临牌号为必填项", {icon: 2});
         flag = false;
         return true;
       }
@@ -1288,8 +1289,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         flag = false;
         return true;
       }
-      if(!item.tempLicenseBackImage){
-        layer.msg("请上传行驶证", {icon: 2});
+      if(!item.tempLicenseBackImage && item.masterFlag == "是"){
+        layer.msg("请上传主车行驶证", {icon: 2});
         flag = false;
         return true;
       }

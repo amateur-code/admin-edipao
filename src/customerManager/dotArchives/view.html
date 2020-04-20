@@ -170,6 +170,15 @@
 		.hide{
 			display: none !important;
 		}
+		.check .layui-input-block{
+			position:absolute;
+			top:12px;
+			left:30px;
+			line-height:15px;
+			max-width:200px;
+			white-space: pre-wrap;
+			overflow-wrap: break-word;
+		}
 	</style>
 </head>
 
@@ -224,12 +233,13 @@
 						<div class="layui-input-block">
 							<span class="name-color" id="name">{{d.detail.company}}</span>
 						</div>
-						{{# if(d.check.company){ }}
-						<div class="check"><label class="layui-form-label x-red">待审：</label>
-							<div class="layui-input-block">{{d.check.company}}</div>
-						</div>
-						{{# } }}
 					</div>
+					{{# if(d.check.company){ }}
+					<div class="check">
+						<label class="layui-form-label x-red">待审：</label>
+						<div class="layui-input-block">{{d.check.company}}</div>
+					</div>
+					{{# } }}
 				</div>
 				<div class="layui-col-md4">
 					<div class="layui-form-item">

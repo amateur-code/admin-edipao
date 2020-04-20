@@ -130,10 +130,24 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
     });
     $(".view_fee").unbind().on("click", this.handleViewFee);
     $("#addrCode").unbind().on("input", function (e) {
-      if(e.target.value.length > 15) e.target.value = e.target.value.slice(0, 15);
+      var max = 15;
+      if(e.target.value.length > max) e.target.value = e.target.value.slice(0, max);
+    });
+    $("#company").unbind().on("input", function (e) {
+      var max = 50;
+      if(e.target.value.length > max) e.target.value = e.target.value.slice(0, max);
+    });
+    $("#connectorName").unbind().on("input", function (e) {
+      var max = 50;
+      if(e.target.value.length > max) e.target.value = e.target.value.slice(0, max);
     });
     $("#connectorPhone").unbind().on("input", function (e) {
-      if(e.target.value.length > 11) e.target.value = e.target.value.slice(0, 11);
+      var max = 12;
+      if(e.target.value.length > max) e.target.value = e.target.value.slice(0, max);
+    });
+    $("#remark").unbind().on("input", function (e) {
+      var max = 300;
+      if(e.target.value.length > max) e.target.value = e.target.value.slice(0, max);
     });
     $("#add_fee").unbind().on("click", function (e) {
       laytpl($("#fee_template").html()).render({index: $(".fee_row").length, feeTpls: feeTpls, startParks: startParks}, function (html) {
