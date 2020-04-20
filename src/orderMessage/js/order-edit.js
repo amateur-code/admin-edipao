@@ -539,9 +539,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.renderFee = function (options, feeDetail, cb) {
 		var _this = this;
     if(feeDetail){
-      feeDetail.prePayRatio = (feeDetail.prePayRatio*100).toFixed(2);
-      feeDetail.arrivePayRatio = (feeDetail.arrivePayRatio*100).toFixed(2);
-      feeDetail.tailPayRatio = (feeDetail.tailPayRatio*100).toFixed(2);
+      feeDetail.prePayRatio = (feeDetail.prePayRatio * 1).toFixed(2);
+      feeDetail.arrivePayRatio = (feeDetail.arrivePayRatio * 1).toFixed(2);
+      feeDetail.tailPayRatio = (feeDetail.tailPayRatio * 1).toFixed(2);
       _this.originFeeRate.feeDetail = feeDetail;
       laytpl($("#fee_form_tpl").html()).render(_this.originFeeRate, function (html) {
         $("#form_fee_container").html(html);
@@ -557,9 +557,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     _this.getOrderFee(options).done(function (res) {
       if(res.code == "0"){
         _this.originFeeRate = res.data;
-        _this.originFeeRate.prePayRatio = (_this.originFeeRate.prePayRatio * 100).toFixed(2);
-        _this.originFeeRate.arrivePayRatio = (_this.originFeeRate.arrivePayRatio * 100).toFixed(2);
-        _this.originFeeRate.tailPayRatio = (_this.originFeeRate.tailPayRatio * 100).toFixed(2);
+        _this.originFeeRate.prePayRatio = (_this.originFeeRate.prePayRatio * 1).toFixed(2);
+        _this.originFeeRate.arrivePayRatio = (_this.originFeeRate.arrivePayRatio * 1).toFixed(2);
+        _this.originFeeRate.tailPayRatio = (_this.originFeeRate.tailPayRatio * 1).toFixed(2);
         _this.feeDetail.oilCapacity = options.oilCapacity || 100;
         _this.feeDetail.maxCustomerMileage = options.maxCustomerMileage;
         _this.feeDetail.oil = _this.orderData.oil;
@@ -572,9 +572,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.feeDetail.freightUnitPrice = _this.orderData.freightUnitPrice;
         _this.feeDetail.prePayAmount = _this.orderData.prePayAmount;
         _this.feeDetail.arrivePayAmount = _this.orderData.arrivePayAmount;
-        _this.feeDetail.prePayRatio = (_this.orderData.prePayRatio*100).toFixed(2);
-        _this.feeDetail.arrivePayRatio = (_this.orderData.arrivePayRatio*100).toFixed(2);
-        _this.feeDetail.tailPayRatio = (_this.orderData.tailPayRatio*100).toFixed(2);
+        _this.feeDetail.prePayRatio = (_this.orderData.prePayRatio * 1).toFixed(2);
+        _this.feeDetail.arrivePayRatio = (_this.orderData.arrivePayRatio * 1).toFixed(2);
+        _this.feeDetail.tailPayRatio = (_this.orderData.tailPayRatio * 1).toFixed(2);
         _this.feeDetail.tailPayAmount = _this.orderData.tailPayAmount;
         _this.feeDetail.tailPayBillType = _this.orderData.tailPayBillType;
 				_this.originFeeRate.feeDetail = _this.feeDetail;

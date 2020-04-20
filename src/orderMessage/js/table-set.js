@@ -66,7 +66,8 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     }).done(function(res) {
         if (res.code == 0) {
             if(!res.data){
-                $('#itemList').find('input').prop("checked", true);
+                $('#itemList').find('.checkbox_show').prop("checked", true);
+                $('#itemList').find('.checkbox_fixed').prop("checked", false);
             }else{
                 var showList = [];
                 try{
@@ -79,17 +80,19 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
             form.render();
         }
     })
-  
+    
     form.on('checkbox(father)', function(data,e){
         if(data.elem.checked){
-            $(data.elem).closest('.layui-form').find('input').prop("checked", true);
+            $(data.elem).closest('.layui-form').find('.checkbox_show').prop("checked", true);
             form.render();
         }else{
-            $(data.elem).closest('.layui-form').find('input').prop("checked", false);
+            $(data.elem).closest('.layui-form').find('.checkbox_show').prop("checked", false);
             form.render();
         }
     });
-  
+    form.on('checkbox(fixed)', function (data) {
+        console.log(data)
+    });
     form.on('submit(update)', function(data) {
         let list = [];
         $('#itemList').find('input').each(function(index, el) {

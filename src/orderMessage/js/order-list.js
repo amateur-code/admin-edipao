@@ -31,6 +31,7 @@ var provinceList = [];
 var cityCode = {};
 var loadLayer = null;
 var paying = false;
+var reloadOption = null;
 layui.config({
     base: '../../lib/'
 }).extend({
@@ -203,7 +204,7 @@ layui.config({
         'elem' : '#orderList',//table的选择器
         'mode' : 'self',//过滤模式
         'filters' : filters,//过滤项配置
-        'done': function(filters){
+        'done': function(filters, reload){
             filters = $.extend({},filters);
             var index = 0;
             where = {
@@ -269,7 +270,11 @@ layui.config({
                 }
                 index++;
             });
-            mainTable.reload( { where: where, page: { curr: 1 }});
+            if(reload){
+                reloadOption = { where: where, page: { curr: 1 }};
+            }else{
+                mainTable.reload( { where: where, page: { curr: 1 }});
+            }
         }
     });
 
@@ -516,14 +521,10 @@ layui.config({
                 flag = flag.map(function (item) {
                     return getReq(item);
                 });
-                if(flag.length == 0 && !hadUpload){
-                    //layer.msg("请先选择图片");
-                }else if(flag.length == 1){
-                    promise = $.when(flag[0]);
-                }else if(flag.length == 2){
-                    promise = $.when(flag[0], flag[1]);
-                }else if(flag.length == 3){
-                    promise = $.when(flag[0], flag[1], flag[2]);
+                if(flag.length > 0){
+                    promise = $.when.apply($, flag);
+                }else{
+
                 }
                 if(promise)promiseList.push({
                     promise: promise,
@@ -1320,6 +1321,10 @@ layui.config({
                         $('.layui-table-header').css('overflow-x','scroll');
                     }else{
                         $('.layui-table-header').css('overflow','hidden');
+                    }
+                    if(reloadOption) {
+                        mainTable.reload(JSON.parse(JSON.stringify(reloadOption)));
+                        reloadOption = false;
                     }
                     tableFilterIns && tableFilterIns.reload();
                 },

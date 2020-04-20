@@ -672,7 +672,7 @@
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.deliveryOperator + d.orderData.deliveryOperatorPhone}}</span>
                             {{# if(d.deliveryOperator || d.deliveryOperatorPhone){ }}
                             <div class="check">
-                                <label class=" x-red">待审：</label>
+                                <label class="x-red">待审：</label>
                                 <span class="">{{d.deliveryOperator + d.deliveryOperatorPhone}}</span>
                             </div>
                             {{# } }}
@@ -682,7 +682,7 @@
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.followOperator + d.orderData.followOperatorPhone}}</span>
                             {{# if(d.followOperator || d.followOperatorPhone){ }}
                             <div class="check">
-                                <label class=" x-red">待审：</label>
+                                <label class="x-red">待审：</label>
                                 <span class="">{{d.followOperator + d.followOperatorPhone}}</span>
                             </div>
                             {{# } }}
@@ -692,7 +692,7 @@
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.followOperator + d.orderData.followOperatorPhone}}</span>
                             {{# if(d.followOperator || d.followOperatorPhone){ }}
                             <div class="check">
-                                <label class=" x-red">待审：</label>
+                                <label class="x-red">待审：</label>
                                 <span class="">{{d.followOperator + d.followOperatorPhone}}</span>
                             </div>
                             {{# } }}
@@ -704,7 +704,7 @@
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.department}}</span>
                             {{# if(d.department){ }}
                             <div class="check">
-                                <label class=" x-red">待审：</label>
+                                <label class="x-red">待审：</label>
                                 <span class="">{{d.department}}</span>
                             </div>
                             {{# } }}
@@ -797,10 +797,10 @@
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">承运公里数：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}km</span>
-                            {{# if(d.driverMileage){ }}
+                            {{# if(d.feeUpdateData.driverMileage){ }}
                             <div class="check">
-                                <span class="x-red">待审：</span>
-                                <span class="">{{d.driverMileage}}km</span>
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.driverMileage}}km</span>
                             </div>
                             {{# } }}
                         </div>
@@ -809,30 +809,30 @@
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">应给油：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.oil}}升</span>
-                            {{# if(d.oil){ }}
+                            {{# if(d.feeUpdateData.oil){ }}
                             <div class="check">
-                                <span class="x-red">待审：</span>
-                                <span class="">{{d.oil}}升</span>
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.oil}}升</span>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">油：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.prePayOil}}升</span>
-                            {{# if(d.prePayOil){ }}
+                            {{# if(d.feeUpdateData.prePayOil){ }}
                             <div class="check">
-                                <span class="x-red">待审：</span>
-                                <span class="">{{d.prePayOil}}升</span>
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.prePayOil}}升</span>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">油转现：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.oilAmount}}元</span>
-                            {{# if(d.oilAmount){ }}
+                            {{# if(d.feeUpdateData.oilAmount){ }}
                             <div class="check">
-                                <span class="x-red">待审：</span>
-                                <span class="">{{d.oilAmount}}元</span>
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.oilAmount}}元</span>
                             </div>
                             {{# } }}
                         </div>
@@ -841,10 +841,10 @@
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">现金：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.amount}}元</span>
-                            {{# if(d.amount){ }}
+                            {{# if(d.feeUpdateData.amount){ }}
                             <div class="check">
-                                <span class="x-red">待审：</span>
-                                <span class="">{{d.amount}}元</span>
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.amount}}元</span>
                             </div>
                             {{# } }}
                         </div>
@@ -853,20 +853,20 @@
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">总现金：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.totalAmount}}元</span>
-                            {{# if(d.totalAmount){ }}
+                            {{# if(d.feeUpdateData.totalAmount){ }}
                             <div class="check">
-                                <span class="x-red">待审：</span>
-                                <span class="">{{d.totalAmount}}元</span>
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.totalAmount}}元</span>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">尾款账期：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.tailPayBillType}}</span>
-                            {{# if(d.tailPayBillType){ }}
+                            {{# if(d.feeUpdateData.tailPayBillType || d.tailPayBillType){ }}
                             <div class="check">
-                                <span class="x-red">待审：</span>
-                                <span class="">{{d.tailPayBillType}}</span>
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.tailPayBillType || d.tailPayBillType}}</span>
                             </div>
                             {{# } }}
                         </div>
@@ -875,30 +875,30 @@
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">预付现金：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.prePayAmount}}元</span>
-                            {{# if(d.prePayAmount){ }}
+                            {{# if(d.feeUpdateData.prePayAmount){ }}
                             <div class="check">
-                                <span class="x-red">待审：</span>
-                                <span class="">{{d.prePayAmount}}元</span>
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.prePayAmount}}元</span>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">到付现金：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.arrivePayAmount}}元</span>
-                            {{# if(d.arrivePayAmount){ }}
+                            {{# if(d.feeUpdateData.arrivePayAmount){ }}
                             <div class="check">
-                                <span class="x-red">待审：</span>
-                                <span class="">{{d.arrivePayAmount}}元</span>
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.arrivePayAmount}}元</span>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">尾款现金：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.tailPayAmount}}元</span>
-                            {{# if(d.tailPayAmount){ }}
+                            {{# if(d.feeUpdateData.tailPayAmount){ }}
                             <div class="check">
-                                <span class="x-red">待审：</span>
-                                <span class="">{{d.tailPayAmount}}</span>
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.tailPayAmount}}</span>
                             </div>
                             {{# } }}
                         </div>

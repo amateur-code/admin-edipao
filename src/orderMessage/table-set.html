@@ -44,6 +44,7 @@
                                         <input name="full" lay-skin="primary" type="checkbox" lay-filter="father">
                                     </th>
                                     <th>表格头名称</th>
+                                    <!-- <th>固定表格列</th> -->
                                 </tr>
                             </thead>
                             <tbody id="itemList">
@@ -62,9 +63,12 @@
         {{#  layui.each(d.list, function(index, item){ }}
         <tr>
 	      <td>
-	      	<input name="{{item.field}}" lay-skin="primary" lay-filter="role" type="checkbox" value="{{item.field}}">
+	      	<input class="checkbox_show" name="{{item.field}}" lay-skin="primary" lay-filter="role" type="checkbox" value="{{item.field}}">
 	      </td>
-	      <td>{{ item.title }}</td>
+          <td>{{ item.title }}</td>
+          <!-- <td>
+            <input class="checkbox_fixed" name="{{item.field + '_fixed'}}" lay-filter="fixed" type="checkbox" lay-text="固定|不固定" lay-skin="switch">
+          </td> -->
 	    </tr>
 	    {{# }) }}
 	</script>

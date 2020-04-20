@@ -19,7 +19,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 
 	//渲染
 	tableFilter.render = function(opt){
-
+		
 		//配置默认值
 		var elem = $(opt.elem || '#table'),
 			elemId = elem.attr("id") || "table_" + new Date().getTime(),
@@ -30,6 +30,13 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 		//写入默认缓存
 		tableFilter.cache[elemId]={};
 
+		var initData;
+		try {
+			initData = JSON.parse(sessionStorage.getItem("tableFilterData"))||{};
+		} catch (error) {
+			initData = {};
+		}
+		opt.done(initData[elemId], true);
 		//主运行
 		var main = function (){
 
@@ -65,9 +72,9 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 				var icon = 'layui-icon-search';
 				var filterIcon = $('<span class="layui-table-filter layui-inline"><i class="layui-icon '+icon+'"></i></span>');
 				th.find('.layui-table-cell').append(filterIcon)
-
+				
 				//图标默认高亮
-				if(tableFilter.cache[elemId][filterName]){
+				if((initData[elemId] && initData[elemId][filterName] && initData[elemId][filterName].length > 0) || tableFilter.cache[elemId][filterName]){
 					filterIcon.addClass("tableFilter-has")
 				}else{
 					filterIcon.removeClass("tableFilter-has")
@@ -208,10 +215,11 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 					}
 
 					//赋值FORM
-					form.val("table-filter-form", tableFilter.toLayuiFrom(elemId, filterName, filterType));
+					console.log(tableFilter.toLayuiFrom(elemId, filterName, filterType))
+					form.val("table-filter-form", initData[elemId] || tableFilter.toLayuiFrom(elemId, filterName, filterType));
 
 					if(filterType == "city"){
-						var val = tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
+						var val = initData[elemId] || tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
 						if(val && JSON.stringify(val) != "{}"){
 							// 必须引用xctiy.js 有值时赋值
 							$('#'+filterName+'Start').xcity(val[filterName+'Start-province'],val[filterName+'Start-city']);
@@ -223,7 +231,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						}
 					}
 					if(filterType == "province"){
-						var val = tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
+						var val = initData[elemId] || tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
 						if(val && JSON.stringify(val) != "{}" && val[filterName] && JSON.stringify(val[filterName]) != "{}"){
 							// 必须引用xctiy.js 有值时赋值
 							$('#'+filterName).xcity(val[filterName][filterName]);
@@ -233,7 +241,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						}
 					}
 					if(filterType == "provincecity"){
-						var val = tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
+						var val = initData[elemId] || tableFilter.toLayuiFrom(elemId, filterName, filterType) || '';
 						if(val && JSON.stringify(val) != "{}" && val[filterName] && JSON.stringify(val[filterName]) != "{}"){
 							// 必须引用xctiy.js 有值时赋值
 							$('#'+filterName).xcity(val[filterName]["province"],val[filterName]["city"]);
@@ -261,7 +269,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 								filterType == "radio" && filterBoxUl.append('<li><input type="radio" name="'+filterName+'" value="'+item.key+'" title="'+item.value+'"></li>');
 							})
 							form.render(null, 'table-filter-form');
-							form.val("table-filter-form", tableFilter.toLayuiFrom(elemId, filterName, filterType));
+							form.val("table-filter-form", initData[elemId] || tableFilter.toLayuiFrom(elemId, filterName, filterType));
 						});
 					}
 
@@ -360,7 +368,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						tableFilter.cache[elemId][filterName] = data.field[filterName];
 
 						//如果有过滤项 icon就高亮
-						if(tableFilter.cache[elemId][filterName].length > 0){
+						if((initData[elemId] && initData[elemId][filterName].length > 0) || tableFilter.cache[elemId][filterName].length > 0){
 							filterIcon.addClass("tableFilter-has")
 						}else{
 							filterIcon.removeClass("tableFilter-has")
@@ -396,6 +404,11 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 							}
 							table.reload(elemId,{"where":new_where})
 						}
+						try {
+							initData[elemId] = tableFilter.cache[elemId];
+							sessionStorage.setItem("tableFilterData", JSON.stringify(initData));
+						} catch (error) {}
+						console.log(tableFilter.cache[elemId])
 
 						//写入回调函数
 						opt.done(tableFilter.cache[elemId]);
@@ -425,10 +438,13 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						}else if(mode == "api"){
 							//需要清除where里的对应的值
 							var where = {};
-								where[filterName] = ''
-							table.reload(elemId,{"where" : where})
+							where[filterName] = '';
+							table.reload(elemId,{"where" : where});
 						}
-
+						try {
+							initData[elemId] = tableFilter.cache[elemId];
+							sessionStorage.setItem("tableFilterData", JSON.stringify(initData));
+						} catch (error) {}
 						opt.done(tableFilter.cache[elemId]);
 						filterBox.remove();
 					})

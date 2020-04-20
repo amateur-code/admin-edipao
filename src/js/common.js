@@ -112,7 +112,6 @@ layui.define([], function(exports) {
     Common.prototype.getDataPermission = function () {
         var user = layui.sessionData('user');
         var dataPermission = {};
-        console.log(user)
         if(user&&user.dataPermissionDTO){
             dataPermission = user.dataPermissionDTO;
         }
@@ -132,7 +131,10 @@ layui.define([], function(exports) {
       }
       return permissionList
     }
+    Common.prototype.getSearchOptions = function () {
+        var pid = this.urlGet().perssionId;
 
+    }
     Common.prototype.kcodeToGb = function(kcode){
         var codes = "0123456789abcdefghijkmnpqrstuvwxyz"; 
 

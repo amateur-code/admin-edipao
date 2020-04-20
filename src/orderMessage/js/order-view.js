@@ -20,6 +20,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     this.orderData = null;
     this.carFormList = [];
 		this.updateData = {};
+		this.feeUpdateData = {};
 		this.truckUpdateData = {};
     this.dataPermission = edipao.getDataPermission();
     window.dataPermission = this.dataPermission;
@@ -33,7 +34,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           if(res.code == "0"){
             _this.parseData(res.data);
             _this.orderData = res.data;
-            laytpl($("#forms_tpl").html()).render({orderData: res.data}, function (html) {
+            laytpl($("#forms_tpl").html()).render({orderData: res.data, feeUpdateData: {}}, function (html) {
               $("#form_income_container").after(html);
               _this.setData(_this.orderData);
               _this.bindEvents();
@@ -50,11 +51,12 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           res3 = res3[0];
           res3.data = res3.data || {};
           if(res1.code == "0" && (res2.code == "0" || res3.code == "0")){
-            var updateData;
             if(!res1.data){
-              updateData = {};
-            }else{
+              _this.updateData = {};
+              _this.feeUpdateData = {};
+            }else if(_this.action != "feeVerify"){
               try {
+                var updateData;
                 updateData = JSON.parse(res1.data.modifyAfterJson);
                 updateData.forEach(function (item) {
                   _this.updateData[item.name] = item.value;
@@ -66,12 +68,29 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
               } catch (error) {
                 _this.updateData = {};
               }
-						}
+            }else{
+              _this.updateData = {};
+              try {
+                var updateData;
+                updateData = JSON.parse(res1.data.modifyAfterJson);
+                updateData.forEach(function (item) {
+                  if(_this.dataPermission.canViewOrderCost != "Y"){
+                    _this.feeUpdateData[item.name] = "*";
+                  }else{
+                    _this.feeUpdateData[item.name] = item.value;
+                  }
+                });
+              } catch (error) {
+                _this.feeUpdateData = {};
+              }
+            }
 						_this.parseTruckData(res3.data);
 						_this.truckUpdateData = res3.data;
             _this.parseData(res2.data);
+            _this.parseData(_this.updateData);
             _this.orderData = res2.data;
             _this.updateData.orderData = res2.data;
+            _this.updateData.feeUpdateData = _this.feeUpdateData || {};
             laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
               $("#form_income_container").after(html);
             });
@@ -134,12 +153,16 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     },
     getUpdate: function (cb) {
       var _this = this;
+      var operationModule = 4;
+      if(_this.action == "feeVerify"){
+        operationModule = 11;
+      }
       return edipao.request({
         url: "/admin/log/last-modify/get",
         method: "GET",
         data:{
           loginStaffId: _this.user.staffId,
-          operationModule: 4,
+          operationModule: operationModule,
           dataPk: _this.orderId
         }
       });
@@ -199,7 +222,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       var imageStr = $("#image_tpl").html();
       data.truckDTOList.forEach(function (item, index) {
 				var truck = item;
-				var updateData = _this.truckUpdateData[truck.id] || {};
         if(_this. dataPermission.canViewOrderIncome != "Y"){
           item.pricePerMeliage = "*";
           item.manageFee = "*";
@@ -228,21 +250,29 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 				else item.startBillImage = item.startBillImage.split(",");
         if(!item.tempLicenseBackImage) item.tempLicenseBackImage = [];
 				else item.tempLicenseBackImage = item.tempLicenseBackImage.split(",");
-
-				if(!updateData.returnImages) updateData.returnImages = [];
-        else updateData.returnImages = updateData.returnImages.split(",");
-        if(!updateData.fetchImages) updateData.fetchImages = [];
-        else updateData.fetchImages = updateData.fetchImages.split(",");
-        if(!updateData.startImages) updateData.startImages = [];
-        else updateData.startImages = updateData.startImages.split(",");
-        if(!updateData.startBillImage) updateData.startBillImage = [];
-				else updateData.startBillImage = updateData.startBillImage.split(",");
-        if(!updateData.tempLicenseBackImage) updateData.tempLicenseBackImage = [];
-				else updateData.tempLicenseBackImage = updateData.tempLicenseBackImage.split(",");
         Object.keys(item).forEach(function (key) {
           if(!item[key])item[key] = "- -";
-				});
-				truck.updateData = updateData;
+        });
+        
+				if(_this.action != "feeVerify"){
+				  var updateData = _this.truckUpdateData[truck.id] || {};
+          if(!updateData.returnImages) updateData.returnImages = [];
+          else updateData.returnImages = updateData.returnImages.split(",");
+          if(!updateData.fetchImages) updateData.fetchImages = [];
+          else updateData.fetchImages = updateData.fetchImages.split(",");
+          if(!updateData.startImages) updateData.startImages = [];
+          else updateData.startImages = updateData.startImages.split(",");
+          if(!updateData.startBillImage) updateData.startBillImage = [];
+          else updateData.startBillImage = updateData.startBillImage.split(",");
+          if(!updateData.tempLicenseBackImage) updateData.tempLicenseBackImage = [];
+          else updateData.tempLicenseBackImage = updateData.tempLicenseBackImage.split(",");
+          Object.keys(updateData).forEach(function (key) {
+            if(!updateData[key]) updateData[key] = "- -";
+          });
+          truck.updateData = updateData;
+        }else{
+          truck.updateData = {};
+        }
         laytpl(imageStr).render(item, function (imageHtml) {
           Object.keys(truck).forEach(function (key) {
             truck[key] = truck[key] || "- -";
