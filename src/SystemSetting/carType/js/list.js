@@ -145,6 +145,7 @@ layui.config({
             renderTable();
         }
     })
+    var where = {};
     function renderTable(){
         tableIns = table.render({
             elem: '#carTypeList',
@@ -182,6 +183,78 @@ layui.config({
                 tableFilterIns&&tableFilterIns.reload() // 搜索
             }
         });
+
+
+        // 获取所有驾照类型
+        var driveLicenceTypeFilter = [];
+        edipao.request({
+            type: 'GET',
+            dataType: "JSON",
+            async: false,
+            url: '/admin/driver/info/licenceType',
+        }).done(res=>{
+            if(res.code == 0){
+                var data = res.data.sort();
+                layui.each(data,function (index,item) {
+                    driveLicenceTypeFilter.push({
+                        'key':item,
+                        'value':item
+                    });
+                });
+            }else{
+                layer.msg(res.message, {icon: 5,anim: 6});
+            }
+        });
+
+
+        var orderTypeFilter = [];
+        layui.each(orderTypeData,function (index,item) {
+            orderTypeFilter.push({
+                'key':index,
+                'value':item
+            });
+        });
+
+        var  statusFilter = [];
+        layui.each(statusData,function (index,item) {
+            statusFilter.push({
+                'key':index,
+                'value':item
+            });
+        });
+        var filters = [
+            { field: 'modelName', type: 'input' },
+            { field: 'certificateCode', type: 'checkbox', data: driveLicenceTypeFilter},
+            { field: 'orderType',type: 'checkbox', data: orderTypeFilter},
+            { field: 'modelCode', type: 'input' },
+            { field: 'driveWayCode', type: 'input' },
+            { field: 'powerCode', type: 'input' },
+            { field: 'remark', type: 'input' },
+            { field: 'status',type: 'checkbox', data: statusFilter }
+        ]
+        // 查询
+        tableFilterIns = tableFilter.render({
+            'elem' : '#carTypeList',//table的选择器
+            'mode' : 'self',//过滤模式
+            'filters' : filters,//过滤项配置
+            'done': function(filters){
+                var index = 0;
+                where = {
+                    loginStaffId: edipao.getLoginStaffId()
+                };
+
+                layui.each(filters,function(key, value){
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    if( key == 'status'||key == 'orderType'||key == 'certificateCode'){
+                        where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+                    }else{
+                        where['searchFieldDTOList['+ index +'].fieldValue'] = value;
+                    }
+                    index++;
+                })
+                tableIns.reload( { where: where, page: { curr: 1 }});
+            }
+        });
     };
     var resizeTime = null;
     function resizeTable() {
@@ -217,82 +290,6 @@ layui.config({
         }, dur);
     }
 
-    // 获取所有驾照类型
-    var driveLicenceTypeFilter = [];
-    edipao.request({
-        type: 'GET',
-        dataType: "JSON",
-        async: false,
-        url: '/admin/driver/info/licenceType',
-    }).done(res=>{
-        if(res.code == 0){
-            var data = res.data.sort();
-            layui.each(data,function (index,item) {
-                driveLicenceTypeFilter.push({
-                    'key':item,
-                    'value':item
-                });
-            });
-        }else{
-            layer.msg(res.message, {icon: 5,anim: 6});
-        }
-    });
-
-
-    var orderTypeFilter = [];
-    layui.each(orderTypeData,function (index,item) {
-        orderTypeFilter.push({
-            'key':index,
-            'value':item
-        });
-    });
-
-    var  statusFilter = [];
-    layui.each(statusData,function (index,item) {
-        statusFilter.push({
-            'key':index,
-            'value':item
-        });
-    });
-    var filters = [
-        { field: 'modelName', type: 'input' },
-        { field: 'certificateCode', type: 'checkbox', data: driveLicenceTypeFilter},
-        { field: 'orderType',type: 'checkbox', data: orderTypeFilter},
-        { field: 'modelCode', type: 'input' },
-        { field: 'driveWayCode', type: 'input' },
-        { field: 'powerCode', type: 'input' },
-        { field: 'remark', type: 'input' },
-        { field: 'status',type: 'checkbox', data: statusFilter }
-    ]
-    var where = {};
-    tableFilterIns = tableFilter.render({
-        'elem' : '#carTypeList',//table的选择器
-        'mode' : 'self',//过滤模式
-        'filters' : filters,//过滤项配置
-        'done': function(filters){
-            var index = 0;
-            where = {
-                    loginStaffId: edipao.getLoginStaffId()
-                };
-            if(!filters.operation) {
-                verifyFilter = false;
-            }else{
-                // verifyFilter = true;
-                // where["pageSize"] = 60;
-            }
-            delete filters.operation;
-            layui.each(filters,function(key, value){
-                where['searchFieldDTOList['+ index +'].fieldName'] = key;
-                if( key == 'status'||key == 'orderType'||key == 'certificateCode'){
-                    where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
-                }else{
-                    where['searchFieldDTOList['+ index +'].fieldValue'] = value;
-                }
-                index++;
-            })
-            tableIns.reload( { where: where, page: { curr: 1 }});
-        }
-    });
     function DataNull (data) {
         if(data == null||data == ''){
             return '--'
