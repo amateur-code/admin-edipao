@@ -546,7 +546,7 @@
                         <div class="layui-input-inline layui-row  layui-col-space14">
                             <div class="layui-col-md4 relative">
                                 <span class="input_unit">升</span>
-                                <input value="{{d.feeDetail.oil * 1 - d.feeDetail.prePayOil * 1}}" onchange="num(this)" disabled type="text" name="" autocomplete="off" class="layui-input">
+                                <input value="{{(d.feeDetail.oil * 1 - d.feeDetail.prePayOil * 1).toFixed(2)}}" onchange="num(this)" disabled type="text" name="" autocomplete="off" class="layui-input">
                                 <span class="blue">x</span>
                             </div>
                             <div class="layui-col-md4 relative">

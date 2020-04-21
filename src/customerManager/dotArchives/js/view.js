@@ -49,9 +49,9 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
             }
           }
           _this.detail.feeJson.forEach(function (item, index) {
-            var startWarehouse = item.startWarehouse
-            feeId = item.feeId,
-            name = item.name;
+            var startWarehouse = item.startWarehouse,
+              feeId = item.feeId,
+              name = item.name;
             var existFlag = false;
             var updateFlag = false;
             var checkData = {};
@@ -72,7 +72,6 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
             if(existFlag && updateFlag){
               _this.detail.feeJson[index].check = checkData;
             }else if(!existFlag){
-              console.log(_this.detail.feeJson, index)
               _this.detail.feeJson[index].delete = true;
             }
           });

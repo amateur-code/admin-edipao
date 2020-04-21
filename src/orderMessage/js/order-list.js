@@ -688,7 +688,6 @@ layui.config({
             $(".list_arrive_prepay").unbind().on("click", function (e) {
                 var field = e.target.dataset.field;
                 var orderId = e.target.dataset.orderid;
-
                 var orderNo = e.target.dataset.order;
                 var type = e.target.dataset.type*1;
                 var key = "prePayFeeItems";

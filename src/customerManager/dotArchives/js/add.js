@@ -164,6 +164,23 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
       xadmin.close();
       return false;
     });
+    form.on("select(startWarehouse)", function (data) {
+      var startWarehouseList = [];
+      var formData = form.val("main_form");
+      var existNum = 0;
+      $(".fee_row").each(function (index, item) {
+        index = item.dataset.index;
+        if(formData["startWarehouse" + index] == data.value) existNum++;
+        startWarehouseList.push(formData["startWarehouse" + index]);
+      });
+      if(existNum > 1){
+        layer.msg("相同的发车仓库只能配置一个模板！", {icon: 2});
+        var name = data.elem.name;
+        var resetData = {};
+        resetData[name] = "";
+        form.val("main_form", resetData);
+      }
+    });
     form.on("submit(submit)", function (data) {
       data = data.field;
       var feeJson = [];

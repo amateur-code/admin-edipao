@@ -390,7 +390,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         initial: true
       });
     });
-    var oilCapacity = 0;
     var maxCustomerMileage = 0;
     _this.carFormList.forEach(function (item, index) {
       var itemStr = carFormHtml;
@@ -405,19 +404,18 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         truckData.income = "*";
         truckData.manageFee = "*";
       }
-      oilCapacity = oilCapacity + truckData.oilCapacity * 1;
       if(truckData.customerMileage > maxCustomerMileage) maxCustomerMileage = truckData.customerMileage;
       itemStr = itemStr.replace(/CARFORM/g, item.filter);
       laytpl(itemStr).render(truckData, function (html) {
         carFormStr += html;
         if(index == _this.carFormList.length - 1){
 					_this.maxCustomerMileage = maxCustomerMileage;
-					_this.oilCapacity = oilCapacity;
+					_this.oilCapacity = _this.orderDataBackUp.oilCapacity;
           $("#car_form_container").html(carFormStr);
           renderEnd();
           _this.renderFee({
             maxCustomerMileage: maxCustomerMileage,
-            oilCapacity: oilCapacity,
+            oilCapacity: _this.oilCapacity,
             cb: _this.bindEvents.bind(_this),
           });
         }
@@ -560,8 +558,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.originFeeRate.prePayRatio = (_this.originFeeRate.prePayRatio * 1).toFixed(2);
         _this.originFeeRate.arrivePayRatio = (_this.originFeeRate.arrivePayRatio * 1).toFixed(2);
         _this.originFeeRate.tailPayRatio = (_this.originFeeRate.tailPayRatio * 1).toFixed(2);
-        _this.feeDetail.oilCapacity = options.oilCapacity || 100;
-        _this.feeDetail.maxCustomerMileage = options.maxCustomerMileage;
+        _this.feeDetail.oilCapacity = _this.orderData.oilCapacity || options.oilCapacity;
+        _this.feeDetail.maxCustomerMileage = _this.orderData.driverMileage || options.maxCustomerMileage;
         _this.feeDetail.oil = _this.orderData.oil;
         _this.feeDetail.oilUnitPrice = _this.orderData.oilUnitPrice;
         _this.feeDetail.prePayOil = _this.orderData.prePayOil;
@@ -618,7 +616,13 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           value = 0;
         }
         var feeFormData = form.val("form_fee");
+        if(field == "prePayOil"){
+          if(value * 1 > feeFormData.oil * 1){
+            value = feeFormData.oil;
+          }
+        }
         feeFormData[field] = value;
+        feeFormData.driverMileage = feeFormData.maxCustomerMileage;
         delete feeFormData.maxCustomerMileage;
         Object.assign(feeFormData, {
           oilCapacity: _this.feeDetail.oilCapacity,
@@ -1264,6 +1268,19 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     //   return;
     // }
     if(!_this.veriftParams(data)) return;
+    if(data.prePayOil * 1 > data.oilCapacity * 1){
+      layer.confirm('车辆油箱可能装不下这么多油，是否继续给这么多油？', {icon: 3, title:'提示'}, function(index){
+        //do something
+        var loadIndex = layer.load(1);
+        _this.submitAll(edipao.request({
+          url: "/admin/order/updateOrder",
+          method: "POST",
+          data: getParams(data),
+        }), loadIndex);
+        layer.close(index);
+      });
+      return;
+    }
     var loadIndex = layer.load(1);
     _this.submitAll(edipao.request({
       url: "/admin/order/updateOrder",
@@ -1745,7 +1762,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     $customerMileage.unbind().on("input", function (e) {
       var arr = [];
       $customerMileage.each(function (index, item) {
-        arr.push(item.value*1);
+        arr.push(item.value * 1);
       });
 			$(".maxCustomerMileage").val(Math.max.apply(null,arr));
 			_this.maxCustomerMileage = Math.max.apply(null,arr);

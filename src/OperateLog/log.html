@@ -153,6 +153,16 @@
                                             .replace(/(null)/g, '--')
                                             .replace(/\[\]/g,'--')
                                             
+                            } else if(data.indexOf("费用结构jsonjson") > -1){
+                                var json = data.replace("费用结构json:", "").replace(/<br>/g, "").replace(/<\/br>/g, "").replace(/'/g,"\""), jsonStr = "";
+                                console.log(json)
+                                try{
+                                    json = JSON.parse(json);
+                                } catch (err){json = []}
+                                json.forEach(function(item){
+                                    if(item.name) jsonStr = jsonStr + "发车网点：" + item.startWarehouse + "，费用模板：" + item.name + "，<br>";
+                                })
+                                return jsonStr;
                             }else{
                                 return data
                                         .replace(/(null)/g, '--');
