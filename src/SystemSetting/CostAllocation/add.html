@@ -582,7 +582,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
         let tailPayRatioB = $('#tailPayRatioB' + item.id).val();
         feeItemJson.push({
             id: index + '100000',
-            orderType: item.orderType,
             carModel: item.modelName + '背车',
             freightUnitPrice: toDecimal2(freightUnitPrice),
             oilUnitPrice: toDecimal2(oilUnitPrice),
@@ -591,7 +590,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
             tailPayRatio: toDecimal2(tailPayRatio),
           }, {
             id: index + '200000',
-            orderType: item.orderType,
             carModel: item.modelName,
             freightUnitPrice: toDecimal2(freightUnitPriceB),
             oilUnitPrice: toDecimal2(oilUnitPriceB),
@@ -608,7 +606,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
         let tailPayRatioB = $('#tailPayRatioB' + item.id).val();
         feeItemJson.push({
           id: index + '300000',
-          orderType: item.orderType,
           carModel: item.modelName,
           freightUnitPrice: toDecimal2(freightUnitPriceB),
           oilUnitPrice: toDecimal2(oilUnitPriceB),
