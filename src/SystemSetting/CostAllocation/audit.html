@@ -100,9 +100,9 @@
       </div>
       <div class="layui-row">
         <div class="layui-col-xs12" style="word-break: break-all; ">
-          备注：<span style="color: #1E9FFF">{{d.detail.remark}}</span>
+          备注：<span style="color: #1E9FFF">{{d.detail.remark || '--'}}</span>
           {{# if(d.detail.remarkFlag =='1'){ }}
-          <span class="x-red">待审：</span><span class="colorb">{{d.detail.remarkStr}}</span>
+          <div><span class="x-red">待审：</span><span class="colorb">{{d.detail.remarkStr}}</span></div>
           {{# } }}
         </div>
       </div>

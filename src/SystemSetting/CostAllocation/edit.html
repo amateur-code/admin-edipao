@@ -157,6 +157,25 @@
 {{# }) }}
 </script>
 <script type="text/javascript">
+//只保留2位小数，如：2，会在2后面补上00.即2.00
+function toDecimal2 (x) {
+  var f = parseFloat(x);
+  if (isNaN(f)) {
+    return false;
+  }
+  var f = Math.round(x * 100) / 100;
+  var s = f.toString();
+  var rs = s.indexOf('.');
+  if (rs < 0) {
+    rs = s.length;
+    s += '.';
+  }
+  while (s.length <= rs + 2) {
+    s += '0';
+  }
+  return s;
+}
+
 // 输入框只能输入数字并保留两位小数
 function clearNoNum (obj) {
   // if(obj.value<=0&&obj.)
@@ -207,15 +226,15 @@ function preblur (val) {
   // 清楚上一次校验的内容
   $('#jy' + str).remove()
   // 判断预付款的值能输入的区间赋值给预付款输入框
-  if ((val.value > 0 || val.value == 0) && (val.value < 100 - one || val.value == 100 - one)) {
+  if (val.value >= 0&& val.value <= 100 - one) {
     $('#prePayRatio' + str).val(val.value)
   } else if (val.value != 100 - one) {
     // val.value = 0.00
     $('#prePayRatio' + str).after("<span id='jy" + str + "' style='color: #f22; position: absolute;top:25px;'>预付款加到付款的值应等于100</span>")
   }
   // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
-  if ((100 - val.value - one > 0 || 100 - val.value - one == 0) && (100 - val.value - one < 100 || 100 - val.value - one == 100)) {
-    totalNum = 100 - val.value - one
+  if (100 - val.value - one >= 0 && 100 - val.value - one <= 100) {
+    totalNum = toDecimal2(100 - val.value - one)
     $('#tailPayRatio' + str).val(totalNum)
   }
 }
@@ -232,15 +251,15 @@ function arriveblur (val) {
   // 清楚上一次校验的内容
   $('#dfk' + str).remove()
   // 判断到付款的值能输入的区间并转换小数点后两位赋值给到付款输入框
-  if ((val.value > 0 || val.value == 0) && (val.value < 100 - one || val.value == 100 - one)) {
+  if (val.value >= 0 && val.value <= 100 - one) {
     $('#arrivePayRatio' + str).val(val.value)
   } else if (val.value != 100 - one) {
     // val.value = 0.00
     $('#arrivePayRatio' + str).after("<span id='dfk" + str + "' style='color: #f22; position: absolute;top:25px;'>预付款加到付款的值应等于100</span>")
   }
   // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
-  if ((100 - val.value - one > 0 || 100 - val.value - one == 0) && (100 - val.value - one < 100 || 100 - val.value - one == 100)) {
-    totalNum = 100 - val.value - one
+  if (100 - val.value - one >= 0 && 100 - val.value - one <= 100) {
+    totalNum = toDecimal2(100 - val.value - one)
     $('#tailPayRatio' + str).val(totalNum)
   }
 }
