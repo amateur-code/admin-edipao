@@ -376,9 +376,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
         } else {
           return '输入格式有误,请输入0-100的数值';
         }
-        // if (!value.replace(/^(\d|[1-9]\d|100)(\.\d{1,2})?$/)) {
-        //   return '输入格式有误';
-        // }
       }
     }
   });
@@ -393,7 +390,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
       let tailPayRatio = $('#tailPayRatio' + item.id).val();
       feeItemJson.push({
         id: item.id,
-        orderType: item.orderType,
         carModel: item.carModel,
         freightUnitPrice: toDecimal2(freightUnitPrice),
         oilUnitPrice: toDecimal2(oilUnitPrice),

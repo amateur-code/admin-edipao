@@ -357,7 +357,7 @@ function preblur (val) {
     $('#prePayRatio' + str).after("<span id='jyk" + str + "' style='color: #f22; position: absolute;top:25px;'>预付款加到付款的值应等于100</span>")
   }
   // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
-  if ((100 - val.value - one > 0 || 100 - val.value - one == 0) && (100 - val.value - one < 100 || 100 - val.value - one == 100)) {
+  if (100 - val.value - one >= 0 && 100 - val.value - one <= 100) {
     totalNum = toDecimal2(100 - val.value - one)
     $('#tailPayRatio' + str).val(totalNum)
   }
@@ -433,7 +433,7 @@ function arriveblurB (val) {
   // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
   if (100 - val.value - one >= 0 && 100 - val.value - one <= 100) {
     totalNum = toDecimal2(100 - val.value - one)
-    $('#tailPayRatio' + str).val(totalNum)
+    $('#tailPayRatioB' + str).val(totalNum)
   }
 }
 
@@ -497,34 +497,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
         } else {
           return '输入格式有误,请输入0-100的数值';
         }
-        // if (!value.replace(/^(\d|[1-9]\d|100)(\.\d{1,2})?$/)) {
-        //   return '输入格式有误';
-        // }
-      }
-    },
-    freightUnitPrice: function (value) {
-      if (value.length > 15) {
-        return '运费不能超过15个字符';
-      }
-    },
-    oilUnitPrice: function (value) {
-      if (value.length > 15) {
-        return '油不能超过15个字符';
-      }
-    },
-    prePayRatio: function (value) {
-      if (value.length > 15) {
-        return '预付款不能超过15个字符';
-      }
-    },
-    arrivePayRatio: function (value) {
-      if (value.length > 15) {
-        return '到付款不能超过15个字符';
-      }
-    },
-    tailPayRatio: function (value) {
-      if (value.length > 15) {
-        return '尾款不能超过15个字符';
       }
     },
   });
@@ -582,7 +554,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
         let tailPayRatioB = $('#tailPayRatioB' + item.id).val();
         feeItemJson.push({
             id: index + '100000',
-            orderType: item.orderType,
             carModel: item.modelName + '背车',
             freightUnitPrice: toDecimal2(freightUnitPrice),
             oilUnitPrice: toDecimal2(oilUnitPrice),
@@ -591,7 +562,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
             tailPayRatio: toDecimal2(tailPayRatio),
           }, {
             id: index + '200000',
-            orderType: item.orderType,
             carModel: item.modelName,
             freightUnitPrice: toDecimal2(freightUnitPriceB),
             oilUnitPrice: toDecimal2(oilUnitPriceB),
@@ -608,7 +578,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
         let tailPayRatioB = $('#tailPayRatioB' + item.id).val();
         feeItemJson.push({
           id: index + '300000',
-          orderType: item.orderType,
           carModel: item.modelName,
           freightUnitPrice: toDecimal2(freightUnitPriceB),
           oilUnitPrice: toDecimal2(oilUnitPriceB),
