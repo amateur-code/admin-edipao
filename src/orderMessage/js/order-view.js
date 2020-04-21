@@ -23,6 +23,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 		this.feeUpdateData = {};
 		this.truckUpdateData = {};
     this.dataPermission = edipao.getDataPermission();
+    this.truckList = [];
     window.dataPermission = this.dataPermission;
   }
   $.extend(View.prototype, {
@@ -84,12 +85,19 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
                 _this.feeUpdateData = {};
               }
             }
+            res2.data.truckDTOList = res2.data.truckDTOList || [];
 						_this.parseTruckData(res3.data);
-						_this.truckUpdateData = res3.data;
             _this.parseData(res2.data);
             _this.parseData(_this.updateData);
             _this.orderData = res2.data;
-            _this.updateData.orderData = res2.data;
+            _this.truckUpdateData = res3.data;
+
+            _this.truckUpdateData.add.forEach(function (item) {
+              item.isNew = true;
+              _this.orderData.truckDTOList.push(item);
+            });
+
+            _this.updateData.orderData = _this.orderData;
             _this.updateData.feeUpdateData = _this.feeUpdateData || {};
             laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
               $("#form_income_container").after(html);
@@ -255,7 +263,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         });
         
 				if(_this.action != "feeVerify"){
-				  var updateData = _this.truckUpdateData[truck.id] || {};
+				  var updateData = _this.truckUpdateData.update[truck.id] || {};
           if(!updateData.returnImages) updateData.returnImages = [];
           else updateData.returnImages = updateData.returnImages.split(",");
           if(!updateData.fetchImages) updateData.fetchImages = [];
@@ -273,6 +281,11 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         }else{
           truck.updateData = {};
         }
+        _this.truckUpdateData.delete.some(function (item) {
+          if(item == truck.id){
+            truck.isDeleted = truck;
+          }
+        });
         laytpl(imageStr).render(item, function (imageHtml) {
           Object.keys(truck).forEach(function (key) {
             truck[key] = truck[key] || "- -";

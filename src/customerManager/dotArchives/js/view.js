@@ -39,14 +39,58 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
           }
           try {
             _this.check = JSON.parse(res2.data.modifyAfterJson).newMap;
+            _this.check.feeJson = _this.check.feeJson || "[]";
           } catch (error) {}
           if(_this.check.feeJson){
             try {
               _this.check.feeJson = JSON.parse(_this.check.feeJson);
             } catch (error) {
-              _this.check.feeJson = "";
+              _this.check.feeJson = [];
             }
           }
+          _this.detail.feeJson.forEach(function (item, index) {
+            var startWarehouse = item.startWarehouse
+            feeId = item.feeId,
+            name = item.name;
+            var existFlag = false;
+            var updateFlag = false;
+            var checkData = {};
+            existFlag = _this.check.feeJson.some(function (item, index) {
+              if(item.startWarehouse == startWarehouse) {
+                if(item.name != name || item.feeId != feeId){
+                  if(item.name != name){
+                    checkData.name = item.name;
+                    checkData.feeId = item.feeId;
+                  }
+                  updateFlag = true;
+                }
+                if(item.startWarehouse == startWarehouse && item.name == name && item.feeId == feeId){
+                  return true;
+                }
+              }
+            });
+            if(existFlag && updateFlag){
+              _this.detail.feeJson[index].check = checkData;
+            }else if(!existFlag){
+              console.log(_this.detail.feeJson, index)
+              _this.detail.feeJson[index].delete = true;
+            }
+          });
+          _this.check.feeJson.forEach(function (item) {
+            var startWarehouse = item.startWarehouse,
+              feeId = item.feeId,
+              name = item.name;
+            var existFlag = false;
+            existFlag = _this.detail.feeJson.some(function(item){
+              if(item.startWarehouse == startWarehouse && item.name == name && item.feeId == feeId){
+                return true;
+              }
+            });
+            if(!existFlag){
+              item.isNew = true;
+              if(item.feeId) _this.detail.feeJson.push(item);
+            }
+          });
           laytpl($("#preview").html()).render({check: _this.check, detail: _this.detail}, function (html) {
             $("#view").html(html);
             _this.bindEvents();

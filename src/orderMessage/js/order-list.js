@@ -1580,7 +1580,6 @@ layui.config({
                 if(dataPermission.canViewOrderCost != "Y"){
                     return "* " + payStatus;
                 }
-                payStatus = verifyStr3.replace("{{}}", "-申请支付");
                 return d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus;
         }},
         {field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 200, hide: false, templet: function (d) {

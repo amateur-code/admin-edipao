@@ -611,6 +611,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     $(".input_fee").unbind().on("input", function (e) {
       if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
       _this.feeInputTimer = setTimeout(function () {
+        var loadIndex = layer.load(1);
         var field = e.target.dataset.field;
         var value = e.target.value * 1;
         if(!value || value == 0){
@@ -625,6 +626,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         });
         delete feeFormData.tailPayAmount;
         _this.getCalOrderFee(feeFormData).done(function (res) {
+          layer.close(loadIndex)
           if(res.code == "0"){
             Object.assign(_this.feeDetail, res.data);
             _this.renderFee({
@@ -638,7 +640,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             e.target.value = _this.feeDetail[field];
           }
         });
-      }, 300);
+      }, 500);
     });
   }
   Edit.prototype.getCalOrderFee = function(data){

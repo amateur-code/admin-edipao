@@ -168,6 +168,7 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
       data = data.field;
       var feeJson = [];
       $(".fee_row").each(function (index, item) {
+        index = item.dataset.index;
         feeJson.push({
           startWarehouse: data["startWarehouse" + index],
           feeId: data["feeId" + index],

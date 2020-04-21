@@ -113,7 +113,15 @@
             <div class="page-header border-bottom">
                 <div class="layui-row">
                     <div class="layui-col-md1">
-                        <div class="title">车辆信息</div>
+                        <div class="title">
+                            车辆信息
+                            {{# if(d.isDeleted){ }}
+                            <div style="font-size: 14px;"><span class="red">待审：</span>已删除</div>
+                            {{# } }}
+                            {{# if(d.isNew){ }}
+                            <div style="font-size: 14px;"><span class="red">待审：</span>新增</div>
+                            {{# } }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -341,7 +349,7 @@
                         {{# if(d.updateData.customerMileage){ }}
                         <div class="layui-row">
                             <span class="layui-form-span form_span red">待审：</span>
-                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.customerMileage}}</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.customerMileage}}km</span>
                         </div>
                         {{# } }}
                     </div>
@@ -355,14 +363,14 @@
                         {{# if(d.updateData.income){ }}
                         <div class="layui-row">
                             <span class="layui-form-span form_span red">待审：</span>
-                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.income}}</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.income}}元</span>
                         </div>
                         {{# } }}
                     </div>
                     <div class="layui-inline layui-col-md4">
                         <div class="layui-row">
                             <span class="layui-form-span form_span">管理费：</span>
-                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.manageFee}}</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.manageFee}}元</span>
                         </div>
                         {{# if(d.updateData.manageFee){ }}
                         <div class="layui-row">
