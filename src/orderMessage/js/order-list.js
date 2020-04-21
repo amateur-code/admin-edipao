@@ -22,9 +22,14 @@ var feeData = [
 ]
 var picData = [
     {key: 1, value: "未上传"},
-    {key: 2, value: "未审核"},
-    {key: 3, value: "已审核"},
-    {key: 3, value: "待我审核"},
+    {key: 2, value: "已上传"},
+]
+var tailPayStatusData = [
+    {key: 1, value: "待支付"},
+    {key: 2, value: "支付中"},
+    {key: 3, value: "支付成功"},
+    {key: 4, value: "支付失败"},
+    {key: 5, value: "未到期"},
 ]
 
 var provinceList = [];
@@ -118,6 +123,7 @@ layui.config({
         { field: 'prePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'arrivePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'tailPayAmount', type: 'checkbox-numberslot', data: feeData },
+        { field: 'tailPayStatus', type: 'checkbox', data: tailPayStatusData },
         { field: 'fetchStatus', type: 'checkbox', data: picData },
         { field: 'startAuditStatus', type: 'checkbox', data: picData },
         { field: 'returnAuditStatus', type: 'checkbox', data: picData },
@@ -258,7 +264,7 @@ layui.config({
                         where['searchFieldDTOList['+ index +'].fieldName'] = key.replace("Amount", "Status");
                         where['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
                     }
-                }else if(key == "orderStatus" || key == "orderType"){
+                }else if(key == "orderStatus" || key == "orderType" || key == "tailPayStatus"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                 }else if(key == "fetchStatus" || key == "startAuditStatus" || key == "returnAuditStatus"){
@@ -1285,7 +1291,6 @@ layui.config({
                     var data = [];
                     orderDTOList = res.data.orderDTOList;
                     orderDTOList.forEach(function(item){
-                        console.log(item.feeId)
                         if(item.orderType == 2 && item.masterFlag == "否"){
                             item.showBtn = 0;
                         }else{
@@ -1635,6 +1640,20 @@ layui.config({
                     return "* " + payStatus;
                 }
                 return d.tailPayAmount + "元" + payStatus;
+        }},
+        {field: "tailPayStatus", title: "尾款状态", sort: false, width: 100, hide: false, templet: function (d) {
+            switch(d.tailPayStatus * 1){
+                case 1:
+                    return "待支付";
+                case 2:
+                    return "支付中";
+                case 3:
+                    return "支付成功";
+                case 4:
+                    return "支付失败";
+                case 5:
+                    return "未到期";
+            }
         }},
         {field: 'fetchStatus', title: '提车照片', sort: false,width: 120, hide: false, templet: function(d){
             var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='5' data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";

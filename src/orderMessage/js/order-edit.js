@@ -577,6 +577,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.feeDetail.tailPayRatio = (_this.orderData.tailPayRatio * 1).toFixed(2);
         _this.feeDetail.tailPayAmount = _this.orderData.tailPayAmount;
         _this.feeDetail.tailPayBillType = _this.orderData.tailPayBillType;
+        _this.feeDetail.tailPayBillDate = _this.orderData.tailPayBillDate;
 				_this.originFeeRate.feeDetail = _this.feeDetail;
 				if(_this.dataPermission.canViewOrderCost != "Y"){
 					Object.keys(_this.originFeeRate).forEach(function(key){
@@ -591,6 +592,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 					});
 				}
         laytpl($("#fee_form_tpl").html()).render(_this.originFeeRate, function (html) {
+          if(_this.feeDetail.tailPayBillType * 1 == 3){
+            html = html.replace("tailPayBillDate hide", "tailPayBillDate");
+          }
           $("#form_fee_container").html(html);
           _this.bindFeeInput();
           if(_this.dataPermission.canViewOrderCost != "Y"){
@@ -1206,6 +1210,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 			data.arrivePayRatio = _this.orderDataBackUp.arrivePayRatio;
       data.tailPayRatio = _this.orderDataBackUp.tailPayRatio;
 			data.tailPayBillType = feeFormData.tailPayBillType;
+			data.tailPayBillDate = feeFormData.tailPayBillDate;
 		}else{
       data.driverMileage = (_this.maxCustomerMileage * 1).toFixed(2);
       data.oilCapacity = feeFormData.oilCapacity;
@@ -1223,7 +1228,12 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 			data.arrivePayRatio = feeFormData.arrivePayRatio;
 			data.tailPayRatio = feeFormData.tailPayRatio;
 			data.tailPayBillType = feeFormData.tailPayBillType;
-		}
+			data.tailPayBillDate = feeFormData.tailPayBillDate;
+    }
+    if(data.tailPayBillType * 1 == 3 && !data.tailPayBillDate){
+      layer.msg("请填写运费结算账期", {icon: 2});
+      return;
+    }
     data.truckUpdateReqList = truckUpdateReqList || "";
     if(data.orderType == 1){
       if(truckUpdateReqList[0].masterFlag == "否"){
@@ -1779,6 +1789,13 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
   Edit.prototype.bindEvents = function(){
     var _this = this;
+    form.on("select(tailPayBillType)", function(data){
+      if(data.value * 1 != 3){
+        $(".tailPayBillDate").addClass("hide");
+      }else{
+        $(".tailPayBillDate").removeClass("hide");
+      }
+    });
     $(".select_operator_btn").unbind().on("click", function (e) {
       var field = e.target.dataset.field;
       var index = layer.open({

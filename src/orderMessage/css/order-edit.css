@@ -258,3 +258,6 @@
 .relative .input_unit + input {
   padding-right: 20px;
 }
+.hide {
+  display: none !important;
+}

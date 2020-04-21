@@ -860,16 +860,6 @@
                             </div>
                             {{# } }}
                         </div>
-                        <div class="layui-inline layui-col-md4">
-                            <span class="layui-form-span form_span">尾款账期：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.tailPayBillType}}</span>
-                            {{# if(d.feeUpdateData.tailPayBillType || d.tailPayBillType){ }}
-                            <div class="check">
-                                <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.feeUpdateData.tailPayBillType || d.tailPayBillType}}</span>
-                            </div>
-                            {{# } }}
-                        </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md4">
@@ -899,6 +889,28 @@
                             <div class="check">
                                 <span class="x-red layui-form-span form_span">待审：</span>
                                 <span class="">{{d.feeUpdateData.tailPayAmount}}</span>
+                            </div>
+                            {{# } }}
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md4">
+                            <span class="layui-form-span form_span">结算方式：</span>
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.tailPayBillType}}</span>
+                            {{# if(d.feeUpdateData.tailPayBillType){ }}
+                            <div class="check">
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.tailPayBillType}}</span>
+                            </div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-inline layui-col-md4">
+                            <span class="layui-form-span form_span">尾款账期：</span>
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.tailPayBillDate == '- -' ? d.orderData.tailPayBillDate : d.orderData.tailPayBillDate + '天'}}</span>
+                            {{# if(d.feeUpdateData.tailPayBillDate){ }}
+                            <div class="check">
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.tailPayBillDate}}天</span>
                             </div>
                             {{# } }}
                         </div>

@@ -594,16 +594,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="layui-inline layui-col-md3">
-                        <label class="layui-form-label text_left form_label">尾款账期</label><br>
-                        <div class="layui-input-inline layui-row">
-                            <select name="tailPayBillType" lay-verify="">
-                                <option value="1" {{d.feeDetail.tailPayBillType == '1' ? 'selected' : ''}}>现结</option>
-                                <option value="2" {{d.feeDetail.tailPayBillType == '2' ? 'selected' : ''}}>月结</option>
-                                <option value="3" {{d.feeDetail.tailPayBillType == '3' ? 'selected' : ''}}>账期</option>
-                            </select>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="form_item_container">
@@ -648,6 +638,27 @@
                                 <div class="blue">实际：{{d.feeDetail.tailPayRatio}}%</div>
                                 <input value="{{d.feeDetail.tailPayRatio}}" type="text" name="tailPayRatio" class="layui-input" style="width: 0;height: 0;opacity:0;">
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form_item_container">
+                <div class="layui-form-item layui-row layui-col-space30">
+                    <div class="layui-inline layui-col-md3">
+                        <label class="layui-form-label text_left form_label">结算方式</label><br>
+                        <div class="layui-input-inline layui-row">
+                            <select name="tailPayBillType" lay-filter="tailPayBillType">
+                                <option value="1" {{d.feeDetail.tailPayBillType == '1' ? 'selected' : ''}}>现结</option>
+                                <option value="2" {{d.feeDetail.tailPayBillType == '2' ? 'selected' : ''}}>月结</option>
+                                <option value="3" {{d.feeDetail.tailPayBillType == '3' ? 'selected' : ''}}>账期</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md3 layui-col-md-offset1 tailPayBillDate hide">
+                        <label class="layui-form-label text_left form_label">尾款账期</label><br>
+                        <div class="layui-input-inline layui-row relative">
+                            <span class="input_unit">天</span>
+                            <input value="{{d.feeDetail.tailPayBillDate || ''}}" type="text" name="tailPayBillDate" class="layui-input">
                         </div>
                     </div>
                 </div>
