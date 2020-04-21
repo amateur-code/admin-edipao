@@ -601,26 +601,26 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
       }
     });
 
-    // edipao.request({
-    //   url: '/admin/fee/add',
-    //   data: {
-    //     name: data.field.name,
-    //     remark: data.field.remark,
-    //     feeItemJson: JSON.stringify(feeItemJson)
-    //   },
-    // }).done(function (res) {
-    //   if (res.code == 0) {
-    //     layer.alert("添加费用配置成功", {
-    //       icon: 6,
-    //       end: function () {
-    //         xadmin.close();
-    //         xadmin.father_reload();
-    //       }
-    //     });
-    //   } else {
-    //     layer.msg(res.message)
-    //   }
-    // });
+    edipao.request({
+      url: '/admin/fee/add',
+      data: {
+        name: data.field.name,
+        remark: data.field.remark,
+        feeItemJson: JSON.stringify(feeItemJson)
+      },
+    }).done(function (res) {
+      if (res.code == 0) {
+        layer.alert("添加费用配置成功", {
+          icon: 6,
+          end: function () {
+            xadmin.close();
+            xadmin.father_reload();
+          }
+        });
+      } else {
+        layer.msg(res.message)
+      }
+    });
     return false;
   });
 
