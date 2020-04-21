@@ -30,6 +30,7 @@
     .w40 {
       width: 45px;
     }
+
     .bgc {
       background-color: #ccc;
     }
@@ -70,7 +71,7 @@
     {{# layui.each(d.truckModelList, function(index, item){ }}
     {{# if(item.orderType == 1){ }}
     <div class="layui-card-body">
-      <div>车型：{{item.modelName}}(背车)</div>
+      <div>车型：{{item.modelName}}背车</div>
       <div class="layui-form-item">
         <div class="layui-inline">
           <label class="layui-form-label">运费</label>
@@ -286,6 +287,7 @@ function clearNoNum (obj) {
     obj.value = parseFloat(obj.value);
   }
 }
+
 // 输入框只能输入0.00-100.00之间的数字并保留两位小数
 function clearNoNumOne (obj) {
   obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
@@ -303,6 +305,7 @@ function clearNoNumOne (obj) {
     // obj.value = Number(obj.value);
   }
 }
+
 // 背车预付款id前段
 let prePayRatio = 'prePayRatio'
 // 不背车预付款id前段
@@ -423,13 +426,35 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
   //自定义验证规则
   form.verify({
     name: function (value) {
-      if (value.length > 50) {
+      var i,
+        code,
+        str = value.length
+      for (i = 0; i < value.length; i++) {
+        code = value.charCodeAt(i);
+        if (code > 255) {
+          str = str + 1
+        } else {
+          str = str
+        }
+      }
+      if (str > 50) {
         return '费用名称不能超过50个字符';
       }
     },
     remark: function (value) {
-      if (value.length > 300) {
-        return '费用备注不能超过300个字符';
+      var i,
+        code,
+        str = value.length
+      for (i = 0; i < value.length; i++) {
+        code = value.charCodeAt(i);
+        if (code > 255) {
+          str = str + 1
+        } else {
+          str = str
+        }
+      }
+      if (str > 300) {
+        return '费用名称不能超过300个字符';
       }
     },
     numberOne: function (value) {
@@ -540,7 +565,7 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
         feeItemJson.push({
             id: index + '100000',
             orderType: item.orderType,
-            carModel: item.modelName + '(背车)',
+            carModel: item.modelName + '背车',
             freightUnitPrice: toDecimal2(freightUnitPrice),
             oilUnitPrice: toDecimal2(oilUnitPrice),
             prePayRatio: toDecimal2(prePayRatio),
@@ -576,26 +601,26 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
       }
     });
 
-    edipao.request({
-      url: '/admin/fee/add',
-      data: {
-        name: data.field.name,
-        remark: data.field.remark,
-        feeItemJson: JSON.stringify(feeItemJson)
-      },
-    }).done(function (res) {
-      if (res.code == 0) {
-        layer.alert("添加费用配置成功", {
-          icon: 6,
-          end: function () {
-            xadmin.close();
-            xadmin.father_reload();
-          }
-        });
-      } else {
-        layer.msg(res.message)
-      }
-    });
+    // edipao.request({
+    //   url: '/admin/fee/add',
+    //   data: {
+    //     name: data.field.name,
+    //     remark: data.field.remark,
+    //     feeItemJson: JSON.stringify(feeItemJson)
+    //   },
+    // }).done(function (res) {
+    //   if (res.code == 0) {
+    //     layer.alert("添加费用配置成功", {
+    //       icon: 6,
+    //       end: function () {
+    //         xadmin.close();
+    //         xadmin.father_reload();
+    //       }
+    //     });
+    //   } else {
+    //     layer.msg(res.message)
+    //   }
+    // });
     return false;
   });
 

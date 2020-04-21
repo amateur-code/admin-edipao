@@ -304,12 +304,34 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
   //自定义验证规则
   form.verify({
     name: function (value) {
-      if (value.length > 50) {
+      var i,
+        code,
+        str = value.length
+      for (i = 0; i < value.length; i++) {
+        code = value.charCodeAt(i);
+        if (code > 255) {
+          str = str + 1
+        } else {
+          str = str
+        }
+      }
+      if (str > 50) {
         return '费用名称不能超过50个字符';
       }
     },
     remark: function (value) {
-      if (value.length > 300) {
+      var i,
+        code,
+        str = value.length
+      for (i = 0; i < value.length; i++) {
+        code = value.charCodeAt(i);
+        if (code > 255) {
+          str = str + 1
+        } else {
+          str = str
+        }
+      }
+      if (str > 300) {
         return '费用名称不能超过300个字符';
       }
     },

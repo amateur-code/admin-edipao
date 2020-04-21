@@ -190,7 +190,18 @@ layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, layt
 //自定义验证规则
   form.verify({
     approvalRemark: function (value) {
-      if (value.length > 300) {
+      var i,
+        code,
+        str = value.length
+      for (i = 0; i < value.length; i++) {
+        code = value.charCodeAt(i);
+        if (code > 255) {
+          str = str + 1
+        } else {
+          str = str
+        }
+      }
+      if (str > 300) {
         return '费用名称不能超过300个字符';
       }
     }
