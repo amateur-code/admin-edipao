@@ -357,7 +357,7 @@ function preblur (val) {
     $('#prePayRatio' + str).after("<span id='jyk" + str + "' style='color: #f22; position: absolute;top:25px;'>预付款加到付款的值应等于100</span>")
   }
   // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
-  if ((100 - val.value - one > 0 || 100 - val.value - one == 0) && (100 - val.value - one < 100 || 100 - val.value - one == 100)) {
+  if (100 - val.value - one >= 0 && 100 - val.value - one <= 100) {
     totalNum = toDecimal2(100 - val.value - one)
     $('#tailPayRatio' + str).val(totalNum)
   }
@@ -433,7 +433,7 @@ function arriveblurB (val) {
   // 判断 尾款的值的范围并转换成小数点后两位赋值给尾款输入框
   if (100 - val.value - one >= 0 && 100 - val.value - one <= 100) {
     totalNum = toDecimal2(100 - val.value - one)
-    $('#tailPayRatio' + str).val(totalNum)
+    $('#tailPayRatioB' + str).val(totalNum)
   }
 }
 
