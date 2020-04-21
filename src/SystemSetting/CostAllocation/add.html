@@ -497,34 +497,6 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
         } else {
           return '输入格式有误,请输入0-100的数值';
         }
-        // if (!value.replace(/^(\d|[1-9]\d|100)(\.\d{1,2})?$/)) {
-        //   return '输入格式有误';
-        // }
-      }
-    },
-    freightUnitPrice: function (value) {
-      if (value.length > 15) {
-        return '运费不能超过15个字符';
-      }
-    },
-    oilUnitPrice: function (value) {
-      if (value.length > 15) {
-        return '油不能超过15个字符';
-      }
-    },
-    prePayRatio: function (value) {
-      if (value.length > 15) {
-        return '预付款不能超过15个字符';
-      }
-    },
-    arrivePayRatio: function (value) {
-      if (value.length > 15) {
-        return '到付款不能超过15个字符';
-      }
-    },
-    tailPayRatio: function (value) {
-      if (value.length > 15) {
-        return '尾款不能超过15个字符';
       }
     },
   });
