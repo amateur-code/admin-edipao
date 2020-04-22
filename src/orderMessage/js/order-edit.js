@@ -496,6 +496,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           form.render('select');
           layer.close(_this.loadingIndex);
           $("[lay-filter=" + item.filter + "] .select_vin").remove();
+          _this.setStartWareHouseSelect(item.filter, _this.selectData[3]);
         }, {
           flag: true,
           province: truckData.endProvince,
@@ -619,16 +620,15 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         if(field == "prePayOil"){
           if(value * 1 > feeFormData.oil * 1){
             value = feeFormData.oil;
+            layer.msg("最大不能超过应给油升数", {icon: 2});
           }
         }
         feeFormData[field] = value;
         feeFormData.driverMileage = feeFormData.maxCustomerMileage;
-        delete feeFormData.maxCustomerMileage;
         Object.assign(feeFormData, {
           oilCapacity: _this.feeDetail.oilCapacity,
           closestOilPrice: _this.feeDetail.closestOilPrice,
         });
-        delete feeFormData.tailPayAmount;
         _this.getCalOrderFee(feeFormData).done(function (res) {
           layer.close(loadIndex)
           if(res.code == "0"){
@@ -656,11 +656,39 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     delete data.arrivePayRatio;
     delete data.totalAmount;
     delete data.oilAmount;
+    delete data.tailPayBillType;
+    delete data.tailPayBillDate;
+    delete feeFormData.maxCustomerMileage;
     return edipao.request({
       url: "/admin/order/calOrderFee",
       method: "POST",
       data: data,
     });
+  }
+  Edit.prototype.setStartWareHouseSelect = function (filter, data) {
+    data = data || [];
+    var _this = this;
+    var selector = $(".startWarehouse_selector_" + filter);
+    var input = selector.find(".startWarehouse_search_input");
+    var options = selector.find(".startWarehouse_options");
+    input.on("click", function (e) {
+      selector.find(".layui-form-select").addClass("layui-form-selected");
+    });
+    options.html(returnOptions2(data)).unbind().on("click", function(e){
+      var name = e.target.dataset.name||"";
+      input.val(name);
+    });
+    function returnOptions2(array){
+      if(array.length < 1){
+        return html = '<dd class="layui-select-tips disabled" value="暂无数据">暂无数据</dd>'
+      }
+      var html = '';
+      html = '<dd class="layui-select-tips disabled" value="请选择">请选择</dd>'
+      for(var i = 0; i < array.length; i ++){
+        html += '<dd data-name=' + array[i].name +  ' data-province=' + array[i].endProvince + ' data-city='+array[i].endCity+' data-lng=' +array[i].endLng+ ' data-lat=' +array[i].endLat+ ' data-address=' + array[i].endAddress + ' value="' + array[i].name + '">' + array[i].name + '</dd>';
+      }
+      return html;
+    }
   }
   Edit.prototype.setEndParkSelect = function(filter, data){
     data = data || [];
@@ -1308,21 +1336,21 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var orderType = data.orderType;
     var flag = true;
     data.truckUpdateReqList.some(function (item) {
-      if(!item.tempLicense && item.masterFlag == "是"){
-        layer.msg("主车临牌号为必填项", {icon: 2});
-        flag = false;
-        return true;
-      }
+      // if(!item.tempLicense && item.masterFlag == "是"){
+      //   layer.msg("主车临牌号为必填项", {icon: 2});
+      //   flag = false;
+      //   return true;
+      // }
       if(!item.settleWay){
         layer.msg("结算方式为必填项", {icon: 2});
         flag = false;
         return true;
       }
-      if(!item.tempLicenseBackImage && item.masterFlag == "是"){
-        layer.msg("请上传主车行驶证", {icon: 2});
-        flag = false;
-        return true;
-      }
+      // if(!item.tempLicenseBackImage && item.masterFlag == "是"){
+      //   layer.msg("请上传主车行驶证", {icon: 2});
+      //   flag = false;
+      //   return true;
+      // }
       // if(!item.income && _this.dataPermission.canViewOrderIncome == "Y"){
       //   layer.msg("车辆收入为必填项", {icon: 2});
       //   flag = false;
@@ -2006,6 +2034,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.setEndParkSelect(filterStr, []);
         _this.setConfigData(function(){
           form.render('select');
+          _this.setStartWareHouseSelect(filterStr, _this.selectData[3]);
         }, {
           flag: false,
           province: '',

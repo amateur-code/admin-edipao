@@ -265,6 +265,7 @@ layui.config({
                         where['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
                     }
                 }else if(key == "orderStatus" || key == "orderType" || key == "tailPayStatus"){
+                    console.log(value)
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                 }else if(key == "fetchStatus" || key == "startAuditStatus" || key == "returnAuditStatus"){
@@ -601,15 +602,11 @@ layui.config({
             $(".list_arrive_verify").unbind().on("click", function(e){
                 var field = e.target.dataset.field;
                 var orderId = e.target.dataset.orderid;
-                var orderNo = e.target.dataset.order;
                 var type = e.target.dataset.type*1;
-                var key = "prePayFeeItems";
                 var title = "审核预付款";
                 if(field == "arrivePayAmount"){
-                    key = "arrivePayFeeItems";
                     title = "审核到付款";
                 }else if(field == "tailPayAmount"){
-                    key = "tailPayFeeItems";
                     title = "审核尾款";
                 }
                 table.render({
@@ -621,10 +618,25 @@ layui.config({
                     , where: { loginStaffId: user.staffId, id: orderId } //ORDERNO
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
+                        var feeData = [];
+                        if(res.code == "0"){
+                            feeData.push({
+                                key: "现金",
+                                val: res.data[field],
+                                unit: "元",
+                            });
+                            if(field == "prePayAmount"){
+                                feeData.push({
+                                    key: "油",
+                                    val: res.data.prePayOil,
+                                    unit: "升",
+                                });
+                            }
+                        }
                         return {
                             "code": res.code, //解析接口状态
                             "msg": res.message, //解析提示文本
-                            "data": JSON.parse(res.data[key]) || [] //解析数据列表
+                            "data": feeData //解析数据列表
                         }
                     }
                     , done: function () {//表格渲染完成的回调
@@ -688,15 +700,11 @@ layui.config({
             $(".list_arrive_prepay").unbind().on("click", function (e) {
                 var field = e.target.dataset.field;
                 var orderId = e.target.dataset.orderid;
-                var orderNo = e.target.dataset.order;
                 var type = e.target.dataset.type*1;
-                var key = "prePayFeeItems";
                 var title = "确定申请支付预付款？";
                 if(field == "arrivePayAmount"){
-                    key = "arrivePayFeeItems";
                     title = "确定申请支付到付款？";
                 }else if(field == "tailPayAmount"){
-                    key = "tailPayFeeItems";
                     title = "确定申请支付尾款？";
                 }
                 table.render({
@@ -708,10 +716,25 @@ layui.config({
                     , where: { loginStaffId: user.staffId, id: orderId } //ORDERNO
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
+                        var feeData = [];
+                        if(res.code == "0"){
+                            feeData.push({
+                                key: "现金",
+                                val: res.data[field],
+                                unit: "元",
+                            });
+                            if(field == "prePayAmount"){
+                                feeData.push({
+                                    key: "油",
+                                    val: res.data.prePayOil,
+                                    unit: "升",
+                                });
+                            }
+                        }
                         return {
                             "code": res.code, //解析接口状态
                             "msg": res.message, //解析提示文本
-                            "data": JSON.parse(res.data[key]) || [] //解析数据列表
+                            "data": feeData //解析数据列表
                         }
                     }
                     , done: function () { //表格渲染完成的回调
@@ -794,10 +817,25 @@ layui.config({
                     , where: { loginStaffId: user.staffId, id: orderId } //ORDERNO
                     , id: "pre_fee_verify_table"
                     , parseData: function (res) {
+                        var feeData = [];
+                        if(res.code ==  "0"){
+                            feeData.push({
+                                key: "现金",
+                                val: res.data[field],
+                                unit: "元",
+                            });
+                            if(field == "prePayAmount"){
+                                feeData.push({
+                                    key: "油",
+                                    val: res.data.prePayOil,
+                                    unit: "升",
+                                });
+                            }
+                        }
                         return {
                             "code": res.code, //解析接口状态
                             "msg": res.message, //解析提示文本
-                            "data": JSON.parse(res.data[key]) || [] //解析数据列表
+                            "data": feeData //解析数据列表
                         }
                     }
                     , done: function () { //表格渲染完成的回调
@@ -846,7 +884,7 @@ layui.config({
                         {field: 'key', title: '费用项', sort: false,width: "80px"},
                         {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) {
                             if(dataPermission.canViewOrderCost != "Y"){
-                                return "* ";
+                                return "*";
                             }
                             return d.val + ' (' + d.unit + ')'
                         }},
@@ -1553,15 +1591,16 @@ layui.config({
         //     return d.income ? d.income+"元" : '- -';
         // }},
         {field: 'prePayAmount', title: '预付款金额', sort: false,width: 200, hide: false, templet: function (d) {
+                var amount = d.prePayAmount;
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var payStatus = "";
-                if (d.prePayApprovalBtn == 1) {
+                if (d.prePayApprovalBtn == 1 && amount > 0) {
                     payStatus = verifyStr3.replace("{{}}", "-申请支付");
-                } else if (d.prePayApprovalBtn == 2) {
+                } else if (d.prePayApprovalBtn == 2 && amount > 0) {
                     payStatus = verifyStr.replace("{{}}", "-审核");
-                } else if (d.prePayApprovalBtn == 3) {
+                } else if (d.prePayApprovalBtn == 3 && amount > 0) {
                     payStatus = verifyStr2.replace("{{}}", "-支付");
                 } else if (d.prePayApprovalBtn == 4) {
                     payStatus = "-已支付";
@@ -1582,15 +1621,16 @@ layui.config({
                 return d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus;
         }},
         {field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 200, hide: false, templet: function (d) {
+                var amount = d.arrivePayAmount;
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var payStatus = "";
-                if (d.arrivePayApprovalBtn == 1) {
+                if (d.arrivePayApprovalBtn == 1 && amount > 0) {
                     payStatus = verifyStr3.replace("{{}}", " - 申请支付");
-                } else if (d.arrivePayApprovalBtn == 2) {
+                } else if (d.arrivePayApprovalBtn == 2 && amount > 0) {
                     payStatus = verifyStr.replace("{{}}", " - 审核");
-                } else if (d.arrivePayApprovalBtn == 3) {
+                } else if (d.arrivePayApprovalBtn == 3 && amount > 0) {
                     payStatus = verifyStr2.replace("{{}}", " - 支付");
                 } else if (d.arrivePayApprovalBtn == 4) {
                     payStatus = " - 已支付";
@@ -1611,15 +1651,16 @@ layui.config({
                 return d.arrivePayAmount + "元" + payStatus;
         }},
         {field: 'tailPayAmount', title: '尾款金额', sort: false,width: 200, hide: false, templet: function (d) {
+                var amount = d.tailPayAmount * 1;
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var payStatus = "";
-                if (d.tailPayApprovalBtn == 1) {
+                if (d.tailPayApprovalBtn == 1 && amount > 0) {
                     payStatus = verifyStr3.replace("{{}}", " - 申请支付");
-                } else if (d.tailPayApprovalBtn == 2) {
+                } else if (d.tailPayApprovalBtn == 2 && amount > 0) {
                     payStatus = verifyStr.replace("{{}}", " - 审核");
-                } else if (d.tailPayApprovalBtn == 3) {
+                } else if (d.tailPayApprovalBtn == 3 && amount > 0) {
                     payStatus = verifyStr2.replace("{{}}", " - 支付");
                 } else if (d.tailPayApprovalBtn == 4) {
                     payStatus = " - 已支付";

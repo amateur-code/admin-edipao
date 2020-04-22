@@ -286,7 +286,6 @@ tableFilter.render = function(opt){
 
 				//点击确认开始过滤
 				form.on('submit(tableFilter)', function(data){
-					console.log(data.field)
 					//重构复选框结果
 					if(filterType == "checkbox"){
 						var NEWfield = [];

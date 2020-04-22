@@ -167,10 +167,17 @@
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>发车仓库</label><br>
-                            <div class="layui-input-inline">
+                            <div data-filter="CARFORM" class="layui-input-inline startWarehouse_selector startWarehouse_selector_CARFORM">
                                 <!-- <input type="text" name="startWarehouse" lay-verify="required" autocomplete="off" class="layui-input"> -->
-                                <select name="startWarehouse" lay-verify="required" class="startWarehouseList" lay-filter="startWarehouse" lay-search>
-                                </select>  
+                                <div class="layui-form-select">
+                                    <div class="layui-select-title">
+                                        <input name="startWarehouse" type="text" class="startWarehouse_search_input layui-input">
+                                        <i class="layui-edge"></i>
+                                    </div>
+                                    <dl class="layui-anim layui-anim-upbit startWarehouse_options">
+                                        <dd lay-value="请选择" class="layui-hide">请选择</dd>
+                                    </dl>
+                                </div>
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
