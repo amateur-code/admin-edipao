@@ -351,13 +351,12 @@ layui.config({
     layui.each(list, function (index2, item2) {
       var dataItem = {};
       layui.each(tableCols, function (index, item) {
-        if (item.field && item.hide != true) {
+        if (item.field && item.hide != true && item.field != 'operation') {
           if (index2 == 0) {
             dataItem[item.field] = item.title;
           } else {
             dataItem[item.field] = item2[item.field] || '--'
           }
-
         }
       })
       data.push(dataItem)
