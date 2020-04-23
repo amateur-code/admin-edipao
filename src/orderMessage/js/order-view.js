@@ -90,12 +90,14 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             _this.parseData(res2.data);
             _this.parseData(_this.updateData);
             _this.orderData = res2.data;
-            _this.truckUpdateData = res3.data;
+            _this.truckUpdateData = res3.data || {add:[],update:{},delete:[]};
 
-            _this.truckUpdateData.add.forEach(function (item) {
-              item.isNew = true;
-              _this.orderData.truckDTOList.push(item);
-            });
+            if(_this.action == "verify"){
+              _this.truckUpdateData.add && _this.truckUpdateData.add.forEach(function (item) {
+                item.isNew = true;
+                _this.orderData.truckDTOList.push(item);
+              });
+            }
 
             _this.updateData.orderData = _this.orderData;
             _this.updateData.feeUpdateData = _this.feeUpdateData || {};
@@ -262,8 +264,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           if(!item[key])item[key] = "- -";
         });
         
-				if(_this.action != "feeVerify"){
-				  var updateData = _this.truckUpdateData.update[truck.id] || {};
+				if(_this.action == "verify"){
+          var updateData = _this.truckUpdateData.update || {};
+				  updateData = updateData[truck.id] || {};
           if(!updateData.returnImages) updateData.returnImages = [];
           else updateData.returnImages = updateData.returnImages.split(",");
           if(!updateData.fetchImages) updateData.fetchImages = [];
@@ -278,14 +281,15 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             if(!updateData[key]) updateData[key] = "- -";
           });
           truck.updateData = updateData;
+          _this.truckUpdateData.delete && _this.truckUpdateData.delete.some(function (item) {
+            if(item == truck.id){
+              truck.isDeleted = truck;
+            }
+          });
         }else{
           truck.updateData = {};
         }
-        _this.truckUpdateData.delete.some(function (item) {
-          if(item == truck.id){
-            truck.isDeleted = truck;
-          }
-        });
+        
         laytpl(imageStr).render(item, function (imageHtml) {
           Object.keys(truck).forEach(function (key) {
             truck[key] = truck[key] || "- -";

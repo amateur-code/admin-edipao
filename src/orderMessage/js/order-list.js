@@ -1219,6 +1219,26 @@ layui.config({
                                     }
                                     value = item[i] + "元" + payStatus;
                                     break;
+                                case 'tailPayStatus':
+                                    switch(item[i] * 1){
+                                        case 1:
+                                            value = "待支付";
+                                            break;
+                                        case 2:
+                                            value = "支付中";
+                                            break;
+                                        case 3:
+                                            value = "支付成功";
+                                            break;
+                                        case 4:
+                                            value = "支付失败";
+                                            break;
+                                        case 5:
+                                            value = "未到期";
+                                            break;
+                                        default:
+                                            value = "非法状态";
+                                    }
                                 case 'fetchStatus':
                                     switch(item[i]){
                                         case 0:

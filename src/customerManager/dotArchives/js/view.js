@@ -48,7 +48,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
               _this.check.feeJson = [];
             }
           }
-          _this.detail.feeJson.forEach(function (item, index) {
+          _this.check.feeJson.length > 0 && _this.detail.feeJson.forEach(function (item, index) {
             var startWarehouse = item.startWarehouse,
               feeId = item.feeId,
               name = item.name;
@@ -57,6 +57,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
             var checkData = {};
             existFlag = _this.check.feeJson.some(function (item, index) {
               if(item.startWarehouse == startWarehouse) {
+                console.log(item.startWarehouse == startWarehouse)
                 if(item.name != name || item.feeId != feeId){
                   if(item.name != name){
                     checkData.name = item.name;
@@ -64,9 +65,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
                   }
                   updateFlag = true;
                 }
-                if(item.startWarehouse == startWarehouse && item.name == name && item.feeId == feeId){
-                  return true;
-                }
+                return true;
               }
             });
             if(existFlag && updateFlag){
@@ -81,7 +80,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
               name = item.name;
             var existFlag = false;
             existFlag = _this.detail.feeJson.some(function(item){
-              if(item.startWarehouse == startWarehouse && item.name == name && item.feeId == feeId){
+              if(item.startWarehouse == startWarehouse){
                 return true;
               }
             });

@@ -658,7 +658,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     delete data.oilAmount;
     delete data.tailPayBillType;
     delete data.tailPayBillDate;
-    delete feeFormData.maxCustomerMileage;
+    delete data.maxCustomerMileage;
     return edipao.request({
       url: "/admin/order/calOrderFee",
       method: "POST",
@@ -1793,7 +1793,31 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         arr.push(item.value * 1);
       });
 			$(".maxCustomerMileage").val(Math.max.apply(null,arr));
-			_this.maxCustomerMileage = Math.max.apply(null,arr);
+      _this.maxCustomerMileage = Math.max.apply(null,arr);
+      if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
+      _this.feeInputTimer = setTimeout(function () {
+        var loadIndex = layer.load(1);
+        var field = "driverMileage";
+        var value = _this.maxCustomerMileage * 1;
+        if(!value || value == 0){
+          value = 0;
+        }
+        var feeFormData = form.val("form_fee");
+        feeFormData[field] = value;
+        Object.assign(feeFormData, {
+          oilCapacity: _this.feeDetail.oilCapacity,
+          closestOilPrice: _this.feeDetail.closestOilPrice,
+        });
+        _this.getCalOrderFee(feeFormData).done(function (res) {
+          layer.close(loadIndex)
+          if(res.code == "0"){
+            Object.assign(_this.feeDetail, res.data);
+            _this.renderFee({}, _this.feeDetail);
+          }else{
+            e.target.value = _this.feeDetail[field];
+          }
+        });
+      }, 500);
     });
     $(".vinCode_input").on("input", function (e) {
       if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);
