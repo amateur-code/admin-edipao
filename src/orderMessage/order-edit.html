@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="../css/xadmin.css">
     <link rel="stylesheet" href="../lib/TableFilter/tableFilter.css">
     <link rel="stylesheet" href="./css/common.css?VERSION">
-    <link rel="stylesheet" href="./css/order-list.css">
-    <link rel="stylesheet" href="./css/order-edit.css">
+    <link rel="stylesheet" href="./css/order-list.css?VERSION">
+    <link rel="stylesheet" href="./css/order-edit.css?VERSION">
     <script src="./js/polyfill.js?VERSION"></script>
     <script src="../js/jquery.min.js"></script>
     <script src="../lib/layui/layui.js" charset="utf-8"></script>
@@ -172,10 +172,9 @@
                                 <div class="layui-form-select">
                                     <div class="layui-select-title">
                                         <input name="startWarehouse" type="text" class="startWarehouse_search_input layui-input">
-                                        <i class="layui-edge"></i>
                                     </div>
                                     <dl class="layui-anim layui-anim-upbit startWarehouse_options">
-                                        <dd lay-value="请选择" class="layui-hide">请选择</dd>
+                                        <dd lay-value="" class="layui-select-tips">暂无数据</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -514,7 +513,7 @@
                         <label class="layui-form-label text_left form_label">承运公里数</label><br>
                         <div class="layui-input-inline relative">
                             <span class="input_unit">km</span>
-                            <input onchange="num(this)" disabled type="text" value="{{d.feeDetail.maxCustomerMileage}}" name="maxCustomerMileage" lay-verify="required" autocomplete="off" class="layui-input maxCustomerMileage">
+                            <input onchange="num(this)" disabled type="text" value="{{d.feeDetail.driverMileage}}" name="maxCustomerMileage" lay-verify="required" autocomplete="off" class="layui-input driverMileage">
                         </div>
                     </div>
                 </div>
@@ -543,7 +542,7 @@
                                 <input data-field="prePayOil" value="{{d.feeDetail.prePayOil}}" onkeyup="num(this)" type="text" name="prePayOil" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5">
-                                <div class="blue">油箱容量：{{d.feeDetail.oilCapacity}}升</div>
+                                <div class="blue">油箱容量：{{d.feeDetail.oilCapacity > 100000 ? '无限' : d.feeDetail.oilCapacity + '升'}}</div>
                                 <input value="{{d.feeDetail.oilCapacity}}" type="text" name="oilCapacity" class="layui-input" style="width: 0;height: 0;opacity:0;">
                             </div>
                         </div>

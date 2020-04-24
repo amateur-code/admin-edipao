@@ -63,6 +63,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     //数据权限
     this.dataPermission = edipao.getDataPermission();
     window.dataPermission = this.dataPermission;
+    this.startWarehouseTimer = null;
     this.endParkTimer = null;
     this.mapAddress = {};
   }
@@ -376,8 +377,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     });
     if(data.driverId){
       form.val("form_dispatch", data);
-    }else{
-      form.val("form_dispatch", {driverMileage: data.driverMileage});
     }
     var carFormStr = "";
     var carFormHtml = $("#car_info_tpl").html();
@@ -409,12 +408,12 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       laytpl(itemStr).render(truckData, function (html) {
         carFormStr += html;
         if(index == _this.carFormList.length - 1){
-					_this.maxCustomerMileage = maxCustomerMileage;
+					_this.feeDetail.driverMileage = _this.orderDataBackUp.driverMileage || maxCustomerMileage;
 					_this.oilCapacity = _this.orderDataBackUp.oilCapacity;
           $("#car_form_container").html(carFormStr);
           renderEnd();
           _this.renderFee({
-            maxCustomerMileage: maxCustomerMileage,
+            driverMileage: _this.feeDetail.driverMileage,
             oilCapacity: _this.oilCapacity,
             cb: _this.bindEvents.bind(_this),
           });
@@ -560,7 +559,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.originFeeRate.arrivePayRatio = (_this.originFeeRate.arrivePayRatio * 1).toFixed(2);
         _this.originFeeRate.tailPayRatio = (_this.originFeeRate.tailPayRatio * 1).toFixed(2);
         _this.feeDetail.oilCapacity = _this.orderData.oilCapacity || options.oilCapacity;
-        _this.feeDetail.maxCustomerMileage = _this.orderData.driverMileage || options.maxCustomerMileage;
+        _this.feeDetail.driverMileage = _this.orderData.driverMileage || options.driverMileage;
         _this.feeDetail.oil = _this.orderData.oil;
         _this.feeDetail.oilUnitPrice = _this.orderData.oilUnitPrice;
         _this.feeDetail.prePayOil = _this.orderData.prePayOil;
@@ -624,7 +623,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           }
         }
         feeFormData[field] = value;
-        feeFormData.driverMileage = feeFormData.maxCustomerMileage;
         Object.assign(feeFormData, {
           oilCapacity: _this.feeDetail.oilCapacity,
           closestOilPrice: _this.feeDetail.closestOilPrice,
@@ -671,6 +669,21 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var selector = $(".startWarehouse_selector_" + filter);
     var input = selector.find(".startWarehouse_search_input");
     var options = selector.find(".startWarehouse_options");
+    input.unbind().on("input", function(e){
+      var text = e.target.value;
+      if(_this.startWarehouseTimer) clearTimeout(_this.startWarehouseTimer);
+      _this.startWarehouseTimer = setTimeout(function () {
+        if(text.length < 1 || !text) {
+          return options.html(returnOptions2([]));
+        }
+        getStartWarehouse(text).done(function (res) {
+          if(res.code == "0" && res.data){
+            res.data = res.data || [];
+            options.html(returnOptions2(res.data));
+          }
+        });
+      }, 300);
+    });
     input.on("click", function (e) {
       selector.find(".layui-form-select").addClass("layui-form-selected");
     });
@@ -678,6 +691,15 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       var name = e.target.dataset.name||"";
       input.val(name);
     });
+    function getStartWarehouse(keyword){
+      return edipao.request({
+        method: "GET",
+        url: "/admin/dictionary/getEndAddressList",
+        data: {
+          keyword: keyword
+        }
+      });
+    }
     function returnOptions2(array){
       if(array.length < 1){
         return html = '<dd class="layui-select-tips disabled" value="暂无数据">暂无数据</dd>'
@@ -977,19 +999,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.handleDeleteCar = function (e) {
     var _this = this;
     var filter = e.target.dataset.filter;
-    var initialLength = 0;
-    var delInitialFlag = false;
-    _this.carFormList.forEach(function (item) {
-      if(item.initial) initialLength ++;
-      if(item.filter == filter && item.initial) delInitialFlag = true;
-    });
     if(_this.carFormList.length <= 1){
       layer.alert("不能删除唯一车辆信息", {icon: 2})
       return;
     }
-    var idTodel = "";
-    var carFormListIndex;
-    var id;
+    var carFormListIndex, id;
     var carData = form.val(filter);
     _this.cars.forEach(function (item) {
       if(item.filter == filter) id = item.id;
@@ -1009,72 +1023,46 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     _this.carFormList.forEach(function (item, index) {
       if(item.filter == filter) carFormListIndex = index;
     });
-    _this.carFormList.splice(carFormListIndex, 1);
-    _this.tempLicenseBackImage = _this.tempLicenseBackImage.filter(function (item) {
-      return item.filter != filter;
-    });
-    // _this.tempLicense.splice(carFormListIndex, 1);
-    var carsFlag = _this.cars.some(function (item, index) {
-      if(item.filter == filter) {idTodel = item.id; indexTodel = index;}
-      return item.filter == filter;
-    });
-    if(carsFlag){
-      _this.carsToDel.push({
-        id: idTodel,
-        filter: filter
-      });
-      _this.cars.splice(indexTodel, 1);
-    }else{
-      //待添加的车辆中已包含
-      var addCarsFlag = _this.carsToAdd.some(function (item, index) {
-        if(item.filter == filter) {idTodel = item.id; indexTodel = index;}
-        return item.filter == filter;
-      });
-      if(addCarsFlag){
-        _this.carsToAdd.splice(indexTodel, 1);
-      }
-    }
+    $("." + filter).remove();
+    _this.setDriverMileage();
     if(id != undefined){
-      // edipao.request({
-      //   url: "/admin/truck/delTruck",
-      //   method: "post",
-      //   data: {
-      //     loginStaffId: _this.user.staffId,
-      //     truckId: id,
-      //     orderId: _this.orderId
-      //   }
-      // }).done(function (res) {
-      //   if(res.code == 0){
-          $("." + filter).remove();
-          if(_this.carFormList.length == 0){
-            layer.alert("订单中已没有车辆，订单将会被取消", { icon: 6 }, function() {
-              edipao.request({
-                url: "/admin/order/cancelOrder",
-                method: "post",
-                data: {loginStaffId: _this.user.staffId, id: _this.orderId}
-              }).done(function(res){
-                if(res.code == 0){
-                    layer.msg("订单已取消");
-                    xadmin.father_reload();
-                    xadmin.close();
-                }
-              });
-            });
-          }
-      //   }else{
-      //     layer.msg(res.message, {icon: 5,anim: 6});
-      //   }
-      // });
-      return;
-    }else{
-      $("." + filter).remove();
-      if(_this.carFormList.length == 0){
+      if(_this.carFormList.length == 1){
         layer.alert("订单中已没有车辆，订单将会被取消", { icon: 6 }, function() {
           edipao.request({
             url: "/admin/order/cancelOrder",
             method: "post",
             data: {loginStaffId: _this.user.staffId, id: _this.orderId}
           }).done(function(res){
+            _this.carFormList.splice(carFormListIndex, 1);
+            _this.tempLicenseBackImage = _this.tempLicenseBackImage.filter(function (item) {
+              return item.filter != filter;
+            });
+            if(res.code == 0){
+                layer.msg("订单已取消");
+                xadmin.father_reload();
+                xadmin.close();
+            }
+          });
+        });
+      }else{
+        _this.carFormList.splice(carFormListIndex, 1);
+        _this.tempLicenseBackImage = _this.tempLicenseBackImage.filter(function (item) {
+          return item.filter != filter;
+        });
+      }
+      return;
+    }else{
+      if(_this.carFormList.length == 1){
+        layer.alert("订单中已没有车辆，订单将会被取消", { icon: 6 }, function() {
+          edipao.request({
+            url: "/admin/order/cancelOrder",
+            method: "post",
+            data: {loginStaffId: _this.user.staffId, id: _this.orderId}
+          }).done(function(res){
+            _this.carFormList.splice(carFormListIndex, 1);
+            _this.tempLicenseBackImage = _this.tempLicenseBackImage.filter(function (item) {
+              return item.filter != filter;
+            });
             if(res.code == 0){
               $("." + filter).remove();
               layer.msg("订单已取消");
@@ -1082,6 +1070,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
               xadmin.close();
             }
           });
+        });
+      }else{
+        _this.carFormList.splice(carFormListIndex, 1);
+        _this.tempLicenseBackImage = _this.tempLicenseBackImage.filter(function (item) {
+          return item.filter != filter;
         });
       }
     }
@@ -1091,7 +1084,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var truckUpdateReqList = [];
     var orderData = JSON.parse(JSON.stringify(_this.orderData));
     var data = {};
-    var truckDTOList;
     try {
       JSON.parse(JSON.stringify(orderData.truckDTOList));
     } catch (error) {
@@ -1218,7 +1210,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     data.driverPhone = dispatchData.driverPhone || "";
     data.driverIdCard = dispatchData.driverIdCard || "";
     data.driverCertificate = dispatchData.driverCertificate || "";
-		data.driverMileage = (_this.maxCustomerMileage * 1).toFixed(2);
+		data.driverMileage = (_this.feeDetail.driverMileage * 1).toFixed(2);
     data.oilCapacity = _this.oilCapacity;
     if(_this. dataPermission.canViewOrderIncome != "Y"){
       data.totalIncome = _this.orderDataBackUp.totalIncome || "";
@@ -1246,7 +1238,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 			data.tailPayBillType = feeFormData.tailPayBillType;
 			data.tailPayBillDate = feeFormData.tailPayBillDate;
 		}else{
-      data.driverMileage = (_this.maxCustomerMileage * 1).toFixed(2);
+      data.driverMileage = (_this.feeDetail.driverMileage * 1).toFixed(2);
       data.oilCapacity = feeFormData.oilCapacity;
 			data.prePayAmount = feeFormData.prePayAmount;
 			data.arrivePayAmount = feeFormData.arrivePayAmount;
@@ -1306,6 +1298,16 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           data: getParams(data),
         }), loadIndex);
         layer.close(index);
+      },
+      function(){
+        data.prePayOil = (_this.oilCapacity * 0.95).toFixed(2);
+        var loadIndex = layer.load(1);
+        _this.submitAll(edipao.request({
+          url: "/admin/order/updateOrder",
+          method: "POST",
+          data: getParams(data),
+        }), loadIndex);
+        layer.close(index);
       });
       return;
     }
@@ -1336,36 +1338,21 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var orderType = data.orderType;
     var flag = true;
     data.truckUpdateReqList.some(function (item) {
-      // if(!item.tempLicense && item.masterFlag == "是"){
-      //   layer.msg("主车临牌号为必填项", {icon: 2});
-      //   flag = false;
-      //   return true;
-      // }
+      if(!item.tempLicense && item.masterFlag == "是"){
+        layer.msg("主车临牌号为必填项", {icon: 2});
+        flag = false;
+        return true;
+      }
       if(!item.settleWay){
         layer.msg("结算方式为必填项", {icon: 2});
         flag = false;
         return true;
       }
-      // if(!item.tempLicenseBackImage && item.masterFlag == "是"){
-      //   layer.msg("请上传主车行驶证", {icon: 2});
-      //   flag = false;
-      //   return true;
-      // }
-      // if(!item.income && _this.dataPermission.canViewOrderIncome == "Y"){
-      //   layer.msg("车辆收入为必填项", {icon: 2});
-      //   flag = false;
-      //   return true;
-      // }
-      // if(!item.pricePerMeliage && _this.dataPermission.canViewOrderIncome == "Y"){
-      //   layer.msg("收入单价为必填项", {icon: 2});
-      //   flag = false;
-      //   return true;
-      // }
-      // if(!item.manageFee && _this.dataPermission.canViewOrderIncome == "Y"){
-      //   layer.msg("管理费为必填项", {icon: 2});
-      //   flag = false;
-      //   return true;
-      // }
+      if(!item.tempLicenseBackImage && item.masterFlag == "是"){
+        layer.msg("请上传主车行驶证", {icon: 2});
+        flag = false;
+        return true;
+      }
     });
     return flag;
   }
@@ -1786,38 +1773,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
   Edit.prototype.bindInputLimit = function () {
     var _this = this;
-    var $customerMileage = $(".customerMileage");
-    $customerMileage.unbind().on("input", function (e) {
-      var arr = [];
-      $customerMileage.each(function (index, item) {
-        arr.push(item.value * 1);
-      });
-			$(".maxCustomerMileage").val(Math.max.apply(null,arr));
-      _this.maxCustomerMileage = Math.max.apply(null,arr);
-      if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
-      _this.feeInputTimer = setTimeout(function () {
-        var loadIndex = layer.load(1);
-        var field = "driverMileage";
-        var value = _this.maxCustomerMileage * 1;
-        if(!value || value == 0){
-          value = 0;
-        }
-        var feeFormData = form.val("form_fee");
-        feeFormData[field] = value;
-        Object.assign(feeFormData, {
-          oilCapacity: _this.feeDetail.oilCapacity,
-          closestOilPrice: _this.feeDetail.closestOilPrice,
-        });
-        _this.getCalOrderFee(feeFormData).done(function (res) {
-          layer.close(loadIndex)
-          if(res.code == "0"){
-            Object.assign(_this.feeDetail, res.data);
-            _this.renderFee({}, _this.feeDetail);
-          }else{
-            e.target.value = _this.feeDetail[field];
-          }
-        });
-      }, 500);
+    $(".customerMileage").unbind().on("input", function (e) {
+      _this.setDriverMileage();
     });
     $(".vinCode_input").on("input", function (e) {
       if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);
@@ -1825,6 +1782,41 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     $(".productCode_input").on("input", function (e) {
       if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);
     });
+  }
+  Edit.prototype.setDriverMileage = function () {
+    var _this = this;
+    if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
+    _this.feeInputTimer = setTimeout(function () {
+      var arr = [];
+      $(".customerMileage").each(function (index, item) {
+        arr.push(item.value * 1);
+      });
+      console.log(_this.feeDetail.driverMileage, Math.max.apply(null, arr))
+      if(_this.feeDetail.driverMileage == Math.max.apply(null, arr)) return clearTimeout(_this.feeInputTimer);
+      $(".driverMileage").val(Math.max.apply(null,arr));
+      _this.feeDetail.driverMileage = Math.max.apply(null,arr);
+      var loadIndex = layer.load(1);
+      var field = "driverMileage";
+      var value = _this.feeDetail.driverMileage * 1;
+      if(!value || value == 0){
+        value = 0;
+      }
+      var feeFormData = form.val("form_fee");
+      feeFormData[field] = value;
+      Object.assign(feeFormData, {
+        oilCapacity: _this.feeDetail.oilCapacity,
+        closestOilPrice: _this.feeDetail.closestOilPrice,
+      });
+      _this.getCalOrderFee(feeFormData).done(function (res) {
+        layer.close(loadIndex)
+        if(res.code == "0"){
+          Object.assign(_this.feeDetail, res.data);
+          _this.renderFee({}, _this.feeDetail);
+        }else{
+          e.target.value = _this.feeDetail[field];
+        }
+      });
+    }, 500);
   }
   Edit.prototype.getProductInfo = function (e) {
     var code, _this = this, filter = e.target.dataset.filter;
