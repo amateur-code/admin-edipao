@@ -412,6 +412,13 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 					_this.oilCapacity = _this.orderDataBackUp.oilCapacity;
           $("#car_form_container").html(carFormStr);
           renderEnd();
+          if(!_this.orderDataBackUp.feeId){
+            _this.orderData.oilAmount = 0;
+            _this.orderData.amount = _this.orderData.prePayAmount * 1 + _this.orderData.arrivePayAmount * 1 + _this.orderData.tailPayAmount * 1;
+            _this.orderData.totalAmount = _this.orderData.prePayAmount * 1 + _this.orderData.arrivePayAmount * 1 + _this.orderData.tailPayAmount * 1;
+            _this.oil = _this.orderData.prePayOil;
+            _this.oilAmount = 0;
+          }
           _this.renderFee({
             driverMileage: _this.feeDetail.driverMileage,
             oilCapacity: _this.oilCapacity,
@@ -534,7 +541,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
     });
   }
-  Edit.prototype.renderFee = function (options, feeDetail, cb) {
+  Edit.prototype.renderFee = function (options, feeDetail) {
 		var _this = this;
     if(feeDetail){
       feeDetail.prePayRatio = (feeDetail.prePayRatio * 1).toFixed(2);
@@ -595,8 +602,13 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           }
           $("#form_fee_container").html(html);
           _this.bindFeeInput();
-          if(_this.dataPermission.canViewOrderCost != "Y"){
-            $(".input_fee").attr("readonly", "readonly");
+          if(_this.dataPermission.canViewOrderCost != "Y" || !_this.orderDataBackUp.feeId){
+            $(".input_fee").attr("readonly", "readonly").attr("disabled", "disabled");
+            if(!_this.orderDataBackUp.feeId){
+              $("select[name=tailPayBillType]").attr("disabled", "disabled");
+              $(".customerMileage").attr("disabled", "disabled");
+              $(".origin_fee").addClass("hide");
+            }
           }
           form.render();
           options.cb && options.cb();
@@ -627,7 +639,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           oilCapacity: _this.feeDetail.oilCapacity,
           closestOilPrice: _this.feeDetail.closestOilPrice,
         });
-        _this.getCalOrderFee(feeFormData).done(function (res) {
+        _this.getCalOrderFee(feeFormData, field).done(function (res) {
           layer.close(loadIndex)
           if(res.code == "0"){
             Object.assign(_this.feeDetail, res.data);
@@ -645,18 +657,21 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }, 500);
     });
   }
-  Edit.prototype.getCalOrderFee = function(data){
+  Edit.prototype.getCalOrderFee = function(data, field){
     var _this = this;
     data.orderNo = _this.orderNo;
     data.feeId = _this.feeId;
+    data.freightUnitPrice = _this.originFeeRate.freightUnitPrice;
+    data.oilUnitPrice = _this.originFeeRate.oilUnitPrice;
+    data.prePayRatio = _this.originFeeRate.prePayRatio;
+    data.arrivePayRatio = _this.originFeeRate.arrivePayRatio;
     delete data.tailPayRatio;
-    delete data.prePayRatio;
-    delete data.arrivePayRatio;
     delete data.totalAmount;
     delete data.oilAmount;
     delete data.tailPayBillType;
     delete data.tailPayBillDate;
     delete data.maxCustomerMileage;
+    data.modifyFieldName = field;
     return edipao.request({
       url: "/admin/order/calOrderFee",
       method: "POST",
@@ -1774,7 +1789,36 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.bindInputLimit = function () {
     var _this = this;
     $(".customerMileage").unbind().on("input", function (e) {
-      _this.setDriverMileage();
+      var arr = [];
+      $customerMileage.each(function (index, item) {
+        arr.push(item.value * 1);
+      });
+			$(".maxCustomerMileage").val(Math.max.apply(null,arr));
+      _this.maxCustomerMileage = Math.max.apply(null,arr);
+      if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
+      _this.feeInputTimer = setTimeout(function () {
+        var loadIndex = layer.load(1);
+        var field = "driverMileage";
+        var value = _this.maxCustomerMileage * 1;
+        if(!value || value == 0){
+          value = 0;
+        }
+        var feeFormData = form.val("form_fee");
+        feeFormData[field] = value;
+        Object.assign(feeFormData, {
+          oilCapacity: _this.feeDetail.oilCapacity,
+          closestOilPrice: _this.feeDetail.closestOilPrice,
+        });
+        _this.getCalOrderFee(feeFormData, field).done(function (res) {
+          layer.close(loadIndex)
+          if(res.code == "0"){
+            Object.assign(_this.feeDetail, res.data);
+            _this.renderFee({}, _this.feeDetail);
+          }else{
+            e.target.value = _this.feeDetail[field];
+          }
+        });
+      }, 500);
     });
     $(".vinCode_input").on("input", function (e) {
       if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);

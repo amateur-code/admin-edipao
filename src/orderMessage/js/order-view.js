@@ -214,6 +214,13 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     setData: function (data) {
       var _this = this;
        //渲染订单数据
+       if(!data.feeId){
+        data.oilAmount = 0;
+        data.amount = data.prePayAmount * 1 + data.arrivePayAmount * 1 + data.tailPayAmount * 1;
+        data.totalAmount = data.prePayAmount * 1 + data.arrivePayAmount * 1 + data.tailPayAmount * 1;
+        _this.oil = data.prePayOil;
+        _this.oilAmount = 0;
+      }
       if(_this. dataPermission.canViewOrderIncome != "Y"){
         data.totalIncome = "*";
         data.totalManageFee = "*";
