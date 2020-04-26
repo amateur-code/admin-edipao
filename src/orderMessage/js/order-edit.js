@@ -105,25 +105,25 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var _this = this;
     if(!_this.selectData){
       $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList()).done(function (res1, res2, res3, res4, res5) {
-        $('.customerList').append(returnOptions(res1[0].data));
+        $('.' + options.filter).find('.customerList').html(returnOptions(res1[0].data));
         // if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions2(res2[0].data));
         // $(options.selector).append(returnOptions2(res2[0].data));
-        $('.startParkList').append(returnOptions(res3[0].data));
-        $('.startWarehouseList').append(returnOptions(res4[0].data));
+        $('.' + options.filter).find('.startParkList').html(returnOptions(res3[0].data));
+        // $('.startWarehouseList').append(returnOptions(res4[0].data));
         _this.selectData = [res1[0].data, res2[0].data, res3[0].data, res4[0].data];
         cb && cb();
       });
     } else {
-      $('.customerList').append(returnOptions(_this.selectData[0]));
+      $('.' + options.filter).find('.customerList').html(returnOptions(_this.selectData[0]));
       // if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions2(_this.selectData[1]));
       // $(options.selector).append(returnOptions2(_this.selectData[1]));
-      $('.startParkList').append(returnOptions(_this.selectData[2]));
-      $('.startWarehouseList').append(returnOptions(_this.selectData[3]));
+      $('.' + options.filter).find('.startParkList').html(returnOptions(_this.selectData[2]));
+      // $('.startWarehouseList').append(returnOptions(_this.selectData[3]));
       cb && cb();
     }
     function returnOptions2(array){
       var html = '';
-      html = '<option value="请选择">请选择</option>'
+      html = '<option class="layui-select-tips disabled" value="请选择">请选择</option>'
       for(var i = 0; i < array.length; i ++){
         html += '<option data-province=' + array[i].endProvince + ' data-city='+array[i].endCity+' data-lng=' +array[i].endLng+ ' data-lat=' +array[i].endLat+ ' data-address=' + array[i].endAddress + ' value="' + array[i].name + '">' + array[i].name + '</option>';
       }
@@ -131,7 +131,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     }
     function returnOptions(array){
       var html = '';
-      html = '<option value="请选择">请选择</option>'
+      html = '<option class="layui-select-tips disabled" value="请选择">请选择</option>'
       for(var i = 0; i < array.length; i ++){
         html += '<option value="' + array[i].name + '">' + array[i].name + '</option>';
       }
@@ -182,6 +182,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     }
     // 获取发车仓库
     function getStartWarehouseList(){
+      return [{code: 0, data: {}}]
       return edipao.request({
         url: "/admin/dictionary/getStartWarehouseList",
         method: "GET",
@@ -502,8 +503,17 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           form.render('select');
           layer.close(_this.loadingIndex);
           $("[lay-filter=" + item.filter + "] .select_vin").remove();
-          _this.setStartWareHouseSelect(item.filter, _this.selectData[3]);
+          _this.setStartWareHouseSelect(item.filter, [{
+            "startProvince": truckData.startProvince || "",
+            "startCity": truckData.startCity || "",
+            "startAddress": truckData.startAddress || "",
+            "startLng": truckData.startLng || "",
+            "startLat": truckData.startLat || "",
+            "code": truckData.startWarehouse || "",
+            "name": truckData.startWarehouse || "",
+          }]);
         }, {
+          filter: item.filter,
           flag: true,
           province: truckData.endProvince,
           city: truckData.endCity,
@@ -681,7 +691,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.setStartWareHouseSelect = function (filter, data) {
     data = data || [];
     var _this = this;
-    var selector = $(".startWarehouse_selector_" + filter);
+    var $form = $("." + filter);
+    var selector = $form.find(".startWarehouse_selector_" + filter);
     var input = selector.find(".startWarehouse_search_input");
     var options = selector.find(".startWarehouse_options");
     input.unbind().on("input", function(e){
@@ -703,13 +714,28 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       selector.find(".layui-form-select").addClass("layui-form-selected");
     });
     options.html(returnOptions2(data)).unbind().on("click", function(e){
+      var lat = e.target.dataset.lat||"";
+      var lng = e.target.dataset.lng||"";
+      var address = e.target.dataset.address||"";
+      var city = e.target.dataset.city||"";
+      var province = e.target.dataset.province||"";
       var name = e.target.dataset.name||"";
+      if(lat == "null") lat == "";
+      if(lng == "null") lng == "";
+      if(address == "null") address == "";
+      // $form.find('.address-map .location-end-name').val(address).next().val(lat).next().val(lng);
       input.val(name);
+      _this.setCitySelector({
+        selector: $form.find(".start_city_selector"),
+        province: province,
+        city: city,
+        type: "start"
+      });
     });
     function getStartWarehouse(keyword){
       return edipao.request({
         method: "GET",
-        url: "/admin/dictionary/getEndAddressList",
+        url: "/admin/dictionary/getStartWarehouseList",
         data: {
           keyword: keyword
         }
@@ -722,7 +748,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       var html = '';
       html = '<dd class="layui-select-tips disabled" value="请选择">请选择</dd>'
       for(var i = 0; i < array.length; i ++){
-        html += '<dd data-name=' + array[i].name +  ' data-province=' + array[i].endProvince + ' data-city='+array[i].endCity+' data-lng=' +array[i].endLng+ ' data-lat=' +array[i].endLat+ ' data-address=' + array[i].endAddress + ' value="' + array[i].name + '">' + array[i].name + '</dd>';
+        html += '<dd data-name=' + array[i].name +  ' data-province=' + array[i].startProvince + ' data-city='+array[i].startCity+' data-lng=' +array[i].startLng+ ' data-lat=' +array[i].startLat+ ' data-address=' + array[i].startAddress + ' value="' + array[i].code + '">' + array[i].name + '</dd>';
       }
       return html;
     }
@@ -787,7 +813,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       var html = '';
       html = '<dd class="layui-select-tips disabled" value="请选择">请选择</dd>'
       for(var i = 0; i < array.length; i ++){
-        html += '<dd data-name=' + array[i].name +  ' data-province=' + array[i].endProvince + ' data-city='+array[i].endCity+' data-lng=' +array[i].endLng+ ' data-lat=' +array[i].endLat+ ' data-address=' + array[i].endAddress + ' value="' + array[i].name + '">' + array[i].name + '</dd>';
+        html += '<dd data-name=' + array[i].name +  ' data-province=' + array[i].endProvince + ' data-city='+array[i].endCity+' data-lng=' +array[i].endLng+ ' data-lat=' +array[i].endLat+ ' data-address=' + array[i].endAddress + ' value="' + array[i].code + '">' + array[i].name + '</dd>';
       }
       return html;
     }
@@ -1757,9 +1783,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
               });
               return;
           }
-          
           _t.parent().parent().append('<div class="addressList">'+ getItem(json.pois) + '</div>');
-
           function getItem(pois){
             var content = '';
             if(pois.length > 0){
@@ -1770,10 +1794,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             } else {
               content = '<div class="empty">暂无数据</div>'
             }
-            
             return content;
           }
-
           $('.addressList .item').click(function(){
             $(this).parents('.address-map').find('input').val($(this).text())
             $('.addressList') && $('.addressList').remove();
@@ -1835,7 +1857,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       $(".customerMileage").each(function (index, item) {
         arr.push(item.value * 1);
       });
-      console.log(_this.feeDetail.driverMileage, Math.max.apply(null, arr))
       if(_this.feeDetail.driverMileage == Math.max.apply(null, arr)) return clearTimeout(_this.feeInputTimer);
       $(".driverMileage").val(Math.max.apply(null,arr));
       _this.feeDetail.driverMileage = Math.max.apply(null,arr);
@@ -2096,6 +2117,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           form.render('select');
           _this.setStartWareHouseSelect(filterStr, _this.selectData[3]);
         }, {
+          filter: filterStr,
           flag: false,
           province: '',
           city: '',
