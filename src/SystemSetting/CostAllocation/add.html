@@ -508,6 +508,11 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
   }).done(function (res) {
     if (res.code == 0) {
       cx = res.data.truckModelList;
+      let obj = {}
+      obj.modelName = '通用车型'
+      obj.orderType = 1
+      obj.id = '00'
+      cx.unshift(obj)
       let getTpl = feeInfo.innerHTML;
       view = document.getElementById('view');
       laytpl(getTpl).render(res.data, function (html) {
