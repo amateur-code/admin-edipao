@@ -670,7 +670,7 @@ layui.config({
                                     setTimeout(function () { paying = false; }, 1500);
                                     layer.close(loadIndex);
                                     if(res.code == "0"){
-                                        layer.msg("提交成功", {icon: 1,anim: 6});
+                                        layer.msg("提交成功", {icon: 1});
                                         table.reload("orderList");
                                         layer.close(index);
                                     }else{
@@ -765,7 +765,7 @@ layui.config({
                                     setTimeout(function () { paying = false; }, 1500);
                                     layer.close(loadIndex);
                                     if(res.code == "0"){
-                                        layer.msg("提交成功", {icon: 1,anim: 6});
+                                        layer.msg("提交成功", {icon: 1});
                                         table.reload("orderList");
                                         layer.close(index);
                                     }else{
@@ -866,7 +866,7 @@ layui.config({
                                     setTimeout(function () { paying = false; }, 1500);
                                     layer.close(loadIndex);
                                     if(res.code == "0"){
-                                        layer.msg("提交成功", {icon: 1,anim: 6});
+                                        layer.msg("提交成功", {icon: 1});
                                         table.reload("orderList");
                                         layer.close(index);
                                     }else{
@@ -1239,7 +1239,10 @@ layui.config({
                                         default:
                                             value = "非法状态";
                                     }
-                                case 'fetchStatus':
+                                    if(orderType == 2 && masterFlag == "否"){
+                                        value = "";
+                                    }
+                                case 'fetchUploadBtn':
                                     switch(item[i]){
                                         case 0:
                                         case 1:
@@ -1263,7 +1266,7 @@ layui.config({
                                         value = "";
                                     }
                                     break;
-                                case 'startAuditStatus':
+                                case 'startUploadBtn':
                                     switch(item[i]){
                                         case 0:
                                         case 1:
@@ -1287,7 +1290,7 @@ layui.config({
                                         value = "";
                                     }
                                     break;
-                                case 'returnAuditStatus':
+                                case 'returnUploadBtn':
                                     switch(item[i]){
                                         case 0:
                                         case 1:
@@ -1515,17 +1518,6 @@ layui.config({
                     return "非法类型";
                 }
         }},
-        // {field: 'masterFlag', title: '上下车', sort: false,minWidth:100, templet: function (d) {
-        //         if(d.orderType * 1 == 1){
-        //             return "单车";
-        //         }else{
-        //             if (d.masterFlag == "是") {
-        //                 return "下车";
-        //             } else {
-        //                 return "上车";
-        //             }
-        //         }
-        // }},
         {field: 'orderStatus', title: '订单状态', sort: false,minWidth:100, templet: function (d) {
                 if (d.orderStatus == 1) {
                     return "待调度";
@@ -1617,7 +1609,11 @@ layui.config({
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var payStatus = "";
                 if (d.prePayApprovalBtn == 1 && amount > 0) {
-                    payStatus = verifyStr3.replace("{{}}", "-申请支付");
+                    if(amount > 0){
+                        payStatus = verifyStr3.replace("{{}}", " - 申请支付");
+                    }else{
+                        payStatus = "";
+                    }
                 } else if (d.prePayApprovalBtn == 2 && amount > 0) {
                     payStatus = verifyStr.replace("{{}}", "-审核");
                 } else if (d.prePayApprovalBtn == 3 && amount > 0) {
@@ -1626,8 +1622,6 @@ layui.config({
                     payStatus = "-已支付";
                 }else if(d.prePayApprovalBtn == 0){
                     payStatus = "";
-                } else {
-                    payStatus = "-非法状态";
                 }
                 if(d.orderStatus == 6){
                     payStatus = "";
@@ -1646,8 +1640,12 @@ layui.config({
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var payStatus = "";
-                if (d.arrivePayApprovalBtn == 1 && amount > 0) {
-                    payStatus = verifyStr3.replace("{{}}", " - 申请支付");
+                if (d.arrivePayApprovalBtn == 1 ) {
+                    if(amount > 0){
+                        payStatus = verifyStr3.replace("{{}}", " - 申请支付");
+                    }else{
+                        payStatus = "";
+                    }
                 } else if (d.arrivePayApprovalBtn == 2 && amount > 0) {
                     payStatus = verifyStr.replace("{{}}", " - 审核");
                 } else if (d.arrivePayApprovalBtn == 3 && amount > 0) {
@@ -1656,8 +1654,6 @@ layui.config({
                     payStatus = " - 已支付";
                 }else if(d.arrivePayApprovalBtn == 0){
                     payStatus = "";
-                } else {
-                    payStatus = " - 非法状态";
                 }
                 if(d.orderStatus == 6){
                     payStatus = "";
@@ -1677,7 +1673,11 @@ layui.config({
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var payStatus = "";
                 if (d.tailPayApprovalBtn == 1 && amount > 0) {
-                    payStatus = verifyStr3.replace("{{}}", " - 申请支付");
+                    if(amount > 0){
+                        payStatus = verifyStr3.replace("{{}}", " - 申请支付");
+                    }else{
+                        payStatus = "";
+                    }
                 } else if (d.tailPayApprovalBtn == 2 && amount > 0) {
                     payStatus = verifyStr.replace("{{}}", " - 审核");
                 } else if (d.tailPayApprovalBtn == 3 && amount > 0) {
@@ -1686,8 +1686,6 @@ layui.config({
                     payStatus = " - 已支付";
                 }else if(d.tailPayApprovalBtn == 0){
                     payStatus = "";
-                } else {
-                    payStatus = " - 非法状态";
                 }
                 if(d.orderStatus == 6){
                     payStatus = "";
@@ -1701,6 +1699,9 @@ layui.config({
                 return d.tailPayAmount + "元" + payStatus;
         }},
         {field: "tailPayStatus", title: "尾款状态", sort: false, width: 100, hide: false, templet: function (d) {
+            if(d.orderType == 2 && d.masterFlag == "否"){
+                return "";
+            }
             switch(d.tailPayStatus * 1){
                 case 1:
                     return "待支付";
@@ -1722,21 +1723,12 @@ layui.config({
             if(permissionList.indexOf("提车照片上传") < 0){
                 str2 = "";
             }
-            switch(d.fetchStatus*1){
-                case 0: 
-                    status = "未上传";
-                    break;
+            switch(d.fetchUploadBtn*1){
                 case 1:
                     status = "未上传" + str2.replace("{{}}"," 上传");
                     break;
                 case 2:
                     status = str.replace("{{}}","查看");
-                    break;
-                case 3:
-                    status = str.replace("{{}}","查看");
-                    break;
-                case 4:
-                    status = "已驳回";
                     break;
             }
             if(d.fetchApprovalBtn * 1 == 1){
@@ -1758,21 +1750,12 @@ layui.config({
             if(permissionList.indexOf("发车单-上传") < 0){
                 str2 = "";
             }
-            switch(d.startAuditStatus*1){
-                case 0:
-                    status = "未上传";
-                    break;
+            switch(d.startUploadBtn*1){
                 case 1:
                     status = "未上传" + str2.replace("{{}}"," 上传");
                     break;
                 case 2:
                     status = str.replace("{{}}","查看");
-                    break;
-                case 3:
-                    status = str.replace("{{}}","查看");
-                    break;
-                case 4:
-                    status = "已驳回";
                     break;
             }
             if(d.startApprovalBtn * 1 == 1){
@@ -1794,21 +1777,12 @@ layui.config({
             if(permissionList.indexOf("交接单回收-上传") < 0){
                 str2 = "";
             }
-            switch(d.returnAuditStatus * 1){
-                case 0:
-                    status = "未上传";
-                    break;
+            switch(d.returnUploadBtn * 1){
                 case 1:
                     status = "未上传" + str2.replace("{{}}"," 上传");
                     break;
                 case 2:
                     status = str.replace("{{}}","查看");
-                    break;
-                case 3:
-                    status = str.replace("{{}}","查看");
-                    break;
-                case 4:
-                    status = "已驳回";
                     break;
             }
             if(d.returnApprovalBtn * 1 == 1){

@@ -51,7 +51,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     this.driverTimer = null;
     this.feeInputTimer = null;
 		this.feeDetail = {};
-		this.maxCustomerMileage = "";
+		this.driverMileage = "";
 		this.oilCapacity = 0;
     this.loadingIndex = "";
     this.formList = [
@@ -76,8 +76,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.init = function(){
     var _this = this;
     _this.loadingIndex = layer.load(1);
-    $.when(this.getStaffList(), this.getFeeItemList(), this.getFeeItemUnitList(), this.getOrder(), this.getDriverList()).done(function (res1, res2, res3, res4) {
-      res = res4[0];
+    $.when(this.getOrder(), this.getDriverList()).done(function (res1) {
+      res = res1[0];
       if(res.code == "0"){
         _this.orderDataBackUp = JSON.parse(JSON.stringify(res.data));
         _this.orderData = res.data;
@@ -305,56 +305,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
     });
   }
-  Edit.prototype.addFeeItem = function (data) {
-    //后台增加费用项
-    var _this = this;
-    return edipao.request({
-      url: "/admin/feeItem/add",
-      method: "POST",
-      data: {
-        loginStaffId: _this.user.staffId,
-        name: data.addFeeName,
-        unit: data.addFeeUnit
-      }
-    });
-  }
-  Edit.prototype.getFeeItemUnitList = function () {
-    var _this = this;
-    //获取费用单位
-    return edipao.request({
-      url: "/admin/feeItem/unit/list",
-      method: "GET",
-      data: { loginStaffId: _this.user.staffId }
-    }).done(function (res) {
-      if(res.code == 0){
-        _this.feeUnitItemList = res.data;
-      }
-    });
-  }
-  Edit.prototype.getFeeItemList = function () {
-    //费用项列表
-    var _this = this;
-    return edipao.request({
-      url: "/admin/feeItem/list",
-      method: "GET",
-      data: {}
-    }).done(function (res) {
-      if(res.code == "0"){
-        _this.feeItemList = res.data;
-      }else{
-        layer.msg(res.message, {icon: 5,anim: 6});
-      }
-    });
-  }
-  Edit.prototype.setFeeList = function(flag, type, newObj){
-    return;
-  }
   
   Edit.prototype.setData = function(data){
     //渲染订单数据
     var _this =this;
-    _this.setFeeList();
-
     laytpl($("#form_ascription_tpl").html()).render({orderData: _this.orderData, staffList: _this.staffList, driverList: _this.driverList}, function (html) {
       $("#form_ascription_container").html(html);
       data.dispatchOperator = data.dispatchOperator + "," + data.dispatchOperatorPhone;
@@ -521,8 +475,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         });
         _this.setEndParkSelect(
           item.filter,
-          [
-            {
+          [{
               "endProvince": truckData.endProvince || "",
               "endCity": truckData.endCity || "",
               "endAddress": truckData.endAddress || "",
@@ -530,8 +483,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
               "endLat": truckData.endLat || "",
               "code": truckData.endPark || "",
               "name": truckData.endPark || "",
-            }
-          ]
+          }]
         );
       });
       _this.bindInputLimit();
@@ -923,49 +875,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
     })
   } 
-  Edit.prototype.openUpdateFee = function (e, event, layerIndex1) {
-    var _this = this;
-    var index = event.target.dataset.index*1;
-    laytpl($("#update_fee_tpl").html()).render({oldName: _this.feeItemList[index].value}, function (html) {
-      var index = layer.open({
-        title: "修改费用项",
-        type: 1,
-        area: "400px",
-        content: html,
-        btn: ['确定', '取消'],
-        yes: function () {
-          var loadIndex = layer.load(1);
-          var data = form.val("update_fee_item_form");
-          if(!data.newName){
-            layer.msg("请输入新名称");
-            return;
-          }
-          data.loginStaffId = _this.user.staffId;
-          edipao.request({
-            url: "/admin/feeItem/edit",
-            method: "post",
-            data: data
-          }).done(function (res) {
-            if(res.code == "0"){
-              _this.getFeeItemList().done(function (res2) {
-                layer.close(index);
-                layer.close(layerIndex1);
-                setTimeout(function(){
-                  _this.openAddFee(e);
-                  layer.msg("修改成功");
-                  layer.close(loadIndex);
-                }, 500);
-              });
-            }else{
-              layer.close(loadIndex);
-            }
-          }).fail(function () {
-            layer.close(loadIndex);
-          });
-        }
-      })
-    });
-  }
 
   Edit.prototype.handleAddCar = function (data, filter) {
     //添加车辆时
@@ -1812,16 +1721,17 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var _this = this;
     $(".customerMileage").unbind().on("input", function (e) {
       var arr = [];
-      $customerMileage.each(function (index, item) {
+      $(".customerMileage").each(function (index, item) {
         arr.push(item.value * 1);
       });
-			$(".maxCustomerMileage").val(Math.max.apply(null,arr));
-      _this.maxCustomerMileage = Math.max.apply(null,arr);
+      if(_this.feeDetail.driverMileage == Math.max.apply(null, arr)) return clearTimeout(_this.feeInputTimer);
+			$(".driverMileage").val(Math.max.apply(null,arr));
+      _this.feeDetail.driverMileage = Math.max.apply(null,arr);
       if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
       _this.feeInputTimer = setTimeout(function () {
         var loadIndex = layer.load(1);
         var field = "driverMileage";
-        var value = _this.maxCustomerMileage * 1;
+        var value = _this.feeDetail.driverMileage * 1;
         if(!value || value == 0){
           value = 0;
         }
