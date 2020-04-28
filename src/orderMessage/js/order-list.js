@@ -688,7 +688,7 @@ layui.config({
                         {field: 'key', title: '费用项', sort: false,width: "80px"},
                         {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) {
                             if(dataPermission.canViewOrderCost != "Y"){
-                                return "*";
+                                return "****";
                             }
                             return d.val + " (" + d.unit + ")"
                         }},
@@ -783,7 +783,7 @@ layui.config({
                         {field: 'key', title: '费用项', sort: false,width: "80px"},
                         {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) { 
                             if(dataPermission.canViewOrderCost != "Y"){
-                                return "*";
+                                return "****";
                             }
                             return d.val + ' (' + d.unit + ')'
                         }},
@@ -1175,7 +1175,11 @@ layui.config({
                                         value = "";
                                         break;
                                     }
-                                    value = item[i] + "元" + "/" + prePayOil + "升" + payStatus;
+                                    if(dataPermission.canViewOrderCost != "Y"){
+                                        value = "****" + payStatus;
+                                    }else{
+                                        value = item[i] + "元" + "/" + prePayOil + "升" + payStatus;
+                                    }
                                     break;
                                 case 'arrivePayAmount':
                                     var payStatus = "";
@@ -1196,7 +1200,11 @@ layui.config({
                                         value = "";
                                         break;
                                     }
-                                    value = item[i] + "元" + payStatus;
+                                    if(dataPermission.canViewOrderCost != "Y"){
+                                        value = "****" + payStatus;
+                                    }else{
+                                        value = item[i] + "元" + payStatus;
+                                    }
                                     break;
                                 case 'tailPayAmount':
                                     var payStatus = "";
@@ -1217,7 +1225,11 @@ layui.config({
                                         value = "";
                                         break;
                                     }
-                                    value = item[i] + "元" + payStatus;
+                                    if(dataPermission.canViewOrderCost != "Y"){
+                                        value = "****" + payStatus;
+                                    }else{
+                                        value = item[i] + "元" + payStatus;
+                                    }
                                     break;
                                 case 'tailPayStatus':
                                     switch(item[i] * 1){
@@ -1630,7 +1642,7 @@ layui.config({
                     return "";
                 }
                 if(dataPermission.canViewOrderCost != "Y"){
-                    return "* " + payStatus;
+                    return "**** " + payStatus;
                 }
                 return d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus;
         }},
@@ -1662,7 +1674,7 @@ layui.config({
                     return "";
                 }
                 if(dataPermission.canViewOrderCost != "Y"){
-                    return "* " + payStatus;
+                    return "**** " + payStatus;
                 }
                 return d.arrivePayAmount + "元" + payStatus;
         }},
@@ -1694,7 +1706,7 @@ layui.config({
                     return "";
                 }
                 if(dataPermission.canViewOrderCost != "Y"){
-                    return "* " + payStatus;
+                    return "**** " + payStatus;
                 }
                 return d.tailPayAmount + "元" + payStatus;
         }},

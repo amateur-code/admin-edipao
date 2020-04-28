@@ -7,6 +7,13 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
   var feeKeys = [
     "amount", "arrivePayAmount","arrivePayRatio","closestOilPrice","freightUnitPrice","oil","oilAmount","totalAmount",
     "oilCapacity","oilUnitPrice","prePayAmount","prePayRatio","prePayOil","tailPayAmount","tailPayRatio",
+    
+  ]
+  var truckKeys = [
+    "startCity", "endCity", "startProvince", "endProvince", "connectorName", "connectorPhone"
+  ]
+  var orderKeys = [
+    "followOperator", "followOperatorPhone", "deliveryOperator", "deliveryOperatorPhone"
   ]
   function View() {
     var qs = edipao.urlGet();
@@ -23,6 +30,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 		this.feeUpdateData = {};
 		this.truckUpdateData = {};
     this.dataPermission = edipao.getDataPermission();
+    this.dataPermission.canViewOrderIncome = "";
     this.truckList = [];
     window.dataPermission = this.dataPermission;
   }
@@ -62,9 +70,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
                 updateData.forEach(function (item) {
                   _this.updateData[item.name] = item.value;
                 });
-                if(_this. dataPermission.canViewOrderIncome != "Y"){
-                  if(_this.updateData.totalIncome) _this.updateData.totalIncome = "*";
-                  if(_this.updateData.totalManageFee) _this.updateData.totalManageFee = "*";
+                if(_this.dataPermission.canViewOrderIncome != "Y"){
+                  if(_this.updateData.totalIncome) _this.updateData.totalIncome = "****";
+                  if(_this.updateData.totalManageFee) _this.updateData.totalManageFee = "****";
                 }
               } catch (error) {
                 _this.updateData = {};
@@ -76,7 +84,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
                 updateData = JSON.parse(res1.data.modifyAfterJson);
                 updateData.forEach(function (item) {
                   if(_this.dataPermission.canViewOrderCost != "Y"){
-                    _this.feeUpdateData[item.name] = "*";
+                    _this.feeUpdateData[item.name] = "****";
                   }else{
                     _this.feeUpdateData[item.name] = item.value;
                   }
@@ -112,12 +120,14 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 		},
 		parseTruckData: function (data) {
 			Object.keys(data).forEach(function (key) {
-				var item = data[key];
+        var item = data[key];
 				Object.keys(item).forEach(function (key2) {
-					if(feeKeys.indexOf(key2) < 0){
-						item[key2] = item[key2] || "- -";
-					}
-				});
+					if(truckKeys.indexOf(key2) < 0){
+            if(!item[key2] || item[key2] == "undefined"){
+              item[key2] = "- -";
+            }
+          }
+        });
 				switch(item.settleWay * 1){
 					case 1:
 						item.settleWay = "现结";
@@ -129,14 +139,24 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 						item.settleWay = "账期";
 						break;
 				}
-			});
+      });
 		},
     parseData: function (data) {
       Object.keys(data).forEach(function (key) {
-        if(feeKeys.indexOf(key) < 0){
-          data[key] = data[key] || "- -";
+        if(feeKeys.indexOf(key) < 0 && orderKeys.indexOf(key) < 0){
+          if(!data[key] || data[key] == "undefined"){
+            data[key] = "- -";
+          }
         }
       });
+      if(!data.deliveryOperator && !data.deliveryOperatorPhone){
+        data.deliveryOperator = "- -";
+        data.deliveryOperatorPhone = "";
+      }
+      if(!data.followOperator && !data.followOperatorPhone){
+        data.followOperator = "- -";
+        data.followOperatorPhone = "";
+      }
       switch(data.tailPayBillType * 1){
         case 1:
           data.tailPayBillType = "现结";
@@ -221,9 +241,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         _this.oil = data.prePayOil;
         _this.oilAmount = 0;
       }
-      if(_this. dataPermission.canViewOrderIncome != "Y"){
-        data.totalIncome = "*";
-        data.totalManageFee = "*";
+      if(_this.dataPermission.canViewOrderIncome != "Y"){
+        data.totalIncome = "****";
+        data.totalManageFee = "****";
       }
 
       laytpl($("#base_info_tpl").html()).render(data, function(html){
@@ -239,10 +259,10 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       var imageStr = $("#image_tpl").html();
       data.truckDTOList.forEach(function (item, index) {
 				var truck = item;
-        if(_this. dataPermission.canViewOrderIncome != "Y"){
-          item.pricePerMeliage = "*";
-          item.manageFee = "*";
-          item.income = "*";
+        if(_this.dataPermission.canViewOrderIncome != "Y"){
+          item.pricePerMeliage = "****";
+          item.manageFee = "****";
+          item.income = "****";
         }
         switch(item.settleWay * 1){
           case 1:
@@ -267,9 +287,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 				else item.startBillImage = item.startBillImage.split(",");
         if(!item.tempLicenseBackImage) item.tempLicenseBackImage = [];
 				else item.tempLicenseBackImage = item.tempLicenseBackImage.split(",");
-        Object.keys(item).forEach(function (key) {
-          if(!item[key])item[key] = "- -";
-        });
         
 				if(_this.action == "verify"){
           var updateData = _this.truckUpdateData.update || {};
@@ -285,22 +302,37 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           if(!updateData.tempLicenseBackImage) updateData.tempLicenseBackImage = [];
           else updateData.tempLicenseBackImage = updateData.tempLicenseBackImage.split(",");
           Object.keys(updateData).forEach(function (key) {
-            if(!updateData[key]) updateData[key] = "- -";
+            if(!updateData[key] || updateData[key] == "undefined") updateData[key] = "- -";
           });
           truck.updateData = updateData;
           _this.truckUpdateData.delete && _this.truckUpdateData.delete.some(function (item) {
             if(item == truck.id){
-              truck.isDeleted = truck;
+              truck.isDeleted = true;
             }
           });
         }else{
           truck.updateData = {};
         }
-        
+        Object.keys(truck).forEach(function (key) {
+          if(truckKeys.indexOf(key) < 0){
+            if(!truck[key] || truck[key] == "undefined"){
+              truck[key] = "- -";
+            }
+          }
+        });
+        if(!truck.startCity && !truck.startProvince){
+          truck.startCity = '- -';
+          truck.startProvince = "";
+        }
+        if(!truck.endCity && !truck.endProvince){
+          truck.endCity = '- -';
+          truck.endProvince = "";
+        }
+        if(!truck.connectorName && !truck.connectorPhone){
+          truck.connectorName = "- -";
+          truck.connectorPhone = "";
+        }
         laytpl(imageStr).render(item, function (imageHtml) {
-          Object.keys(truck).forEach(function (key) {
-            truck[key] = truck[key] || "- -";
-					});
           laytpl(carFormHtml).render(truck, function (html) {
             var filterStr = "form_car_" + index;
             _this.carFormList.push(filterStr);

@@ -28,9 +28,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   var table = layui.table;
   function Edit(){
     var qs = edipao.urlGet();
-    this.orderNo = qs.orderNo || "OR00000025";
+    this.orderNo = qs.orderNo;
     this.orderId = qs.orderId;
-    this.feeId = qs.feeId || "FEE8ead80814370Uy641b70c";
+    this.feeId = qs.feeId;
     this.action = qs.action;
     this.user = JSON.parse(sessionStorage.user);
     this.carFormList = [];
@@ -76,7 +76,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.init = function(){
     var _this = this;
     _this.loadingIndex = layer.load(1);
-    $.when(this.getOrder(), this.getDriverList()).done(function (res1) {
+    $.when(this.getOrder(), this.getDriverList(), this.getStaffList()).done(function (res1) {
       res = res1[0];
       if(res.code == "0"){
         _this.orderDataBackUp = JSON.parse(JSON.stringify(res.data));
@@ -318,9 +318,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       form.val("form_ascription", data);
     });
 
-    if(_this. dataPermission.canViewOrderIncome != "Y"){
-      data.totalIncome = "*";
-      data.totalManageFee = "*";
+    if(_this.dataPermission.canViewOrderIncome != "Y"){
+      data.totalIncome = "****";
+      data.totalManageFee = "****";
     }
 
     laytpl($("#base_info_tpl").html()).render(data, function(html){
@@ -353,11 +353,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         truckData = JSON.parse(JSON.stringify(data.truckDTOList[index]))
       } catch (error) {}
       //数据权限处理
-      if(_this. dataPermission.canViewOrderIncome != "Y"){
-        truckData.pricePerMeliage = "*";
-        truckData.income = "*";
-        truckData.manageFee = "*";
-      }
+      
+      console.log(truckData)
       if(truckData.customerMileage > maxCustomerMileage) maxCustomerMileage = truckData.customerMileage;
       itemStr = itemStr.replace(/CARFORM/g, item.filter);
       laytpl(itemStr).render(truckData, function (html) {
@@ -417,11 +414,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           data.truckDTOList[index] = data.truckDTOList[index] || "{}";
           truckData = JSON.parse(JSON.stringify(data.truckDTOList[index]))
         } catch (error) {}
-        if(_this.dataPermission.canViewOrderIncome != "Y"){
-          truckData.pricePerMeliage = "*";
-          truckData.income = "*";
-          truckData.manageFee = "*";
-        }
         _this.tempLicenseBackImage.push({
           image: truckData.tempLicenseBackImage,
           id: truckData.id,
@@ -453,6 +445,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.setStartSelectCity(truckData);
         _this.setEndSelectCity(truckData);
         _this.setConfigData(function(){
+          if(_this.dataPermission.canViewOrderIncome != "Y"){
+            truckData.pricePerMeliage = "****";
+            truckData.income = "****";
+            truckData.manageFee = "****";
+          }
           form.val(item.filter, truckData);
           form.render('select');
           layer.close(_this.loadingIndex);
@@ -523,7 +520,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     }
     _this.getOrderFee(options).done(function (res) {
       if(res.code == "0"){
-        _this.originFeeRate = res.data;
+        _this.originFeeRate = res.data || {};
         _this.originFeeRate.prePayRatio = (_this.originFeeRate.prePayRatio * 1).toFixed(2);
         _this.originFeeRate.arrivePayRatio = (_this.originFeeRate.arrivePayRatio * 1).toFixed(2);
         _this.originFeeRate.tailPayRatio = (_this.originFeeRate.tailPayRatio * 1).toFixed(2);
@@ -548,11 +545,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 				_this.originFeeRate.feeDetail = _this.feeDetail;
 				if(_this.dataPermission.canViewOrderCost != "Y"){
 					Object.keys(_this.originFeeRate).forEach(function(key){
-						console.log(typeof _this.originFeeRate[key])
 						if(typeof _this.originFeeRate[key] == "string" || typeof _this.originFeeRate[key] == "number"){
 							_this.originFeeRate[key] = "****";
 						}else{
-							Object.keys(_this.originFeeRate[key]).forEach(function (key2) {
+							Object.keys(_this.originFeeRate[key] || []).forEach(function (key2) {
 								_this.originFeeRate[key][key2] = "****";
 							});
 						}
@@ -811,6 +807,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       data: {
         loginStaffId: _this.user.staffId,
         id: _this.orderId
+      }
+    }).done(function(res){
+      if(res.code == "0" && !res.data){
+        layer.msg("获取订单信息失败！", {icon: 2});
       }
     });
   }
@@ -1119,7 +1119,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         deliverResourceRemark: itemData.deliverResourceRemark,
         transportRemark: itemData.transportRemark||"",
       }
-      if(_this. dataPermission.canViewOrderIncome != "Y"){
+      if(_this.dataPermission.canViewOrderIncome != "Y"){
         if(_this.orderDataBackUp.truckDTOList[index]){
           truckItem.income = _this.orderDataBackUp.truckDTOList[index].income;
         }else{
@@ -1162,7 +1162,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     data.driverCertificate = dispatchData.driverCertificate || "";
 		data.driverMileage = (_this.feeDetail.driverMileage * 1).toFixed(2);
     data.oilCapacity = _this.oilCapacity;
-    if(_this. dataPermission.canViewOrderIncome != "Y"){
+    if(_this.dataPermission.canViewOrderIncome != "Y"){
       data.totalIncome = _this.orderDataBackUp.totalIncome || "";
       data.totalManageFee = _this.orderDataBackUp.totalManageFee || "";
     }else{
@@ -1288,8 +1288,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var orderType = data.orderType;
     var flag = true;
     data.truckUpdateReqList.some(function (item) {
-      if(!item.tempLicense && item.masterFlag == "是"){
-        layer.msg("主车临牌号为必填项", {icon: 2});
+      if(!item.tempLicense){
+        layer.msg("临牌号为必填项", {icon: 2});
         flag = false;
         return true;
       }
@@ -1298,8 +1298,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         flag = false;
         return true;
       }
-      if(!item.tempLicenseBackImage && item.masterFlag == "是"){
-        layer.msg("请上传主车行驶证", {icon: 2});
+      if(!item.tempLicenseBackImage){
+        layer.msg("请上传行驶证", {icon: 2});
         flag = false;
         return true;
       }
@@ -1326,7 +1326,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.openSelectDriver = function () {
     //选择司机
     var _this= this;
-    var id = "driver_name_select";
+    var $options = $(".driverName_options");
     edipao.request({
       url: "/admin/order/matchDriver/list",
       method: "GET",
@@ -1337,28 +1337,19 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     }).done(function (res) {
       if(res.code == "0"){
         if(!res.data) res.data = [];
-        if(res.data.length < 1)return;
+        if(res.data.length < 1) return;
         _this.driverInfoListDto = res.data;
-        laytpl($("#driver_list_tpl").html()).render({list: res.data}, function (html) {
-          $("#driver_select_item_container").html(html);
-          $(".driver_item").on("click", function (e) {
-            var index = e.target.dataset.index * 1;
-            if(index != "none") {
-              var data = _this.driverInfoListDto[index];
-              var driverData = {
-                driverId: data.id,
-                driverName: data.name,
-                driverPhone: data.phone,
-                driverIdCard: data.idNum,
-                driverCertificate: data.driveLicenceType,
-              }
-              form.val("form_dispatch", driverData);
-            }
-            $('#match_driver_list').remove();
-          });
-        });
+        $options.html(returnOptions2(res.data));
       }
     });
+    function returnOptions2(array){
+      var html = '';
+      html = '<dd class="layui-select-tips disabled" value="请选择">请选择</dd>';
+      for(var i = 0; i < array.length; i ++){
+          html += '<dd data-certificate=' + array[i].driveLicenceType + ' data-card=' + array[i].idNum + ' data-id=' +array[i].id+ ' data-name=' +array[i].name+ ' data-phone=' + array[i].phone + ' value="' + array[i].name + '">' + array[i].name + '</dd>';
+      }
+      return html;
+    }
   }
   Edit.prototype.openSelectDriverTable = function (ascription) {
     var _this = this;
@@ -1721,6 +1712,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var _this = this;
     $(".customerMileage").unbind().on("input", function (e) {
       var arr = [];
+      if(_this.dataPermission.canViewOrderCost != "Y") return;
       $(".customerMileage").each(function (index, item) {
         arr.push(item.value * 1);
       });
@@ -1758,6 +1750,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     $(".productCode_input").on("input", function (e) {
       if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);
     });
+    if(_this.dataPermission.canViewOrderIncome != "Y"){
+      $(".car_income").attr("disabled", "disabled");
+      $(".car_manageFee").attr("disabled", "disabled");
+      $(".pricePerMeliage").attr("disabled", "disabled");
+    }
   }
   Edit.prototype.setDriverMileage = function () {
     var _this = this;
@@ -1868,7 +1865,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           }
           , done: function () {
             table.on('row(staffList_table)', function(obj){
-              var data = obj.data;
+              var data = {};
               data[field] = obj.data.name + "," + obj.data.phone;
               form.val("form_ascription", data);
               $(".layui-table-view[lay-id=staffList_table]").remove();
@@ -1899,6 +1896,19 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     });
     $("#driver_name").unbind().on("click", function(){
       _this.openSelectDriver();
+      $(".driver_name_selector").addClass("layui-form-selected");
+    });
+    var $driverNameOptions = $(".driverName_options");
+    $driverNameOptions.on("click", function(e){
+      var data = e.target.dataset;
+      var driverData = {
+        driverId: data.id,
+        driverName: data.name,
+        driverPhone: data.phone,
+        driverIdCard: data.card,
+        driverCertificate: data.certificate,
+      }
+      form.val("form_dispatch", driverData);
     });
     $("#driver_name").on("input", function (e) {
       var name = e.target.value;
@@ -1911,27 +1921,18 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             if(!res.data) return;
             if(!res.data.driverInfoListDtoList || res.data.driverInfoListDtoList.length < 0) return;
             _this.driverInfoListDto = res.data.driverInfoListDtoList;
-            laytpl($("#driver_list_tpl").html()).render({list: res.data.driverInfoListDtoList}, function (html) {
-              $("#driver_select_item_container").html(html);
-              $(".driver_item").unbind().on("click", function (e) {
-                var index = e.currentTarget.dataset.index;
-                if(index != "none") {
-                  var data = _this.driverInfoListDto[index*1];
-                  var driverData = {
-                    driverId: data.id,
-                    driverName: data.name,
-                    driverPhone: data.phone,
-                    driverIdCard: data.idNum,
-                    driverCertificate: data.driveLicenceType,
-                  }
-                  form.val("form_dispatch", driverData);
-                }
-                $('#match_driver_list').hide();
-              });
-            });
+            $driverNameOptions.html(returnOptions2(res.data.driverInfoListDtoList || []));
           }
         });
       }, 500);
+      function returnOptions2(array){
+        var html = '';
+        html = '<dd class="layui-select-tips disabled" value="请选择">请选择</dd>';
+        for(var i = 0; i < array.length; i ++){
+            html += '<dd data-certificate=' + array[i].driveLicenceType + ' data-card=' + array[i].idNum + ' data-id=' +array[i].id+ ' data-name=' +array[i].name+ ' data-phone=' + array[i].phone + ' value="' + array[i].name + '">' + array[i].name + '</dd>';
+        }
+        return html;
+      }
     });
     $(document).on("click", function (e) {
       if(!$(e.target).hasClass("driver_item")){
@@ -1981,9 +1982,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       var addRenderData = {}
       if(_this.dataPermission.canViewOrderIncome != "Y"){
         addRenderData = {
-          income: "*",
-          pricePerMeliage: "*",
-          manageFee: "*"
+          income: "****",
+          pricePerMeliage: "****",
+          manageFee: "****"
         }
       }
       laytpl(html).render(addRenderData, function(html2){

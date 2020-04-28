@@ -335,14 +335,14 @@
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收入金额</label><br>
                             <div class="layui-input-inline relative">
                                 <span class="input_unit">元</span>
-                                <input onkeyup="num(this)" {{d.income=='*'?'disabled':''}} data-filter="CARFORM" type="text" name="income" autocomplete="off" class="layui-input car_income">
+                                <input onkeyup="num(this)" {{d.income=='****'?'disabled':''}} data-filter="CARFORM" type="text" name="income" autocomplete="off" class="layui-input car_income">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>管理费</label><br>
                             <div class="layui-input-inline relative">
                                 <span class="input_unit">元</span>
-                                <input onkeyup="num(this)" {{d.manageFee=='*'?'disabled':''}} data-filter="CARFORM" type="text" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
+                                <input onkeyup="num(this)" {{d.manageFee=='****'?'disabled':''}} data-filter="CARFORM" type="text" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -361,7 +361,7 @@
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收入单价</label><br>
                             <div class="layui-input-inline relative">
                                 <span class="input_unit">元/km</span>
-                                <input onkeyup="num(this)" {{d.pricePerMeliage=='*'?'disabled':''}} type="text" name="pricePerMeliage" autocomplete="off" class="layui-input">
+                                <input onkeyup="num(this)" {{d.pricePerMeliage=='****'?'disabled':''}} type="text" name="pricePerMeliage" autocomplete="off" class="layui-input pricePerMeliage">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -450,8 +450,16 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">司机姓名</label><br>
                             <div id="driver_name_select" class="layui-input-inline layui-row">
-                                <div class="layui-inline layui-col-md8">
-                                    <input id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input">
+                                <div class="layui-inline layui-col-md8" style="margin-right: 0;">
+                                    <div class="layui-form-select driver_name_selector">
+                                        <div class="layui-select-title">
+                                            <input id="driver_name" name="driverName" type="text" class="layui-input" autocomplete="off">
+                                        </div>
+                                        <dl class="layui-anim layui-anim-upbit driverName_options">
+                                            <dd lay-value="" class="layui-select-tips">暂无数据</dd>
+                                        </dl>
+                                    </div>
+                                    <!-- <input id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input"> -->
                                 </div>
                                 <div class="layui-inline layui-col-md3">
                                     <button id="select_driver_btn" type="button" class="layui-btn layui-btn-sm layui-btn-fluid">选择</button>
@@ -552,7 +560,11 @@
                         <div class="layui-input-inline layui-row  layui-col-space14">
                             <div class="layui-col-md4 relative">
                                 <span class="input_unit">升</span>
+                                {{# if(dataPermission.canViewOrderCost != 'Y'){ }}
+                                <input value="{{'****'}}" onchange="num(this)" disabled type="text" name="" autocomplete="off" class="layui-input">
+                                {{# }else{ }}
                                 <input value="{{(d.feeDetail.oil * 1 - d.feeDetail.prePayOil * 1).toFixed(2)}}" onchange="num(this)" disabled type="text" name="" autocomplete="off" class="layui-input">
+                                {{# } }}
                                 <span class="blue">x</span>
                             </div>
                             <div class="layui-col-md4 relative">

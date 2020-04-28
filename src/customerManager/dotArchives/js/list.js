@@ -323,7 +323,7 @@ layui
         { field: "endAddress", type: "input" },
         { field: "addrCode", type: "input" },
         { field: "connectorName", type: "input" },
-        { field: "transportOrderNum", type: "numberslot" },
+        // { field: "transportOrderNum", type: "numberslot" },
         { field: "status", type: "checkbox", data: statusData },
       ];
       tableFilterIns = tableFilter.render({

@@ -4,12 +4,13 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
       layer = layui.layer,
       laytpl = layui.laytpl,
       edipao = layui.edipao;
-  var feeTpls = [], startParks = [];
   function Add(){
     var qs = edipao.urlGet();
     console.log(qs)
     this.id = qs.id;
     this.action = qs.action;
+    this.feeTpls = [];
+    this.startParks = [];
   }
   Add.prototype.init = function () {
     var _this = this;
@@ -24,38 +25,35 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
       res2 = res2[0];
       res3 = res3[0];
       if(res1.code == "0" && res2.code == "0" && res3.code == "0")
-        feeTpls = res1.data.feeDTOList || [];
-        startParks = res2.data || [];
-        var commonTpl = {}, commonIndex, feeTpl = $("#fee_template").html();
-        res1.data.feeDTOList.some(function (item, index) {
-          if(item.name == "通用费用模板"){
-            commonTpl = item;
+        _this.detail = res3.data;
+        try {
+          _this.detail.feeJson = JSON.parse(_this.detail.feeJson);
+        } catch (error) {
+          _this.detail.feeJson = [];
+        }
+        var feeList = _this.detail.feeJson, commonIndex = 0, feeTpl = $("#fee_template").html();
+        _this.feeTpls = res1.data.feeDTOList || [];
+        _this.startParks = res2.data || [];
+        feeList.some(function (item, index) {
+          if(item.startWarehouse == "不限"){
             commonIndex = index;
             return true;
           }
         });
-        res1.data.feeDTOList.splice(commonIndex, 1);
-        laytpl(feeTpl).render({index: 0, first: true, commonTpl: commonTpl}, function (html) {
+        laytpl(feeTpl).render({index: 0, first: true, feeTpls: _this.feeTpls, feeItem: feeList[commonIndex]}, function (html) {
           $("#fee_container").append(html);
           form.render();
           _this.bindEvents();
         });
         if(_this.action == "edit"){
-          _this.detail = res3.data;
-          try {
-            _this.detail.feeJson = JSON.parse(_this.detail.feeJson);
-          } catch (error) {
-            _this.detail.feeJson = [];
-          }
-          var feeList = _this.detail.feeJson;
           $("#accountCity").xcity(_this.detail.endProvince, _this.detail.endCity);
           form.val("main_form", res3.data);
           feeList.forEach(function (item, index) {
             if(index > 0){
               laytpl(feeTpl).render({
                 index: index,
-                feeTpls: feeTpls, 
-                startParks: startParks,
+                feeTpls: _this.feeTpls, 
+                startParks: _this.startParks,
                 feeItem: item
               }, function (html) {
                 $("#fee_container").append(html);
@@ -150,7 +148,7 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
       if(e.target.value.length > max) e.target.value = e.target.value.slice(0, max);
     });
     $("#add_fee").unbind().on("click", function (e) {
-      laytpl($("#fee_template").html()).render({index: $(".fee_row").length, feeTpls: feeTpls, startParks: startParks}, function (html) {
+      laytpl($("#fee_template").html()).render({index: $(".fee_row").length, feeTpls: _this.feeTpls, startParks: _this.startParks}, function (html) {
         $("#fee_container").append(html);
         form.render("select");
         $(".view_fee").unbind().on("click", _this.handleViewFee);
@@ -174,7 +172,7 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
         startWarehouseList.push(formData["startWarehouse" + index]);
       });
       if(existNum > 1){
-        layer.msg("相同的发车仓库只能配置一个模板！", {icon: 2});
+        layer.msg("相同的发车仓库只能配置一个运费模板！", {icon: 2});
         var name = data.elem.name;
         var resetData = {};
         resetData[name] = "";

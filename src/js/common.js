@@ -135,6 +135,28 @@ layui.define([], function(exports) {
         var pid = this.urlGet().perssionId;
 
     }
+    Common.prototype.formatDate = function(date, format) {
+        format = format || "yyyy-MM-dd hh:mm:ss";
+        var list = {
+            "y+": String(date.getFullYear()), //年
+            "M+": String(date.getMonth() + 1), //月份 
+            "d+": String(date.getDate()), //日 
+            "h+": String(date.getHours()), //小时 
+            "m+": String(date.getMinutes()), //分 
+            "s+": String(date.getSeconds()), //秒 
+            "q+": String(Math.floor((date.getMonth() + 3) / 3)), //季度 
+            "S": String(date.getMilliseconds()) //毫秒 
+    
+        };
+        Object.keys(list).map(function (key) {
+            var reg = new RegExp("(" + key + ")", 'g');
+            format = format.replace(reg, function (fmt) {
+                if (/y+/.test(fmt)) return list[key].substr(4 - fmt.length);
+                return fmt.length == 1 ? list[key] : ("00" + list[key]).substr(list[key].length);
+            });
+        })
+        return format;
+    };
     Common.prototype.kcodeToGb = function(kcode){
         var codes = "0123456789abcdefghijkmnpqrstuvwxyz"; 
 
