@@ -34,6 +34,9 @@
     .bgc {
       background-color: #ccc;
     }
+    .bold {
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -44,7 +47,7 @@
 <script id="feeInfo" type="text/html">
 <form class="layui-form" lay-filter="addStaff">
   <div class="layui-card">
-    <div class="layui-card-header">基础信息</div>
+    <div class="layui-card-header bold">基础信息</div>
     <div class="layui-card-body">
       <div class="layui-form-item">
         <label for="name" class="layui-form-label">
@@ -67,11 +70,11 @@
     </div>
   </div>
   <div class="layui-card">
-    <div class="layui-card-header">费用结构</div>
+    <div class="layui-card-header bold">费用结构</div>
     {{# layui.each(d.truckModelList, function(index, item){ }}
     {{# if(item.orderType == 1){ }}
     <div class="layui-card-body">
-      <div>车型：{{item.modelName}}背车</div>
+      <div class="bold">车型：{{item.modelName}}背车</div>
       <div class="layui-form-item">
         <div class="layui-inline">
           <label class="layui-form-label">运费</label>
@@ -134,9 +137,10 @@
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
       </div>
+      <hr/>
     </div>
     <div class="layui-card-body">
-      <div>车型：{{item.modelName}}</div>
+      <div class="bold">车型：{{item.modelName}}</div>
       <div class="layui-form-item">
         <div class="layui-inline">
           <label class="layui-form-label">运费</label>
@@ -198,10 +202,11 @@
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
       </div>
+      <hr/>
     </div>
     {{# } else { }}
     <div class="layui-card-body">
-      <div>车型：{{item.modelName}}</div>
+      <div class="bold">车型：{{item.modelName}}</div>
       <div class="layui-form-item">
         <div class="layui-inline">
           <label class="layui-form-label">运费</label>
@@ -262,6 +267,7 @@
           <div class="layui-form-mid layui-word-aux">%</div>
         </div>
       </div>
+      <hr/>
     </div>
     {{# } }}
     {{# }) }}

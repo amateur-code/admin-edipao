@@ -28,14 +28,27 @@
   </script>
   <style type="text/css">
     .layui-col-xs4 {
-      padding: 20px;
+      padding: 10px;
+    }
+
+    .layui-col-xs6 {
+      padding: 10px;
+    }
+
+    .layui-col-xs12 {
+      padding: 10px;
     }
 
     .layui-col-xs4 > span {
       color: #1E9FFF;
     }
+
     .colorb {
       color: #1E9FFF;
+    }
+
+    .bold {
+      font-weight: bold;
     }
   </style>
 </head>
@@ -81,7 +94,7 @@
 </div>
 <script id="auditInfo" type="text/html">
 <div class="layui-card">
-  <div class="layui-card-header">基本信息</div>
+  <div class="layui-card-header bold">基本信息</div>
   <div class="layui-card-body">
     <div class="layui-fluid">
       <div class="layui-row">
@@ -111,14 +124,14 @@
 </div>
 
 <div class="layui-card">
-  <div class="layui-card-header">费用架构</div>
+  <div class="layui-card-header bold">费用架构</div>
   <div class="layui-card-body">
     {{# if(d.detail.feeItemJson == 0){ }}
     <div class="no-data"><label class="layui-form-label">暂无数据</label></div>
     {{# } else { }}
     <div class="layui-fluid">
       {{# layui.each(d.detail.feeItemJson, function(index, item){ }}
-      <div>{{item.carModel}}</div>
+      <div class="bold">车型：{{item.carModel}}</div>
       <div class="layui-row">
         <div class="layui-col-xs4">
           运费：<span>{{item.freightUnitPrice}} 元/km</span>
@@ -153,6 +166,7 @@
           {{# } }}
         </div>
       </div>
+      <hr/>
       {{# }) }}
       {{# } }}
     </div>
