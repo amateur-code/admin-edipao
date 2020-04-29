@@ -49,7 +49,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
               _this.check.feeJson = [];
             }
           }
-          _this.check.feeJson.length > 0 && _this.detail.feeJson.forEach(function (item, index) {
+          _this.check.feeJson && _this.detail.feeJson.forEach(function (item, index) {
             var startWarehouse = item.startWarehouse,
               feeId = item.feeId,
               name = item.name;
@@ -75,7 +75,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
               _this.detail.feeJson[index].delete = true;
             }
           });
-          _this.check.feeJson.forEach(function (item) {
+          _this.check.feeJson && _this.check.feeJson.forEach(function (item) {
             var startWarehouse = item.startWarehouse,
               feeId = item.feeId,
               name = item.name;

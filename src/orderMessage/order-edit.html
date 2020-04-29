@@ -101,6 +101,7 @@
                     <div class="layui-row">
                         <div class="layui-col-md1">
                             <div class="title">车辆信息</div>
+                            <input class="carOilCapacity" type="text" name="oilCapacity" style="width:0;height:0;visibility:hidden;pointer-events:none;">
                         </div>
                         <div style="line-height: 32px;" class="layui-col-md1 blue pointer btn_btn">
                             <span class="select_vin" data-filter="CARFORM">选择vin码</span>
@@ -119,7 +120,7 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">车辆vin码</label><br>
                             <div class="layui-input-inline">
-                                <input type="text" name="vinCode" lay-verify="required" autocomplete="off" class="layui-input vinCode_input">
+                                <input data-filter="CARFORM" type="text" name="vinCode" lay-verify="required" autocomplete="off" class="layui-input vinCode_input">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -550,7 +551,7 @@
                                 <input data-field="prePayOil" value="{{d.feeDetail.prePayOil}}" onkeyup="num(this)" type="text" name="prePayOil" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5">
-                                <div class="blue">油箱容量：{{d.feeDetail.oilCapacity > 100000 ? '无限' : d.feeDetail.oilCapacity + '升'}}</div>
+                                <div class="blue">油箱容量：{{d.feeDetail.oilCapacity > 100000 ? '无限' : d.feeDetail.oilCapacity * .95 + '升'}}</div>
                                 <input value="{{d.feeDetail.oilCapacity}}" type="text" name="oilCapacity" class="layui-input" style="width: 0;height: 0;opacity:0;">
                             </div>
                         </div>

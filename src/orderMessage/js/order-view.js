@@ -30,7 +30,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 		this.feeUpdateData = {};
 		this.truckUpdateData = {};
     this.dataPermission = edipao.getDataPermission();
-    this.dataPermission.canViewOrderIncome = "";
     this.truckList = [];
     window.dataPermission = this.dataPermission;
   }
@@ -96,7 +95,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             res2.data.truckDTOList = res2.data.truckDTOList || [];
 						_this.parseTruckData(res3.data);
             _this.parseData(res2.data);
-            _this.parseData(_this.updateData);
+            _this.parseData(_this.updateData, true);
             _this.orderData = res2.data;
             _this.truckUpdateData = res3.data || {add:[],update:{},delete:[]};
 
@@ -141,7 +140,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 				}
       });
 		},
-    parseData: function (data) {
+    parseData: function (data, update) {
       Object.keys(data).forEach(function (key) {
         if(feeKeys.indexOf(key) < 0 && orderKeys.indexOf(key) < 0){
           if(!data[key] || data[key] == "undefined"){
@@ -149,13 +148,15 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           }
         }
       });
-      if(!data.deliveryOperator && !data.deliveryOperatorPhone){
-        data.deliveryOperator = "- -";
-        data.deliveryOperatorPhone = "";
-      }
-      if(!data.followOperator && !data.followOperatorPhone){
-        data.followOperator = "- -";
-        data.followOperatorPhone = "";
+      if(!update){
+        if(!data.deliveryOperator && !data.deliveryOperatorPhone){
+          data.deliveryOperator = "- -";
+          data.deliveryOperatorPhone = "";
+        }
+        if(!data.followOperator && !data.followOperatorPhone){
+          data.followOperator = "- -";
+          data.followOperatorPhone = "";
+        }
       }
       switch(data.tailPayBillType * 1){
         case 1:
