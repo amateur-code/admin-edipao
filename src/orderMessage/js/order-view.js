@@ -32,6 +32,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     this.dataPermission = edipao.getDataPermission();
     this.truckList = [];
     window.dataPermission = this.dataPermission;
+    console.log(this.dataPermission)
   }
   $.extend(View.prototype, {
     init: function () {
@@ -42,7 +43,17 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           if(res.code == "0"){
             _this.parseData(res.data);
             _this.orderData = res.data;
-            laytpl($("#forms_tpl").html()).render({orderData: res.data, feeUpdateData: {}}, function (html) {
+            if(_this.dataPermission.canViewOrderCost != "Y"){
+              _this.orderData.oil = "****";
+              _this.orderData.prePayOil = "****";
+              _this.orderData.oilAmount = "****";
+              _this.orderData.amount = "****";
+              _this.orderData.totalAmount = "****";
+              _this.orderData.prePayAmount = "****";
+              _this.orderData.arrivePayAmount = "****";
+              _this.orderData.tailPayAmount = "****";
+            }
+            laytpl($("#forms_tpl").html()).render({orderData: _this.orderData, feeUpdateData: {}}, function (html) {
               $("#form_income_container").after(html);
               _this.setData(_this.orderData);
               _this.bindEvents();
@@ -83,7 +94,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
                 updateData = JSON.parse(res1.data.modifyAfterJson);
                 updateData.forEach(function (item) {
                   if(_this.dataPermission.canViewOrderCost != "Y"){
-                    _this.feeUpdateData[item.name] = "****";
+                    if(item.name != "driverMileage") _this.feeUpdateData[item.name] = "****";
                   }else{
                     _this.feeUpdateData[item.name] = item.value;
                   }
@@ -108,6 +119,19 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 
             _this.updateData.orderData = _this.orderData;
             _this.updateData.feeUpdateData = _this.feeUpdateData || {};
+            if(_this.dataPermission.canViewOrderCost != "Y"){
+              Object.keys(_this.feeUpdateData).forEach(function (key) {
+                if(key != "driverMileage") _this.feeUpdateData[key] = "****";
+              });
+              _this.updateData.orderData.oil = "****";
+              _this.updateData.orderData.prePayOil = "****";
+              _this.updateData.orderData.oilAmount = "****";
+              _this.updateData.orderData.amount = "****";
+              _this.updateData.orderData.totalAmount = "****";
+              _this.updateData.orderData.prePayAmount = "****";
+              _this.updateData.orderData.arrivePayAmount = "****";
+              _this.updateData.orderData.tailPayAmount = "****";
+            }
             laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
               $("#form_income_container").after(html);
             });

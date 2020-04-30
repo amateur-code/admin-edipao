@@ -96,7 +96,7 @@
             </div>
         </script>
         <script id="car_info_tpl" type="text/html">
-            <form lay-filter="CARFORM" class="car_info_form layui-row layui-col-space15 page_block layui-form CARFORM">
+            <form data-filter="CARFORM" lay-filter="CARFORM" class="car_info_form layui-row layui-col-space15 page_block layui-form CARFORM">
                 <div class="page-header border-bottom">
                     <div class="layui-row">
                         <div class="layui-col-md1">
@@ -107,7 +107,7 @@
                             <span class="select_vin" data-filter="CARFORM">选择vin码</span>
                         </div>
                         <div style="line-height: 32px;" class="layui-col-md1 layui-col-md-offset8 btn_btn switch_updown">
-                            <input type="checkbox" name="masterFlag" lay-text="上车|下车" lay-skin="switch" checked="checked">
+                            <input data-filter="CARFORM" class="masterFlag" lay-filter="masterFlag" type="checkbox" name="masterFlag" lay-text="上车|下车" lay-skin="switch" checked="checked">
                         </div>
                         <div style="line-height: 32px;" class="layui-col-md1 btn_btn">
                             <span data-filter="CARFORM" class="del_car_btn blue pointer">删除车辆</span>
@@ -132,7 +132,7 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">车型</label><br>
                             <div class="layui-input-inline">
-                                <input disabled type="text" name="model" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input disabled type="text" name="model" lay-verify="required" autocomplete="off" class="model layui-input">
                             </div>
                         </div>
                     </div>
@@ -174,7 +174,7 @@
                                     <div class="layui-select-title">
                                         <input name="startWarehouse" type="text" class="startWarehouse_search_input layui-input" autocomplete="off">
                                     </div>
-                                    <dl class="layui-anim layui-anim-upbit startWarehouse_options">
+                                    <dl data-filter="CARFORM" class="layui-anim layui-anim-upbit startWarehouse_options">
                                         <dd lay-value="" class="layui-select-tips">暂无数据</dd>
                                     </dl>
                                 </div>
@@ -240,8 +240,8 @@
                                 <div class="layui-input-inline layui-col-md9" style="width: 250px;margin-right: 0;">
                                     <!-- <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList"> -->
                                     <input class="layui-input location-start-name" name="startAddress" id="seach-location-input-start" autocomplete="off" placeholder="请输入收车位置" value=""/>
-                                    <input name="startLat" id="startLat" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
-                                    <input name="startLng" id="startLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                    <input class="startLat" name="startLat" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                    <input class="startLng" name="startLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
                                 </div>
                                 <div class="layui-input-inline layui-col-md3" style="width: 50px;">
                                     <a data-field="start" class="layui-btn showMap selectMapLocation">选择</a>
@@ -256,8 +256,9 @@
                                 <div class="layui-form-select">
                                     <div class="layui-select-title">
                                         <input name="endPark" type="text" class="end_park_search_input layui-input" autocomplete="off">
+                                        <input name="endAddrCode" class="endAddrCode" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
                                     </div>
-                                    <dl class="layui-anim layui-anim-upbit end_park_options">
+                                    <dl data-filter="CARFORM" class="layui-anim layui-anim-upbit end_park_options">
                                         <dd lay-value="" class="layui-select-tips">暂无数据</dd>
                                     </dl>
                                 </div>
@@ -291,8 +292,8 @@
                                 <div class="layui-input-inline layui-col-md9" style="width: 250px;margin-right: 0;">
                                     <!-- <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList"> -->
                                     <input class="layui-input location-end-name" name="endAddress" id="seach-location-input" autocomplete="off" placeholder="请输入收车位置" value=""/>
-                                    <input name="endLat" id="endLat" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
-                                    <input name="endLng" id="endLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                    <input name="endLat" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                    <input name="endLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
                                 </div>
                                 <div class="layui-input-inline layui-col-md3" style="width: 50px;">
                                     <a data-field="end" class="layui-btn showMap selectMapLocation">选择</a>
@@ -349,7 +350,7 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>结算方式</label><br>
                             <div class="layui-input-inline">
-                                <select name="settleWay" lay-verify="">
+                                <select disabled name="settleWay" lay-verify="">    
                                     <option value="1" selected>现结</option>
                                     <option value="2">月结</option>
                                     <option value="3">账期</option>
@@ -551,7 +552,11 @@
                                 <input data-field="prePayOil" value="{{d.feeDetail.prePayOil}}" onkeyup="num(this)" type="text" name="prePayOil" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5">
+                                {{# if(dataPermission.canViewOrderCost != 'Y'){ }}
+                                <div class="blue">油箱容量：{{'****升'}}</div>
+                                {{# }else{ }}
                                 <div class="blue">油箱容量：{{d.feeDetail.oilCapacity > 100000 ? '无限' : d.feeDetail.oilCapacity * .95 + '升'}}</div>
+                                {{# } }}
                                 <input value="{{d.feeDetail.oilCapacity}}" type="text" name="oilCapacity" class="layui-input" style="width: 0;height: 0;opacity:0;">
                             </div>
                         </div>
@@ -622,7 +627,7 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input data-field="prePayAmount" value="{{d.feeDetail.prePayAmount}}" onkeyup="num(this)" type="text" name="prePayAmount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
+                                <input data-field="prePayAmount" value="{{(d.feeDetail.prePayAmount * 1).toFixed(2)}}" onkeyup="num(this)" type="text" name="prePayAmount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.prePayRatio}}%</div>
@@ -636,7 +641,7 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input data-field="arrivePayAmount" value="{{d.feeDetail.arrivePayAmount}}" onkeyup="num(this)" type="text" name="arrivePayAmount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
+                                <input data-field="arrivePayAmount" value="{{(d.feeDetail.arrivePayAmount * 1).toFixed(2)}}" onkeyup="num(this)" type="text" name="arrivePayAmount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.arrivePayRatio}}%</div>
@@ -650,7 +655,7 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input value="{{d.feeDetail.tailPayAmount}}" onchange="num(this)" disabled type="text" name="tailPayAmount" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input value="{{(d.feeDetail.tailPayAmount * 1).toFixed(2)}}" onchange="num(this)" disabled type="text" name="tailPayAmount" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.tailPayRatio}}%</div>
@@ -666,8 +671,8 @@
                     <div class="layui-inline layui-col-md3">
                         <label class="layui-form-label text_left form_label">结算方式</label><br>
                         <div class="layui-input-inline layui-row">
-                            <select name="tailPayBillType" lay-filter="tailPayBillType">
-                                <option value="1" {{d.feeDetail.tailPayBillType == '1' ? 'selected' : ''}}>现结</option>
+                            <select disabled name="tailPayBillType" lay-filter="tailPayBillType">
+                                <option value="1" selected>现结</option>
                                 <option value="2" {{d.feeDetail.tailPayBillType == '2' ? 'selected' : ''}}>月结</option>
                                 <option value="3" {{d.feeDetail.tailPayBillType == '3' ? 'selected' : ''}}>账期</option>
                             </select>

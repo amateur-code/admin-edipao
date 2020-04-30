@@ -409,8 +409,6 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 							initData[elemId] = tableFilter.cache[elemId];
 							sessionStorage.setItem("tableFilterData", JSON.stringify(initData));
 						} catch (error) {}
-						console.log(tableFilter.cache[elemId])
-
 						//写入回调函数
 						opt.done(tableFilter.cache[elemId]);
 

@@ -41,7 +41,7 @@ layui.config({
     base: '../../lib/'
 }).extend({
     excel: 'layui_exts/excel.min',
-    tableFilter: 'TableFilter/tableFilter',
+    tableFilter: 'TableFilter/tableFiltercopy',
 }).use(['form', 'jquery','layer', 'upload', 'table','laytpl', 'excel', 'tableFilter'], function () {
     var tableName = "orderMessage-order-list";
     var mainTable;
@@ -1158,19 +1158,6 @@ layui.config({
                                     break;
                                 case 'prePayAmount':
                                     var payStatus = "";
-                                    if (prePayApprovalBtn == 1) {
-                                        payStatus = '-申请支付';
-                                    } else if (prePayApprovalBtn == 2) {
-                                        payStatus = '-审核';
-                                    } else if (prePayApprovalBtn == 3) {
-                                        payStatus = '-支付';
-                                    } else if (prePayApprovalBtn == 4) {
-                                        payStatus = "-已支付";
-                                    }else if(prePayApprovalBtn == 0){
-                                        payStatus = "";
-                                    } else {
-                                        payStatus = "-非法状态";
-                                    }
                                     if(orderType == 2 && masterFlag == "否"){
                                         value = "";
                                         break;
@@ -1183,19 +1170,6 @@ layui.config({
                                     break;
                                 case 'arrivePayAmount':
                                     var payStatus = "";
-                                    if (arrivePayApprovalBtn == 1) {
-                                        payStatus = '-申请支付';
-                                    } else if (arrivePayApprovalBtn == 2) {
-                                        payStatus = '-审核';
-                                    } else if (arrivePayApprovalBtn == 3) {
-                                        payStatus = '-支付';
-                                    } else if (arrivePayApprovalBtn == 4) {
-                                        payStatus = "-已支付";
-                                    }else if(arrivePayApprovalBtn == 0){
-                                        payStatus = "";
-                                    } else {
-                                        payStatus = "-非法状态";
-                                    }
                                     if(orderType == 2 && masterFlag == "否"){
                                         value = "";
                                         break;
@@ -1208,23 +1182,6 @@ layui.config({
                                     break;
                                 case 'tailPayAmount':
                                     var payStatus = "";
-                                    if (tailPayApprovalBtn == 1) {
-                                        payStatus = '-申请支付';
-                                    } else if (tailPayApprovalBtn == 2) {
-                                        payStatus = '-审核';
-                                    } else if (tailPayApprovalBtn == 3) {
-                                        payStatus = '-支付';
-                                    } else if (tailPayApprovalBtn == 4) {
-                                        payStatus = "-已支付";
-                                    }else if(tailPayApprovalBtn == 0){
-                                        payStatus = "";
-                                    } else {
-                                        payStatus = "-非法状态";
-                                    }
-                                    if(orderType == 2 && masterFlag == "否"){
-                                        value = "";
-                                        break;
-                                    }
                                     if(dataPermission.canViewOrderCost != "Y"){
                                         value = "****" + payStatus;
                                     }else{
