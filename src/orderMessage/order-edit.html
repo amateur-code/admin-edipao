@@ -350,7 +350,7 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>结算方式</label><br>
                             <div class="layui-input-inline">
-                                <select disabled name="settleWay" lay-verify="">    
+                                <select disabled name="settleWay" lay-verify="settleWay">    
                                     <option value="1" selected>现结</option>
                                     <option value="2">月结</option>
                                     <option value="3">账期</option>
@@ -655,7 +655,7 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input value="{{(d.feeDetail.tailPayAmount * 1).toFixed(2)}}" onchange="num(this)" disabled type="text" name="tailPayAmount" lay-verify="required" autocomplete="off" class="layui-input">
+                                <input value="{{(d.feeDetail.tailPayAmount * 1).toFixed(2)}}" onchange="num(this)" disabled type="text" name="tailPayAmount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.tailPayRatio}}%</div>
@@ -673,8 +673,8 @@
                         <div class="layui-input-inline layui-row">
                             <select disabled name="tailPayBillType" lay-filter="tailPayBillType">
                                 <option value="1" selected>现结</option>
-                                <option value="2" {{d.feeDetail.tailPayBillType == '2' ? 'selected' : ''}}>月结</option>
-                                <option value="3" {{d.feeDetail.tailPayBillType == '3' ? 'selected' : ''}}>账期</option>
+                                <option value="2">月结</option>
+                                <option value="3">账期</option>
                             </select>
                         </div>
                     </div>

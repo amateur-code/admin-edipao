@@ -188,11 +188,25 @@
 			overflow-wrap: break-word;
 		}
 		#fee_container .layui-form-item{
-			margin-bottom: 20px;
+			margin-bottom: 0px;
 		}
 		.check_span{
 			display: inline-block;
 			margin-top: 5px;
+		}
+		.form_span{
+			position: absolute;
+			left: 0;
+			display: inline-block;
+			width: 110px;
+			text-align: right;
+		}
+		.form_span + span{
+			display: inline-block;
+			margin-left: 120px;
+		}
+		.blue{
+			color: #3490e9;
 		}
 	</style>
 </head>
@@ -243,135 +257,100 @@
 			<div class="layui-card-header">基础信息</div>
 			<div class="layui-card-body layui-row layui-col-space10 info_row">
 				<div class="layui-col-md4">
-					<div class="layui-form-item">
-						<label class="layui-form-label">网点名称：</label>
-						<div class="layui-input-block">
-							<span class="name-color" id="name">{{d.detail.company}}</span>
-						</div>
+					<div class="layui-row">
+						<span class="layui-form-span form_span">网点名称：</span>
+						<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.company}}</span>
 					</div>
+					{{# if(d.check.company){ }}
+					<div class="layui-row">
+							<span class="layui-form-span form_span red">待审：</span>
+							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.company}}</span>
+					</div>
+					{{# } }}
 				</div>
 				<div class="layui-col-md4">
-					<div class="layui-form-item">
-						<label class="layui-form-label">所在省市：</label>
-						<div class="layui-input-block">
-							<span class="name-color" name="phone" id="phone">{{d.detail.endProvince + d.detail.endCity}}</span>
-						</div>
+					<div class="layui-row">
+						<span class="layui-form-span form_span">所在省市：</span>
+						<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.endProvince + d.detail.endCity}}</span>
 					</div>
-				</div>
-				<div class="layui-col-md4">
-					<div class="layui-form-item">
-						<label class="layui-form-label">详细地址：</label>
-						<div class="layui-input-block">
-							<span class="name-color" name="idNum" id="idNum">{{d.detail.endAddress}}</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="layui-card-body layui-row layui-col-space10" style="padding: 0;">
-				<div class="layui-col-md4">
-					<div class="layui-form-item">
-						{{# if(d.check.company){ }}
-						<label class="layui-form-label x-red">待审：</label>
-						<div class="layui-input-block" style="left: 13px;">
-							<span>{{d.check.company}}</span>
-						</div>
-						{{# } }}
-					</div>
-				</div>
-				{{# if(d.check.endProvince || d.check.endCity){ }}
-				<div class="layui-col-md4">
-					<div class="layui-form-item">
-						{{# if(d.check.endProvince){ }}
-						<label class="layui-form-label x-red">待审：</label>
-						<div class="layui-input-block" style="left: 8px;">
-							<span class="">{{d.check.endProvince}}</span>
-						</div>
+					{{# if(d.check.endProvince || d.check.endCity){ }}
+					<div class="layui-row">
+						<span class="layui-form-span form_span red">待审：</span>
+						{{# if(d.check.endProvince && d.check.endProvince){ }}
+						<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.endProvince + d.check.endCity}}</span>
 						{{# }else if(d.check.endCity){ }}
-						<label class="layui-form-label x-red">待审：</label>
-						<div class="layui-input-block" style="left: 8px;">
-							<span class="">{{d.check.endCity}}</span>
-						</div>
+						<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.endCity}}</span>
 						{{# }else{ }}
-						<label class="layui-form-label x-red">待审：</label>
-						<div class="layui-input-block" style="left: 8px;">
-							<span class="">{{d.check.endProvince + d.check.endCity}}</span>
-						</div>
+						<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.endProvince + d.check.endCity}}</span>
 						{{# } }}
 					</div>
+					{{# } }}
 				</div>
-				{{# } }}
 				<div class="layui-col-md4">
-					<div class="layui-form-item">
-						{{# if(d.check.endAddress){ }}
-						<label class="layui-form-label x-red">待审：</label>
-						<div class="layui-input-block">
-							<span>{{d.check.endAddress}}</span>
-						</div>
-						{{# } }}
+					<div class="layui-row">
+						<span class="layui-form-span form_span">详细地址：</span>
+						<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.endAddress}}</span>
 					</div>
+					{{# if(d.check.endAddress){ }}
+					<div class="layui-row">
+							<span class="layui-form-span form_span red">待审：</span>
+							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.endAddress}}</span>
+					</div>
+					{{# } }}
 				</div>
 			</div>
 			<div class="layui-card-body layui-row layui-col-space10">
 					<div class="layui-col-md4">
-						<div class="layui-form-item">
-							<label class="layui-form-label">地址代码：</label>
-							<div class="layui-input-block">
-								<span class="name-color" name="dotType" id="dotType">{{d.detail.addrCode}}</span>
-							</div>
-							{{# if(d.check.addrCode){ }}
-							<div class="check" style="top:30px;"><label class="layui-form-label x-red">待审：</label>
-								<div class="layui-input-block">{{d.check.addrCode}}</div>
-							</div>
-							{{# } }}
+						<div class="layui-row">
+							<span class="layui-form-span form_span">地址代码：</span>
+							<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.addrCode}}</span>
 						</div>
+						{{# if(d.check.addrCode){ }}
+						<div class="layui-row">
+								<span class="layui-form-span form_span red">待审：</span>
+								<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.addrCode}}</span>
+						</div>
+						{{# } }}
 					</div>
 					<div class="layui-col-md4">
-						<div class="layui-form-item">
-							<label class="layui-form-label">联系人：</label>
-							<div class="layui-input-block">
-								<span class="name-color" name="dotLicenceType" id="dotLicenceType">{{d.detail.connectorName + d.detail.connectorPhone }}</span>
-							</div>
-							{{# if(d.check.connectorName || d.check.connectorPhone){ }}
-							<div class="check" style="top:30px;"><label class="layui-form-label x-red">待审：</label>
-								{{# if(d.check.connectorName && !d.check.connectorPhone){ }}
-								<div class="layui-input-block">{{d.check.connectorName + d.detail.connectorPhone }}</div>
-								{{# }else if(d.check.connectorPhone && !d.check.connectorName){ }}
-								<div class="layui-input-block">{{d.detail.connectorName + d.check.connectorPhone }}</div>
-								{{# }else{ }}
-								<div class="layui-input-block">{{d.detail.connectorName + d.detail.connectorPhone }}</div>
-								{{# } }}
-							</div>
+						<div class="layui-row">
+							<span class="layui-form-span form_span">联系人：</span>
+							<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.connectorName + d.detail.connectorPhone }}</span>
+						</div>
+						{{# if(d.check.connectorName || d.check.connectorPhone){ }}
+						<div class="layui-row">
+							<span class="layui-form-span form_span red">待审：</span>
+							{{# if(d.check.connectorName && !d.check.connectorPhone){ }}
+							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.connectorName + d.detail.connectorPhone }}</span>
+							{{# }else if(d.check.connectorPhone && !d.check.connectorName){ }}
+							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.detail.connectorName + d.check.connectorPhone }}</span>
+							{{# }else{ }}
+							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.connectorName + d.check.connectorPhone }}</span>
 							{{# } }}
 						</div>
+						{{# } }}
 					</div>
 					<div class="layui-col-md4">
-						<div class="layui-form-item">
-							<label class="layui-form-label">状态：</label>
-							<div class="layui-input-block">
-								<span class="name-color" name="dotType" id="dotType">{{d.detail.statusDesc}}</span>
-							</div>
-							{{# if(d.check.status){ }}
-							<div class="check"><label class="layui-form-label x-red">待审：</label>
-								<div class="layui-input-block">{{d.check.status * 1 == 1 ? '有效' : '无效'}}</div>
-							</div>
-							{{# } }}
+						<div class="layui-row">
+							<span class="layui-form-span form_span">状态：</span>
+							<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.statusDesc}}</span>
 						</div>
-					</div>
-					<div class="layui-col-md12 info_row">
-						<div class="layui-form-item">
-							<label class="layui-form-label">备注：</label>
-							<div class="layui-input-block">
-								<span class="name-color" name="dotType" id="dotType">{{d.detail.remark}}</span>
-							</div>
+						{{# if(d.check.statusDesc){ }}
+						<div class="layui-row">
+								<span class="layui-form-span form_span red">待审：</span>
+								<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.statusDesc}}</span>
 						</div>
+						{{# } }}
 					</div>
-					<div class="layui-col-md12">
+					<div class="layui-col-md12 info_row" style="padding-top: 15px;">
+						<div class="layui-row">
+							<span class="layui-form-span form_span">备注：</span>
+							<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.remark}}</span>
+						</div>
 						{{# if(d.check.remark){ }}
-						<div class="layui-form-item">
-							<label class="layui-form-label x-red">待审：</label>
-							<div class="layui-input-block">
-								<span>{{d.check.remark}}</span>
-							</div>
+						<div class="layui-row">
+								<span class="layui-form-span form_span red">待审：</span>
+								<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.remark}}</span>
 						</div>
 						{{# } }}
 					</div>
@@ -379,27 +358,31 @@
 		</div>
 		<div id="fee_container" class="layui-card layui-form">
 			<div class="layui-card-header">费用结构</div>
-			{{# console.log(d) }}
+			{{# if(!d.detail.feeJson || d.detail.feeJson.length == 0){ }}
+			<div class="layui-card-body layui-row layui-col-space10" style="padding: 15px 15px;text-align:center;color: #666;">
+				暂无数据
+			</div>
+			{{# } }}
 			{{# if(d.detail.feeJson && d.detail.feeJson.length > 0){ }}
 				{{#  layui.each(d.detail.feeJson, function(index, item){ }}
-				<div class="layui-card-body layui-row layui-col-space10">
+				<div class="layui-card-body layui-row layui-col-space10" style="padding: 0px 15px 15px;">
 					{{# if(item.isNew){ }}
-						<div> <span class="x-red">待审</span>：新增</div>
+						<div style="padding: 0px;"> <span class="x-red">待审</span>：新增</div>
 					{{# } }}
 					{{# if(item.delete){ }}
-						<div> <span class="x-red">待审</span>：删除</div>
+						<div style="padding: 0px;"> <span class="x-red">待审</span>：删除</div>
 					{{# } }}
-					<div class="layui-col-md4">
+					<div class="layui-col-md4" style="padding: 0px 5px;">
 						<div class="layui-form-item">
-							<label class="layui-form-label">发车仓库：</label>
+							<label class="layui-form-label" style="height: auto;">发车仓库：</label>
 							<div class="layui-input-block">
 								<span class="name-color">{{item.startWarehouse}}</span>
 							</div>
 						</div>
 					</div>
-					<div class="layui-col-md5">
+					<div class="layui-col-md5 style="padding: 0px 5px;"">
 						<div class="layui-form-item">
-							<label class="layui-form-label">
+							<label class="layui-form-label" style="height: auto;">
 								运费模板：
 								{{# if(item.check && item.check.name){ }}
 									<div class="x-red">待审：</div>
@@ -419,6 +402,7 @@
 							</div>
 						</div>
 					</div>
+					<div style="height:0px; border-bottom: 1px solid #f6f6f6;width:96%;position:absolute;bottom:0;margin: 15px 0;"></div>
 				</div>
 				{{#  }); }}
 			{{# }else{ }}

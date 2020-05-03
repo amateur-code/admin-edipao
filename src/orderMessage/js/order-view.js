@@ -258,6 +258,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     },
     setData: function (data) {
       var _this = this;
+      data.updateData = _this.updateData;
        //渲染订单数据
        if(!data.feeId){
         data.oilAmount = 0;

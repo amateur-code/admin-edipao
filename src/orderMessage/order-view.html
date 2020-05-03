@@ -107,6 +107,20 @@
                 <span disabled type="text" autocomplete="off" class="blue">{{d.totalManageFee}}</span>
             </div>
         </div>
+        <div class="layui-row form_item_container">
+            <div class="layui-col-md4">
+                {{# if(d.updateData.totalIncome){ }}
+                <span class="layui-form-span form_span red">待审：</span>
+                <span disabled type="text" autocomplete="off" class="blue">{{d.updateData.totalIncome}}</span>
+                {{# } }}
+            </div>
+            <div class="layui-col-md4">
+                {{# if(d.updateData.totalManageFee){ }}
+                <span class="layui-form-span form_span red">待审：</span>
+                <span disabled type="text" autocomplete="off" class="blue">{{d.updateData.totalManageFee}}</span>
+                {{# } }}
+            </div>
+        </div>
       </script>
       <script id="car_info_tpl" type="text/html">
         <form lay-filter="CARFORM" class="car_info_form layui-row layui-col-space15 page_block layui-form CARFORM">
@@ -408,7 +422,7 @@
                     <div class="layui-inline layui-col-md4">
                         <div class="layui-row">
                             <span class="layui-form-span form_span">运输商指派时间：</span>
-                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.transportAssignTime}}</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.transportAssignTime || '- -'}}</span>
                         </div>
                         {{# if(d.updateData.transportAssignTime){ }}
                         <div class="layui-row">
@@ -445,7 +459,7 @@
                     </div>
                 </div>
                 <div class="layui-form-item layui-row">
-                    <div class="layui-inline layui-col-md6">
+                    <div class="layui-inline layui-col-md3">
                         <div class="layui-row">
                             <span class="layui-form-span form_span textarea_span">销售备注：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.saleRemark}}</span>
@@ -457,7 +471,7 @@
                         </div>
                         {{# } }}
                     </div>
-                    <div class="layui-inline layui-col-md6">
+                    <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                         <div class="layui-row">
                             <span class="layui-form-span form_span textarea_span">储运备注：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.storageAndDeliverRemark}}</span>
@@ -469,9 +483,7 @@
                         </div>
                         {{# } }}
                     </div>
-                </div>
-                <div class="layui-form-item layui-row">
-                    <div class="layui-inline layui-col-md6">
+                    <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                         <div class="layui-row">
                             <span class="layui-form-span form_span textarea_span">经销商备注：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.dealerRemark}}</span>
@@ -483,7 +495,9 @@
                         </div>
                         {{# } }}
                     </div>
-                    <div class="layui-inline layui-col-md6">
+                </div>
+                <div class="layui-form-item layui-row" style="margin-bottom: 30px;">
+                    <div class="layui-inline layui-col-md3">
                         <div class="layui-row">
                             <span class="layui-form-span form_span textarea_span">发运资源库备注（委改库）：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.deliverResourceRemark}}</span>
@@ -495,9 +509,7 @@
                         </div>
                         {{# } }}
                     </div>
-                </div>
-                <div class="layui-form-item layui-row">
-                    <div class="layui-inline layui-col-md6">
+                    <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                         <div class="layui-row">
                             <span class="layui-form-span form_span textarea_span">运输商备注：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.transportRemark}}</span>

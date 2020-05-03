@@ -277,6 +277,7 @@ layui.config({
                 }
                 index++;
             });
+            console.log(reload)
             if(reload){
                 reloadOption = { where: where, page: { curr: 1 }};
             }else{
@@ -1692,13 +1693,21 @@ layui.config({
             if(permissionList.indexOf("提车照片上传") < 0){
                 str2 = "";
             }
-            switch(d.fetchUploadBtn*1){
+            switch(d.fetchStatus*1){
+                case 0: 
                 case 1:
-                    status = "未上传" + str2.replace("{{}}"," 上传");
+                    status = "未上传";
                     break;
                 case 2:
+                case 3:
                     status = str.replace("{{}}","查看");
                     break;
+                case 4:
+                    status = "已驳回";
+                    break;
+            }
+            if(d.fetchUploadBtn * 1 == 1){
+                status += str2.replace("{{}}"," 上传");
             }
             if(d.fetchApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
@@ -1719,13 +1728,21 @@ layui.config({
             if(permissionList.indexOf("发车单-上传") < 0){
                 str2 = "";
             }
-            switch(d.startUploadBtn*1){
+            switch(d.startAuditStatus*1){
+                case 0:
                 case 1:
-                    status = "未上传" + str2.replace("{{}}"," 上传");
+                    status = "未上传";
                     break;
                 case 2:
+                case 3:
                     status = str.replace("{{}}","查看");
                     break;
+                case 4:
+                    status = "已驳回";
+                    break;
+            }
+            if(d.startUploadBtn * 1 == 1){
+                status += str2.replace("{{}}"," 上传");
             }
             if(d.startApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");
@@ -1746,13 +1763,21 @@ layui.config({
             if(permissionList.indexOf("交接单回收-上传") < 0){
                 str2 = "";
             }
-            switch(d.returnUploadBtn * 1){
+            switch(d.returnAuditStatus * 1){
+                case 0:
                 case 1:
-                    status = "未上传" + str2.replace("{{}}"," 上传");
+                    status = "未上传";
                     break;
                 case 2:
+                case 3:
                     status = str.replace("{{}}","查看");
                     break;
+                case 4:
+                    status = "已驳回";
+                    break;
+            }
+            if(d.returnUploadBtn * 1 == 1){
+                status += str2.replace("{{}}"," 上传");
             }
             if(d.returnApprovalBtn * 1 == 1){
                 status += str3.replace("{{}}"," 审核");

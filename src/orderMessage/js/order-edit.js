@@ -82,6 +82,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       if(res.code == "0"){
         _this.orderDataBackUp = JSON.parse(JSON.stringify(res.data));
         _this.orderData = res.data;
+        _this.feeId = res.data.feeId;
         _this.setData(res.data);
 
         // 默认地图初始化
@@ -450,9 +451,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             truckData.income = "****";
             truckData.manageFee = "****";
           }
+          truckData.settleWay = 1;
           form.val(item.filter, truckData);
           form.render('select');
           layer.close(_this.loadingIndex);
+          _this.setStartWareHouseSelect(item.filter, _this.selectData[3]);
           $("[lay-filter=" + item.filter + "] .select_vin").remove();
           _this.setStartWareHouseSelect(item.filter, [{
             "startProvince": truckData.startProvince || "",
@@ -470,6 +473,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           city: truckData.endCity,
           selector: "." + item.filter + "_endCity_select"
         });
+        $("." + item.filter).find(".endAddrCode").val(truckData.endAddrCode);
         _this.setEndParkSelect(
           item.filter,
           [{
@@ -480,6 +484,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
               "endLat": truckData.endLat || "",
               "code": truckData.endPark || "",
               "name": truckData.endPark || "",
+              "endAddrCode": truckData.endAddrCode
           }]
         );
       });
@@ -504,6 +509,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     });
   }
   Edit.prototype.getMatchFee = function(filter){
+    if(this.orderDataBackUp.orderStatus != 1) return;
     var $form = $("." + filter), _this = this, loadIndex = layer.load(1);
     if($form.find(".masterFlag").next().hasClass("layui-form-onswitch")) return layer.close(loadIndex);
     var carInfo = {
@@ -513,6 +519,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       masterStartLng: $form.find(".startLng").val(),
       masterStartLat: $form.find(".startLat").val(),
     };
+    console.log(carInfo)
     if(carInfo.masterEndAddrCode && carInfo.masterStartWarehouse && carInfo.masterProductNo && carInfo.masterStartLat && carInfo.masterStartLng){
       var params = {
         orderNo: _this.orderNo,
@@ -525,27 +532,46 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         data: params
       }).done(function (res) {
         if(res.code == "0"){
+          if(res.data.feeItemDTO){
+            _this.feeId = res.data.feeItemDTO.feeId;
+            delete res.data.feeItemDTO.feeId;
+            _this.originFeeRate = res.data.feeItemDTO;
+          }
           _this.renderFee({cb: function(){layer.close(loadIndex)}}, res.data);
         }else{
           layer.close(loadIndex);
         }
       });
+    }else{
+      layer.close(loadIndex);
     }
 
   }
   Edit.prototype.renderFee = function (options, feeDetail) {
 		var _this = this;
     if(feeDetail){
+      if(!feeDetail.driverMileage) feeDetail.driverMileage = _this.feeDetail.driverMileage || _this.orderData.driverMileage;
       feeDetail.prePayRatio = (feeDetail.prePayRatio * 1).toFixed(2);
       feeDetail.arrivePayRatio = (feeDetail.arrivePayRatio * 1).toFixed(2);
       feeDetail.tailPayRatio = (feeDetail.tailPayRatio * 1).toFixed(2);
+      feeDetail.oilUnitPrice = (feeDetail.oilUnitPrice * 1).toFixed(2);
+      feeDetail.freightUnitPrice = (feeDetail.freightUnitPrice * 1).toFixed(2);
+      Object.keys(_this.originFeeRate).forEach(function(key){
+        if(typeof (_this.originFeeRate[key] * 1) == "number"){
+          _this.originFeeRate[key] = (_this.originFeeRate[key] * 1).toFixed(2);
+        }
+      });
       _this.originFeeRate.feeDetail = feeDetail;
+      // Object.keys(_this.originFeeRate.feeDetail).forEach(function(key){
+      //   if(typeof (_this.originFeeRate.feeDetail[key] * 1) == "number"){
+      //     _this.originFeeRate.feeDetail[key] = (_this.originFeeRate.feeDetail[key] * 1).toFixed(2);
+      //   }
+      // });
       laytpl($("#fee_form_tpl").html()).render(_this.originFeeRate, function (html) {
         $("#form_fee_container").html(html);
         _this.bindFeeInput();
         if(_this.dataPermission.canViewOrderCost != "Y"){
-          $(".input_fee").attr("readonly", "readonly");
-          $(".co")
+          $(".input_fee").attr("readonly", "readonly").val("****");
         }
         form.render();
         options.cb && options.cb();
@@ -562,13 +588,13 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.feeDetail.oilCapacity = _this.orderData.oilCapacity;
         _this.feeDetail.driverMileage = _this.orderData.driverMileage || options.driverMileage;
         _this.feeDetail.oil = _this.orderData.oil;
-        _this.feeDetail.oilUnitPrice = _this.orderData.oilUnitPrice;
+        _this.feeDetail.oilUnitPrice = (_this.orderData.oilUnitPrice * 1).toFixed(2);
         _this.feeDetail.prePayOil = _this.orderData.prePayOil;
         _this.feeDetail.closestOilPrice = _this.orderData.closestOilPrice;
         _this.feeDetail.oilAmount = _this.orderData.oilAmount;
         _this.feeDetail.amount = _this.orderData.amount;
         _this.feeDetail.totalAmount = _this.orderData.totalAmount;
-        _this.feeDetail.freightUnitPrice = _this.orderData.freightUnitPrice;
+        _this.feeDetail.freightUnitPrice = (_this.orderData.freightUnitPrice * 1).toFixed(2);
         _this.feeDetail.prePayAmount = _this.orderData.prePayAmount;
         _this.feeDetail.arrivePayAmount = _this.orderData.arrivePayAmount;
         _this.feeDetail.prePayRatio = (_this.orderData.prePayRatio * 1).toFixed(2);
@@ -579,8 +605,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.feeDetail.tailPayBillDate = _this.orderData.tailPayBillDate;
         originFeeRate.feeDetail = JSON.parse(JSON.stringify(_this.feeDetail));
         if(!_this.feeId){
-          Object.assign(originFeeRate, _this.orderDataBackUp);
-          Object.assign(originFeeRate.feeDetail, _this.orderDataBackUp);
+          Object.assign(originFeeRate, JSON.parse(JSON.stringify(_this.orderDataBackUp)));
+          Object.assign(originFeeRate.feeDetail, JSON.parse(JSON.stringify(_this.orderDataBackUp)));
         }
 				if(_this.dataPermission.canViewOrderCost != "Y"){
 					Object.keys(originFeeRate).forEach(function(key){
@@ -592,7 +618,17 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 							});
 						}
 					});
-				}
+        }
+        Object.keys(originFeeRate).forEach(function(key){
+          if(key != "feeDetail" && typeof (originFeeRate[key] * 1) == "number"){
+            originFeeRate[key] = (originFeeRate[key] * 1).toFixed(2);
+          }
+        });
+        // Object.keys(originFeeRate.feeDetail).forEach(function(key){
+        //   if(typeof (originFeeRate.feeDetail[key] * 1) == "number"){
+        //     originFeeRate.feeDetail[key] = (originFeeRate.feeDetail[key] * 1).toFixed(2);
+        //   }
+        // });
         laytpl($("#fee_form_tpl").html()).render(originFeeRate, function (html) {
           if(_this.feeDetail.tailPayBillType * 1 == 3){
             html = html.replace("tailPayBillDate hide", "tailPayBillDate");
@@ -600,6 +636,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           $("#form_fee_container").html(html);
           _this.bindFeeInput();
           if(_this.dataPermission.canViewOrderCost != "Y" || !_this.orderDataBackUp.feeId){
+            if(_this.dataPermission.canViewOrderCost != "Y") {
+              $(".input_fee").val("****");
+            }
             $(".input_fee").attr("readonly", "readonly").attr("disabled", "disabled");
             $(".customerMileage").attr("disabled", "disabled");
             if(!_this.orderDataBackUp.feeId){
@@ -794,7 +833,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       var city = e.target.dataset.city||"";
       var province = e.target.dataset.province||"";
       var name = e.target.dataset.name||"";
-      var endAddrCode = e.target.dataset.endAddrCode||"";
+      var endAddrCode = e.target.dataset.endaddrcode||"";
       if(lat == "null") lat == "";
       if(lng == "null") lng == "";
       if(address == "null") address == "";
@@ -807,6 +846,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         city: city,
         type: "end"
       });
+      _this.getMatchFee(filter);
     });
     function getEndPark(keyword) {
       return edipao.request({
@@ -824,7 +864,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       var html = '';
       html = '<dd class="layui-select-tips disabled" value="请选择">请选择</dd>'
       for(var i = 0; i < array.length; i ++){
-        html += '<dd data-endAddrCode=' + array[i].endAddrCode + ' data-name=' + array[i].name +  ' data-province=' + array[i].endProvince + ' data-city='+array[i].endCity+' data-lng=' +array[i].endLng+ ' data-lat=' +array[i].endLat+ ' data-address=' + array[i].endAddress + ' value="' + array[i].code + '">' + array[i].name + '</dd>';
+        html += '<dd data-endAddrCode=' + (array[i].endAddrCode || array[i].addrCode) + ' data-name=' + array[i].name +  ' data-province=' + array[i].endProvince + ' data-city='+array[i].endCity+' data-lng=' +array[i].endLng+ ' data-lat=' +array[i].endLat+ ' data-address=' + array[i].endAddress + ' value="' + array[i].code + '">' + array[i].name + '</dd>';
       }
       return html;
     }
@@ -1011,6 +1051,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
   Edit.prototype.setCapacity = function(capacity, action){
     var arr = [], _this = this;
+    if(_this.orderDataBackUp.orderStatus != 1) return;
     $(".carOilCapacity").each(function (index, item) {
       arr.push(item.value * 1);
     });
@@ -1090,7 +1131,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     });
     console.log(_this.feeDetail);
     $("." + filter).remove();
-    _this.setCapacity();
     _this.setDriverMileage();
     if(id != undefined){
       if(_this.carFormList.length == 1){
@@ -1186,7 +1226,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       if(itemData.endPark == "0" || itemData.endPark == "请选择") itemData.endPark = "";
       if(itemData.endCity == "0" || itemData.endCity == "请选择") itemData.endCity = "";
       if(itemData.endProvince == "0" || itemData.endProvince == "请选择") itemData.endProvince = "";
-      if(itemData.settleWay == "0" || itemData.settleWay == "请选择") itemData.settleWay = "";
+      if(itemData.settleWay == "0" || itemData.settleWay == "请选择") itemData.settleWay = 1;
       if(!itemData.startLat || !itemData.startLng || itemData.startLat == "" || itemData.startLat*1 == 0 || itemData.startLng == "" || itemData.startLng*1 == 0){
         startLatLngError = true;
         startLatLngErrorTruck.push(itemData.vinCode);
@@ -1211,7 +1251,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         startAddress: itemData.startAddress||"",
         startLat: itemData.startLat||"",
         startLng: itemData.startLng||"",
-        settleWay: itemData.settleWay||"",
+        settleWay: itemData.settleWay||1,
         shaftNum: itemData.shaftNum,
         model: itemData.model,
         power: itemData.power,
@@ -1238,6 +1278,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
       if(itemData.endAddrCode) truckItem.endAddrCode = itemData.endAddrCode;
       if(_this.dataPermission.canViewOrderIncome != "Y"){
+        console.log(_this.orderDataBackUp.truckDTOList)
         if(_this.orderDataBackUp.truckDTOList[index]){
           truckItem.income = _this.orderDataBackUp.truckDTOList[index].income;
         }else{
@@ -1269,6 +1310,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       layer.msg("车辆 " + endLatLngErrorTruck.join(",") + " 收车地址经纬度无效", {icon: 2});
       return;
     }
+
     data.id = _this.orderId;
     data.loginStaffId = _this.user.staffId || "";
     data.orderNo = _this.orderNo || "";
@@ -1394,6 +1436,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       return;
     }
     var loadIndex = layer.load(1);
+
     _this.submitAll(edipao.request({
       url: "/admin/order/updateOrder",
       method: "POST",
@@ -1862,7 +1905,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var _this = this;
     $(".customerMileage").unbind().on("input", function (e) {
       var arr = [];
-      if(_this.dataPermission.canViewOrderCost != "Y") return;
+      if(_this.dataPermission.canViewOrderCost != "Y") return clearTimeout(_this.feeInputTimer);
+      if(_this.orderDataBackUp.orderStatus != 1) return clearTimeout(_this.feeInputTimer);
       $(".customerMileage").each(function (index, item) {
         arr.push(item.value * 1);
       });
@@ -1932,6 +1976,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
   Edit.prototype.setDriverMileage = function () {
     var _this = this;
+    if(_this.orderDataBackUp.orderStatus != 1) return;
     if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
     _this.feeInputTimer = setTimeout(function () {
       var arr = [];
@@ -1942,10 +1987,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       $(".carOilCapacity").each(function (index, item) {
         arr2.push(item.value * 1);
       });
-      if(Math.max.apply(null, arr2) * 1 != 0){
-        if(capacity == 0){
-          _this.feeDetail.oilCapacity = max;
-        }
+      var max = Math.max.apply(null, arr2);
+      if(max != 0){
+        _this.feeDetail.oilCapacity = max;
       }else{
         _this.feeDetail.oilCapacity = 2147483647;
       }
@@ -1956,6 +2000,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       var value = _this.feeDetail.driverMileage * 1;
       if(!value || value == 0){
         value = 0;
+      }
+      if(_this.orderDataBackUp.orderStatus != 1) {
+        layer.close(loadIndex);
+        return;
       }
       var feeFormData;
       if(_this.dataPermission.canViewOrderCost != "Y"){
@@ -2152,6 +2200,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 
     $(".product_code").unbind().on("change", function (e) {
       _this.getProductInfo(e);
+      _this.getMatchFee(e.target.dataset.filter);
     });
     $(".vinCode_input").unbind().on("change", function (e) {
       _this.handleInputVinCode(e);
@@ -2227,6 +2276,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         });
         $(".product_code").unbind().on("change", function (e) {
           _this.getProductInfo(e);
+          _this.getMatchFee(e.target.dataset.filter);
+          console.log(e)
         });
         $(".vinCode_input").unbind().on("change", function (e) {
           _this.handleInputVinCode(e);

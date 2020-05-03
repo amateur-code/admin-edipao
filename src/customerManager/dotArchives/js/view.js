@@ -40,7 +40,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
           }
           try {
             _this.check = JSON.parse(res2.data.modifyAfterJson).newMap;
-            _this.check.feeJson = _this.check.feeJson || "[]";
+            _this.check.feeJson = _this.check.feeJson || "";
           } catch (error) {}
           if(_this.check.feeJson){
             try {
