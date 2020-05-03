@@ -49,19 +49,19 @@
                 <div class="layui-fluid">
                     <div class="layui-row">
                         <div class="layui-col-xs4">
-                            网点名称:  <span>{{d.detail.productName}}</span>
+                            网点名称: <span>{{d.detail.productName}}</span>
                             {{# if(d.check.productName){ }}
                             <div><span class="x-red">待审：</span>{{d.check.productName}}</div>
                             {{# } }}
                         </div>
                         <div class="layui-col-xs4">
-                            详细地址： <span>{{d.detail.detailAddress}}</span>
+                            详细地址：<span>{{d.detail.detailAddress}}</span>
                             {{# if(d.check.detailAddress){ }}
                             <div><span class="x-red">待审：</span>{{d.check.detailAddress}}</div>
                             {{# } }}
                         </div>
                         <div class="layui-col-xs4">
-                            归属供应商： <span>{{d.detail.supplierName}}</span>
+                            归属供应商：<span>{{d.detail.supplierName}}</span>
                             {{# if(d.check.supplierName){ }}
                             <div><span class="x-red">待审：</span>{{d.check.supplierName}}</div>
                             {{# } }}
@@ -69,19 +69,19 @@
                     </div>
                     <div class="layui-row">
                         <div class="layui-col-xs4">
-                            供应商类型： <span>{{d.detail.supplierTypeDesc}}</span>
+                            供应商类型：<span>{{d.detail.supplierTypeDesc}}</span>
                             {{# if(d.check.supplierTypeDesc){ }}
                             <div><span class="x-red">待审：</span>{{d.check.supplierTypeDesc}}</div>
                             {{# } }}
                         </div>
                         <div class="layui-col-xs4">
-                            联系人： <span>{{d.detail.contractName || d.detail.contractPhone ? (d.detail.contractName + '('+d.detail.contractPhone+')'): '--'}}</span>
+                            联系人：<span>{{d.detail.contractName || d.detail.contractPhone ? (d.detail.contractName + '('+d.detail.contractPhone+')'): '--'}}</span>
                             {{# if(d.check.contractName || d.check.contractPhone){ }}
                             <div><span class="x-red">待审：</span>{{d.check.contractName|| d.detail.contractName}}({{d.check.contractPhone||d.detail.contractPhone}}) </div>
                             {{# } }}
                         </div>
                         <div class="layui-col-xs4">
-                            状态： <span>{{d.detail.statusDesc}}</span>
+                            状态：<span>{{d.detail.statusDesc}}</span>
                             {{# if(d.check.statusDesc){ }}
                             <div><span class="x-red">待审：</span>{{d.check.statusDesc}} </div>
                             {{# } }}
@@ -89,7 +89,7 @@
                     </div>
                     <div class="layui-row">
                         <div class="layui-col-xs4">
-                            备注： <span>{{d.detail.remark || '--'}}</span>
+                            备注：<span>{{d.detail.remark || '--'}}</span>
                             {{# if(d.check.remark){ }}
                             <div><span class="x-red">待审：</span>{{d.check.remark}} </div>
                             {{# } }}
@@ -100,17 +100,18 @@
         </div>
         <div class="layui-card">
             <div class="layui-card-header">价格信息</div>
+            {{# if(d.detail.supplierType != "tempLicenseSupply"){ }}
             <div class="layui-card-body">
                 <div class="layui-fluid">
                     <div class="layui-row">
                         <div class="layui-col-xs4">
-                            单价:  <span>{{d.detail.unitPrice}}{{d.detail.supplierType == "unloadCar"?'元/次':'元/升'}}</span>
+                            单价：<span>{{d.detail.unitPrice}}{{d.detail.supplierType == "unloadCar"?'元/次':'元/升'}}</span>
                             {{# if(d.check.unitPrice){ }}
                             <div><span class="x-red">待审：</span>{{d.check.unitPrice}}</div>
                             {{# } }}
                         </div>
                         <div class="layui-col-xs4">
-                            生效时间： <span>{{d.detail.effectiveTime}}</span>
+                            生效时间：<span>{{d.detail.effectiveTime}}</span>
                             {{# if(d.check.effectiveTime){ }}
                             <div><span class="x-red">待审：</span>{{d.check.effectiveTime}}</div>
                             {{# } }}
@@ -118,6 +119,32 @@
                     </div>
                 </div>
             </div>
+            {{# } else { }}
+            <div class="layui-card-body">
+                <div class="layui-fluid">
+                    <div class="layui-row">
+                        <div class="layui-col-xs4">
+                            临牌：<span>{{d.detail.tempLicensePrice}}元</span>
+                            {{# if(d.check.tempLicensePrice){ }}
+                            <div><span class="x-red">临牌：</span>{{d.check.tempLicensePrice}}元</div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-col-xs4">
+                            三超：<span>{{d.detail.threeExceedingPrice}}元</span>
+                            {{# if(d.check.threeExceedingPrice){ }}
+                            <div><span class="x-red">三超：</span>{{d.check.threeExceedingPrice}}元</div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-col-xs4">
+                            强险：<span>{{d.detail.compulsoryInsurancePrice}}元</span>
+                            {{# if(d.check.compulsoryInsurancePrice){ }}
+                            <div><span class="x-red">强险：</span>{{d.check.compulsoryInsurancePrice}}元</div>
+                            {{# } }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{# } }}
         </div>
         
     </script>

@@ -100,6 +100,7 @@
         </div>
         <div class="layui-card">
             <div class="layui-card-header">价格信息</div>
+            {{# if(d.detail.supplierType != "tempLicenseSupply"){ }}
             <div class="layui-card-body">
                 <div class="layui-fluid">
                     <div class="layui-row">
@@ -118,6 +119,32 @@
                     </div>
                 </div>
             </div>
+            {{# } else { }}
+            <div class="layui-card-body">
+                <div class="layui-fluid">
+                    <div class="layui-row">
+                        <div class="layui-col-xs4">
+                            临牌：<span>{{d.detail.tempLicensePrice}}元</span>
+                            {{# if(d.check.tempLicensePrice){ }}
+                            <div><span class="x-red">临牌：</span>{{d.check.tempLicensePrice}}元</div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-col-xs4">
+                            三超：<span>{{d.detail.threeExceedingPrice}}元</span>
+                            {{# if(d.check.threeExceedingPrice){ }}
+                            <div><span class="x-red">三超：</span>{{d.check.threeExceedingPrice}}元</div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-col-xs4">
+                            强险：<span>{{d.detail.compulsoryInsurancePrice}}元</span>
+                            {{# if(d.check.compulsoryInsurancePrice){ }}
+                            <div><span class="x-red">强险：</span>{{d.check.compulsoryInsurancePrice}}元</div>
+                            {{# } }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{# } }}
         </div>
         <div class="layui-card">
             <div class="layui-card-header">审核</div>
@@ -211,7 +238,6 @@
         form.verify({
             checkRemark: function(value){
                 var result = $("input[name=checkResult]:checked").val();
-                console.log(result,value)
                 if(result == 'reject' && value == ''){
                     return '审核结果为驳回时，审核备注必填';
                 }

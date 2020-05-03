@@ -143,6 +143,7 @@
             type: 'get',
             url:'/admin/supplier/getSupplierType'
         }).then(function(res){
+            console.log(res)
             if(res.code == 0){
                 laytpl(selectDom.innerHTML).render({list: res.data},function(html){
                     document.getElementById('supplierType').innerHTML = html;
