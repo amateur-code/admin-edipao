@@ -57,3 +57,13 @@
 #form_fee_list {
   padding-top: 20px;
 }
+.linpai_row {
+  position: relative;
+}
+.linpai_row .linpai_btn {
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  right: -80px;
+}

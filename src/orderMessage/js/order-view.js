@@ -19,7 +19,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     var qs = edipao.urlGet();
     this.orderNo = qs.orderNo;
     this.orderId = qs.orderId;
-    this.action = qs.action || "";
+    this.action = qs.action || "view";
     this.user = JSON.parse(sessionStorage.user);
     this.prePay = [];
     this.arrivePay = [];
@@ -359,6 +359,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           truck.connectorPhone = "";
         }
         laytpl(imageStr).render(item, function (imageHtml) {
+          truck.action = _this.action;
           laytpl(carFormHtml).render(truck, function (html) {
             var filterStr = "form_car_" + index;
             _this.carFormList.push(filterStr);
@@ -367,12 +368,32 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             carFormStr += html;
             if(index == data.truckDTOList.length -1){
               $("#car_form_container").html(carFormStr);
+              _this.renderEnd();
 						}
 						zoomImg();
           });
         });
       });
       form.render();
+    },
+    renderEnd: function () {
+      $(".linpai_btn").unbind().on("click", function(e){
+        var loadIndex = layer.load(1)
+        var vinCode = e.target.dataset.vin;
+        edipao.request({
+          url: "/admin/product/handleTempLicense",
+          method: "POST",
+          data: {
+            vinCode: vinCode
+          }
+        }).done(function (res) {
+          layer.close(loadIndex);
+          if(res.code == "0"){
+            layer.msg("提交成功");
+          }
+        });
+
+      });
     },
     getOrder: function () {
       //获取订单详情
