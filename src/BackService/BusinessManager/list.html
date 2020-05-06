@@ -190,6 +190,8 @@ layui.config({
   var resizeTime = null;
 
   function resizeTable () {
+    //w:width
+    //l:left
     var w = "100px";
     var backw = "400px";
     var backl = "-1px";
@@ -375,7 +377,7 @@ layui.config({
         if (data.supplierType != 'tempLicenseSupply') {
           xadmin.open('交易记录', '../trade-record.html?key=supplierNo&id=' + data.supplierNo + '&perssionId=' + params.perssionId)
         } else {
-          xadmin.open('交易记录', '../trade-record-lp.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
+          xadmin.open('交易记录', '../trade-record-lp.html?key=supplierNo&id=' + data.supplierNo + '&perssionId=' + params.perssionId)
         }
         break;
       case 'add':

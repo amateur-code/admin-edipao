@@ -36,6 +36,11 @@
     .layui-btn-container {
       text-align: right;
     }
+    .drivingLicenseImg_container{
+      text-align:center;
+      height:400px;
+      line-height:400px;
+    }
   </style>
 </head>
 
@@ -257,7 +262,7 @@ layui.config({
           fixed: false, //不固定
           maxmin: true,
           title: '查看行驶证',
-          content: '<img src="'+ obj.data.drivingLicenseImg+'">'
+          content: obj.data.drivingLicenseImg ? '<div class="drivingLicenseImg_container"><img style="max-width:100%;max-height:100%;" src="'+ obj.data.drivingLicenseImg+'"></div>':'<div class="drivingLicenseImg_container"><span style="color:#999;">暂无数据</span></div>'
         });
         break;
     }
