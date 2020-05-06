@@ -4,7 +4,7 @@ layui
   })
   .extend({
     excel: "layui_exts/excel.min",
-    tableFilter: "TableFilter/tableFilter",
+    tableFilter: "TableFilter/tableFiltercopy",
   })
   .use(["jquery", "table", "layer", "excel", "tableFilter", "form"], function () {
     var statusData = [
@@ -19,12 +19,13 @@ layui
       form = layui.form,
       edipao = layui.edipao,
       tableIns,
-      tableFilterIns;
+      tableFilterIns,
+      reloadOption = null;
     window.permissionList = edipao.getMyPermission();
     console.log(permissionList)
     window.form = form;
     var where = {};
-    var showList = ["company", "endProvince", "name", "name", "name", "name", "name"];
+    var showList = ["company", "endProvince", "endAddress", "addrCode", "connectorName", "remark", "transportOrderNum", "status"];
     var exportHead = {}; // 导出头部
     var tableCols = [
       { checkbox: true },
@@ -200,6 +201,10 @@ layui
             resizeTable();
             $(".layui-table-header").css("overflow", "hidden");
           }
+          if(reloadOption) {
+            tableIns.reload(JSON.parse(JSON.stringify(reloadOption)));
+            reloadOption = false;
+          }
           tableFilterIns && tableFilterIns.reload(); // 搜索
         },
       });
@@ -295,7 +300,7 @@ layui
                 .then(function (res) {
                   if (res.code == 0) {
                     layer.msg("删除成功");
-                    tableIns.reload();
+                    tableIns.reload( { where: where, page: { curr: 1 }} );
                   } else {
                     layer.msg(res.message);
                   }
@@ -330,7 +335,8 @@ layui
         elem: "#dotList", //table的选择器
         mode: "self", //过滤模式
         filters: filters, //过滤项配置
-        done: function (filters) {
+        done: function (filters, reload) {
+          filters = $.extend({},filters);
           var index = 0;
           where = {
             loginStaffId: edipao.getLoginStaffId(),
@@ -353,7 +359,11 @@ layui
             }
             index++;
           });
-          tableIns.reload({ where: where, page: { curr: 1 } });
+          if(reload){
+            reloadOption = { where: where, page: { curr: 1 }};
+          }else{
+              tableIns.reload( { where: where, page: { curr: 1 }});
+          }
         },
       });
     };

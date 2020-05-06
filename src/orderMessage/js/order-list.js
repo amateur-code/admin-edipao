@@ -395,7 +395,7 @@ layui.config({
                         layer.close(loadLayer);
                         if(res.code == "0"){
                             layer.msg("上传成功", {icon: 1});
-                            table.reload("orderList");
+                            mainTable.reload( { where: where, page: { curr: 1 }});
                             layer.close(index);
                         }
                     });
@@ -672,7 +672,7 @@ layui.config({
                                     layer.close(loadIndex);
                                     if(res.code == "0"){
                                         layer.msg("提交成功", {icon: 1});
-                                        table.reload("orderList");
+                                        mainTable.reload( { where: where, page: { curr: 1 }});
                                         layer.close(index);
                                     }else{
                                         //layer.alert(res.message);
@@ -767,7 +767,7 @@ layui.config({
                                     layer.close(loadIndex);
                                     if(res.code == "0"){
                                         layer.msg("提交成功", {icon: 1});
-                                        table.reload("orderList");
+                                        mainTable.reload( { where: where, page: { curr: 1 }});
                                         layer.close(index);
                                     }else{
                                         //layer.alert(res.message);
@@ -868,7 +868,7 @@ layui.config({
                                     layer.close(loadIndex);
                                     if(res.code == "0"){
                                         layer.msg("提交成功", {icon: 1});
-                                        table.reload("orderList");
+                                        mainTable.reload( { where: where, page: { curr: 1 }});
                                         layer.close(index);
                                     }else{
                                         //layer.alert(res.message);
@@ -1308,7 +1308,7 @@ layui.config({
                 , method: "get" // 请求方式  默认get
                 , page: true //开启分页
                 , limit: 10  //每页显示条数
-                , limits: [20, 50, 100] //每页显示条数可选择
+                , limits: [10, 20, 50, 100] //每页显示条数可选择
                 , request: {
                     pageName: 'pageNo' //页码的参数名称，默认：page
                     , limitName: 'pageSize' //每页数据量的参数名，默认：limit
@@ -1420,7 +1420,7 @@ layui.config({
                                 if(res.code == "0"){
                                     layer.msg("取消成功");
                                     layer.close(index);
-                                    table.reload("orderList")
+                                    mainTable.reload( { where: where, page: { curr: 1 }});
                                 }else{
                                     layer.msg(res.message, {icon: 5,anim: 6});
                                 }

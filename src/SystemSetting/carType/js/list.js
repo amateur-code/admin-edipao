@@ -16,8 +16,9 @@ layui.config({
     base: '../../lib/'
 }).extend({
     excel: 'layui_exts/excel.min',
-    tableFilter: 'TableFilter/tableFilter'
+    tableFilter: 'TableFilter/tableFiltercopy'
 }).use(['jquery', 'table','layer','excel','tableFilter','form'], function () {
+    var reloadOption = null;
     var $ = layui.jquery,
         table = layui.table,
         layer = layui.layer,
@@ -180,6 +181,10 @@ layui.config({
                 }else{
                     $('.layui-table-header').css('overflow','hidden')
                 }
+                if(reloadOption) {
+                    tableIns.reload(JSON.parse(JSON.stringify(reloadOption)));
+                    reloadOption = false;
+                }
                 tableFilterIns&&tableFilterIns.reload() // 搜索
             }
         });
@@ -237,7 +242,8 @@ layui.config({
             'elem' : '#carTypeList',//table的选择器
             'mode' : 'self',//过滤模式
             'filters' : filters,//过滤项配置
-            'done': function(filters){
+            'done': function(filters, reload){
+                filters = $.extend({}, filters);
                 var index = 0;
                 where = {
                     loginStaffId: edipao.getLoginStaffId()
@@ -252,7 +258,11 @@ layui.config({
                     }
                     index++;
                 })
-                tableIns.reload( { where: where, page: { curr: 1 }});
+                if(reload){
+                    reloadOption = { where: where, page: { curr: 1 }};
+                }else{
+                    tableIns.reload( { where: where, page: { curr: 1 }});
+                }
             }
         });
     };

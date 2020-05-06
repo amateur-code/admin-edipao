@@ -654,7 +654,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
   Edit.prototype.bindFeeInput = function () {
     var _this = this;
-    $(".input_fee").unbind().on("input", function (e) {
+    $(".input_fee").unbind().on("change", function (e) {
       if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
       _this.feeInputTimer = setTimeout(function () {
         var loadIndex = layer.load(1);
@@ -1479,18 +1479,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         flag = false;
         return true;
       }
-      if(!item.tempLicense){
-        layer.msg("临牌号为必填项", {icon: 2});
-        flag = false;
-        return true;
-      }
       if(!item.settleWay){
         layer.msg("结算方式为必填项", {icon: 2});
-        flag = false;
-        return true;
-      }
-      if(!item.tempLicenseBackImage){
-        layer.msg("请上传行驶证", {icon: 2});
         flag = false;
         return true;
       }
