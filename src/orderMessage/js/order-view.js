@@ -10,7 +10,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     
   ]
   var truckKeys = [
-    "startCity", "endCity", "startProvince", "endProvince", "connectorName", "connectorPhone"
+    "startCity", "endCity", "startProvince", "endProvince", "connectorName", "connectorPhone", "handlingStatus"
   ]
   var orderKeys = [
     "followOperator", "followOperatorPhone", "deliveryOperator", "deliveryOperatorPhone"
@@ -390,6 +390,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           layer.close(loadIndex);
           if(res.code == "0"){
             layer.msg("提交成功");
+            setTimeout(function () {
+              location.reload();
+            }, 1000);
           }
         });
 
