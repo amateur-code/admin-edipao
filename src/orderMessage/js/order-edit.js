@@ -654,7 +654,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
   Edit.prototype.bindFeeInput = function () {
     var _this = this;
-    $(".input_fee").unbind().on("change", function (e) {
+    $(".input_fee").unbind().on("input", function (e) {
       if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
       _this.feeInputTimer = setTimeout(function () {
         var loadIndex = layer.load(1);

@@ -436,7 +436,7 @@
                             <span class="layui-form-span form_span">临牌号：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue linpai_row">
                                 {{d.tempLicense}}
-                                {{# if(d.handlingStatus == 0 && d.action == 'view'){ }}
+                                {{# if(d.handlingStatus == 0 && d.action == 'view' && d.orderStatus != 4){ }}
                                 <button data-vin="{{d.vinCode}}" type="button" class="linpai_btn layui-btn layui-btn-normal layui-btn-xs">办理临牌</button>
                                 {{# }else if(d.handlingStatus == 1 && d.action == 'view'){ }}
                                 <button data-vin="{{d.vinCode}}" type="button" class="disabled linpai_btn layui-btn layui-btn-disabled layui-btn-xs">办理中</button>

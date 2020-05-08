@@ -360,6 +360,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         }
         laytpl(imageStr).render(item, function (imageHtml) {
           truck.action = _this.action;
+          truck.orderStatus = _this.orderData.orderStatus;
           laytpl(carFormHtml).render(truck, function (html) {
             var filterStr = "form_car_" + index;
             _this.carFormList.push(filterStr);
