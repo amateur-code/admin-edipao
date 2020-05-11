@@ -1352,7 +1352,7 @@ layui.config({
                     method.bindPay();
                     method.bindPrePay();
                     method.bindEvents();
-                    if(res.data == null || res.data.length < 1){
+                    if(!res.data || res.data == null || res.data.length < 1){
                         $('.layui-table-header').css('overflow-x','scroll');
                     }else{
                         $('.layui-table-header').css('overflow','hidden');

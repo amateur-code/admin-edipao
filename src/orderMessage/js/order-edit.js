@@ -2528,4 +2528,5 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   var edit = new Edit();
   top.window.edit = edit;
   edit.init();
+  console.log(window)
 });

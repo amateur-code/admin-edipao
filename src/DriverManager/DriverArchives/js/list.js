@@ -294,7 +294,7 @@ layui.config({
             done: function (res, curr, count) {
                 $(window).unbind("resize");
                 resizeTable();
-                if(res.data== null||res.data.length == 0){
+                if(!res.data || res.data== null||res.data.length == 0){
                     $('.layui-table-header').css('overflow-x','scroll')
                 }else{
                     $('.layui-table-header').css('overflow','hidden')
