@@ -19,6 +19,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     var qs = edipao.urlGet();
     this.orderNo = qs.orderNo;
     this.orderId = qs.orderId;
+    this.feeId = qs.feeId;
     this.action = qs.action || "view";
     this.user = JSON.parse(sessionStorage.user);
     this.prePay = [];
@@ -39,10 +40,25 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       var _this = this;
       if(_this.action != "verify" && _this.action != "feeVerify"){
         $("#verify_container").remove();
-        _this.getOrder().done(function (res) {
+        $.when(_this.getOrder(), _this.getOrderFee()).done(function(res, res1){
+          res = res[0];
+          res1 = res1[0];
           if(res.code == "0"){
             _this.parseData(res.data);
             _this.orderData = res.data;
+            if(!_this.feeId){
+              _this.orderData.oil = _this.orderData.prePayOil || 0;
+              _this.orderData.amount =
+                (_this.orderData.prePayAmount ? (_this.orderData.prePayAmount * 1) : 0) +
+                (_this.orderData.arrivePayAmount ? (_this.orderData.arrivePayAmount * 1) : 0) +
+                (_this.orderData.tailPayAmount ? (_this.orderData.tailPayAmount * 1) : 0);
+              _this.orderData.totalAmount = _this.orderData.amount;
+            }
+            if(res1.code == "0"){
+              _this.orderData.subsidy = res1.data.subsidy || 0;
+            }else{
+              _this.orderData.subsidy = 0;
+            }
             if(_this.dataPermission.canViewOrderCost != "Y"){
               _this.orderData.oil = "****";
               _this.orderData.prePayOil = "****";
@@ -52,9 +68,13 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
               _this.orderData.prePayAmount = "****";
               _this.orderData.arrivePayAmount = "****";
               _this.orderData.tailPayAmount = "****";
+              _this.orderData.subsidy = "****";
             }
             laytpl($("#forms_tpl").html()).render({orderData: _this.orderData, feeUpdateData: {}}, function (html) {
               $("#form_income_container").after(html);
+              if(!_this.feeId){
+                $(".origin_fee").addClass("hide");
+              }
               _this.setData(_this.orderData);
               _this.bindEvents();
             });
@@ -64,10 +84,12 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         });
       }else{
         $(".page_title_text").text("订单审核");
-        $.when(_this.getUpdate(), _this.getOrder(), _this.getTruckUpdate()).done(function (res1, res2, res3) {
+        $.when(_this.getUpdate(), _this.getOrder(), _this.getTruckUpdate(), _this.getOrderFee()).done(function (res1, res2, res3, res4) {
           res1 = res1[0];
           res2 = res2[0];
           res3 = res3[0];
+          res4 = res4[0];
+          res2.data = res2.data || {};
           res3.data = res3.data || {};
           if(res1.code == "0" && (res2.code == "0" || res3.code == "0")){
             if(!res1.data){
@@ -104,10 +126,23 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
               }
             }
             res2.data.truckDTOList = res2.data.truckDTOList || [];
-						_this.parseTruckData(res3.data);
+            if(!_this.feeId){
+              res2.data.oil = res2.data.prePayOil || 0;
+              res2.data.amount =
+                (res2.data.prePayAmount ? (res2.data.prePayAmount * 1) : 0) +
+                (res2.data.arrivePayAmount ? (res2.data.arrivePayAmount * 1) : 0) +
+                (res2.data.tailPayAmount ? (res2.data.tailPayAmount * 1) : 0);
+              res2.data.totalAmount = res2.data.amount;
+            }
+            _this.parseTruckData(res3.data);
             _this.parseData(res2.data);
             _this.parseData(_this.updateData, true);
             _this.orderData = res2.data;
+            if(res4.code == "0"){
+              _this.orderData.subsidy = res4.data.subsidy || 0;
+            }else{
+              _this.orderData.subsidy = 0;
+            }
             _this.truckUpdateData = res3.data || {add:[],update:{},delete:[]};
 
             if(_this.action == "verify"){
@@ -131,16 +166,32 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
               _this.updateData.orderData.prePayAmount = "****";
               _this.updateData.orderData.arrivePayAmount = "****";
               _this.updateData.orderData.tailPayAmount = "****";
+              _this.updateData.orderData.subsidy = "****";
             }
             laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
               $("#form_income_container").after(html);
+              if(!_this.feeId){
+                $(".origin_fee").addClass("hide");
+              }
             });
             _this.setData(_this.orderData);
             _this.bindEvents();
           }
         });
       }
-		},
+    },
+    getOrderFee: function(){
+      var _this = this;
+      if(!_this.feeId) return [{code: 0, data: {}}];
+      return edipao.request({
+        url: "/admin/order/getOrderFee",
+        method: "POST",
+        data: {
+          orderNo: _this.orderNo,
+          feeId: _this.feeId,
+        }
+      });
+    },
 		parseTruckData: function (data) {
 			Object.keys(data).forEach(function (key) {
         var item = data[key];
@@ -149,9 +200,26 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             if(!item[key2] || item[key2] == "undefined"){
               item[key2] = "- -";
             }
+            switch(item[key2].settleWay * 1){
+              case 0:
+                item[key2].settleWay = "- -";
+                break;
+              case 1:
+                item[key2].settleWay = "现结";
+                break;
+              case 2:
+                item[key2].settleWay = "月结";
+                break;
+              case 3:
+                item[key2].settleWay = "账期";
+                break;
+            }
           }
         });
 				switch(item.settleWay * 1){
+          case 0:
+            item.settleWay = "- -";
+            break;
 					case 1:
 						item.settleWay = "现结";
 						break;
@@ -160,7 +228,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 						break;
 					case 3:
 						item.settleWay = "账期";
-						break;
+            break;
 				}
       });
 		},
@@ -168,7 +236,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       Object.keys(data).forEach(function (key) {
         if(feeKeys.indexOf(key) < 0 && orderKeys.indexOf(key) < 0){
           if(!data[key] || data[key] == "undefined"){
-            data[key] = "- -";
+            if(key != "driverMileage") data[key] = "- -";
           }
         }
       });
@@ -290,7 +358,11 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           item.manageFee = "****";
           item.income = "****";
         }
+        console.log(item)
         switch(item.settleWay * 1){
+          case 0:
+            item.settleWay = "- -";
+            break;
           case 1:
             item.settleWay = "现结";
             break;

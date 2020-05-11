@@ -509,6 +509,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     });
   }
   Edit.prototype.getMatchFee = function(filter){
+    if(!this.feeId) return;
     if(this.orderDataBackUp.orderStatus != 1) return;
     var $form = $("." + filter), _this = this, loadIndex = layer.load(1);
     if($form.find(".masterFlag").next().hasClass("layui-form-onswitch")) return layer.close(loadIndex);
@@ -550,12 +551,14 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.renderFee = function (options, feeDetail) {
 		var _this = this;
     if(feeDetail){
+      if(!this.feeId) return;
       if(!feeDetail.driverMileage) feeDetail.driverMileage = _this.feeDetail.driverMileage || _this.orderData.driverMileage;
       feeDetail.prePayRatio = (feeDetail.prePayRatio * 1).toFixed(2);
       feeDetail.arrivePayRatio = (feeDetail.arrivePayRatio * 1).toFixed(2);
       feeDetail.tailPayRatio = (feeDetail.tailPayRatio * 1).toFixed(2);
       feeDetail.oilUnitPrice = (feeDetail.oilUnitPrice * 1).toFixed(2);
       feeDetail.freightUnitPrice = (feeDetail.freightUnitPrice * 1).toFixed(2);
+      feeDetail.totalAmount = (feeDetail.totalAmount * 1).toFixed(2);
       Object.keys(_this.originFeeRate).forEach(function(key){
         if(typeof (_this.originFeeRate[key] * 1) == "number"){
           _this.originFeeRate[key] = (_this.originFeeRate[key] * 1).toFixed(2);
@@ -585,6 +588,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         originFeeRate.prePayRatio = (_this.originFeeRate.prePayRatio * 1).toFixed(2);
         originFeeRate.arrivePayRatio = (_this.originFeeRate.arrivePayRatio * 1).toFixed(2);
         originFeeRate.tailPayRatio = (_this.originFeeRate.tailPayRatio * 1).toFixed(2);
+        originFeeRate.subsidy = _this.originFeeRate.subsidy || 0;
+        originFeeRate.subsidy = (originFeeRate.subsidy * 1).toFixed(2);
         _this.feeDetail.oilCapacity = _this.orderData.oilCapacity;
         _this.feeDetail.driverMileage = _this.orderData.driverMileage || options.driverMileage;
         _this.feeDetail.oil = _this.orderData.oil;
@@ -593,7 +598,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.feeDetail.closestOilPrice = _this.orderData.closestOilPrice;
         _this.feeDetail.oilAmount = _this.orderData.oilAmount;
         _this.feeDetail.amount = _this.orderData.amount;
-        _this.feeDetail.totalAmount = _this.orderData.totalAmount;
+        _this.feeDetail.totalAmount = (_this.orderData.totalAmount * 1).toFixed(2);
         _this.feeDetail.freightUnitPrice = (_this.orderData.freightUnitPrice * 1).toFixed(2);
         _this.feeDetail.prePayAmount = _this.orderData.prePayAmount;
         _this.feeDetail.arrivePayAmount = _this.orderData.arrivePayAmount;
@@ -607,7 +612,18 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         if(!_this.feeId){
           Object.assign(originFeeRate, JSON.parse(JSON.stringify(_this.orderDataBackUp)));
           Object.assign(originFeeRate.feeDetail, JSON.parse(JSON.stringify(_this.orderDataBackUp)));
+          originFeeRate.feeDetail.oil = originFeeRate.feeDetail.prePayOil;
+          originFeeRate.feeDetail.amount =
+            (originFeeRate.feeDetail.prePayAmount ? (originFeeRate.feeDetail.prePayAmount * 1) : 0) +
+            (originFeeRate.feeDetail.arrivePayAmount ? (originFeeRate.feeDetail.arrivePayAmount * 1) : 0) +
+            (originFeeRate.feeDetail.tailPayAmount ? (originFeeRate.feeDetail.tailPayAmount * 1) : 0);
+          originFeeRate.feeDetail.totalAmount = originFeeRate.feeDetail.amount;
         }
+        Object.keys(originFeeRate).forEach(function(key){
+          if(key != "feeDetail" && typeof (originFeeRate[key] * 1) == "number"){
+            originFeeRate[key] = (originFeeRate[key] * 1).toFixed(2);
+          }
+        });
 				if(_this.dataPermission.canViewOrderCost != "Y"){
 					Object.keys(originFeeRate).forEach(function(key){
 						if(typeof originFeeRate[key] == "string" || typeof originFeeRate[key] == "number"){
@@ -619,16 +635,12 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 						}
 					});
         }
-        Object.keys(originFeeRate).forEach(function(key){
-          if(key != "feeDetail" && typeof (originFeeRate[key] * 1) == "number"){
-            originFeeRate[key] = (originFeeRate[key] * 1).toFixed(2);
-          }
-        });
         // Object.keys(originFeeRate.feeDetail).forEach(function(key){
         //   if(typeof (originFeeRate.feeDetail[key] * 1) == "number"){
         //     originFeeRate.feeDetail[key] = (originFeeRate.feeDetail[key] * 1).toFixed(2);
         //   }
         // });
+        console.log(originFeeRate)
         laytpl($("#fee_form_tpl").html()).render(originFeeRate, function (html) {
           if(_this.feeDetail.tailPayBillType * 1 == 3){
             html = html.replace("tailPayBillDate hide", "tailPayBillDate");
@@ -706,6 +718,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     data.oilUnitPrice = _this.originFeeRate.oilUnitPrice;
     data.prePayRatio = _this.originFeeRate.prePayRatio;
     data.arrivePayRatio = _this.originFeeRate.arrivePayRatio;
+    data.subsidy = _this.originFeeRate.subsidy;
     delete data.tailPayRatio;
     delete data.totalAmount;
     delete data.oilAmount;
@@ -1067,6 +1080,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     }
   }
   Edit.prototype.updateFee = function(){
+    if(!this.feeId) return;
     var _this = this;
     var feeFormData;
     if(_this.dataPermission.canViewOrderCost != "Y"){
@@ -1331,9 +1345,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       data.totalIncome = _this.orderDataBackUp.totalIncome || "";
       data.totalManageFee = _this.orderDataBackUp.totalManageFee || "";
     }else{
-      data.totalIncome = totalIncome || 0;
-      data.totalManageFee = totalManageFee || 0;
+      data.totalIncome = totalIncome || "";
+      data.totalManageFee = totalManageFee || "";
     }
+    if(data.totalIncome) data.totalIncome = (data.totalIncome*1).toFixed(2);
+    if(data.totalManageFee) data.totalManageFee = (data.totalManageFee*1).toFixed(2);
     var feeFormData = form.val("form_fee");
 		if(_this.dataPermission.canViewOrderCost != "Y"){
 			data.prePayAmount = _this.orderDataBackUp.prePayAmount;
@@ -1344,6 +1360,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 			data.oilAmount = _this.orderDataBackUp.oilAmount;
 			data.amount = _this.orderDataBackUp.amount;
 			data.totalAmount = _this.orderDataBackUp.totalAmount;
+			data.subsidy = _this.orderDataBackUp.subsidy;
 			data.freightUnitPrice = _this.orderDataBackUp.freightUnitPrice;
 			data.oilUnitPrice = _this.orderDataBackUp.oilUnitPrice;
 			data.prePayRatio = _this.orderDataBackUp.prePayRatio;
@@ -1361,6 +1378,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 			data.oilAmount = feeFormData.oilAmount;
 			data.amount = feeFormData.amount;
 			data.totalAmount = feeFormData.totalAmount;
+			data.subsidy = feeFormData.subsidy;
 			data.freightUnitPrice = feeFormData.freightUnitPrice;
 			data.oilUnitPrice = feeFormData.oilUnitPrice;
 			data.prePayRatio = feeFormData.prePayRatio;
@@ -1368,6 +1386,12 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 			data.tailPayRatio = feeFormData.tailPayRatio;
 			data.tailPayBillType = feeFormData.tailPayBillType;
 			data.tailPayBillDate = feeFormData.tailPayBillDate;
+    }
+    if(!_this.feeId){
+      data.oil = _this.orderDataBackUp.oil;
+      data.amount = _this.orderDataBackUp.amount;
+      data.totalAmount = _this.orderDataBackUp.totalAmount;
+      data.driverMileage = _this.orderDataBackUp.driverMileage || 0;
     }
     if(data.tailPayBillType * 1 == 3 && !data.tailPayBillDate){
       layer.msg("请填写运费结算账期", {icon: 2});
@@ -1401,7 +1425,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     //   return;
     // }
     if(!_this.veriftParams(data)) return;
-    if(data.prePayOil * 1 > data.oilCapacity * 1 * .95){
+    if(data.prePayOil * 1 > data.oilCapacity * 1 * .95 && _this.feeId){
       layer.confirm('车辆油箱可能装不下这么多油，是否继续给这么多油？', {icon: 3, title:'提示'}, function(index){
         //do something
         var loadIndex = layer.load(1);
@@ -1946,6 +1970,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     }
   }
   Edit.prototype.handleInputVinCode = function (e) {
+    if(!this.feeId) return;
     var _this = this, vin = e.target.value, filter = e.target.dataset.filter;
     if(_this.vinCodeTimer) clearTimeout(_this.vinCodeTimer);
     _this.vinCodeTimer = setTimeout(function () {
@@ -1966,6 +1991,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
   Edit.prototype.setDriverMileage = function () {
     var _this = this;
+    if(!this.feeId) return;
     if(_this.orderDataBackUp.orderStatus != 1) return;
     if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
     _this.feeInputTimer = setTimeout(function () {

@@ -117,6 +117,19 @@
       </div>
       <div class="layui-form-mid layui-word-aux">升/百公里</div>
     </div>
+    <div class="layui-inline" style="position:relative;left:15px;">
+      <label class="layui-form-label" style="width: auto;">补助</label>
+      <div class="layui-input-inline">
+        <input type="text" name="subsidy"
+               id="subsidy{{item.id}}" autocomplete="off"
+               lay-verify="required|numberOne"
+               placeholder="0.00"
+               onkeyup="clearNoNum(this)"
+               class="layui-input"
+               value="{{item.subsidy || 0}}">
+      </div>
+      <div class="layui-form-mid layui-word-aux">元</div>
+    </div>
     <br/>
     <div class="layui-inline">
       <label class="layui-form-label">预付款</label>
@@ -310,6 +323,7 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
         }
         item.freightUnitPrice = toDecimal2(item.freightUnitPrice);
         item.oilUnitPrice = toDecimal2(item.oilUnitPrice);
+        item.subsidy = toDecimal2(item.subsidy);
         item.prePayRatio = toDecimal2(item.prePayRatio);
         item.arrivePayRatio = toDecimal2(item.arrivePayRatio);
         item.tailPayRatio = toDecimal2(item.tailPayRatio);
@@ -389,6 +403,7 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
     resData.forEach(item => {
       let freightUnitPrice = $('#freightUnitPrice' + item.id).val();
       let oilUnitPrice = $('#oilUnitPrice' + item.id).val();
+      let subsidy = $('#subsidy' + item.id).val();
       let prePayRatio = $('#prePayRatio' + item.id).val();
       let arrivePayRatio = $('#arrivePayRatio' + item.id).val();
       let tailPayRatio = $('#tailPayRatio' + item.id).val();
@@ -397,6 +412,7 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
         carModel: item.carModel,
         freightUnitPrice: toDecimal2(freightUnitPrice),
         oilUnitPrice: toDecimal2(oilUnitPrice),
+        subsidy: toDecimal2(subsidy),
         prePayRatio: toDecimal2(prePayRatio),
         arrivePayRatio: toDecimal2(arrivePayRatio),
         tailPayRatio: toDecimal2(tailPayRatio),

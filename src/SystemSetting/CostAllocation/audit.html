@@ -145,6 +145,12 @@
           <div><span class="x-red">待审：</span><span class="colorb">{{item.oilUnitPriceStr}} 升/百公里</span></div>
           {{# } }}
         </div>
+        <div class="layui-col-xs4">
+          补助：<span>{{item.subsidy}} 元</span>
+          {{# if(item.subsidyFlag =='1'){ }}
+          <div><span class="x-red">待审：</span><span class="colorb">{{item.subsidyStr}} 元</span></div>
+          {{# } }}
+        </div>
       </div>
       <div class="layui-row">
         <div class="layui-col-xs4">
@@ -235,6 +241,7 @@ layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, layt
       resData.forEach(item => {
         item.freightUnitPrice = toDecimal2(item.freightUnitPrice);
         item.oilUnitPrice = toDecimal2(item.oilUnitPrice);
+        item.subsidy = toDecimal2(item.subsidy);
         item.prePayRatio = toDecimal2(item.prePayRatio);
         item.arrivePayRatio = toDecimal2(item.arrivePayRatio);
         item.tailPayRatio = toDecimal2(item.tailPayRatio)
@@ -255,6 +262,8 @@ layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, layt
         item.freightUnitPriceStr = '';
         item.oilUnitPriceFlag = '0';
         item.oilUnitPriceStr = '';
+        item.subsidyFlag = '0';
+        item.subsidyStr = '';
         item.prePayRatioFlag = '0';
         item.prePayRatioStr = '';
         item.arrivePayRatioFlag = '0';
@@ -300,6 +309,10 @@ layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, layt
                     if (h.oilUnitPrice != val.oilUnitPrice) {
                       val.oilUnitPriceFlag = '1';
                       val.oilUnitPriceStr = h.oilUnitPrice
+                    }
+                    if (h.subsidy != val.subsidy) {
+                      val.subsidyFlag = '1';
+                      val.subsidyStr = h.subsidy
                     }
                     if (h.prePayRatio != val.prePayRatio) {
                       val.prePayRatioFlag = '1';

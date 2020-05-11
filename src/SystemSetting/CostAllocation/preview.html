@@ -97,35 +97,41 @@
       <div class="layui-row">
         <div class="layui-col-xs4">
           运费：<span>{{item.freightUnitPrice}} 元/km</span>
-          {{# if(item.freightUnitPriceFlag =='1'){ }}
+          <!-- {{# if(item.freightUnitPriceFlag =='1'){ }}
           <div><span class="x-red">待审：</span><span class="colorb">{{item.freightUnitPriceStr}} 元/km</span></div>
-          {{# } }}
+          {{# } }} -->
         </div>
         <div class="layui-col-xs4">
           油：<span>{{item.oilUnitPrice}} 升/百公里</span>
-          {{# if(item.oilUnitPriceFlag =='1'){ }}
+          <!-- {{# if(item.oilUnitPriceFlag =='1'){ }}
           <div><span class="x-red">待审：</span><span class="colorb">{{item.oilUnitPriceStr}} 升/百公里</span></div>
-          {{# } }}
+          {{# } }} -->
+        </div>
+        <div class="layui-col-xs4">
+          补贴：<span>{{item.subsidy || 0}} 元</span>
+          <!-- {{# if(item.subsidyFlag =='1'){ }}
+          <div><span class="x-red">待审：</span><span class="colorb">{{item.subsidyStr || 0}} 元</span></div>
+          {{# } }} -->
         </div>
       </div>
       <div class="layui-row">
         <div class="layui-col-xs4">
           预付款：<span>{{item.prePayRatio}}%</span>
-          {{# if(item.prePayRatioFlag =='1'){ }}
+          <!-- {{# if(item.prePayRatioFlag =='1'){ }}
           <div><span class="x-red">待审：</span><span class="colorb">{{item.prePayRatioStr}}%</span></div>
-          {{# } }}
+          {{# } }} -->
         </div>
         <div class="layui-col-xs4">
           到付款：<span>{{item.arrivePayRatio}}%</span>
-          {{# if(item.arrivePayRatioFlag =='1'){ }}
+          <!-- {{# if(item.arrivePayRatioFlag =='1'){ }}
           <div><span class="x-red">待审：</span><span class="colorb">{{item.arrivePayRatioStr}}%</span></div>
-          {{# } }}
+          {{# } }} -->
         </div>
         <div class="layui-col-xs4">
           尾款：<span>{{item.tailPayRatio}}%</span>
-          {{# if(item.tailPayRatioFlag =='1'){ }}
+          <!-- {{# if(item.tailPayRatioFlag =='1'){ }}
           <div><span class="x-red">待审：</span><span class="colorb">{{item.tailPayRatioStr}}%</span></div>
-          {{# } }}
+          {{# } }} -->
         </div>
       </div>
       <hr/>
@@ -177,6 +183,7 @@ layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, layt
       resData.forEach(item => {
         item.freightUnitPrice = toDecimal2(item.freightUnitPrice);
         item.oilUnitPrice = toDecimal2(item.oilUnitPrice);
+        item.subsidy = toDecimal2(item.subsidy);
         item.prePayRatio = toDecimal2(item.prePayRatio);
         item.arrivePayRatio = toDecimal2(item.arrivePayRatio);
         item.tailPayRatio = toDecimal2(item.tailPayRatio)
@@ -197,6 +204,8 @@ layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, layt
         item.freightUnitPriceStr = '';
         item.oilUnitPriceFlag = '0';
         item.oilUnitPriceStr = '';
+        item.subsidyFlag = '0';
+        item.subsidyStr = '';
         item.prePayRatioFlag = '0';
         item.prePayRatioStr = '';
         item.arrivePayRatioFlag = '0';
@@ -242,6 +251,10 @@ layui.use(['layer', 'element', 'laytpl', 'form'], function (layer, element, layt
                     if (h.oilUnitPrice != val.oilUnitPrice) {
                       val.oilUnitPriceFlag = '1';
                       val.oilUnitPriceStr = h.oilUnitPrice
+                    }
+                    if (h.subsidy != val.subsidy) {
+                      val.subsidyFlag = '1';
+                      val.subsidyStr = h.subsidy
                     }
                     if (h.prePayRatio != val.prePayRatio) {
                       val.prePayRatioFlag = '1';

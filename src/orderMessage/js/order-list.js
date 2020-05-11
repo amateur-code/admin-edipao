@@ -1399,11 +1399,11 @@ layui.config({
                 }else if (layEvent === 'edit') { //编辑
                     xadmin.open('修改订单', './order-edit.html?action=edit&orderNo=' + data.orderNo + "&orderId=" + data.id + "&feeId=" + data.feeId);
                 } else if (layEvent === 'verify') { //审核
-                    xadmin.open('审核', './order-view.html?action=verify&orderNo=' + data.orderNo + "&orderId=" + data.id);
+                    xadmin.open('审核', './order-view.html?action=verify&orderNo=' + data.orderNo + "&orderId=" + data.id + "&feeId=" + data.feeId);
                 }else if(layEvent == "feeVerify"){
                     xadmin.open('审核运费', './order-view.html?action=feeVerify&orderNo=' + data.orderNo + "&orderId=" + data.id + "&feeId=" + data.feeId);
                 } else if (layEvent === 'view') { //查看
-                    xadmin.open('查看订单', './order-view.html?orderNo=' + data.orderNo + "&orderId=" + data.id + "&action=view");
+                    xadmin.open('查看订单', './order-view.html?orderNo=' + data.orderNo + "&orderId=" + data.id + "&action=view" + "&feeId=" + data.feeId);
                 } else if (layEvent === 'cancel') { //取消
                     var index = layer.open({
                         title: "取消确认",

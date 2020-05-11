@@ -344,12 +344,13 @@ layui.config({
       exportXlsx(checkStatus.data)
       return;
     }
-    tableWhere.pageNo = 1;
-    tableWhere.pageSize = 10000;
+    let where = JSON.parse(JSON.stringify(tableWhere));
+    where.pageNo = 1;
+    where.pageSize = 10000;
     edipao.request({
       type: 'post',
       url: '/admin/fee/list',
-      data: tableWhere
+      data: where
     }).then(function (res) {
       if (res.code == 0) {
         exportXlsx(res.data.feeDTOList);

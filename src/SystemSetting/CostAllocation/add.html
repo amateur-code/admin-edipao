@@ -99,6 +99,18 @@
           </div>
           <div class="layui-form-mid layui-word-aux">升/百公里</div>
         </div>
+        <div class="layui-inline" style="position:relative;left:15px;">
+          <label class="layui-form-label" style="width: auto;">补助</label>
+          <div class="layui-input-inline">
+            <input type="text" name="subsidy"
+                   id="subsidy{{item.id}}" autocomplete="off"
+                   lay-verify="required|numberOne"
+                   placeholder="0.00"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
+          </div>
+          <div class="layui-form-mid layui-word-aux">元</div>
+        </div>
         <br/>
         <div class="layui-inline">
           <label class="layui-form-label">预付款</label>
@@ -165,6 +177,18 @@
           </div>
           <div class="layui-form-mid layui-word-aux">升/百公里</div>
         </div>
+        <div class="layui-inline" style="position:relative;left:15px;">
+          <label class="layui-form-label" style="width: auto;">补助</label>
+          <div class="layui-input-inline">
+            <input type="text" name="subsidy"
+                   id="subsidyB{{item.id}}" autocomplete="off"
+                   lay-verify="required|numberOne"
+                   placeholder="0.00"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
+          </div>
+          <div class="layui-form-mid layui-word-aux">元</div>
+        </div>
         <br/>
         <div class="layui-inline">
           <label class="layui-form-label">预付款</label>
@@ -229,6 +253,18 @@
                    class="layui-input">
           </div>
           <div class="layui-form-mid layui-word-aux">升/百公里</div>
+        </div>
+        <div class="layui-inline" style="position:relative;left:15px;">
+          <label class="layui-form-label" style="width: auto;">补助</label>
+          <div class="layui-input-inline">
+            <input type="text" name="subsidy"
+                   id="subsidyB{{item.id}}" autocomplete="off"
+                   lay-verify="required|numberOne"
+                   placeholder="0.00"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
+          </div>
+          <div class="layui-form-mid layui-word-aux">元</div>
         </div>
         <br/>
         <div class="layui-inline">
@@ -554,12 +590,14 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
       if (item.orderType == 1) {
         let freightUnitPrice = $('#freightUnitPrice' + item.id).val();
         let oilUnitPrice = $('#oilUnitPrice' + item.id).val();
+        let subsidy = $('#subsidy' + item.id).val();
         let prePayRatio = $('#prePayRatio' + item.id).val();
         let arrivePayRatio = $('#arrivePayRatio' + item.id).val();
         let tailPayRatio = $('#tailPayRatio' + item.id).val();
 
         let freightUnitPriceB = $('#freightUnitPriceB' + item.id).val();
         let oilUnitPriceB = $('#oilUnitPriceB' + item.id).val();
+        let subsidyB = $('#subsidyB' + item.id).val();
         let prePayRatioB = $('#prePayRatioB' + item.id).val();
         let arrivePayRatioB = $('#arrivePayRatioB' + item.id).val();
         let tailPayRatioB = $('#tailPayRatioB' + item.id).val();
@@ -568,6 +606,7 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
             carModel: item.modelName + '背车',
             freightUnitPrice: toDecimal2(freightUnitPrice),
             oilUnitPrice: toDecimal2(oilUnitPrice),
+            subsidy: toDecimal2(subsidy),
             prePayRatio: toDecimal2(prePayRatio),
             arrivePayRatio: toDecimal2(arrivePayRatio),
             tailPayRatio: toDecimal2(tailPayRatio),
@@ -576,6 +615,7 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
             carModel: item.modelName,
             freightUnitPrice: toDecimal2(freightUnitPriceB),
             oilUnitPrice: toDecimal2(oilUnitPriceB),
+            subsidy: toDecimal2(subsidyB),
             prePayRatio: toDecimal2(prePayRatioB),
             arrivePayRatio: toDecimal2(arrivePayRatioB),
             tailPayRatio: toDecimal2(tailPayRatioB),
@@ -584,6 +624,7 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
       } else {
         let freightUnitPriceB = $('#freightUnitPriceB' + item.id).val();
         let oilUnitPriceB = $('#oilUnitPriceB' + item.id).val();
+        let subsidyB = $('#subsidyB' + item.id).val();
         let prePayRatioB = $('#prePayRatioB' + item.id).val();
         let arrivePayRatioB = $('#arrivePayRatioB' + item.id).val();
         let tailPayRatioB = $('#tailPayRatioB' + item.id).val();
@@ -592,6 +633,7 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
           carModel: item.modelName,
           freightUnitPrice: toDecimal2(freightUnitPriceB),
           oilUnitPrice: toDecimal2(oilUnitPriceB),
+          subsidy: toDecimal2(subsidyB),
           prePayRatio: toDecimal2(prePayRatioB),
           arrivePayRatio: toDecimal2(arrivePayRatioB),
           tailPayRatio: toDecimal2(tailPayRatioB),

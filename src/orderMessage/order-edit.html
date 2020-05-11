@@ -551,7 +551,7 @@
                                 <span class="input_unit">升</span>
                                 <input data-field="prePayOil" value="{{d.feeDetail.prePayOil}}" onkeyup="num(this)" type="text" name="prePayOil" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
-                            <div class="layui-col-md5">
+                            <div class="layui-col-md5 origin_fee">
                                 {{# if(dataPermission.canViewOrderCost != 'Y'){ }}
                                 <div class="blue">油箱容量：{{'****升'}}</div>
                                 {{# }else{ }}
@@ -602,6 +602,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="layui-inline layui-col-md4">
+                        <label class="layui-form-label text_left form_label"><span class="red">*</span>补助</label><br>
+                        <div class="layui-input-inline layui-row">
+                            <div class="layui-col-md7 relative">
+                                <span class="input_unit">元</span>
+                                <input value="{{d.subsidy}}" disabled type="text" name="subsidy" lay-verify="required" autocomplete="off" class="layui-input input_fee">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="form_item_container">
@@ -614,7 +623,7 @@
                                 <input value="{{d.feeDetail.totalAmount}}" onchange="num(this)" disabled type="text" name="totalAmount" lay-verify="required" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-col-md5 origin_fee">
-                                <div class="blue">现金+油转现</div>
+                                <div class="blue">现金+油转现+补助</div>
                             </div>
                         </div>
                     </div>

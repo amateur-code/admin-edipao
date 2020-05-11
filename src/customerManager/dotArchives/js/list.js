@@ -328,7 +328,7 @@ layui
         { field: "endProvince", type: "provincecity" },
         { field: "endAddress", type: "input" },
         { field: "addrCode", type: "input" },
-        { field: "connectorName", type: "input" },
+        { field: "connectorName", type: "contract" },
         // { field: "transportOrderNum", type: "numberslot" },
         { field: "status", type: "checkbox", data: statusData },
       ];
@@ -354,6 +354,16 @@ layui
             } else if(key == "status"){
               where['searchFieldDTOList['+ index +'].fieldName'] = key;
               where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+            }else if(key == "connectorName"){
+              if(value[0]){
+                where["searchFieldDTOList[" + index + "].fieldName"] = "connectorName";
+                where["searchFieldDTOList[" + index + "].fieldValue"] = value[0];
+              }
+              if(value[0] && value[1]) index++;
+              if(value[1]){
+                where["searchFieldDTOList[" + index + "].fieldName"] = "connectorPhone";
+                where["searchFieldDTOList[" + index + "].fieldValue"] = value[1];
+              }
             } else {
               where["searchFieldDTOList[" + index + "].fieldName"] = key;
               where["searchFieldDTOList[" + index + "].fieldValue"] = value;
@@ -375,7 +385,7 @@ layui
         exportXlsx(checkStatus.data);
         return;
       }
-      var param = where;
+      var param = JSON.parse(JSON.stringify(where));
       param["pageNo"] = 1;
       param["pageSize"] = 1000;
       edipao
@@ -417,6 +427,13 @@ layui
                     default:
                       exportObj[index] = "- -";
                       break;
+                  }
+                  break;
+                case "connectorName":
+                  if(!item.connectorName && !item.connectorPhone){
+                    exportObj[index] = "- -";
+                  }else{
+                    exportObj[index] = item.connectorName + item.connectorPhone;
                   }
                   break;
                 default:

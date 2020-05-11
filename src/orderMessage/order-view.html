@@ -841,7 +841,7 @@
                             </div>
                             {{# } }}
                         </div>
-                        <div class="layui-inline layui-col-md4">
+                        <div class="layui-inline layui-col-md4 origin_fee">
                             <span class="layui-form-span form_span">油转现：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.oilAmount}}元</span>
                             {{# if(d.feeUpdateData.oilAmount != undefined){ }}
@@ -860,6 +860,16 @@
                             <div class="check">
                                 <span class="x-red layui-form-span form_span">待审：</span>
                                 <span class="">{{d.feeUpdateData.amount}}元</span>
+                            </div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-inline layui-col-md4">
+                            <span class="layui-form-span form_span">补助：</span>
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.subsidy}}元</span>
+                            {{# if(d.feeUpdateData.subsidy != undefined){ }}
+                            <div class="check">
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.feeUpdateData.subsidy}}元</span>
                             </div>
                             {{# } }}
                         </div>

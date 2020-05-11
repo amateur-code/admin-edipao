@@ -57,6 +57,9 @@
 #form_fee_list {
   padding-top: 20px;
 }
+.hide {
+  display: none !important;
+}
 .linpai_row {
   position: relative;
 }
