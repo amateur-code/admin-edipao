@@ -273,6 +273,7 @@ layui.config({
         var backl = "-1px";
         var l = "-215px";
         var dur = 500;
+        $(".opeartion_icon").removeClass("layui-icon-next").addClass("layui-icon-prev");
         if(resizeTime) clearTimeout(resizeTime);
         resizeTime = setTimeout(function () {
             $(".layui-table-main td[data-field=operation]").css("border-color","#ffffff").css("background","#ffffff").find(".layui-table-cell").css("width", w).html("");

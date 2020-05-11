@@ -215,6 +215,7 @@ layui
         var backl = "-1px";
         var l = "-215px";
         var dur = 300;
+        $(".opeartion_icon").removeClass("layui-icon-next").addClass("layui-icon-prev");
         if (resizeTime) clearTimeout(resizeTime);
         resizeTime = setTimeout(function () {
           $(".layui-table-main td[data-field=operation]")
