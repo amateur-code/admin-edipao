@@ -63,6 +63,7 @@ layui.config({
     window.dataPermission = dataPermission;
     var permissionList = edipao.getMyPermission();
     window.permissionList = permissionList;
+    console.log(window.permissionList)
     var loadLayer = layer.load(2);
     var exportHead = {};
     var where = {
@@ -1403,7 +1404,8 @@ layui.config({
                 }else if(layEvent == "feeVerify"){
                     xadmin.open('审核运费', './order-view.html?action=feeVerify&orderNo=' + data.orderNo + "&orderId=" + data.id + "&feeId=" + data.feeId);
                 } else if (layEvent === 'view') { //查看
-                    xadmin.open('查看订单', './order-view.html?orderNo=' + data.orderNo + "&orderId=" + data.id + "&action=view" + "&feeId=" + data.feeId);
+                    var pid = edipao.urlGet().perssionId;
+                    xadmin.open('查看订单', './order-view.html?orderNo=' + data.orderNo + "&orderId=" + data.id + "&action=view" + "&feeId=" + data.feeId + "&perssionId=" + pid);
                 } else if (layEvent === 'cancel') { //取消
                     var index = layer.open({
                         title: "取消确认",

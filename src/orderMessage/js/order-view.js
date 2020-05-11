@@ -33,7 +33,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     this.dataPermission = edipao.getDataPermission();
     this.truckList = [];
     window.dataPermission = this.dataPermission;
-    console.log(this.dataPermission)
+    this.permissionList = edipao.getMyPermission();
+    window.permissionList = this.permissionList;
+    console.log(permissionList)
   }
   $.extend(View.prototype, {
     init: function () {
