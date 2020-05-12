@@ -128,6 +128,7 @@ tableFilter: 'TableFilter/tableFilter'
                 data[d][l].Point = new Careland.GbPoint(tmp1[1], tmp1[0]);
                 data[d][l].IconType = CLDMAP_TRACK_ICON_TRUCK;
             }
+            console.log(data)
             var trackHandler = new Careland.Track();
             trackHandler.clear();
             trackHandler.setLoop(false); //是否播放结束继续播放

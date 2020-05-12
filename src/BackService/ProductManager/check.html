@@ -107,13 +107,13 @@
                         <div class="layui-col-xs4">
                             单价:  <span>{{d.detail.unitPrice}}{{d.detail.supplierType == "unloadCar"?'元/次':'元/升'}}</span>
                             {{# if(d.check.unitPrice){ }}
-                            <div><span class="x-red">待审：</span>{{d.check.unitPrice}}</div>
+                            <div><span class="x-red">待审:  </span>{{d.check.unitPrice}}{{d.detail.supplierType == "unloadCar"?'元/次':'元/升'}}</div>
                             {{# } }}
                         </div>
                         <div class="layui-col-xs4">
-                            生效时间： <span>{{d.detail.effectiveTime}}</span>
+                            生效时间:  <span>{{d.detail.effectiveTime}}</span>
                             {{# if(d.check.effectiveTime){ }}
-                            <div><span class="x-red">待审：</span>{{d.check.effectiveTime}}</div>
+                            <div><span class="x-red">待审:  </span>{{d.check.effectiveTime}}</div>
                             {{# } }}
                         </div>
                     </div>

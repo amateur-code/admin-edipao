@@ -63,7 +63,6 @@ layui.config({
     window.dataPermission = dataPermission;
     var permissionList = edipao.getMyPermission();
     window.permissionList = permissionList;
-    console.log(window.permissionList)
     var loadLayer = layer.load(2);
     var exportHead = {};
     var where = {
@@ -266,7 +265,6 @@ layui.config({
                         where['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
                     }
                 }else if(key == "orderStatus" || key == "orderType" || key == "tailPayStatus"){
-                    console.log(value)
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                 }else if(key == "fetchStatus" || key == "startAuditStatus" || key == "returnAuditStatus"){
@@ -278,7 +276,6 @@ layui.config({
                 }
                 index++;
             });
-            console.log(reload)
             if(reload){
                 reloadOption = { where: where, page: { curr: 1 }};
             }else{
@@ -1022,6 +1019,15 @@ layui.config({
             });
         },
         bindEvents: function(){
+            // $(window).unbind().on("message", function (e) {
+            //     console.log(e)
+            //     var origin = e.origin || e.originalEvent.origin;  //域
+            //     var source = e.source || e.originalEvent.source;  //信息来源的window
+            //     var data = e.data || e.originalEvent.data;
+            //     if((origin + "").indexOf(window.location.host) > -1){
+                    
+            //     }
+            // });
             $(".top_tool_bar").unbind().on("click", function (e) {
                 var event = e.target.dataset.event;
                 event == 'import_order' && permissionList.indexOf('订单录入') == -1 && (event = 'reject');
