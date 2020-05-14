@@ -526,10 +526,22 @@
                             <input onchange="num(this)" disabled type="text" value="{{d.feeDetail.driverMileage}}" name="driverMileage" lay-verify="required" autocomplete="off" class="layui-input driverMileage">
                         </div>
                     </div>
+                    <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                        <label class="layui-form-label text_left form_label">费用模板</label><br>
+                        <div class="layui-input-inline relative">
+                            <input onchange="num(this)" disabled type="text" value="{{d.feeDetail.feeName || '- -'}}" name="feeName" lay-verify="required" autocomplete="off" class="layui-input feeName">
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md3 layui-col-md-offset1">
+                        <label class="layui-form-label text_left form_label">费用车型</label><br>
+                        <div class="layui-input-inline relative">
+                            <input onchange="num(this)" disabled type="text" value="{{d.feeDetail.carModel || '- -'}}" name="carModel" lay-verify="required" autocomplete="off" class="layui-input carModel">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="form_item_container">
-                <div class="layui-form-item layui-row layui-col-space30">
+                <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md4">
                         <label class="layui-form-label text_left form_label">应给油</label><br>
                         <div class="layui-input-inline layui-row">
@@ -587,7 +599,7 @@
                 </div>
             </div>
             <div class="form_item_container">
-                <div class="layui-form-item layui-row layui-col-space30">
+                <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md4">
                         <label class="layui-form-label text_left form_label"><span class="red">*</span>现金</label><br>
                         <div class="layui-input-inline layui-row">
@@ -614,7 +626,7 @@
                 </div>
             </div>
             <div class="form_item_container">
-                <div class="layui-form-item layui-row layui-col-space30">
+                <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md4">
                         <label class="layui-form-label text_left form_label">总现金</label><br>
                         <div class="layui-input-inline layui-row">
@@ -630,7 +642,7 @@
                 </div>
             </div>
             <div class="form_item_container">
-                <div class="layui-form-item layui-row layui-col-space30">
+                <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md4">
                         <label class="layui-form-label text_left form_label"><span class="red">*</span>预付现金</label><br>
                         <div class="layui-input-inline layui-row">
@@ -676,7 +688,7 @@
                 </div>
             </div>
             <div class="form_item_container">
-                <div class="layui-form-item layui-row layui-col-space30">
+                <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md3">
                         <label class="layui-form-label text_left form_label">结算方式</label><br>
                         <div class="layui-input-inline layui-row">

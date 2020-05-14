@@ -42,46 +42,54 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       var _this = this;
       if(_this.action != "verify" && _this.action != "feeVerify"){
         $("#verify_container").remove();
-        $.when(_this.getOrder(), _this.getOrderFee()).done(function(res, res1){
-          res = res[0];
-          res1 = res1[0];
+        _this.getOrder().done(function (res) {
           if(res.code == "0"){
-            _this.parseData(res.data);
-            _this.orderData = res.data;
-            if(!_this.feeId){
-              _this.orderData.oil = _this.orderData.prePayOil || 0;
-              _this.orderData.amount =
-                (_this.orderData.prePayAmount ? (_this.orderData.prePayAmount * 1) : 0) +
-                (_this.orderData.arrivePayAmount ? (_this.orderData.arrivePayAmount * 1) : 0) +
-                (_this.orderData.tailPayAmount ? (_this.orderData.tailPayAmount * 1) : 0);
-              _this.orderData.totalAmount = _this.orderData.amount;
-            }
-            if(res1.code == "0"){
-              _this.orderData.subsidy = res1.data.subsidy || 0;
-            }else{
-              _this.orderData.subsidy = 0;
-            }
-            if(_this.dataPermission.canViewOrderCost != "Y"){
-              _this.orderData.oil = "****";
-              _this.orderData.prePayOil = "****";
-              _this.orderData.oilAmount = "****";
-              _this.orderData.amount = "****";
-              _this.orderData.totalAmount = "****";
-              _this.orderData.prePayAmount = "****";
-              _this.orderData.arrivePayAmount = "****";
-              _this.orderData.tailPayAmount = "****";
-              _this.orderData.subsidy = "****";
-            }
-            laytpl($("#forms_tpl").html()).render({orderData: _this.orderData, feeUpdateData: {}}, function (html) {
-              $("#form_income_container").after(html);
-              if(!_this.feeId){
-                $(".origin_fee").addClass("hide");
+            _this.feeId = res.data.feeId;
+            _this.getOrderFee().done(function (res1) {
+              if(res.code == "0"){
+                _this.parseData(res.data);
+                _this.orderData = res.data;
+                if(!_this.feeId){
+                  _this.orderData.oil = _this.orderData.prePayOil || 0;
+                  _this.orderData.amount =
+                    (_this.orderData.prePayAmount ? (_this.orderData.prePayAmount * 1) : 0) +
+                    (_this.orderData.arrivePayAmount ? (_this.orderData.arrivePayAmount * 1) : 0) +
+                    (_this.orderData.tailPayAmount ? (_this.orderData.tailPayAmount * 1) : 0);
+                  _this.orderData.totalAmount = _this.orderData.amount;
+                }
+                if(res1.code == "0"){
+                  _this.orderData.originFee = res1.data || {};
+                  _this.orderData.subsidy = res1.data.subsidy || 0;
+                }else{
+                  _this.orderData.originFee = {};
+                  _this.orderData.subsidy = 0;
+                }
+                if(_this.dataPermission.canViewOrderCost != "Y"){
+                  _this.orderData.oil = "****";
+                  _this.orderData.prePayOil = "****";
+                  _this.orderData.oilAmount = "****";
+                  _this.orderData.amount = "****";
+                  _this.orderData.totalAmount = "****";
+                  _this.orderData.prePayAmount = "****";
+                  _this.orderData.arrivePayAmount = "****";
+                  _this.orderData.tailPayAmount = "****";
+                  _this.orderData.subsidy = "****";
+                  Object.keys(_this.orderData.originFee).forEach(function (key) {
+                    _this.orderData.originFee[key] = "****";
+                  });
+                }
+                laytpl($("#forms_tpl").html()).render({orderData: _this.orderData, feeUpdateData: {}}, function (html) {
+                  $("#form_income_container").after(html);
+                  if(!_this.feeId){
+                    $(".origin_fee").addClass("hide");
+                  }
+                  _this.setData(_this.orderData);
+                  _this.bindEvents();
+                });
+              }else{
+                layer.msg(res.message, {icon: 5,anim: 6});
               }
-              _this.setData(_this.orderData);
-              _this.bindEvents();
             });
-          }else{
-            layer.msg(res.message, {icon: 5,anim: 6});
           }
         });
       }else{
@@ -90,94 +98,110 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           res1 = res1[0];
           res2 = res2[0];
           res3 = res3[0];
-          res4 = res4[0];
-          res2.data = res2.data || {};
-          res3.data = res3.data || {};
-          if(res1.code == "0" && (res2.code == "0" || res3.code == "0")){
-            if(!res1.data){
-              _this.updateData = {};
-              _this.feeUpdateData = {};
-            }else if(_this.action != "feeVerify"){
-              try {
-                var updateData;
-                updateData = JSON.parse(res1.data.modifyAfterJson);
-                updateData.forEach(function (item) {
-                  _this.updateData[item.name] = item.value;
-                });
-                if(_this.dataPermission.canViewOrderIncome != "Y"){
-                  if(_this.updateData.totalIncome) _this.updateData.totalIncome = "****";
-                  if(_this.updateData.totalManageFee) _this.updateData.totalManageFee = "****";
+          if(res1[0].code == "0"){
+            _this.feeId = res.data.feeId;
+            _this.getOrderFee().done(function (res4) {
+              res2.data = res2.data || {};
+              res3.data = res3.data || {};
+              if(res1.code == "0" && (res2.code == "0" || res3.code == "0")){
+                if(!res1.data){
+                  _this.updateData = {};
+                  _this.feeUpdateData = {};
+                }else if(_this.action != "feeVerify"){
+                  try {
+                    var updateData;
+                    updateData = JSON.parse(res1.data.modifyAfterJson);
+                    updateData.forEach(function (item) {
+                      _this.updateData[item.name] = item.value;
+                    });
+                    if(_this.dataPermission.canViewOrderIncome != "Y"){
+                      if(_this.updateData.totalIncome) _this.updateData.totalIncome = "****";
+                      if(_this.updateData.totalManageFee) _this.updateData.totalManageFee = "****";
+                    }
+                  } catch (error) {
+                    _this.updateData = {};
+                  }
+                }else{
+                  _this.updateData = {};
+                  try {
+                    var updateData;
+                    updateData = JSON.parse(res1.data.modifyAfterJson);
+                    updateData.forEach(function (item) {
+                      if(_this.dataPermission.canViewOrderCost != "Y"){
+                        if(item.name != "driverMileage") _this.feeUpdateData[item.name] = "****";
+                      }else{
+                        _this.feeUpdateData[item.name] = item.value;
+                      }
+                    });
+                  } catch (error) {
+                    _this.feeUpdateData = {};
+                  }
                 }
-              } catch (error) {
-                _this.updateData = {};
-              }
-            }else{
-              _this.updateData = {};
-              try {
-                var updateData;
-                updateData = JSON.parse(res1.data.modifyAfterJson);
-                updateData.forEach(function (item) {
-                  if(_this.dataPermission.canViewOrderCost != "Y"){
-                    if(item.name != "driverMileage") _this.feeUpdateData[item.name] = "****";
-                  }else{
-                    _this.feeUpdateData[item.name] = item.value;
+                res2.data.truckDTOList = res2.data.truckDTOList || [];
+                if(!_this.feeId){
+                  res2.data.oil = res2.data.prePayOil || 0;
+                  res2.data.amount =
+                    (res2.data.prePayAmount ? (res2.data.prePayAmount * 1) : 0) +
+                    (res2.data.arrivePayAmount ? (res2.data.arrivePayAmount * 1) : 0) +
+                    (res2.data.tailPayAmount ? (res2.data.tailPayAmount * 1) : 0);
+                  res2.data.totalAmount = res2.data.amount;
+                }
+                _this.parseTruckData(res3.data);
+                _this.parseData(res2.data);
+                _this.parseData(_this.updateData, true);
+                _this.orderData = res2.data;
+                if(res4.code == "0"){
+                  _this.orderData.originFee = res4.data || {};
+                  _this.orderData.subsidy = res4.data.subsidy || 0;
+                }else{
+                  _this.orderData.originFee = {};
+                  _this.orderData.subsidy = 0;
+                }
+                _this.truckUpdateData = res3.data || {add:[],update:{},delete:[]};
+    
+                if(_this.action == "verify"){
+                  _this.truckUpdateData.add && _this.truckUpdateData.add.forEach(function (item) {
+                    item.isNew = true;
+                    _this.orderData.truckDTOList.push(item);
+                  });
+                }
+    
+                _this.updateData.orderData = _this.orderData;
+                _this.updateData.feeUpdateData = _this.feeUpdateData || {};
+                if(_this.dataPermission.canViewOrderCost != "Y"){
+                  Object.keys(_this.feeUpdateData).forEach(function (key) {
+                    if(key != "driverMileage") _this.feeUpdateData[key] = "****";
+                  });
+                  Object.keys(_this.orderData.originFee).forEach(function (key) {
+                    _this.orderData.originFee[key] = "****";
+                  });
+                  _this.updateData.orderData.oilUnitPrice = "****";
+                  _this.updateData.orderData.closestOilPrice = "****";
+                  _this.updateData.orderData.freightUnitPrice = "****";
+                  _this.updateData.orderData.prePayRatio = "****";
+                  _this.updateData.orderData.arrivePayRatio = "****";
+                  _this.updateData.orderData.tailPayRatio = "****";
+                  _this.updateData.orderData.oil = "****";
+                  _this.updateData.orderData.prePayOil = "****";
+                  _this.updateData.orderData.oilAmount = "****";
+                  _this.updateData.orderData.amount = "****";
+                  _this.updateData.orderData.totalAmount = "****";
+                  _this.updateData.orderData.prePayAmount = "****";
+                  _this.updateData.orderData.arrivePayAmount = "****";
+                  _this.updateData.orderData.tailPayAmount = "****";
+                  _this.updateData.orderData.subsidy = "****";
+                }
+                _this.updateData.action = _this.action;
+                laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
+                  $("#form_income_container").after(html);
+                  if(!_this.feeId){
+                    $(".origin_fee").addClass("hide");
                   }
                 });
-              } catch (error) {
-                _this.feeUpdateData = {};
-              }
-            }
-            res2.data.truckDTOList = res2.data.truckDTOList || [];
-            if(!_this.feeId){
-              res2.data.oil = res2.data.prePayOil || 0;
-              res2.data.amount =
-                (res2.data.prePayAmount ? (res2.data.prePayAmount * 1) : 0) +
-                (res2.data.arrivePayAmount ? (res2.data.arrivePayAmount * 1) : 0) +
-                (res2.data.tailPayAmount ? (res2.data.tailPayAmount * 1) : 0);
-              res2.data.totalAmount = res2.data.amount;
-            }
-            _this.parseTruckData(res3.data);
-            _this.parseData(res2.data);
-            _this.parseData(_this.updateData, true);
-            _this.orderData = res2.data;
-            if(res4.code == "0"){
-              _this.orderData.subsidy = res4.data.subsidy || 0;
-            }else{
-              _this.orderData.subsidy = 0;
-            }
-            _this.truckUpdateData = res3.data || {add:[],update:{},delete:[]};
-
-            if(_this.action == "verify"){
-              _this.truckUpdateData.add && _this.truckUpdateData.add.forEach(function (item) {
-                item.isNew = true;
-                _this.orderData.truckDTOList.push(item);
-              });
-            }
-
-            _this.updateData.orderData = _this.orderData;
-            _this.updateData.feeUpdateData = _this.feeUpdateData || {};
-            if(_this.dataPermission.canViewOrderCost != "Y"){
-              Object.keys(_this.feeUpdateData).forEach(function (key) {
-                if(key != "driverMileage") _this.feeUpdateData[key] = "****";
-              });
-              _this.updateData.orderData.oil = "****";
-              _this.updateData.orderData.prePayOil = "****";
-              _this.updateData.orderData.oilAmount = "****";
-              _this.updateData.orderData.amount = "****";
-              _this.updateData.orderData.totalAmount = "****";
-              _this.updateData.orderData.prePayAmount = "****";
-              _this.updateData.orderData.arrivePayAmount = "****";
-              _this.updateData.orderData.tailPayAmount = "****";
-              _this.updateData.orderData.subsidy = "****";
-            }
-            laytpl($("#forms_tpl").html()).render(_this.updateData, function (html) {
-              $("#form_income_container").after(html);
-              if(!_this.feeId){
-                $(".origin_fee").addClass("hide");
+                _this.setData(_this.orderData);
+                _this.bindEvents();
               }
             });
-            _this.setData(_this.orderData);
-            _this.bindEvents();
           }
         });
       }

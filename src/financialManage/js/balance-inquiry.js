@@ -1,3 +1,32 @@
+var feeNameData = [
+  {key: "预付款", value: "预付款"},
+  {key: "到付款", value: "到付款"},
+  {key: "尾款", value: "尾款"},
+]
+
+var feeTypeData = [
+  {key: "运费", value: "运费"},
+]
+
+var withdrawStatusData = [
+  {key: "未提现", value: "未提现"},
+  {key: "打款中", value: "打款中"},
+  {key: "打款成功", value: "打款成功"},
+  {key: "打款失败", value: "打款失败"},
+  {key: "不需要提现", value: "不需要提现"},
+]
+
+function timeNull(time){
+  time = time + "";
+  var year = time.substring(0, 4);
+  var month = time.substring(4, 6);
+  var day = time.substring(6, 8);
+  var h = time.substring(8, 10);
+  var m = time.substring(10, 12);
+  var s = time.substring(12, 14);
+  return year + "-" + month + "-" + day + " " + h + ":" + m + ":" + s;
+}
+
 layui
   .config({
     base: "../lib/",
@@ -6,11 +35,12 @@ layui
     excel: "layui_exts/excel.min",
     tableFilter: "TableFilter/tableFiltercopy",
   })
-  .use(["jquery", "form", "table", "excel", "tableFilter"], function () {
+  .use(["jquery", "form", "table", "excel", "tableFilter", "laytpl"], function () {
     var $ = layui.jquery,
       edipao = layui.edipao,
       excel = layui.excel,
       table = layui.table,
+      laytpl = layui.laytpl,
       tableFilter  = layui.tableFilter ,
       form = layui.form,
       tableIns,
@@ -20,16 +50,16 @@ layui
       where = {},
       permissionList = edipao.getMyPermission(),
       exportHead = {};
-      permissionList = permissionList.concat(["同步订单", "重新发起支付", "导出"]);
       console.log(permissionList);
       window.form = form;
+      window.permissionList = permissionList;
     var showList = [
-      'depositTradeNumber',
+      'withdrawFlowNo',
       'orderNo', 'warehouseNo',
       'vinCode', 'transportAssignTime',
       'signTime', 'returnAuditTime',
       'feeType', 'feeName',
-      'feeAmount', 'receiver',
+      'feeAmount', 'receiverName',
       'receiverIdNum', 'receiverBankName',
       'receiverAccountName', 'accountNumber',
       'payTime', 'withdrawTime',
@@ -39,87 +69,125 @@ layui
     ];
     var tableCols = [
       { checkbox: true },
-      { field: "depositTradeNumber", title: "支付流水号", width: 120, templet: function (d) {
-          return d.depositTradeNumber ? d.depositTradeNumber : "- -";
+      { field: "withdrawFlowNo", title: "支付流水号", width: 250, templet: function (d) {
+        return d.withdrawFlowNo ? d.withdrawFlowNo : "- -";
       }},
-      { field: "orderNo", title: "业务单号", width: 105, templet: function (d) {
-          return d.orderNo ? d.orderNo : "- -";
-      }},
-      { field: "warehouseNo", title: "仓库作业单号", width: 100, templet: function (d) {
+      { field: "orderNo", title: "业务单号", width: 120, templet: "#order_href" },
+      { field: "warehouseNo", title: "仓库作业单号", width: 160, templet: function (d) {
           return d.warehouseNo ? d.warehouseNo : "- -";
       }},
-      { field: "vinCode", title: "车辆vin码", width: 100, templet: function (d) {
+      { field: "vinCode", title: "车辆vin码", width: 160, templet: function (d) {
           return d.vinCode ? d.vinCode : "- -";
       }},
-      { field: "transportAssignTime", title: "运输商指派时间", width: 100, templet: function (d) {
-          return d.transportAssignTime ? d.transportAssignTime : "- -";
+      { field: "transportAssignTime", title: "运输商指派时间", width: 160, templet: function (d) {
+          return d.transportAssignTime ? timeNull(d.transportAssignTime) : "- -";
       }},
-      { field: "signTime", title: "扫码签收时间", width: 100, templet: function (d) {
-          return d.signTime ? d.signTime : "- -";
+      { field: "signTime", title: "扫码签收时间", width: 160, templet: function (d) {
+          return d.signTime ? timeNull(d.signTime) : "- -";
       }},
-      { field: "returnAuditTime", title: "回单审核时间", width: 100, templet: function (d) {
-          return d.returnAuditTime ? d.returnAuditTime : "- -";
+      { field: "returnAuditTime", title: "回单审核时间", width: 160, templet: function (d) {
+          return d.returnAuditTime ? timeNull(d.returnAuditTime) : "- -";
       }},
-      { field: "feeType", title: "费用类型", width: 100, templet: function (d) {
+      { field: "feeType", title: "费用类型", width: 120, templet: function (d) {
           return d.feeType ? d.feeType : "- -";
       }},
-      { field: "feeName", title: "费用名称", width: 100, templet: function (d) {
+      { field: "feeName", title: "费用名称", width: 120, templet: function (d) {
           return d.feeName ? d.feeName : "- -";
       }},
-      { field: "feeAmount", title: "金额", width: 100, templet: function (d) {
-          return d.feeAmount ? d.feeAmount : "- -";
+      { field: "feeAmount", title: "金额", width: 120, templet: function (d) {
+          return d.feeAmount ? d.feeAmount + "元" : "- -";
       }},
-      { field: "receiver", title: "业务方", width: 100, templet: function (d) {
-          return d.receiver ? d.receiver : "- -";
-      }},
-      { field: "receiverIdNum", title: "身份证号码", width: 100, templet: function (d) {
+      { field: "receiverName", title: "业务方", width: 160, templet: "#driver_href"},
+      { field: "receiverIdNum", title: "身份证号码", width: 160, templet: function (d) {
           return d.receiverIdNum ? d.receiverIdNum : "- -";
       }},
-      { field: "receiverBankName", title: "银行开户行", width: 100, templet: function (d) {
+      { field: "receiverBankName", title: "银行开户行", width: 160, templet: function (d) {
           return d.receiverBankName ? d.receiverBankName : "- -";
       }},
-      { field: "receiverAccountName", title: "银行账户名", width: 100, templet: function (d) {
+      { field: "receiverAccountName", title: "银行账户名", width: 130, templet: function (d) {
           return d.receiverAccountName ? d.receiverAccountName : "- -";
       }},
-      { field: "accountNumber", title: "银行账号", width: 100, templet: function (d) {
-          return d.accountNumber ? d.accountNumber : "- -";
+      { field: "receiverAccountNumber", title: "银行账号", width: 160, templet: function (d) {
+          return d.receiverAccountNumber ? d.receiverAccountNumber : "- -";
       }},
-      { field: "payTime", title: "支付完成时间", width: 100, templet: function (d) {
-          return d.payTime ? d.payTime : "- -";
+      { field: "payTime", title: "支付完成时间", width: 160, templet: function (d) {
+          return d.payTime ? timeNull(d.payTime) : "- -";
       }},
-      { field: "withdrawTime", title: "提现发起时间", width: 100, templet: function (d) {
-          return d.withdrawTime ? d.withdrawTime : "- -";
+      { field: "withdrawTime", title: "提现发起时间", width: 160, templet: function (d) {
+          return d.withdrawTime ? timeNull(d.withdrawTime) : "- -";
       }},
-      { field: "withdrawStatus", title: "银行支付状态", width: 100, templet: function (d) {
+      { field: "withdrawStatus", title: "提现状态", width: 120, templet: function (d) {
           return d.withdrawStatus ? d.withdrawStatus : "- -";
       }},
-      { field: "remark", title: "银行备注", width: 100, templet: function (d) {
+      { field: "remark", title: "银行备注", width: 300, templet: function (d) {
           return d.remark ? d.remark : "- -";
       }},
-      { field: "toAccountTime", title: "提现到账时间", width: 100, templet: function (d) {
-          return d.toAccountTime ? d.toAccountTime : "- -";
+      { field: "toAccountTime", title: "提现到账时间", width: 150, templet: function (d) {
+          return d.toAccountTime ? timeNull(d.toAccountTime) : "- -";
       }},
-      { field: "thirdFlowNo", title: "银行支付流水号", width: 100, templet: function (d) {
-          return d.thirdFlowNo ? d.thirdFlowNo : "- -";
+      { field: "thirdFlowNo", title: "银行支付流水号", width: 200, templet: function (d) {
+        return d.thirdFlowNo ? d.thirdFlowNo : "- -";
       }},
-      { field: "bankReceipt", title: "银行回单", width: 100, templet: "#view_pic", },
+      { field: "bankReceipt", title: "银行回单", width: 120, templet: "#view_pic", },
     ]
     var toolField = {title: '操作', field: "operation", toolbar: '#rowBtns', align: 'left', fixed: 'right', width: 300};
 
-    function Balance() {}
+    function Balance() {
+      this.tableKey = "balance-order-list";
+    }
     Balance.prototype.init = function () {
-      edipao.request({
+      var _this = this;
+      if(permissionList.indexOf("导出") < 0){
+        $("#export_data").remove();
+      } 
+      if(permissionList.indexOf("查看余额") > -1){
+        edipao.request({
           type: "GET",
           url: "/admin/finance/balance/get",
           data: {},
+        }).done(function (res) {
+          if (res.code == 0) {
+            $("#balanceNo").text(res.data);
+          }
+        });
+      }
+      edipao.request({
+        type: "GET",
+        url: "/admin/table/show-field/get",
+        data: {
+          tableName: this.tableKey,
+        },
       }).done(function (res) {
         if (res.code == 0) {
-          $("#balanceNo").text(res.data);
+          if (res.data) {
+            showList = [];
+            try {
+              showList = JSON.parse(res.data);
+            } catch (e) {}
+            layui.each(tableCols, function (index, item) {
+              if (item.field == "operation") return;
+              if (item.field && showList.indexOf(item.field) == -1) {
+                item.hide = true;
+              } else {
+                if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
+                  exportHead[item.field] = item.title;
+                }
+              }
+            });
+          } else {
+            layui.each(tableCols, function (index, item) {
+              if (item.field && showList.indexOf(item.field) != -1) {
+                if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
+                  exportHead[item.field] = item.title;
+                }
+              }
+            });
+          }
+          tableCols.push(toolField);
+          _this.renderTable();
+          _this.setTableFilter();
         }
       });
-      tableCols.push(toolField);
-      this.renderTable();
-      this.setTableFilter();
     };
     Balance.prototype.renderTable = function () {
       var _this = this;
@@ -141,13 +209,13 @@ layui
           edipao.codeMiddleware(res);
           var data = [];
           res.data = res.data || {};
-          res.data.orderDTOList = res.data.orderDTOList || [];
+          res.data.financeDetailEntityList = res.data.financeDetailEntityList || [];
           if (res.code == 0) {
             return {
               code: res.code,
               msg: res.message,
               count: res.data.totalSize,
-              data: res.data.orderDTOList,
+              data: res.data.financeDetailEntityList,
             };
           }
         },
@@ -171,9 +239,24 @@ layui
       });
     };
     Balance.prototype.bindTableEvents = function () {
+      console.log(table)
       var _this = this;
-      $(".view_pic_btn").unbind().on("click", function(e){
-        console.log(e)
+      $(".view_driver_btn").unbind().on("click", function (e) {
+        var key = e.target.dataset.data;
+        //xadmin.open('查看订单', './order-view.html?orderNo=' + data.orderNo + "&orderId=" + key + "&action=view" + "&feeId=" + data.feeId + "&perssionId=" + pid);
+      });
+      $(".view_order_btn").unbind().on("click", function (e) {  });
+      $(".view_pic_btn").unbind().on("click", function (e) {
+        laytpl($("#view_pic_tpl").html()).render({pic: e.target.dataset.data}, function (html) {
+          console.log(html)
+          layer.open({
+            type: 1,
+            title: "查看",
+            content: html,
+            area: "600px",
+            success: function(){}
+          });
+        });
       });
       table.on("tool(balanceList)", handleEvent);
       $(".top_tool_bar").unbind().on("click", function (e) {
@@ -182,7 +265,7 @@ layui
       function handleEvent(obj) {
         var data = obj.data;
         obj.event == "sync" && permissionList.indexOf("同步订单") == -1 && (obj.event = "reject");
-        obj.event == "repay" && permissionList.indexOf("重新发起支付") == -1 && (obj.event = "reject");
+        obj.event == "repay" && permissionList.indexOf("重新支付") == -1 && (obj.event = "reject");
         obj.event == "export" && permissionList.indexOf("导出") == -1 && (obj.event = "reject");
         switch (obj.event) {
           case "reject":
@@ -201,7 +284,12 @@ layui
             xadmin.open('表格设置', './table-set.html?tableKey=balance-order-list', 600, 400);
             break;
           case "log":
-            top.xadmin.open('操作日志', 'OperateLog/log.html?id=' + data.id + '&type=4');
+            top.xadmin.open('操作日志', 'OperateLog/log.html?id=' + data.orderNo + '&type=14');
+            break;
+          case "reset_search":
+            edipao.resetSearch("balanceList", function(){
+                location.reload();
+            });
             break;
         }
       }
@@ -211,24 +299,26 @@ layui
      * @desc 同步订单
      */
     Balance.prototype.handleSync = function (data) {
-      var loadIndex = layer.load(1);
-      edipao.request({
-        url: "/admin/finance/order/sync",
-        data: { paymentNumber: data.paymentNumber },
-        method: "GET",
-      }).done(function (res) {
-        layer.close(loadIndex);
-        if(res.code == "0"){
-          layer.alert("订单已重新发起同步。", function () {
-            layer.closeAll();
-            tableIns.reload( { where: where, page: { curr: 1 }} );
-          }, function () {
-            layer.closeAll();
-            // tableIns.reload( { where: where, page: { curr: 1 }} );
-          });
-        }
-      }).fail(function () {
-        layer.close(loadIndex);
+      layer.confirm("确认同步订单？", {icon: 3, title: "同步订单"}, function(){
+        var loadIndex = layer.load(1);
+        edipao.request({
+          url: "/admin/finance/order/sync",
+          data: { orderNo: data.orderNo },
+          method: "GET",
+        }).done(function (res) {
+          layer.close(loadIndex);
+          if(res.code == "0"){
+            layer.alert("订单已重新发起同步。", function () {
+              layer.closeAll();
+              tableIns.reload( { where: where, page: { curr: 1 }} );
+            }, function () {
+              layer.closeAll();
+              // tableIns.reload( { where: where, page: { curr: 1 }} );
+            });
+          }
+        }).fail(function () {
+          layer.close(loadIndex);
+        });
       });
     }
     /**
@@ -241,7 +331,7 @@ layui
         var loadIndex = layer.load(1);
         edipao.request({
           url: "/admin/finance/pay/again",
-          data: { paymentNumber: data.paymentNumber },
+          data: { orderNo: data.orderNo, withdrawFlowNo: data.withdrawFlowNo },
           method: "GET",
         }).done(function (res) {
           layer.close(loadIndex);
@@ -295,6 +385,12 @@ layui
           layui.each(v, function (index, item) {
             if (index && showList.indexOf(index) != -1) {
               switch (index) {
+                case "payTime":
+                case "withdrawTime":
+                case "toAccountTime":
+                case "transportAssignTime":
+                  exportObj[index] = timeNull(item);
+                  break;
                 default:
                   exportObj[index] = DataNull(item);
               }
@@ -335,26 +431,26 @@ layui
     };
     Balance.prototype.setTableFilter = function () {
       var filters = [
-        { field: 'depositTradeNumber', type: 'input' },
+        { field: 'withdrawFlowNo', type: 'input' },
         { field: 'orderNo', type: 'input' },
         { field: 'warehouseNo', type: 'input' },
         { field: 'vinCode', type: 'input' },
         { field: 'transportAssignTime', type: 'timeslot' },
         { field: 'signTime', type: 'input' },
         { field: 'returnAuditTime', type: 'input' },
-        { field: 'feeType', type: 'input' },
-        { field: 'feeName', type: 'input' },
-        { field: 'feeAmount', type: 'input' },
-        { field: 'receiver', type: 'input' },
+        { field: 'feeType', type: 'checkbox', data: feeTypeData },
+        { field: 'feeName', type: 'checkbox', data: feeNameData },
+        { field: 'feeAmount', type: 'numberslot' },
+        { field: 'receiverName', type: 'input' },
         { field: 'receiverIdNum', type: 'input' },
         { field: 'receiverBankName', type: 'input' },
         { field: 'receiverAccountName', type: 'input' },
-        { field: 'accountNumber', type: 'input' },
-        { field: 'payTime', type: 'input' },
-        { field: 'withdrawTime', type: 'input' },
-        { field: 'withdrawStatus', type: 'input' },
+        { field: 'receiverAccountNumber', type: 'input' },
+        { field: 'payTime', type: 'timeslot' },
+        { field: 'withdrawTime', type: 'timeslot' },
+        { field: 'withdrawStatus', type: 'checkbox', data: withdrawStatusData },
         { field: 'remark', type: 'input' },
-        { field: 'toAccountTime', type: 'input' },
+        { field: 'toAccountTime', type: 'timeslot' },
         { field: 'thirdFlowNo', type: 'input' },
         // { field: "银行回单", type: "input" },
       ]
@@ -369,9 +465,25 @@ layui
                 loginStaffId: edipao.getLoginStaffId()
             };
             layui.each(filters, function (key, value) {
-                if(key=='startProvince'||key=='endProvince'){
+                if(key=='withdrawStatus'||key=='feeType'){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
-                    where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
+                    where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+                }else if(key=='feeAmount'){
+                  if(value.slot.length > 0){
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    where['searchFieldDTOList['+ index +'].fieldMinValue'] = value.slot[0];
+                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value.slot[1];
+                    if(value.checked.length > 0) index++;
+                  }
+                  if(value.checked.length > 0){
+                      where['searchFieldDTOList['+ index +'].fieldName'] = key.replace("Amount", "Status");
+                      where['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
+                  }
+                }else if(key=='withdrawTime'||key=='toAccountTime'||key=='transportAssignTime'||key=='payTime'){
+                  where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                  value = value.split(" 至 ");
+                  where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+                  where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
                 }else{
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldValue'] = value;
@@ -381,7 +493,7 @@ layui
             if(reload){
                 reloadOption = { where: where, page: { curr: 1 }};
             }else{
-                mainTable.reload( { where: where, page: { curr: 1 }});
+                tableIns.reload( { where: where, page: { curr: 1 }});
             }
         }
       });

@@ -61,7 +61,7 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-body">
-                        <table id="list" lay-filter="list"></table>
+                        <table id="ProductList" lay-filter="ProductList"></table>
                     </div>
                 </div>
             </div>
@@ -69,6 +69,7 @@
     </div>
     <script type="text/html" id="headerBtns">
         <div class="layui-btn-container">
+        <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
         {{# if(permissionList.indexOf('新增') != -1){ }}    
         <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
         {{# } }}
@@ -211,7 +212,7 @@
         }
         function renderTable(){
             tableIns = table.render({
-                elem: '#list',
+                elem: '#ProductList',
                 url: edipao.API_HOST + '/admin/product/list',
                 request: {
                     pageName: 'pageNo',
@@ -274,7 +275,7 @@
             });
 
             tableFilterIns = tableFilter.render({
-                'elem' : '#list',//table的选择器
+                'elem' : '#ProductList',//table的选择器
                 'mode' : 'self',//过滤模式
                 'filters' : filtersHeader,//过滤项配置
                 'done': function(filters, reload){
@@ -315,6 +316,7 @@
         }
 
         function handleEvent(obj){
+            console.log(obj)
             var data = obj.data
             // console.log(obj,permissionList)
             obj.event == 'trade-record' && permissionList.indexOf('交易记录') == -1 && (obj.event = 'reject');
@@ -373,13 +375,18 @@
                 case 'tableSet':
                     xadmin.open('表格设置', './table-set.html', 600)
                     break;
+                case "reset_search":
+                    edipao.resetSearch("ProductList", function(){
+                        location.reload();
+                    });
+                    break;
             };
         }
 
         
 
         function exportData() {
-            var checkStatus = table.checkStatus('list');
+            var checkStatus = table.checkStatus('ProductList');
             if(checkStatus.data.length > 0){
                 exportXlsx(checkStatus.data)
                 return;
@@ -434,8 +441,8 @@
             if(ids) params.dataPkList = ids;
             edipao.exportLog(params);
         }
-        table.on('tool(list)', handleEvent);
-        table.on('toolbar(list)', handleEvent);
+        table.on('tool(ProductList)', handleEvent);
+        table.on('toolbar(ProductList)', handleEvent);
         table.on('checkbox(staffList)', handleEvent);
     })
     </script>

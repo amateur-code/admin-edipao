@@ -2,7 +2,7 @@ layui.config({
     base: '../lib/'
 }).extend({
     excel: 'layui_exts/excel.min',
-    tableFilter: 'TableFilter/tableFilter'
+    tableFilter: 'TableFilter/tableFiltercopy'
 }).use(['jquery', 'table','layer','excel','tableFilter', 'laytpl', 'laypage'], function () {
     var table = layui.table,
         $ = layui.jquery,
@@ -12,7 +12,8 @@ layui.config({
         laytpl = layui.laytpl;
         laypage = layui.laypage;
         tableFilter = layui.tableFilter,
-        permissionList = edipao.getMyPermission();
+        permissionList = edipao.getMyPermission(),
+        reloadOption = null;
 
     function _tableClass(){
         this.user = JSON.parse(sessionStorage.user);
@@ -143,6 +144,10 @@ layui.config({
                     if(_t.pageNo == 1){
                         _t.setLayPage(res.count);
                     }
+                    if(reloadOption) {
+                        tableIns.reload(JSON.parse(JSON.stringify(reloadOption)));
+                        reloadOption = false;
+                    }
                     _t.tableFilterIns && _t.tableFilterIns.reload() // 搜索
                 },
                 text: {
@@ -211,7 +216,7 @@ layui.config({
                     }
 
                 ],//过滤项配置
-                'done': function(filters){
+                'done': function(filters, reload){
                     console.log(filters)
                     //结果回调
                     var where = {},
@@ -229,8 +234,11 @@ layui.config({
                     })
 
                     _t.where = $.extend({}, _t.request, where)
-                    
-                    _t.tableIns.reload( { where: _t.where});
+                    if(reload){
+                        reloadOption = { where: _t.where, page: { curr: 1 }};
+                    }else{
+                        _t.tableIns.reload( { where: _t.where});
+                    }
                 }
             })
 
@@ -303,9 +311,16 @@ layui.config({
             });
             table.on('toolbar(routeList)', function (obj) {
                 var data = obj.data;
-                var layEvent = obj.event; 
-                if (layEvent === 'export') { 
-                    _t.exportData();
+                var layEvent = obj.event;
+                switch(obj.event){
+                    case "export":
+                        _t.exportData();
+                        break;
+                    case "reset_search":
+                        edipao.resetSearch("routeList", function(){
+                            location.reload();
+                        });
+                        break;
                 }
             });
         }

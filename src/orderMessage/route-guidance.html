@@ -53,6 +53,7 @@
 </script>
 <script type="text/html" id="exportBtn">
     <div class="layui-btn-container">
+        <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
         {{# if(permissionList.indexOf('导出') != -1){ }}
         <button class="layui-btn produceOrders" lay-event="export">导出</button>
         {{# } }}

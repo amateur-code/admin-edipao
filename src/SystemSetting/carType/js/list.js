@@ -363,6 +363,11 @@ layui.config({
             case 'log':
                 xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=9');
                 break;
+            case "reset_search":
+                edipao.resetSearch("carTypeList", function(){
+                    location.reload();
+                });
+                break;
         };
 
     }

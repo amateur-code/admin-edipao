@@ -14,11 +14,9 @@
   width: 150px;
 }
 .sample-graph {
-  display: inline-block;
   color: #3490e9;
   cursor: pointer;
   text-decoration: underline;
-  margin-right: 20px;
 }
 .margin_top10 {
   margin-top: 10px;
@@ -42,6 +40,9 @@
 .form_item_container .layui-row {
   height: auto;
   overflow: visible !important;
+}
+.fee_form .layui-row {
+  margin-bottom: 20px;
 }
 .form_item_container .form_span {
   position: absolute;
@@ -72,4 +73,12 @@
 }
 .disabled {
   pointer-events: none;
+}
+.inline-block {
+  display: inline-block !important;
+  float: left;
+}
+.origin_fee {
+  margin-left: 10px;
+  color: #999999 !important;
 }

@@ -314,7 +314,8 @@ layui.config({
     // 日期
     function laydateRender(id){
         laydate.render({
-            elem: '#'+id
+            elem: '#'+id,
+            trigger: 'click'
         });
     };
 

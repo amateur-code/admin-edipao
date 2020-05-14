@@ -3,7 +3,8 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       edipao = layui.edipao,
       tableKey = edipao.urlGet().tableKey;
   var dotTableHeaderList = [
-    { field: 'depositTradeNumber', title: '支付流水号' },
+    { field: 'withdrawFlowNo', title: '支付流水号' },
+    { field: 'thirdFlowNo', title: '银行支付流水号' },
     { field: 'orderNo', title: '业务单号' },
     { field: 'warehouseNo', title: '仓库作业单号' },
     { field: 'vinCode', title: '车辆vin码' },
@@ -13,17 +14,16 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: 'feeType', title: '费用类型' },
     { field: 'feeName', title: '费用名称' },
     { field: 'feeAmount', title: '金额' },
-    { field: 'receiver', title: '业务方' },
+    { field: 'receiverName', title: '业务方' },
     { field: 'receiverIdNum', title: '身份证号码' },
     { field: 'receiverBankName', title: '银行开户行' },
     { field: 'receiverAccountName', title: '银行账户名' },
-    { field: 'accountNumber', title: '银行账号' },
+    { field: 'receiverAccountNumber', title: '银行账号' },
     { field: 'payTime', title: '支付完成时间' },
     { field: 'withdrawTime', title: '提现发起时间' },
     { field: 'withdrawStatus', title: '银行支付状态' },
     { field: 'remark', title: '银行备注' },
     { field: 'toAccountTime', title: '提现到账时间' },
-    { field: 'thirdFlowNo', title: '银行支付流水号' },
     { field: 'bankReceipt', title: '银行回单' }
   ];
   var tableHeaderList = dotTableHeaderList;

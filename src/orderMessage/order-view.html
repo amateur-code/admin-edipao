@@ -542,7 +542,7 @@
                     <span class="blue">- -</span>
                     {{# }else{ }}
                         {{# layui.each(d.tempLicenseBackImage, function(index, item){ }}
-                        <div>
+                        <div class="sample-graph boxZoomImg" src="{{item}}">
                             <img class="car_image" src="{{item}}">
                         </div>
                         {{# }); }}
@@ -567,7 +567,7 @@
                     <span class="blue">- -</span>
                     {{# }else{ }}
                         {{# layui.each(d.startBillImage, function(index, item){ }}
-                        <div>
+                        <div class="sample-graph boxZoomImg" src="{{item}}">
                             <img class="car_image" src="{{item}}">
                         </div>
                         {{# }); }}
@@ -594,7 +594,7 @@
                 {{# }else{ }}
                    <div class="layui-row layui-col-space20">
                         {{# layui.each(d.fetchImages, function(index, item){ }}
-                        <div style="" class="layui-col-md3">
+                        <div style="" class="sample-graph boxZoomImg layui-col-md3" src="{{item}}">
                             <img class="car_image" src="{{item}}">
                         </div>
                         {{# }); }}
@@ -621,7 +621,7 @@
                 {{# }else{ }}
                     <div class="layui-row layui-col-space20">
                         {{# layui.each(d.startImages, function(index, item){ }}
-                        <div style="" class="layui-col-md3">
+                        <div style="" class="layui-col-md3 sample-graph boxZoomImg" src="{{item}}">
                             <img class="car_image" src="{{item}}">
                         </div>
                         {{# }); }}
@@ -648,7 +648,7 @@
                 {{# }else{ }}
                     <div class="layui-row layui-col-space20">
                         {{# layui.each(d.returnImages, function(index, item){ }}
-                        <div style="" class="layui-col-md3">
+                        <div style="" class="layui-col-md3 sample-graph boxZoomImg" src="{{item}}">
                             <img class="car_image" src="{{item}}">
                         </div>
                         {{# }); }}
@@ -807,11 +807,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="form_item_container" style="padding-top:20px;">
-                    <div class="layui-form-item layui-row">
+                <div class="form_item_container fee_form" style="padding-top:20px;">
+                    <div class="layui-form-item layui-row fee_form">
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">承运公里数：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}km</span>
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.driverMileage}}</span>
                             {{# if(d.feeUpdateData.driverMileage != undefined){ }}
                             <div class="check">
                                 <span class="x-red layui-form-span form_span">待审：</span>
@@ -819,47 +819,97 @@
                             </div>
                             {{# } }}
                         </div>
-                    </div>
-                    <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md4">
-                            <span class="layui-form-span form_span">应给油：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.oil}}升</span>
-                            {{# if(d.feeUpdateData.oil != undefined){ }}
+                            <span class="layui-form-span form_span">费用模板：</span>
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.feeName || '- -'}}</span>
+                            {{# if(d.feeUpdateData.feeName != undefined){ }}
                             <div class="check">
                                 <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.feeUpdateData.oil}}升</span>
+                                <span class="">{{d.feeUpdateData.feeName}}km</span>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
-                            <span class="layui-form-span form_span">油：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.prePayOil}}升</span>
-                            {{# if(d.feeUpdateData.prePayOil != undefined){ }}
+                            <span class="layui-form-span form_span">费用车型：</span>
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.carModel || '- -'}}</span>
+                            {{# if(d.feeUpdateData.carModel != undefined){ }}
                             <div class="check">
                                 <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.feeUpdateData.prePayOil}}升</span>
-                            </div>
-                            {{# } }}
-                        </div>
-                        <div class="layui-inline layui-col-md4 origin_fee">
-                            <span class="layui-form-span form_span">油转现：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.oilAmount}}元</span>
-                            {{# if(d.feeUpdateData.oilAmount != undefined){ }}
-                            <div class="check">
-                                <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.feeUpdateData.oilAmount}}元</span>
+                                <span class="">{{d.feeUpdateData.carModel}}km</span>
                             </div>
                             {{# } }}
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md4">
-                            <span class="layui-form-span form_span">现金：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.amount}}元</span>
-                            {{# if(d.feeUpdateData.amount != undefined){ }}
-                            <div class="check">
-                                <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.feeUpdateData.amount}}元</span>
+                            <div class="inline-block">
+                                <span class="layui-form-span form_span">应给油：</span>
+                                <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.oil}}升</span>
+                                {{# if(d.feeUpdateData.oil != undefined){ }}
+                                <div class="check">
+                                    <span class="x-red layui-form-span form_span">待审：</span>
+                                    <span class="">{{d.feeUpdateData.oil}}升</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            {{# if(d.action == "feeVerify"){ }}
+                            <div class="inline-block origin_fee">
+                                <div>规定：{{d.orderData.originFee.oilUnitPrice || '- -'}}升/百公里</div>
+                                <div>实际：{{d.orderData.oilUnitPrice || '- -'}}升/百公里</div>
+                            </div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-inline layui-col-md4">
+                            <div class="inline-block">
+                                <span class="layui-form-span form_span">油：</span>
+                                <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.prePayOil}}升</span>
+                                {{# if(d.feeUpdateData.prePayOil != undefined){ }}
+                                <div class="check">
+                                    <span class="x-red layui-form-span form_span">待审：</span>
+                                    <span class="">{{d.feeUpdateData.prePayOil}}升</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            {{# if(d.action == "feeVerify"){ }}
+                            <div class="inline-block origin_fee">
+                                <div>油箱容量：{{d.orderData.oilCapacity > 100000 ? '无限' : d.orderData.oilCapacity * .95 + '升'}}</div>
+                            </div>
+                            {{# } }}
+                        </div>
+                        <div class="layui-inline layui-col-md4">
+                            <div class="inline-block">
+                                <span class="layui-form-span form_span">油转现：</span>
+                                <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.oilAmount}}元</span>
+                                {{# if(d.feeUpdateData.oilAmount != undefined){ }}
+                                <div class="check">
+                                    <span class="x-red layui-form-span form_span">待审：</span>
+                                    <span class="">{{d.feeUpdateData.oilAmount}}元</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            {{# if(d.action == "feeVerify"){ }}
+                            <div class="inline-block origin_fee">
+                                <div>油单价：{{d.orderData.closestOilPrice || '- -'}}元/升</div>
+                            </div>
+                            {{# } }}
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md4">
+                            <div class="inline-block">
+                                <span class="layui-form-span form_span">现金：</span>
+                                <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.amount}}元</span>
+                                {{# if(d.feeUpdateData.amount != undefined){ }}
+                                <div class="check">
+                                    <span class="x-red layui-form-span form_span">待审：</span>
+                                    <span class="">{{d.feeUpdateData.amount}}元</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            {{# if(d.action == "feeVerify"){ }}
+                            <div class="inline-block origin_fee">
+                                <div>规定：{{d.orderData.originFee.freightUnitPrice || '- -'}}元</div>
+                                <div>实际：{{d.orderData.freightUnitPrice || '- -'}}元</div>
                             </div>
                             {{# } }}
                         </div>
@@ -876,44 +926,75 @@
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md4">
-                            <span class="layui-form-span form_span">总现金：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.totalAmount}}元</span>
-                            {{# if(d.feeUpdateData.totalAmount != undefined){ }}
-                            <div class="check">
-                                <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.feeUpdateData.totalAmount}}元</span>
+                            <div class="inline-block">
+                                <span class="layui-form-span form_span">总现金：</span>
+                                <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.totalAmount}}元</span>
+                                {{# if(d.feeUpdateData.totalAmount != undefined){ }}
+                                <div class="check">
+                                    <span class="x-red layui-form-span form_span">待审：</span>
+                                    <span class="">{{d.feeUpdateData.totalAmount}}元</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            {{# if(d.action == "feeVerify"){ }}
+                            <div class="inline-block origin_fee">
+                                <div>现金+油转现+补助</div>
                             </div>
                             {{# } }}
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md4">
-                            <span class="layui-form-span form_span">预付现金：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.prePayAmount}}元</span>
-                            {{# if(d.feeUpdateData.prePayAmount != undefined){ }}
-                            <div class="check">
-                                <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.feeUpdateData.prePayAmount}}元</span>
+                            <div class="inline-block">
+                                <span class="layui-form-span form_span">预付现金：</span>
+                                <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.prePayAmount}}元</span>
+                                {{# if(d.feeUpdateData.prePayAmount != undefined){ }}
+                                <div class="check">
+                                    <span class="x-red layui-form-span form_span">待审：</span>
+                                    <span class="">{{d.feeUpdateData.prePayAmount}}元</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            {{# if(d.action == "feeVerify"){ }}
+                            <div class="inline-block origin_fee">
+                                <div>规定：{{d.orderData.originFee.prePayRatio || '- -'}}%</div>
+                                <div>实际：{{d.orderData.prePayRatio || '- -'}}%</div>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
-                            <span class="layui-form-span form_span">到付现金：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.arrivePayAmount}}元</span>
-                            {{# if(d.feeUpdateData.arrivePayAmount != undefined){ }}
-                            <div class="check">
-                                <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.feeUpdateData.arrivePayAmount}}元</span>
+                            <div class="inline-block">
+                                <span class="layui-form-span form_span">到付现金：</span>
+                                <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.arrivePayAmount}}元</span>
+                                {{# if(d.feeUpdateData.arrivePayAmount != undefined){ }}
+                                <div class="check">
+                                    <span class="x-red layui-form-span form_span">待审：</span>
+                                    <span class="">{{d.feeUpdateData.arrivePayAmount}}元</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            {{# if(d.action == "feeVerify"){ }}
+                            <div class="inline-block origin_fee">
+                                <div>规定：{{d.orderData.originFee.arrivePayRatio || '- -'}}%</div>
+                                <div>实际：{{d.orderData.arrivePayRatio || '- -'}}%</div>
                             </div>
                             {{# } }}
                         </div>
                         <div class="layui-inline layui-col-md4">
-                            <span class="layui-form-span form_span">尾款现金：</span>
-                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.tailPayAmount}}元</span>
-                            {{# if(d.feeUpdateData.tailPayAmount != undefined){ }}
-                            <div class="check">
-                                <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.feeUpdateData.tailPayAmount}}元</span>
+                            <div class="inline-block">
+                                <span class="layui-form-span form_span">尾款现金：</span>
+                                <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.tailPayAmount}}元</span>
+                                {{# if(d.feeUpdateData.tailPayAmount != undefined){ }}
+                                <div class="check">
+                                    <span class="x-red layui-form-span form_span">待审：</span>
+                                    <span class="">{{d.feeUpdateData.tailPayAmount}}元</span>
+                                </div>
+                                {{# } }}
+                            </div>
+                            {{# if(d.action == "feeVerify"){ }}
+                            <div class="inline-block origin_fee">
+                                <div>规定：{{d.orderData.originFee.tailPayRatio || '- -'}}%</div>
+                                <div>实际：{{d.orderData.tailPayRatio || '- -'}}%</div>
                             </div>
                             {{# } }}
                         </div>

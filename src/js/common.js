@@ -131,10 +131,18 @@ layui.define([], function(exports) {
       }
       return permissionList
     }
-    Common.prototype.getSearchOptions = function () {
-        var pid = this.urlGet().perssionId;
-
+    Common.prototype.resetSearch = function (elemId, cb) {
+        var initData;
+		try {
+			initData = JSON.parse(sessionStorage.getItem("tableFilterData")) || {};
+		} catch (error) {
+			initData = {};
+		}
+        initData[elemId] = {};
+        sessionStorage.setItem("tableFilterData", JSON.stringify(initData));
+        cb && cb()
     }
+    
     Common.prototype.formatDate = function(date, format) {
         format = format || "yyyy-MM-dd hh:mm:ss";
         var list = {

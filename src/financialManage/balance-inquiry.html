@@ -37,6 +37,7 @@
                 <span class="list_title">订单列表</span>56k余额：<span id="balanceNo" style="color:red;font-weight: 600;">- -</span>
               </div>
               <div class="layui-col-md6 tr">
+                  <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
                   <button id="export_data" data-event="export" class="top_tool_bar layui-btn">导出</button>
                   <button id="table_set" data-event="table_set" class="top_tool_bar layui-btn">表格设置</button>
               </div>
@@ -47,12 +48,51 @@
     </div>
   </div>
   <script type="text/html" id="rowBtns">
+    {{# if(d.thirdOrderNo == "" && permissionList.indexOf('同步订单') > -1){ }}
     <a class="layui-btn layui-btn-blue layui-btn-xs" lay-event="sync">同步订单</a>
+    {{# } }}
+    {{# if(d.withdrawStatus.indexOf('打款失败') > -1 && permissionList.indexOf('重新支付') > -1){ }}
     <a class="layui-btn layui-btn-blue layui-btn-xs" lay-event="repay">重新发起支付</a>
+    {{# } }}
     <a class="layui-btn layui-btn-blue layui-btn-xs" lay-event="log">日志</a>
   </script>
   <script type="text/html" id="view_pic">
+    {{# if(d.bankReceipt){ }}
     <a data-data="{{d.bankReceipt}}" data-index="{{d.LAY_TABLE_INDEX}}" data-id="{{d.id}}" class="view_pic_btn" href="javascript:void(0);" style="cursor: pointer;color: #3490E9;">查看</a>
+    {{# }else{ }}
+    - -
+    {{# } }}
+  </script>
+  <script type="text/html" id="view_pic_tpl">
+    <div style="padding: 10px;background:#e6e6e6;" class="view_pic_container">
+      <div class="layui-card">
+        <div class="layui-card-header">银行回单</div>
+        <div class="layui-card-body">
+            <div class="layui-row">
+              {{# if(d.pic){ }}
+              <img class="pic_view_image" style="max-width: 100%;max-height: 400px;" src="{{d.pic}}">
+              {{# } }}
+              {{# if(!d.pic){ }}
+              <div style="color:#666;text-align:center;">暂无数据</div>
+              {{# } }}
+            </div>
+        </div>
+    </div>
+  </div>
+  </script>
+  <script id="driver_href" type="text/html">
+    {{# if(d.receiverName){ }}
+    <a data-data="{{d.receiverId}}" class="view_driver_btn" href="javascript:void(0);" style="cursor: pointer;color: #3490E9;">{{d.receiverName}}</a>
+    {{# }else{ }}
+    - -
+    {{# } }}
+  </script>
+  <script id="order_href" type="text/html">
+    {{# if(d.orderNo){ }}
+    <a data-data="{{d.orderId}}" class="view_order_btn" href="javascript:void(0);" style="cursor: pointer;color: #3490E9;">{{d.orderNo}}</a>
+    {{# }else{ }}
+    - -
+    {{# } }}
   </script>
 </body>
 </html>

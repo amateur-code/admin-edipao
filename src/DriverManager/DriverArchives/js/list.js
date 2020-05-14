@@ -629,6 +629,11 @@ layui.config({
             case 'log':
                 xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=3');
                 break;
+            case "reset_search":
+                edipao.resetSearch("driverList", function(){
+                    location.reload();
+                });
+                break;
         };
 
     }

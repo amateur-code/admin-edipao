@@ -47,6 +47,7 @@
                             <div class="title">订单列表</div>
                         </div>
                         <div class="layui-col-md6 tr">
+                            <button id="reset_search" data-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
                             <button id="import_order" data-event="import_order" class="top_tool_bar layui-btn">录入订单</button>
                             <button id="export_data" data-event="export_data" class="top_tool_bar layui-btn">导出</button>
                             <button id="table_set" data-event="table_set" class="top_tool_bar layui-btn">表格设置</button>
@@ -347,7 +348,7 @@
         {{# if(d.orderApprovalBtn*1 == 1 && d.orderStatus != 5 && d.orderStatus != 6){ }}
         <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="verify">审核</a>
         {{# } }}
-        {{# if(d.feeApprovalBtn*1 == 1 && d.orderStatus != 5 && d.orderStatus != 6){ }}
+        {{# if(d.feeApprovalBtn*1 == 1){ }}
         <a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="feeVerify">审核运费</a>
         {{# } }}
         <a class="layui-btn laydui-btn-xs layui-bg-blue" lay-event="view">查看</a>

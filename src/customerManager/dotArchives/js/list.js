@@ -311,6 +311,11 @@ layui
           case "log":
             xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&type=10");
             break;
+          case "reset_search":
+            edipao.resetSearch("dotList", function(){
+                location.reload();
+            });
+            break;
         }
       }
     };

@@ -938,7 +938,7 @@ layui.config({
                                         if(res.code == "0"){
                                             layer.close(index);
                                             layer.msg("提交成功");
-                                            table.reload("orderList");
+                                            mainTable.reload( { where: where, page: { curr: 1 }});
                                         }else{
                                             //layer.alert(res.message);
                                         }
@@ -1045,6 +1045,11 @@ layui.config({
                         break;
                     case "table_set":
                         xadmin.open('表格设置', './table-set.html?tableKey=orderMessage-order-list', 600, 400);
+                        break;
+                    case "reset_search":
+                        edipao.resetSearch("orderList", function(){
+                            location.reload();
+                        });
                         break;
                 }
             });
@@ -1190,6 +1195,10 @@ layui.config({
                                     break;
                                 case 'tailPayAmount':
                                     var payStatus = "";
+                                    if(orderType == 2 && masterFlag == "否"){
+                                        value = "";
+                                        break;
+                                    }
                                     if(dataPermission.canViewOrderCost != "Y"){
                                         value = "****" + payStatus;
                                     }else{

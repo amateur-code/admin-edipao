@@ -595,6 +595,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         _this.feeDetail.oil = _this.orderData.oil;
         _this.feeDetail.oilUnitPrice = (_this.orderData.oilUnitPrice * 1).toFixed(2);
         _this.feeDetail.prePayOil = _this.orderData.prePayOil;
+        _this.feeDetail.carModel = _this.orderData.carModel;
         _this.feeDetail.closestOilPrice = _this.orderData.closestOilPrice;
         _this.feeDetail.oilAmount = _this.orderData.oilAmount;
         _this.feeDetail.amount = _this.orderData.amount;

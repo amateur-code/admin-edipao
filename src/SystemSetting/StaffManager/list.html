@@ -61,7 +61,7 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-body" id="doc-content">
-                        <table id="list" lay-filter="list"></table>
+                        <table id="staffList" lay-filter="staffList"></table>
                     </div>
                 </div>
             </div>
@@ -69,6 +69,7 @@
     </div>
     <script type="text/html" id="headerBtns">
         <div class="layui-btn-container">
+        <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
         {{# if(permissionList.indexOf('新增') != -1){ }} 
         <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
         {{# } }}
@@ -189,8 +190,8 @@
         }
         function renderTable(){
             tableIns = table.render({
-                id: 'list',
-                elem: '#list',
+                id: 'staffList',
+                elem: '#staffList',
                 url: edipao.API_HOST + '/admin/staff/list',
                 request: {
                     pageName: 'pageNo',
@@ -247,7 +248,7 @@
             });
 
             tableFilterIns = tableFilter.render({
-                elem: '#list',
+                elem: '#staffList',
                 mode: 'self',
                 filters: filtersHeader,//过滤项配置
                 done: function(filters, reload){
@@ -327,11 +328,16 @@
                 case 'tableSet':
                     xadmin.open('表格设置', './table-set.html', 600)
                     break;
+                case "reset_search":
+                    edipao.resetSearch("staffList", function(){
+                        location.reload();
+                    });
+                    break;
             };
         }
 
         function exportData() {
-            var checkStatus = table.checkStatus('list');
+            var checkStatus = table.checkStatus('staffList');
             if(checkStatus.data.length > 0){
                 exportXlsx(checkStatus.data)
                 return;
@@ -380,9 +386,9 @@
         }
 
 
-        table.on('toolbar(list)', handleEvent);
-        table.on('tool(list)', handleEvent);
-        table.on('checkbox(list)', handleEvent);
+        table.on('toolbar(staffList)', handleEvent);
+        table.on('tool(staffList)', handleEvent);
+        table.on('checkbox(staffList)', handleEvent);
         
     })
     </script>

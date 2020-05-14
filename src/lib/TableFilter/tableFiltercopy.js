@@ -32,12 +32,13 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 
 		var initData;
 		try {
-			initData = JSON.parse(sessionStorage.getItem("tableFilterData"))||{};
+			initData = JSON.parse(sessionStorage.getItem("tableFilterData")) || {};
 		} catch (error) {
 			initData = {};
 		}
+		console.log(initData)
 		tableFilter.cache[elemId] = initData[elemId] || {};
-		opt.done(initData[elemId], true);
+		opt.done(JSON.parse(JSON.stringify(tableFilter.cache[elemId])), true);
 		//主运行
 		var main = function (){
 
@@ -406,6 +407,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 							table.reload(elemId,{"where":new_where})
 						}
 						try {
+							console.log(initData)
 							initData[elemId] = tableFilter.cache[elemId];
 							sessionStorage.setItem("tableFilterData", JSON.stringify(initData));
 						} catch (error) {}

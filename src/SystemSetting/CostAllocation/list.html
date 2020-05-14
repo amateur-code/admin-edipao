@@ -65,7 +65,7 @@
     <div class="layui-col-md12">
       <div class="layui-card">
         <div class="layui-card-body" id="doc-content">
-          <table id="list" lay-filter="list"></table>
+          <table id="costList" lay-filter="costList"></table>
         </div>
       </div>
     </div>
@@ -73,6 +73,7 @@
 </div>
 <script type="text/html" id="headerBtns">
 <div class="layui-btn-container">
+  <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
   {{# if(permissionList.indexOf('新增') != -1){ }}
   <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
   {{# } }}
@@ -192,8 +193,8 @@ layui.config({
 
   function renderTable () {
     tableIns = table.render({
-      id: 'list',
-      elem: '#list',
+      id: 'costList',
+      elem: '#costList',
       method: 'post',
       url: edipao.API_HOST + '/admin/fee/list',
       request: {
@@ -249,7 +250,7 @@ layui.config({
       }
     });
     tableFilterIns = tableFilter.render({
-      elem: '#list',
+      elem: '#costList',
       mode: 'self',
       filters: filtersHeader,//过滤项配置
       done: function (filters, reload) {
@@ -335,11 +336,16 @@ layui.config({
       case 'tableSet':
         xadmin.open('表格设置', './table-set.html', 600);
         break;
+      case "reset_search":
+        edipao.resetSearch("costList", function(){
+            location.reload();
+        });
+        break;
     }
   }
 
   function exportData () {
-    var checkStatus = table.checkStatus('list');
+    var checkStatus = table.checkStatus('costList');
     if (checkStatus.data.length > 0) {
       exportXlsx(checkStatus.data)
       return;
@@ -391,9 +397,9 @@ layui.config({
   }
 
 
-  table.on('toolbar(list)', handleEvent);
-  table.on('tool(list)', handleEvent);
-  table.on('checkbox(list)', handleEvent);
+  table.on('toolbar(costList)', handleEvent);
+  table.on('tool(costList)', handleEvent);
+  table.on('checkbox(costList)', handleEvent);
 
 })
 </script>
