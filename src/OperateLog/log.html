@@ -12,15 +12,15 @@
     <meta http-equiv="Pragma" CONTENT="no-cache">
     <link rel="stylesheet" href="../css/font.css">
     <link rel="stylesheet" href="../css/xadmin.css">
-    <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
+    <!- - <link rel="stylesheet" href="./css/theme5.css"> - ->
     <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript" src="../lib/layui/layui.js"></script>
     <script type="text/javascript" src="../js/common.js?VERSION"></script>
-    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
-    <!--[if lt IE 9]>
+    <!- - 让IE8/9支持媒体查询，从而兼容栅格 - ->
+    <!- -[if lt IE 9]>
           <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
           <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
+        <![endif]- ->
     <script>
         // 是否开启刷新记忆tab功能
     // var is_remember = false;
@@ -56,20 +56,26 @@
         var xadmin = layui.xadmin,
             edipao = layui.edipao;
         var params = edipao.urlGet();
-
+        console.log(params)
+        var action = params.action;
+        var apiUrl = "/admin/log/list";
+        var where = {
+            operationModule: params.type,
+            loginStaffId: edipao.getLoginStaffId()
+        }
+        if(action == "exportLog"){
+            apiUrl = "/admin/log/export-log/list";
+        }else{
+            where.dataPk = params.id;
+        }
         table.render({
             elem: '#list',
-            url: edipao.API_HOST + '/admin/log/list',
+            url: edipao.API_HOST + apiUrl,
             request: {
                 pageName: 'pageNo',
                 limitName: 'pageSize'
             },
-            where: {
-                // 操作模块:1供应商 2后服产品 3司机 4订单 5员工模块 6审核 7权限
-                operationModule: params.type,
-                dataPk: params.id,
-                loginStaffId: edipao.getLoginStaffId()
-            },
+            where: where,
             parseData: function(res) { //res 即为原始返回的数据
                 layui.each(res.data.supplierRespList,function(index, el) {
                     el.supplierTypeName = SupplierTypeConfig[el.supplierType]
@@ -97,7 +103,7 @@
                         templet: function (res) {
                         // 上述field: 'modifyBeforeJson' 字段 使用"modifyBeforeJsonNo",日志返回有json串，框架自动放到data-content页面显示会报错
                         // 司机档案-意向路线
-                            var data = res.modifyBeforeJson.replace(/:</g,':--<');
+                            var data = res.modifyBeforeJson.replace(/:</g,':- -<');
                             data = data.replace(/订单类型：1/g, '订单类型：单车单')
                                         .replace(/订单类型：2/g, '订单类型：背车单');
                             if(data.indexOf('意向路线') > -1){
@@ -106,25 +112,25 @@
                                         .replace(/(city)\:/g, '-')
                                         .replace(/\}(end)\:\{(code)\:(\d*)(province)\:/g, '  目的地：')
                                         .replace(/\}\}\{(start)\:\{(code)\:(\d*)(province)\:/g, '; 始发地：')
-                                        .replace(/(null)/g, '--')
+                                        .replace(/(null)/g, '- -')
                                         
                             } else if(data.indexOf('预付款') > -1 || data.indexOf('到付款') > -1 || data.indexOf('尾款') > -1){
                                 return data = data
                                             .replace(/(\')|(\,)/g, '')
                                             .replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '')
                                             .replace(/\}\{(key)/g, ',')
-                                            .replace(/(null)/g, '--')
+                                            .replace(/(null)/g, '- -')
                             }else if(data.indexOf('订单类型') > -1){
                                 console.log("lshhhhhhhhhhhhh")
                                 return data = data
                                             .replace(/(\')|(\,)/g, '')
                                             .replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '')
                                             .replace(/\}\{(key)/g, ',')
-                                            .replace(/(null)/g, '--')
+                                            .replace(/(null)/g, '- -')
                                             
                             }else{
                                 return data
-                                        .replace(/(null)/g, '--');
+                                        .replace(/(null)/g, '- -');
                             }
                         }
                     },
@@ -133,7 +139,7 @@
                             // 上述field: 'modifyAfterJson' 字段 使用"modifyAfterJsonNo",日志返回有json串，框架自动放到data-content页面显示会报错
                             // 司机档案-意向路线
                             var data = res.modifyAfterJson;
-                            var data = res.modifyAfterJson.replace(/:</g,':--<');
+                            var data = res.modifyAfterJson.replace(/:</g,':- -<');
                             data = data.replace(/订单类型：1/g, '订单类型：单车单')
                                         .replace(/订单类型：2/g, '订单类型：背车单');
                             if(data.indexOf('意向路线') > -1){
@@ -143,15 +149,15 @@
                                         .replace(/(city)\:/g, '-')
                                         .replace(/\}(end)\:\{(code)\:(\d*)(province)\:/g, '  目的地：')
                                         .replace(/\}\}\{(start)\:\{(code)\:(\d*)(province)\:/g, '; 始发地：')
-                                        .replace(/(null)/g, '--')
+                                        .replace(/(null)/g, '- -')
                                         
                             } else if(data.indexOf('预付款') > -1 || data.indexOf('到付款') > -1 || data.indexOf('尾款') > -1){
                                 return data = data
                                             .replace(/(\')|(\,)/g, '')
                                             .replace(/(\[\{(key)\:)|(val)|((unit)\:)|(\}\])/g, '')
                                             .replace(/\}\{(key)/g, ',')
-                                            .replace(/(null)/g, '--')
-                                            .replace(/\[\]/g,'--')
+                                            .replace(/(null)/g, '- -')
+                                            .replace(/\[\]/g,'- -')
                                             
                             } else if(data.indexOf("费用结构jsonjson") > -1){
                                 var json = data.replace("费用结构json:", "").replace(/<br>/g, "").replace(/<\/br>/g, "").replace(/'/g,"\""), jsonStr = "";
@@ -165,7 +171,7 @@
                                 return jsonStr;
                             }else{
                                 return data
-                                        .replace(/(null)/g, '--');
+                                        .replace(/(null)/g, '- -');
                             }
                         }},
                     { field: 'operationRemark', title: '说明' , width: 200}
@@ -193,7 +199,7 @@
         function isWishJourney (data) {
             if(data.indexOf('意向路线')!='-1'){
                 if(data.indexOf('意向路线:null')!='-1'){
-                    var newData = data.replace(/(null)/g,'--')
+                    var newData = data.replace(/(null)/g,'- -')
                     return newData;
                 }else{
                     var val = data.split('意向路线:[');
@@ -209,7 +215,7 @@
                         })
                         html = html.substring(0,html.length-1);
                     }else {
-                        html+='--'
+                        html+='- -'
                     }
 
                     var newData = endVal+html;

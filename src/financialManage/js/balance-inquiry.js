@@ -17,6 +17,7 @@ var withdrawStatusData = [
 ]
 
 function timeNull(time){
+  if(!time || time == "0") return "- -";
   time = time + "";
   var year = time.substring(0, 4);
   var month = time.substring(4, 6);
@@ -26,6 +27,11 @@ function timeNull(time){
   var s = time.substring(12, 14);
   return year + "-" + month + "-" + day + " " + h + ":" + m + ":" + s;
 }
+
+var tipsIndex = null;
+$(document).on("click", function (e) {
+  layer.close(tipsIndex);
+});
 
 layui
   .config({
@@ -73,15 +79,9 @@ layui
         return d.withdrawFlowNo ? d.withdrawFlowNo : "- -";
       }},
       { field: "orderNo", title: "业务单号", width: 120, templet: "#order_href" },
-      { field: "warehouseNo", title: "仓库作业单号", width: 160, templet: function (d) {
-          return d.warehouseNo ? d.warehouseNo : "- -";
-      }},
-      { field: "vinCode", title: "车辆vin码", width: 160, templet: function (d) {
-          return d.vinCode ? d.vinCode : "- -";
-      }},
-      { field: "transportAssignTime", title: "运输商指派时间", width: 160, templet: function (d) {
-          return d.transportAssignTime ? timeNull(d.transportAssignTime) : "- -";
-      }},
+      { field: "warehouseNo", title: "仓库作业单号", width: 200, templet: "#warehouseNo_href"},
+      { field: "vinCode", title: "车辆vin码", width: 200, templet: "#vinCode_href"},
+      { field: "transportAssignTime", title: "运输商指派时间", width: 200, templet: "#transportAssignTime_href"},
       { field: "signTime", title: "扫码签收时间", width: 160, templet: function (d) {
           return d.signTime ? timeNull(d.signTime) : "- -";
       }},
@@ -239,13 +239,42 @@ layui
       });
     };
     Balance.prototype.bindTableEvents = function () {
-      console.log(table)
       var _this = this;
+      $(".tips_btn").unbind().click(function (e) {
+        layui.stope(e);
+        var that = this;
+        var context = e.currentTarget.dataset.context;
+        var id = e.currentTarget.dataset.data;
+        var strList = [];
+        if(!id) return;
+        _this.getOrder(id).done(function (res) {
+          if(res.code == "0"){
+            res.data = res.data || {};
+            res.data.truckDTOList = res.data.truckDTOList || [];
+            res.data.truckDTOList.forEach(function (item) {
+              strList.push(item[context] || '');
+            });
+            tipsIndex = layer.tips(strList.join("，\n"), that, {time: 15000});
+          }
+        });
+      });
       $(".view_driver_btn").unbind().on("click", function (e) {
         var key = e.target.dataset.data;
-        //xadmin.open('查看订单', './order-view.html?orderNo=' + data.orderNo + "&orderId=" + key + "&action=view" + "&feeId=" + data.feeId + "&perssionId=" + pid);
+        xadmin.open('司机信息','../DriverManager/DriverArchives/info.html?id=' + key);
       });
-      $(".view_order_btn").unbind().on("click", function (e) {  });
+      $(".view_order_btn").unbind().on("click", function (e) {
+        var user = layui.sessionData("user"), pid;
+        if (user) {
+          layui.each(user.funcPermissionDTOList ,function(key,value){
+            if(value.url.indexOf("order-list.html") > -1){
+              pid = value.resourceId;
+            }
+          });
+        }
+        var key = e.target.dataset.data;
+        var orderNo = e.target.dataset.no;
+        xadmin.open('查看订单', '../orderMessage/order-view.html?orderNo=' + orderNo + "&orderId=" + key + "&action=view&perssionId=" + (pid || 200));
+      });
       $(".view_pic_btn").unbind().on("click", function (e) {
         laytpl($("#view_pic_tpl").html()).render({pic: e.target.dataset.data}, function (html) {
           console.log(html)
@@ -291,8 +320,18 @@ layui
                 location.reload();
             });
             break;
+          case "exportLog":
+            xadmin.open('导出日志', '../../OperateLog/log.html?type=14&action=exportLog');
+            break;
         }
       }
+    }
+    Balance.prototype.getOrder = function (id) {
+      return edipao.request({
+        method: "GET",
+        url: "/admin/order/detail",
+        data: { id: id }
+      });
     }
     /**
      * @method handleSync
@@ -336,7 +375,7 @@ layui
         }).done(function (res) {
           layer.close(loadIndex);
           if(res.code == "0"){
-            layer.alert("费用已重新发起支付。", function () {
+            layer.alert(res.data ? res.data : "重新发起支付成功", function () {
               layer.closeAll();
               tableIns.reload( { where: where, page: { curr: 1 }} );
             }, function () {
@@ -382,17 +421,19 @@ layui
         // 过滤处理数据
         layui.each(data, function (k, v) {
           var exportObj = {};
-          layui.each(v, function (index, item) {
-            if (index && showList.indexOf(index) != -1) {
-              switch (index) {
+          layui.each(v, function (key, value) {
+            if (key && showList.indexOf(key) != -1) {
+              switch (key) {
                 case "payTime":
                 case "withdrawTime":
                 case "toAccountTime":
                 case "transportAssignTime":
-                  exportObj[index] = timeNull(item);
+                case "signTime":
+                case "returnAuditTime":
+                  exportObj[key] = timeNull(value);
                   break;
                 default:
-                  exportObj[index] = DataNull(item);
+                  exportObj[key] = DataNull(value);
               }
             }
           });
@@ -406,26 +447,21 @@ layui
           "已付流水.xlsx",
           "xlsx"
         );
-        var ids = [];
-        data.forEach(function (item) {
-          ids.push(item.id);
-        });
-        exportLog(ids.join(","));
+        exportLog();
       }
       function DataNull(data) {
         if (data == null || data == "") {
-          return "--";
+          return "- -";
         } else {
           return data;
         }
       }
       // 导出日志
-      function exportLog(ids) {
+      function exportLog() {
         var params = {
-          operationModule: 10,
+          operationModule: 14,
           operationRemark: "导出已付流水",
         };
-        if (ids) params.dataPkList = ids;
         edipao.exportLog(params);
       }
     };
@@ -436,8 +472,8 @@ layui
         { field: 'warehouseNo', type: 'input' },
         { field: 'vinCode', type: 'input' },
         { field: 'transportAssignTime', type: 'timeslot' },
-        { field: 'signTime', type: 'input' },
-        { field: 'returnAuditTime', type: 'input' },
+        { field: 'signTime', type: 'timeslot' },
+        { field: 'returnAuditTime', type: 'timeslot' },
         { field: 'feeType', type: 'checkbox', data: feeTypeData },
         { field: 'feeName', type: 'checkbox', data: feeNameData },
         { field: 'feeAmount', type: 'numberslot' },
@@ -469,17 +505,10 @@ layui
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                 }else if(key=='feeAmount'){
-                  if(value.slot.length > 0){
-                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
-                    where['searchFieldDTOList['+ index +'].fieldMinValue'] = value.slot[0];
-                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value.slot[1];
-                    if(value.checked.length > 0) index++;
-                  }
-                  if(value.checked.length > 0){
-                      where['searchFieldDTOList['+ index +'].fieldName'] = key.replace("Amount", "Status");
-                      where['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
-                  }
-                }else if(key=='withdrawTime'||key=='toAccountTime'||key=='transportAssignTime'||key=='payTime'){
+                  where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                  where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
+                  where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+                }else if(key=='withdrawTime'||key=='toAccountTime'||key=='transportAssignTime'||key=='payTime'||key=='signTime'||key=='returnAuditTime'){
                   where['searchFieldDTOList['+ index +'].fieldName'] = key;
                   value = value.split(" 至 ");
                   where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];

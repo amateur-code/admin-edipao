@@ -854,8 +854,8 @@
                             </div>
                             {{# if(d.action == "feeVerify"){ }}
                             <div class="inline-block origin_fee">
-                                <div>规定：{{d.orderData.originFee.oilUnitPrice || '- -'}}升/百公里</div>
-                                <div>实际：{{d.orderData.oilUnitPrice || '- -'}}升/百公里</div>
+                                <div>规定：{{d.orderData.originFee.oilUnitPrice}}升/百公里</div>
+                                <div>实际：{{d.feeUpdateData.oilUnitPrice || d.orderData.oilUnitPrice}}升/百公里</div>
                             </div>
                             {{# } }}
                         </div>
@@ -889,7 +889,7 @@
                             </div>
                             {{# if(d.action == "feeVerify"){ }}
                             <div class="inline-block origin_fee">
-                                <div>油单价：{{d.orderData.closestOilPrice || '- -'}}元/升</div>
+                                <div>油单价：{{d.orderData.closestOilPrice || 0}}元/升</div>
                             </div>
                             {{# } }}
                         </div>
@@ -908,8 +908,8 @@
                             </div>
                             {{# if(d.action == "feeVerify"){ }}
                             <div class="inline-block origin_fee">
-                                <div>规定：{{d.orderData.originFee.freightUnitPrice || '- -'}}元</div>
-                                <div>实际：{{d.orderData.freightUnitPrice || '- -'}}元</div>
+                                <div>规定：{{d.orderData.originFee.freightUnitPrice || 0}}元</div>
+                                <div>实际：{{d.feeUpdateData.freightUnitPrice || d.orderData.freightUnitPrice || 0}}元</div>
                             </div>
                             {{# } }}
                         </div>
@@ -957,8 +957,8 @@
                             </div>
                             {{# if(d.action == "feeVerify"){ }}
                             <div class="inline-block origin_fee">
-                                <div>规定：{{d.orderData.originFee.prePayRatio || '- -'}}%</div>
-                                <div>实际：{{d.orderData.prePayRatio || '- -'}}%</div>
+                                <div>规定：{{d.orderData.originFee.prePayRatio}}%</div>
+                                <div>实际：{{d.feeUpdateData.prePayRatio || d.orderData.prePayRatio}}%</div>
                             </div>
                             {{# } }}
                         </div>
@@ -975,8 +975,8 @@
                             </div>
                             {{# if(d.action == "feeVerify"){ }}
                             <div class="inline-block origin_fee">
-                                <div>规定：{{d.orderData.originFee.arrivePayRatio || '- -'}}%</div>
-                                <div>实际：{{d.orderData.arrivePayRatio || '- -'}}%</div>
+                                <div>规定：{{d.orderData.originFee.arrivePayRatio}}%</div>
+                                <div>实际：{{d.feeUpdateData.arrivePayRatio || d.orderData.arrivePayRatio}}%</div>
                             </div>
                             {{# } }}
                         </div>
@@ -993,8 +993,8 @@
                             </div>
                             {{# if(d.action == "feeVerify"){ }}
                             <div class="inline-block origin_fee">
-                                <div>规定：{{d.orderData.originFee.tailPayRatio || '- -'}}%</div>
-                                <div>实际：{{d.orderData.tailPayRatio || '- -'}}%</div>
+                                <div>规定：{{d.orderData.originFee.tailPayRatio}}%</div>
+                                <div>实际：{{d.feeUpdateData.tailPayRatio || d.orderData.tailPayRatio}}%</div>
                             </div>
                             {{# } }}
                         </div>

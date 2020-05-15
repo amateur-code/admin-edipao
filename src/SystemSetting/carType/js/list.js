@@ -37,7 +37,7 @@ layui.config({
             templet: function (data) {
                 var val = data.modelName;
                 if(val==''){
-                    return '--'
+                    return '- -'
                 }else{
                     return '<span title="'+val+'">'+val+'</span>'
                 }
@@ -52,7 +52,7 @@ layui.config({
         { field: 'orderType', title: '是否背车',width: 100,
             templet: function (data) {
                 var val = data.orderType;
-                return orderTypeData[val] || '--'
+                return orderTypeData[val] || '- -'
             }
         },
         {
@@ -60,7 +60,7 @@ layui.config({
             templet: function (data) {
                 var val = data.modelCode;
                 if(val==''){
-                    return '--'
+                    return '- -'
                 }else{
                     return '<span title="'+val+'">'+val+'</span>'
                 }
@@ -70,7 +70,7 @@ layui.config({
             templet: function (data) {
                 var val = data.driveWayCode;
                 if(val==''){
-                    return '--'
+                    return '- -'
                 }else{
                     return '<span title="'+val+'">'+val+'</span>'
                 }
@@ -80,7 +80,7 @@ layui.config({
             templet: function (data) {
                 var val = data.powerCode;
                 if(val==''){
-                    return '--'
+                    return '- -'
                 }else{
                     return '<span title="'+val+'">'+val+'</span>'
                 }
@@ -91,7 +91,7 @@ layui.config({
             templet: function (data) {
                 var val = data.remark;
                 if(val==''){
-                    return '--'
+                    return '- -'
                 }else{
                     return '<span title="'+val+'">'+val+'</span>'
                 }
@@ -100,7 +100,7 @@ layui.config({
         { field: 'status', title: '状态',width: 100,
             templet: function (data) {
                 var val = data.status;
-                return statusData[val] || '--'
+                return statusData[val] || '- -'
             }
         },
         {
@@ -303,7 +303,7 @@ layui.config({
 
     function DataNull (data) {
         if(data == null||data == ''){
-            return '--'
+            return '- -'
         }else{
             return  data
         }
@@ -368,6 +368,9 @@ layui.config({
                     location.reload();
                 });
                 break;
+            case "exportLog":
+                xadmin.open('导出日志', '../../OperateLog/log.html?type=9&action=exportLog');
+                break;
         };
 
     }
@@ -423,17 +426,14 @@ layui.config({
         excel.exportExcel({
             sheet1: exportData
         }, '车型配置.xlsx', 'xlsx');
-        var ids = [];
-        data.forEach(function(item){ids.push(item.id)});
-        exportLog(ids.join(","));
+        exportLog();
     }
     // 导出日志
-    function exportLog(ids){
+    function exportLog(){
         var params = {
             operationModule: 9,
             operationRemark: "导出车型配置"
         }
-        if(ids) params.dataPkList = ids;
         edipao.exportLog(params);
     }
 });

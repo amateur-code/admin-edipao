@@ -529,13 +529,13 @@
                     <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                         <label class="layui-form-label text_left form_label">费用模板</label><br>
                         <div class="layui-input-inline relative">
-                            <input onchange="num(this)" disabled type="text" value="{{d.feeDetail.feeName || '- -'}}" name="feeName" lay-verify="required" autocomplete="off" class="layui-input feeName">
+                            <input onchange="num(this)" disabled type="text" value="{{d.feeName || d.feeDetail.feeName || '- -'}}" name="feeName" lay-verify="required" autocomplete="off" class="layui-input feeName">
                         </div>
                     </div>
                     <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                         <label class="layui-form-label text_left form_label">费用车型</label><br>
                         <div class="layui-input-inline relative">
-                            <input onchange="num(this)" disabled type="text" value="{{d.feeDetail.carModel || '- -'}}" name="carModel" lay-verify="required" autocomplete="off" class="layui-input carModel">
+                            <input onchange="num(this)" disabled type="text" value="{{d.carModel || d.feeDetail.carModel || '- -'}}" name="carModel" lay-verify="required" autocomplete="off" class="layui-input carModel">
                         </div>
                     </div>
                 </div>

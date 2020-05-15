@@ -381,7 +381,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">驾龄：</label>
                 <div class="layui-input-block">
-                    <span class="name-color" name="drivingAge" id="drivingAge">{{d.detail.drivingAge|| '--'}}</span>
+                    <span class="name-color" name="drivingAge" id="drivingAge">{{d.detail.drivingAge|| '- -'}}</span>
                     {{# if(d.detail.drivingAge){ }}
                         <span style="margin-left: 5px">年</span>
                     {{# } }}
@@ -509,7 +509,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">银行卡账号：</label>
                 <div class="layui-input-block">
-                    <span class="name-color" name="accountNumber" id="accountNumber">{{d.detail.accountNumber|| '--'}}</span>
+                    <span class="name-color" name="accountNumber" id="accountNumber">{{d.detail.accountNumber|| '- -'}}</span>
                 </div>
                 {{# if(d.check.accountNumber){ }}
                 <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.accountNumber}}</div></div>
@@ -520,7 +520,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">开户银行：</label>
                 <div class="layui-input-block">
-                    <span class="name-color" name="accountBank" id="accountBank">{{d.detail.accountBank|| '--'}}</span>
+                    <span class="name-color" name="accountBank" id="accountBank">{{d.detail.accountBank|| '- -'}}</span>
                 </div>
                 {{# if(d.check.accountBank){ }}
                 <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.accountBank}}</div></div>
@@ -531,7 +531,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">开户省市：</label>
                 <div class="layui-input-block">
-                    <span class="name-color" name="accountCity" id="accountCity">{{d.detail.accountCity|| '--'}}</span>
+                    <span class="name-color" name="accountCity" id="accountCity">{{d.detail.accountCity|| '- -'}}</span>
                 </div>
                 {{# if(d.check.accountCity){ }}
                 <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.accountCity}}</div></div>
@@ -542,7 +542,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">开户支行：</label>
                 <div class="layui-input-block">
-                    <span class="name-color" name="accountBankAddress" id="accountBankAddress">{{d.detail.accountBankAddress|| '--'}}</span>
+                    <span class="name-color" name="accountBankAddress" id="accountBankAddress">{{d.detail.accountBankAddress|| '- -'}}</span>
                 </div>
                 {{# if(d.check.accountBankAddress){ }}
                 <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{d.check.accountBankAddress}}</div></div>

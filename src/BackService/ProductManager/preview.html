@@ -75,7 +75,7 @@
                             {{# } }}
                         </div>
                         <div class="layui-col-xs4">
-                            联系人：<span>{{d.detail.contractName || d.detail.contractPhone ? (d.detail.contractName + '('+d.detail.contractPhone+')'): '--'}}</span>
+                            联系人：<span>{{d.detail.contractName || d.detail.contractPhone ? (d.detail.contractName + '('+d.detail.contractPhone+')'): '- -'}}</span>
                             {{# if(d.check.contractName || d.check.contractPhone){ }}
                             <div><span class="x-red">待审：</span>{{d.check.contractName|| d.detail.contractName}}({{d.check.contractPhone||d.detail.contractPhone}}) </div>
                             {{# } }}
@@ -89,7 +89,7 @@
                     </div>
                     <div class="layui-row">
                         <div class="layui-col-xs4">
-                            备注：<span>{{d.detail.remark || '--'}}</span>
+                            备注：<span>{{d.detail.remark || '- -'}}</span>
                             {{# if(d.check.remark){ }}
                             <div><span class="x-red">待审：</span>{{d.check.remark}} </div>
                             {{# } }}
@@ -193,7 +193,7 @@
                             if(key == 'status'){
                                 check.statusDesc = StatusDescConfig[check.status]
                             }
-                            check[key] = value || '--'
+                            check[key] = value || '- -'
                         });
                     }
                     render()

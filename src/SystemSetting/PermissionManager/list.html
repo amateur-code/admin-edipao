@@ -69,6 +69,7 @@
             {{# if(permissionList.indexOf('导出') != -1){ }}
             <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
             {{# } }}
+            <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
             <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
         </div>
     </script>
@@ -274,6 +275,9 @@
                         location.reload();
                     });
                     break;
+                case "exportLog":
+                    xadmin.open('导出日志', '../../OperateLog/log.html?type=7&action=exportLog');
+                    break;
             }; 
         }
 
@@ -316,16 +320,13 @@
             })
             
             excel.exportExcel({sheet1: data}, '权限管理.xlsx', 'xlsx');
-            var ids = [];
-            list.forEach(function (item) {ids.push(item.roleId)});
-            exportLog(ids.join(","));
+            exportLog();
         }
-        function exportLog(ids){
+        function exportLog(){
             var params = {
                 operationModule: 7,
                 operationRemark: "导出权限数据"
             }
-            if(ids) params.dataPkList = ids;
             edipao.exportLog(params);
         }
         table.on('tool(PermissionList)', handleEvent);

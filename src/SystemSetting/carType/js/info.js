@@ -37,7 +37,7 @@ layui.use(['jquery','form','laytpl'], function() {
                         }else if(key == 'orderType'){
                             check.orderType = orderTypeData[check.orderType]
                         }else if(key =='remark'&&value==''){
-                            check[key] = '--'
+                            check[key] = '- -'
                         }
                     });
                 }
@@ -58,7 +58,7 @@ layui.use(['jquery','form','laytpl'], function() {
         if (res.code == 0) {
             res.data.status = statusData[res.data.status]
             res.data.orderType = orderTypeData[res.data.orderType]
-            res.data.remark = res.data.remark!=''? res.data.remark:'--'
+            res.data.remark = res.data.remark!=''? res.data.remark:'- -'
             detail = res.data;
             if(detail.needApproval){
                 waitCheck();

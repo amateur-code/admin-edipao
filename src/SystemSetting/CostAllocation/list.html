@@ -80,6 +80,7 @@
   {{# if(permissionList.indexOf('导出') != -1){ }}
   <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
   {{# } }}
+  <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
   <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
 
 </div>
@@ -117,7 +118,7 @@ layui.config({
       { field: 'receiveCarNetworkCount', title: '关联网点数', templet: '#stffList', width: 400 },
       {
         field: 'remark', title: '备注', width: 300, templet: function (d) {
-          return d.remark || '--'
+          return d.remark || '- -'
         }
       },
       { field: 'status', title: '状态', width: 200, align: 'center' },
@@ -341,6 +342,9 @@ layui.config({
             location.reload();
         });
         break;
+      case "exportLog":
+        xadmin.open('导出日志', '../../OperateLog/log.html?type=8&action=exportLog');
+        break;
     }
   }
 
@@ -373,26 +377,21 @@ layui.config({
           if (index2 == 0) {
             dataItem[item.field] = item.title;
           } else {
-            dataItem[item.field] = item2[item.field] || '--'
+            dataItem[item.field] = item2[item.field] || '- -'
           }
         }
       })
       data.push(dataItem)
     })
     excel.exportExcel({ sheet1: data }, '费用配置.xlsx', 'xlsx');
-    var ids = [];
-    list.forEach(function (item) {
-      ids.push(item.feeId)
-    });
-    exportLog(ids.join(","));
+    exportLog();
   }
 
-  function exportLog (ids) {
+  function exportLog () {
     var params = {
       operationModule: 8,
       operationRemark: "导出费用数据"
     }
-    if (ids) params.dataPkList = ids;
     edipao.exportLog(params);
   }
 

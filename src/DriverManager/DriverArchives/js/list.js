@@ -124,7 +124,7 @@ layui.config({
             field: 'driverType', title: '司机类型',width: 100,
             templet: function (data) {
                 var val = data.driverType;
-                return val || '--'
+                return val || '- -'
             }
         },
         { field: 'driveLicenceType', title: '驾照类型',width: 100,
@@ -168,7 +168,7 @@ layui.config({
             templet: function (data) {
                 var val = data.depositStatus;
                 if(val == null||val == ''){
-                    return '--'
+                    return '- -'
                 }else{
                     if(val=='未支付'||val=='0'){
                         return '<span style="margin-left: 10px;color: #EE5B22;">未支付</span>'
@@ -191,7 +191,7 @@ layui.config({
                     html = html.substring(0,html.length-1);
                     return html;
                 }else{
-                    return '--'
+                    return '- -'
                 }
             }
         },
@@ -199,14 +199,14 @@ layui.config({
             field: 'status', title: '司机状态',width: 100,
             templet: function (data) {
                 var val = data.status;
-                return  val || '--'
+                return  val || '- -'
             }
         },
        /* {
             field: 'approvalFlag', title: '审核状态',
             templet: function (data) {
                 var val = data.approvalFlag;
-                return approvalFlagData[val] || '--'
+                return approvalFlagData[val] || '- -'
             }
         },*/
         {
@@ -480,7 +480,7 @@ layui.config({
 
     function DataNull (data) {
         if(data == null||data == ''){
-            return '--'
+            return '- -'
         }else{
             return  data
         }
@@ -495,13 +495,13 @@ layui.config({
                 var html='<a lay-event="wishJourneyList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;width: 100%;display: block">'+len+'</a>'
                  return html;
                 }else{
-                    return '--';
+                    return '- -';
                 }
             }else{
-                return '--';
+                return '- -';
             }
         }else{
-            return '--';
+            return '- -';
         }
     }
     function oftenJourneyNullHtml(val){
@@ -513,25 +513,25 @@ layui.config({
                     var html='<a lay-event="oftenJourneyList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;width: 100%;display: block">'+len+'</a>'
                     return html;
                 }else{
-                    return '--';
+                    return '- -';
                 }
             }else{
-                return '--';
+                return '- -';
             }
         }else{
-            return '--';
+            return '- -';
         }
     }
     function wishJourneyNull(val){
         if(val!=null&&val!=''&&val!='null'){
             var newVal = JSON.parse(val);
             if(newVal){
-                return newVal.length || '--'
+                return newVal.length || '- -'
             }else{
-                return '--'
+                return '- -'
             }
         }else{
-            return '--'
+            return '- -'
         }
     }
     // 证件预警
@@ -545,7 +545,7 @@ layui.config({
             data = data.substring(0, data.length - 1);
             return data;
         }else{
-            return  '--';
+            return  '- -';
         }
     }
     // 驾龄
@@ -553,7 +553,7 @@ layui.config({
         if(val!=''&&val!=null){
             return val+'年';
         }else{
-            return '--';
+            return '- -';
         }
     }
     // 押金
@@ -561,7 +561,7 @@ layui.config({
         if(val != null||val != ''){
             return  val + '元';
         }else{
-            return '--';
+            return '- -';
         }
     }
     table.on('tool(driverList)', handleEvent);
@@ -633,6 +633,9 @@ layui.config({
                 edipao.resetSearch("driverList", function(){
                     location.reload();
                 });
+                break;
+            case "exportLog":
+                xadmin.open('导出日志', '../../OperateLog/log.html?type=3&action=exportLog');
                 break;
         };
 
@@ -707,17 +710,14 @@ layui.config({
         excel.exportExcel({
             sheet1: exportData
         }, '司机档案.xlsx', 'xlsx');
-        var ids = [];
-        data.forEach(function(item){ids.push(item.id)});
-        exportLog(ids.join(","));
+        exportLog();
     }
     // 导出日志
-    function exportLog(ids){
+    function exportLog(){
         var params = {
             operationModule: 3,
             operationRemark: "导出司机档案"
         }
-        if(ids) params.dataPkList = ids;
         edipao.exportLog(params);
     }
 

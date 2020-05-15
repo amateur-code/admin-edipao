@@ -45,7 +45,7 @@ layui.use(['jquery','form','laytpl'], function() {
                     }
                     check = editData.newMap;
                     layui.each(check,function(key, value) {
-                        check[key] = value || '--'
+                        check[key] = value || '- -'
                     });
                 }
                 render()

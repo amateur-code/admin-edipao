@@ -560,7 +560,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       feeDetail.freightUnitPrice = (feeDetail.freightUnitPrice * 1).toFixed(2);
       feeDetail.totalAmount = (feeDetail.totalAmount * 1).toFixed(2);
       Object.keys(_this.originFeeRate).forEach(function(key){
-        if(typeof (_this.originFeeRate[key] * 1) == "number"){
+        if(key != "feeDetail" && key != "feeName" && key != "carModel" && typeof (_this.originFeeRate[key] * 1) == "number"){
           _this.originFeeRate[key] = (_this.originFeeRate[key] * 1).toFixed(2);
         }
       });
@@ -621,7 +621,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           originFeeRate.feeDetail.totalAmount = originFeeRate.feeDetail.amount;
         }
         Object.keys(originFeeRate).forEach(function(key){
-          if(key != "feeDetail" && typeof (originFeeRate[key] * 1) == "number"){
+          if(key != "feeDetail" && key != "feeName" && key != "carModel" && typeof (originFeeRate[key] * 1) == "number"){
             originFeeRate[key] = (originFeeRate[key] * 1).toFixed(2);
           }
         });
@@ -2135,7 +2135,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
                 {field: 'name', title: '员工姓名', sort: false, width: 100},
                 {field: 'phone', title: '员工手机', sort: false, width: 120},
                 { field: 'dept', title: '所属部门', width: 100, templet: function(d){
-                  return d.dept || '--'
+                  return d.dept || '- -'
                 } },
                 {field: 'status', title: '状态', sort: false,},
             ]]

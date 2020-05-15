@@ -75,7 +75,7 @@
       </div>
       <div class="layui-row" style="word-break: break-all;">
         <div class="layui-col-xs12">
-          备注：<span style="color: #1E9FFF;">{{d.detail.remark || '--'}}</span>
+          备注：<span style="color: #1E9FFF;">{{d.detail.remark || '- -'}}</span>
           {{# if(d.detail.remarkFlag =='1'){ }}
           <div><span class="x-red">待审：</span><span class="colorb">{{d.detail.remarkStr}}</span></div>
           {{# } }}

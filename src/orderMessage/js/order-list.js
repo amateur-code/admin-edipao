@@ -343,6 +343,7 @@ layui.config({
                             }
                             uploadData[item.id + ""] = uploadObjItem;
                         });
+                        console.log(uploadData)
                         var renderData = {
                             list: res.data.truckDTOList,
                             type: type
@@ -1051,6 +1052,9 @@ layui.config({
                             location.reload();
                         });
                         break;
+                    case "exportLog":
+                        xadmin.open('导出日志', '../../OperateLog/log.html?type=4&action=exportLog');
+                        break;
                 }
             });
             $(".list_driver_name").unbind().on("click", function (e) {
@@ -1088,13 +1092,6 @@ layui.config({
                     operationModule: 4,
                     operationRemark: "导出订单数据",
                 }
-                var ids = [];
-                data.forEach(function (item) {
-                    if (!ids.includes(item.id)) {
-                        ids.push(item.id);
-                    }
-                });
-                params.dataPkList = ids.join(",");
                 edipao.exportLog(params);
                 var exportData = [];
                 // 添加头部
@@ -1301,7 +1298,7 @@ layui.config({
                                     }
                                     break;
                                 default:
-                                    value = item[i] ? item[i] : '--'
+                                    value = item[i] ? item[i] : '- -'
                                     break;
                             }
                             newObj[i] = value;
@@ -1445,7 +1442,7 @@ layui.config({
                         }
                     });
                 } else if (layEvent === 'log') {//日志
-                    top.xadmin.open('操作日志', 'OperateLog/log.html?id=' + data.id + '&type=4');
+                    xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=4');
                 }
             });
         },

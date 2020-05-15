@@ -76,6 +76,7 @@
         {{# if(permissionList.indexOf('导出') != -1){ }}
         <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
         {{# } }}
+        <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
         <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
       </div>
     </script>
@@ -109,16 +110,16 @@
                 { field: 'phone', title: '员工手机', width: 200 },
                 { field: 'idCard', title: '身份证号码', width: 200 },
                 { field: 'dept', title: '所属部门', width: 200, templet: function(d){
-                    return d.dept || '--'
+                    return d.dept || '- -'
                 } },
                 { field: 'cardNo', title: '员工工号', width: 200, templet: function(d){
-                    return d.cardNo || '--'
+                    return d.cardNo || '- -'
                 }  },
                 { field: 'positions', title: '员工职位', width: 200, templet: function(d){
-                    return d.positions || '--'
+                    return d.positions || '- -'
                 } },
                 { field: 'roleNames', title: '拥有权限', width: 200,templet: function(d){
-                    return d.roleNames || '--'
+                    return d.roleNames || '- -'
                 } },
                 { field: 'status', title: '状态',width: 200, align: 'center'},
                 { title: '操作', field:"operation",toolbar: '#rowBtns', width: 350, fixed:"right" }
@@ -333,6 +334,9 @@
                         location.reload();
                     });
                     break;
+                case "exportLog":
+                    xadmin.open('导出日志', '../../OperateLog/log.html?type=5&action=exportLog');
+                    break;
             };
         }
 
@@ -364,7 +368,7 @@
                         if(index2 == 0){
                             dataItem[item.field] = item.title; 
                         }else{
-                            dataItem[item.field] = item2[item.field] || '--'
+                            dataItem[item.field] = item2[item.field] || '- -'
                         }
                         
                     } 
@@ -372,16 +376,13 @@
                 data.push(dataItem)
             })
             excel.exportExcel({sheet1: data}, '员工管理.xlsx', 'xlsx');
-            var ids = [];
-            list.forEach(function (item) {ids.push(item.staffId)});
-            exportLog(ids.join(","));
+            exportLog();
         }
-        function exportLog(ids){
+        function exportLog(){
             var params = {
                 operationModule: 5,
                 operationRemark: "导出员工数据"
             }
-            if(ids) params.dataPkList = ids;
             edipao.exportLog(params);
         }
 

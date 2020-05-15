@@ -84,7 +84,7 @@ layui
         title: "发运趟数",
         width: 100,
         templet: function (d) {
-          return d.transportOrderNum ? d.transportOrderNum : "- -";
+          return d.transportOrderNum || d.transportOrderNum == "0" ? d.transportOrderNum : "- -";
         },
       },
       {
@@ -106,7 +106,7 @@ layui
     ];
     function DataNull(data) {
       if (data == null || data == "") {
-        return "--";
+        return "- -";
       } else {
         return data;
       }
@@ -316,6 +316,9 @@ layui
                 location.reload();
             });
             break;
+          case "exportLog":
+            xadmin.open('导出日志', '../../OperateLog/log.html?type=10&action=exportLog');
+            break;
         }
       }
     };
@@ -456,19 +459,14 @@ layui
           "网点档案.xlsx",
           "xlsx"
         );
-        var ids = [];
-        data.forEach(function (item) {
-          ids.push(item.id);
-        });
-        exportLog(ids.join(","));
+        exportLog();
       }
       // 导出日志
-      function exportLog(ids) {
+      function exportLog() {
         var params = {
           operationModule: 10,
           operationRemark: "导出网点档案",
         };
-        if (ids) params.dataPkList = ids;
         edipao.exportLog(params);
       }
     };

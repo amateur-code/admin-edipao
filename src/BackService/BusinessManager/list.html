@@ -79,6 +79,7 @@
   {{# if(permissionList.indexOf('导出') != -1){ }}
   <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
   {{# } }}
+  <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
   <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
 </div>
 </script>
@@ -120,7 +121,7 @@ layui.config({
       {
         field: 'contractName', title: '联系人', width: 200, templet: function (d) {
           var str = d.contractName + '(' + d.contractPhone + ')'
-          return str == "()" ? '--' : str
+          return str == "()" ? '- -' : str
         }
       },
       {
@@ -136,7 +137,7 @@ layui.config({
       },
       {
         field: 'remark', title: '备注', width: 200, templet: function (d) {
-          return d.remark || '--'
+          return d.remark || '- -'
         }
       },
       { title: '操作', field: "operation", toolbar: '#rowBtns', width: 400, fixed: 'right' }
@@ -397,6 +398,9 @@ layui.config({
             location.reload();
         });
         break;
+      case "exportLog":
+        xadmin.open('导出日志', '../../OperateLog/log.html?type=1&action=exportLog');
+        break;
     }
     ;
   }
@@ -431,14 +435,14 @@ layui.config({
             dataItem[item.field] = item.title;
           } else {
             if (item.field == 'supplierType') {
-              dataItem[item.field] = SupplierTypeConfig[item2[item.field]] || '--'
+              dataItem[item.field] = SupplierTypeConfig[item2[item.field]] || '- -'
             } else if (item.field == 'contractName') {
               var str = item2.contractName + '(' + item2.contractPhone + ')'
-              dataItem[item.field] = str == "()" ? '--' : str
+              dataItem[item.field] = str == "()" ? '- -' : str
             } else if (item.field == 'status') {
               dataItem[item.field] = item2.statusDesc
             } else {
-              dataItem[item.field] = item2[item.field] || '--'
+              dataItem[item.field] = item2[item.field] || '- -'
             }
           }
 
@@ -447,19 +451,14 @@ layui.config({
       data.push(dataItem)
     })
     excel.exportExcel({ sheet1: data }, '供应商管理.xlsx', 'xlsx');
-    var ids = [];
-    list.forEach(function (item) {
-      ids.push(item.supplierNo)
-    });
-    exportLog(ids.join(","));
+    exportLog();
   }
 
-  function exportLog (ids) {
+  function exportLog () {
     var params = {
       operationModule: 1,
       operationRemark: "导出供应商档案"
     }
-    if (ids) params.dataPkList = ids;
     edipao.exportLog(params);
   }
 

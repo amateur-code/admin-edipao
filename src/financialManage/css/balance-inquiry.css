@@ -10,3 +10,6 @@
 .tr {
   text-align: right;
 }
+.layui-layer-tips {
+  white-space: pre-wrap;
+}

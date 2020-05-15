@@ -100,10 +100,10 @@
                     return d.tradeTotalPrice + '(元)';
                 }},
                 { field: 'tradeDriverName', title: '消费人',width: 200, templet:function(d){
-                    return d.tradeDriverName || '--'
+                    return d.tradeDriverName || '- -'
                 }},
                 { field: 'tradeConfirmTime', title: '消费确认时间', width: 200,templet:function(d){
-                    return d.tradeConfirmTime || '--'
+                    return d.tradeConfirmTime || '- -'
                 } },
                 { field: 'detailAddress', title: '消费地址',width: 200 },
                 { field: 'tradeStatus', title: '状态',width: 100 ,templet:function(d){
@@ -276,7 +276,7 @@
                                 }else if(item.field == "tradeStatus"){
                                     dataItem[item.field] = item2["tradeStatusDesc"];
                                 }else{
-                                    dataItem[item.field] = item2[item.field] || '--';
+                                    dataItem[item.field] = item2[item.field] || '- -';
                                 }
                             } 
                         })
@@ -298,7 +298,7 @@
                         }else if(item.field == "tradeStatus"){
                             dataItem[item.field] = item2["tradeStatusDesc"];
                         }else{
-                            dataItem[item.field] = item2[item.field] || '--'
+                            dataItem[item.field] = item2[item.field] || '- -'
                         }
                     } 
                 })

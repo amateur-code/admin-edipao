@@ -39,6 +39,7 @@
               <div class="layui-col-md6 tr">
                   <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
                   <button id="export_data" data-event="export" class="top_tool_bar layui-btn">导出</button>
+                  <button id="exportLog" data-event="exportLog" class="top_tool_bar layui-btn">导出日志</button>
                   <button id="table_set" data-event="table_set" class="top_tool_bar layui-btn">表格设置</button>
               </div>
           </div>
@@ -89,7 +90,37 @@
   </script>
   <script id="order_href" type="text/html">
     {{# if(d.orderNo){ }}
-    <a data-data="{{d.orderId}}" class="view_order_btn" href="javascript:void(0);" style="cursor: pointer;color: #3490E9;">{{d.orderNo}}</a>
+    <a data-data="{{d.orderId}}" data-no="{{d.orderNo}}" class="view_order_btn" href="javascript:void(0);" style="cursor: pointer;color: #3490E9;">{{d.orderNo}}</a>
+    {{# }else{ }}
+    - -
+    {{# } }}
+  </script>
+  <script id="warehouseNo_href" type="text/html">
+    {{# if(d.warehouseNo){ }}
+      {{d.warehouseNo}}
+      {{# if(d.truckCount && d.truckCount * 1 > 1){ }}
+      <a data-data="{{d.orderId}}" data-context="warehouseNo" class="tips_btn" href="javascript:void(0);" style="cursor: pointer;">（<span style="cursor: pointer;color: #3490E9;">{{d.truckCount}}</span>）</a>
+      {{# } }}
+    {{# }else{ }}
+    - -
+    {{# } }}
+  </script>
+  <script id="vinCode_href" type="text/html">
+    {{# if(d.vinCode){ }}
+      {{d.vinCode}}
+      {{# if(d.truckCount && d.truckCount * 1 > 1){ }}
+      <a data-data="{{d.orderId}}" data-context="vinCode" class="tips_btn" href="javascript:void(0);" style="cursor: pointer;">（<span style="cursor: pointer;color: #3490E9;">{{d.truckCount}}</span>）</a>
+      {{# } }}
+    {{# }else{ }}
+    - -
+    {{# } }}
+  </script>
+  <script id="transportAssignTime_href" type="text/html">
+    {{# if(d.transportAssignTime){ }}
+      {{timeNull(d.transportAssignTime)}}
+      {{# if(d.truckCount && d.truckCount * 1 > 1){ }}
+      <a data-data="{{d.orderId}}" data-context="transportAssignTime" class="tips_btn" href="javascript:void(0);" style="cursor: pointer;">（<span style="cursor: pointer;color: #3490E9;">{{d.truckCount}}</span>）</a>
+      {{# } }}
     {{# }else{ }}
     - -
     {{# } }}

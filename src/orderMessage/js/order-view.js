@@ -1,5 +1,4 @@
 layui.use(['form', 'jquery', 'laytpl'], function () {
-
   var laytpl = layui.laytpl;
   var $ = layui.jquery;
   var edipao= layui.edipao;
@@ -35,7 +34,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     window.dataPermission = this.dataPermission;
     this.permissionList = edipao.getMyPermission();
     window.permissionList = this.permissionList;
-    console.log(permissionList)
   }
   $.extend(View.prototype, {
     init: function () {
@@ -98,8 +96,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           res1 = res1[0];
           res2 = res2[0];
           res3 = res3[0];
-          if(res1[0].code == "0"){
-            _this.feeId = res.data.feeId;
+          if(res1.code == "0"){
+            _this.feeId = res2.data.feeId;
             _this.getOrderFee().done(function (res4) {
               res2.data = res2.data || {};
               res3.data = res3.data || {};
