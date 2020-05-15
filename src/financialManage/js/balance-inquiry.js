@@ -74,7 +74,7 @@ layui
       "bankReceipt"
     ];
     var tableCols = [
-      { checkbox: true },
+      { checkbox: true, fixed: true, },
       { field: "withdrawFlowNo", title: "支付流水号", width: 250, templet: function (d) {
         return d.withdrawFlowNo ? d.withdrawFlowNo : "- -";
       }},
@@ -501,7 +501,7 @@ layui
                 loginStaffId: edipao.getLoginStaffId()
             };
             layui.each(filters, function (key, value) {
-                if(key=='withdrawStatus'||key=='feeType'){
+                if(key=='withdrawStatus'||key=='feeType'||key=='feeName'){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                 }else if(key=='feeAmount'){

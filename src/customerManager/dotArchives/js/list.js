@@ -1,3 +1,6 @@
+// $("#nav_cite").on("click", function (e) {
+//   xadmin.add_tab("demo", "../demo.html") 
+// })
 layui
   .config({
     base: "../../lib/",
@@ -105,7 +108,7 @@ layui
       { title: "操作", field: "operation", width: 320, fixed: "right", toolbar: "#rowBtns" },
     ];
     function DataNull(data) {
-      if (data == null || data == "") {
+      if (data != "0" && (data == null || data == "")) {
         return "- -";
       } else {
         return data;
@@ -381,7 +384,7 @@ layui
           if(reload){
             reloadOption = { where: where, page: { curr: 1 }};
           }else{
-              tableIns.reload( { where: where, page: { curr: 1 }});
+            tableIns.reload( { where: where, page: { curr: 1 }});
           }
         },
       });
@@ -445,6 +448,7 @@ layui
                   }
                   break;
                 default:
+                  console.log(index, item)
                   exportObj[index] = DataNull(item);
               }
             }
