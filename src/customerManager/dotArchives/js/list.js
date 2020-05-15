@@ -1,6 +1,3 @@
-// $("#nav_cite").on("click", function (e) {
-//   xadmin.add_tab("demo", "../demo.html") 
-// })
 layui
   .config({
     base: "../../lib/",
@@ -257,6 +254,11 @@ layui
       }
     };
     List.prototype.bindTableEvents = function () {
+      if(location.href.indexOf("test") > -1){
+        $("#nav_cite").on("click", function (e) {
+          top.xadmin.add_tab("demo", "customerManager/dotArchives/demo.html");
+        });
+      }
       var _this = this;
       table.on("tool(dotList)", handleEvent);
       table.on("toolbar(dotList)", handleEvent);
