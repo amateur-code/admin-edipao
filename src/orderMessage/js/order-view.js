@@ -31,9 +31,10 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 		this.truckUpdateData = {};
     this.dataPermission = edipao.getDataPermission();
     this.truckList = [];
-    window.dataPermission = this.dataPermission;
     this.permissionList = edipao.getMyPermission();
+    window.feeId = this.feeId;
     window.permissionList = this.permissionList;
+    window.dataPermission = this.dataPermission;
   }
   $.extend(View.prototype, {
     init: function () {
@@ -92,7 +93,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         });
       }else{
         $(".page_title_text").text("订单审核");
-        $.when(_this.getUpdate(), _this.getOrder(), _this.getTruckUpdate(), _this.getOrderFee()).done(function (res1, res2, res3, res4) {
+        $.when(_this.getUpdate(), _this.getOrder(), _this.getTruckUpdate()).done(function (res1, res2, res3, res4) {
           res1 = res1[0];
           res2 = res2[0];
           res3 = res3[0];
@@ -206,7 +207,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     },
     getOrderFee: function(){
       var _this = this;
-      if(!_this.feeId) return [{code: 0, data: {}}];
+      if(!_this.feeId) return  { done: function (cb) {
+        cb({code: 0, data: {}});
+      } };
       return edipao.request({
         url: "/admin/order/getOrderFee",
         method: "POST",

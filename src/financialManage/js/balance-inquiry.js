@@ -79,9 +79,18 @@ layui
         return d.withdrawFlowNo ? d.withdrawFlowNo : "- -";
       }},
       { field: "orderNo", title: "业务单号", width: 120, templet: "#order_href" },
-      { field: "warehouseNo", title: "仓库作业单号", width: 200, templet: "#warehouseNo_href"},
-      { field: "vinCode", title: "车辆vin码", width: 200, templet: "#vinCode_href"},
-      { field: "transportAssignTime", title: "运输商指派时间", width: 200, templet: "#transportAssignTime_href"},
+      { field: "warehouseNo", title: "仓库作业单号", minWidth: 180, width: 180, templet: function (d) {
+        var str = d.warehouseNo;
+        return str ? str.split(",").join("，\n") : "- -";
+      }},
+      { field: "vinCode", title: "车辆vin码", minWidth: 180, width: 180, templet: function (d) {
+        var str = d.vinCode;
+        return str ? str.split(",").join("，\n") : "- -";
+      }},
+      { field: "transportAssignTime", title: "运输商指派时间", minWidth: 180, width: 180, templet: function (d) {
+        var str = d.transportAssignTime;
+        return str ? str.split(",").join("，\n") : "- -";
+      }},
       { field: "signTime", title: "扫码签收时间", width: 160, templet: function (d) {
           return d.signTime ? timeNull(d.signTime) : "- -";
       }},
@@ -119,7 +128,7 @@ layui
       { field: "withdrawStatus", title: "提现状态", width: 120, templet: function (d) {
           return d.withdrawStatus ? d.withdrawStatus : "- -";
       }},
-      { field: "remark", title: "银行备注", width: 300, templet: function (d) {
+      { field: "remark", title: "银行备注", width: 400, templet: function (d) {
           return d.remark ? d.remark : "- -";
       }},
       { field: "toAccountTime", title: "提现到账时间", width: 150, templet: function (d) {
@@ -559,6 +568,14 @@ layui
               });
           });
       }, dur);
+      // $(".layui-table-fixed tbody td").each(function (index, item) {
+      //   var $item = $(item);
+      //   if($item.hasClass("layui-table-col-special")){
+      //     $item.css("height", $($(".layui-table-body.layui-table-main tbody tr")[index]).find("td").height() - 1);
+      //   }else{
+      //     $item.css("height", $($(".layui-table-body.layui-table-main tbody tr")[index]).find("td").height());
+      //   }
+      // });
     }
     var balance = new Balance();
     balance.init();

@@ -105,7 +105,7 @@ layui
       { title: "操作", field: "operation", width: 320, fixed: "right", toolbar: "#rowBtns" },
     ];
     function DataNull(data) {
-      if (data != "0" && (data == null || data == "")) {
+      if (data == null || data == "") {
         return "- -";
       } else {
         return data;
@@ -254,11 +254,11 @@ layui
       }
     };
     List.prototype.bindTableEvents = function () {
-      if(location.href.indexOf("test") > -1){
-        $("#nav_cite").on("click", function (e) {
-          top.xadmin.add_tab("demo", "customerManager/dotArchives/demo.html");
-        });
-      }
+      // if(location.href.indexOf("test") > -1){
+      //   $("#nav_cite").on("click", function (e) {
+      //     top.xadmin.add_tab("demo", "customerManager/dotArchives/demo.html");
+      //   });
+      // }
       var _this = this;
       table.on("tool(dotList)", handleEvent);
       table.on("toolbar(dotList)", handleEvent);
@@ -400,7 +400,7 @@ layui
       }
       var param = JSON.parse(JSON.stringify(where));
       param["pageNo"] = 1;
-      param["pageSize"] = 1000;
+      param["pageSize"] = 9999;
       edipao
         .request({
           type: "GET",
@@ -430,17 +430,8 @@ layui
             if (index && showList.indexOf(index) != -1) {
               switch (index) {
                 case "status":
-                  switch (item + "") {
-                    case "1":
-                      exportObj[index] = "有效";
-                      break;
-                    case "2":
-                      exportObj[index] = "失效";
-                      break;
-                    default:
-                      exportObj[index] = "- -";
-                      break;
-                  }
+                  console.log(index, v["statusDesc"])
+                  exportObj[index] = v["statusDesc"] || "- -";
                   break;
                 case "connectorName":
                   if(!item.connectorName && !item.connectorPhone){
@@ -450,7 +441,6 @@ layui
                   }
                   break;
                 default:
-                  console.log(index, item)
                   exportObj[index] = DataNull(item);
               }
             }

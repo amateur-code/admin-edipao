@@ -852,7 +852,7 @@
                                 </div>
                                 {{# } }}
                             </div>
-                            {{# if(d.action == "feeVerify"){ }}
+                            {{# if(d.action == "feeVerify" && feeId){ }}
                             <div class="inline-block origin_fee">
                                 <div>规定：{{d.orderData.originFee.oilUnitPrice}}升/百公里</div>
                                 <div>实际：{{d.feeUpdateData.oilUnitPrice || d.orderData.oilUnitPrice}}升/百公里</div>
@@ -870,7 +870,7 @@
                                 </div>
                                 {{# } }}
                             </div>
-                            {{# if(d.action == "feeVerify"){ }}
+                            {{# if(d.action == "feeVerify" && feeId){ }}
                             <div class="inline-block origin_fee">
                                 <div>油箱容量：{{d.orderData.oilCapacity > 100000 ? '无限' : d.orderData.oilCapacity * .95 + '升'}}</div>
                             </div>
@@ -887,7 +887,7 @@
                                 </div>
                                 {{# } }}
                             </div>
-                            {{# if(d.action == "feeVerify"){ }}
+                            {{# if(d.action == "feeVerify" && feeId){ }}
                             <div class="inline-block origin_fee">
                                 <div>油单价：{{d.orderData.closestOilPrice || 0}}元/升</div>
                             </div>
@@ -906,7 +906,7 @@
                                 </div>
                                 {{# } }}
                             </div>
-                            {{# if(d.action == "feeVerify"){ }}
+                            {{# if(d.action == "feeVerify" && feeId){ }}
                             <div class="inline-block origin_fee">
                                 <div>规定：{{d.orderData.originFee.freightUnitPrice || 0}}元</div>
                                 <div>实际：{{d.feeUpdateData.freightUnitPrice || d.orderData.freightUnitPrice || 0}}元</div>
@@ -936,7 +936,7 @@
                                 </div>
                                 {{# } }}
                             </div>
-                            {{# if(d.action == "feeVerify"){ }}
+                            {{# if(d.action == "feeVerify" && feeId){ }}
                             <div class="inline-block origin_fee">
                                 <div>现金+油转现+补助</div>
                             </div>
@@ -955,7 +955,7 @@
                                 </div>
                                 {{# } }}
                             </div>
-                            {{# if(d.action == "feeVerify"){ }}
+                            {{# if(d.action == "feeVerify" && feeId){ }}
                             <div class="inline-block origin_fee">
                                 <div>规定：{{d.orderData.originFee.prePayRatio}}%</div>
                                 <div>实际：{{d.feeUpdateData.prePayRatio || d.orderData.prePayRatio}}%</div>
@@ -973,7 +973,7 @@
                                 </div>
                                 {{# } }}
                             </div>
-                            {{# if(d.action == "feeVerify"){ }}
+                            {{# if(d.action == "feeVerify" && feeId){ }}
                             <div class="inline-block origin_fee">
                                 <div>规定：{{d.orderData.originFee.arrivePayRatio}}%</div>
                                 <div>实际：{{d.feeUpdateData.arrivePayRatio || d.orderData.arrivePayRatio}}%</div>
@@ -991,7 +991,7 @@
                                 </div>
                                 {{# } }}
                             </div>
-                            {{# if(d.action == "feeVerify"){ }}
+                            {{# if(d.action == "feeVerify" && feeId){ }}
                             <div class="inline-block origin_fee">
                                 <div>规定：{{d.orderData.originFee.tailPayRatio}}%</div>
                                 <div>实际：{{d.feeUpdateData.tailPayRatio || d.orderData.tailPayRatio}}%</div>

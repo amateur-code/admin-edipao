@@ -36,7 +36,6 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 		} catch (error) {
 			initData = {};
 		}
-		console.log(initData)
 		tableFilter.cache[elemId] = initData[elemId] || {};
 		opt.done(JSON.parse(JSON.stringify(tableFilter.cache[elemId])), true);
 		//主运行

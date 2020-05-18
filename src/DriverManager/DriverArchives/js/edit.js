@@ -56,12 +56,12 @@ layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
         depositStatusRecord =data.depositStatus;
         if(depositStatusRecord=='1'||depositStatusRecord=='已支付'){
             $('#depositTradeNumberDiv').removeClass('layui-hide');
-            $('#deposit').attr("disabled","disabled");
-            $('#deposit').addClass("layui-disabled");
-            $('#depositTradeNumber').attr("disabled","disabled");
-            $('#depositTradeNumber').addClass("layui-disabled");
-            $('#depositStatus').attr("disabled","disabled");
-            $('#depositStatus').addClass("layui-disabled");
+            // $('#deposit').attr("disabled","disabled");
+            // $('#deposit').addClass("layui-disabled");
+            // $('#depositTradeNumber').attr("disabled","disabled");
+            // $('#depositTradeNumber').addClass("layui-disabled");
+            // $('#depositStatus').attr("disabled","disabled");
+            // $('#depositStatus').addClass("layui-disabled");
             form.render();
         }
 

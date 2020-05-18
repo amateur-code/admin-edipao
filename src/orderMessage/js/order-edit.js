@@ -77,7 +77,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.init = function(){
     var _this = this;
     _this.loadingIndex = layer.load(1);
-    $.when(this.getOrder(), this.getDriverList(), this.getStaffList()).done(function (res1) {
+    $.when(this.getOrder(), this.getStaffList()).done(function (res1) {
       res = res1[0];
       if(res.code == "0"){
         _this.orderDataBackUp = JSON.parse(JSON.stringify(res.data));

@@ -640,7 +640,9 @@ layui.config({
                         }
                     }
                     , done: function () {//表格渲染完成的回调
-                        var tableStr = $(".layui-table-view[lay-id=pre_fee_verify_table]").html();
+                        var $table = $(".layui-table-view[lay-id=pre_fee_verify_table]");
+                        $table.find(".layui-table-body.layui-table-main").css("overflow", "hidden");
+                        var tableStr = $table.prop("outerHTML");
                         var htmlStr = $("#arrive_fee_verify_tpl").html();
                         var index = layer.open({
                             title: title,
@@ -685,8 +687,8 @@ layui.config({
                     },
                     text: {none: "暂无数据"},
                     cols: [[
-                        {field: 'key', title: '费用项', sort: false,width: "80px"},
-                        {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) {
+                        {field: 'key', title: '费用项', sort: false,width: "190"},
+                        {field: 'val', title: '金额', sort: false,width: "190", templet: function (d) {
                             if(dataPermission.canViewOrderCost != "Y"){
                                 return "****";
                             }
@@ -738,7 +740,9 @@ layui.config({
                         }
                     }
                     , done: function () { //表格渲染完成的回调
-                        var tableStr = $(".layui-table-view[lay-id=pre_fee_verify_table]").html();
+                        var $table = $(".layui-table-view[lay-id=pre_fee_verify_table]");
+                        $table.find(".layui-table-body.layui-table-main").css("overflow", "hidden");
+                        var tableStr = $table.prop("outerHTML");
                         var htmlStr = $("#pre_fee_verify_tpl").html();
                         var index = layer.open({
                             title: title,
@@ -780,8 +784,8 @@ layui.config({
                     },
                     text: {none: "暂无数据"},
                     cols: [[
-                        {field: 'key', title: '费用项', sort: false,width: "80px"},
-                        {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) { 
+                        {field: 'key', title: '费用项', sort: false,width: "190"},
+                        {field: 'val', title: '金额', sort: false,width: "190", templet: function (d) { 
                             if(dataPermission.canViewOrderCost != "Y"){
                                 return "****";
                             }
@@ -839,7 +843,9 @@ layui.config({
                         }
                     }
                     , done: function () { //表格渲染完成的回调
-                        var tableStr = $(".layui-table-view[lay-id=pre_fee_verify_table]").html();
+                        var $table = $(".layui-table-view[lay-id=pre_fee_verify_table]");
+                        $table.find(".layui-table-body.layui-table-main").css("overflow", "hidden");
+                        var tableStr = $table.prop("outerHTML");
                         var htmlStr = $("#pre_fee_verify_tpl").html();
                         var index = layer.open({
                             title: title,
@@ -881,8 +887,8 @@ layui.config({
                     },
                     text: {none: "暂无数据"},
                     cols: [[
-                        {field: 'key', title: '费用项', sort: false,width: "80px"},
-                        {field: 'val', title: '金额', sort: false,width: "80px", templet: function (d) {
+                        {field: 'key', title: '费用项', sort: false,width: "190"},
+                        {field: 'val', title: '金额', sort: false,width: "190", templet: function (d) {
                             if(dataPermission.canViewOrderCost != "Y"){
                                 return "*";
                             }
