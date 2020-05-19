@@ -792,6 +792,16 @@
                             </div>
                             {{# } }}
                         </div>
+                        <div class="layui-inline layui-col-md4">
+                            <span class="layui-form-span form_span">调度方式：</span>
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.dispatchType}}</span>
+                            {{# if(d.dispatchType){ }}
+                            <div class="check">
+                                <span class="x-red layui-form-span form_span">待审：</span>
+                                <span class="">{{d.dispatchType}}</span>
+                            </div>
+                            {{# } }}
+                        </div>
                     </div>
                     <div id="fee_list_container"></div>
                 </div>
@@ -872,7 +882,7 @@
                             </div>
                             {{# if(d.action == "feeVerify" && feeId){ }}
                             <div class="inline-block origin_fee">
-                                <div>油箱容量：{{d.orderData.oilCapacity > 100000 ? '无限' : d.orderData.oilCapacity * .95 + '升'}}</div>
+                                <div>油箱容量：{{d.orderData.oilCapacity > 100000 ? '无限' : d.orderData.oilCapacity * .9 + '升'}}</div>
                             </div>
                             {{# } }}
                         </div>

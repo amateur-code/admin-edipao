@@ -160,8 +160,6 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>客户名称</label><br>
                             <div class="layui-input-inline">
-                                <!-- <input type="text" name="customerFullName" lay-verify="required" autocomplete="off" class="layui-input"> -->
-
                                 <select name="customerFullName" lay-verify="required" class="customerList" lay-filter="customerFullName" lay-search>
                                 </select>  
                             </div>
@@ -169,10 +167,9 @@
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>发车仓库</label><br>
                             <div data-filter="CARFORM" class="layui-input-inline startWarehouse_selector startWarehouse_selector_CARFORM">
-                                <!-- <input type="text" name="startWarehouse" lay-verify="required" autocomplete="off" class="layui-input"> -->
                                 <div class="layui-form-select">
                                     <div class="layui-select-title">
-                                        <input name="startWarehouse" type="text" class="startWarehouse_search_input layui-input" autocomplete="off">
+                                        <input name="startWarehouse" type="text" class="startWarehouse_search_input layui-input" autocomplete="off" placeholder="请选择">
                                     </div>
                                     <dl data-filter="CARFORM" class="layui-anim layui-anim-upbit startWarehouse_options">
                                         <dd lay-value="" class="layui-select-tips">暂无数据</dd>
@@ -191,10 +188,8 @@
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>发车停车场</label><br>
                             <div class="layui-input-inline">
-                                <!-- <input type="text" name="startPark" lay-verify="required" autocomplete="off" class="layui-input"> -->
-
                                 <select name="startPark" lay-verify="required" class="startParkList" lay-filter="startPark" lay-search>
-                                </select>  
+                                </select>
                             </div>
                         </div>
                         <div style="display:inline-block;" class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -236,15 +231,17 @@
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">发车地址</label><br>
-                            <div class="address-map layui-row">
-                                <div class="layui-input-inline layui-col-md9" style="width: 250px;margin-right: 0;">
-                                    <!-- <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList"> -->
-                                    <input class="layui-input location-start-name" name="startAddress" id="seach-location-input-start" autocomplete="off" placeholder="请输入收车位置" value=""/>
-                                    <input class="startLat" name="startLat" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
-                                    <input class="startLng" name="startLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
-                                </div>
-                                <div class="layui-input-inline layui-col-md3" style="width: 50px;">
-                                    <a data-field="start" class="layui-btn showMap selectMapLocation">选择</a>
+                            <div class="address-map">
+                                <div class="layui-row">
+                                    <div class="layui-col-md8" style="margin-right: 0;">
+                                        <!-- <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList"> -->
+                                        <input class="layui-input location-start-name" name="startAddress" id="seach-location-input-start" autocomplete="off" placeholder="请输入收车位置" value=""/>
+                                        <input class="startLat" name="startLat" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;float:left;"/>
+                                        <input class="startLng" name="startLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;float:left;"/>
+                                    </div>
+                                    <div class="layui-col-md3">
+                                        <button data-field="start" type="button" class="layui-btn showMap selectMapLocation layui-btn-sm layui-btn-fluid">选择</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -255,8 +252,8 @@
                             <div data-filter="CARFORM" class="layui-input-inline end_park_selector end_park_selector_CARFORM">
                                 <div class="layui-form-select">
                                     <div class="layui-select-title">
-                                        <input name="endPark" type="text" class="end_park_search_input layui-input" autocomplete="off">
-                                        <input name="endAddrCode" class="endAddrCode" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                        <input name="endPark" type="text" class="end_park_search_input layui-input" autocomplete="off" placeholder="请选择">
+                                        <input name="endAddrCode" class="endAddrCode" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;float:left;"/>
                                     </div>
                                     <dl data-filter="CARFORM" class="layui-anim layui-anim-upbit end_park_options">
                                         <dd lay-value="" class="layui-select-tips">暂无数据</dd>
@@ -266,9 +263,6 @@
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收车城市</label><br>
-                            <!-- <div class="layui-input-inline">
-                                <input type="text" name="endCity" autocomplete="off" class="layui-input">
-                            </div> -->
                             <div class="layui-form-item">
                                 <div class="layui-inline flex_h end_city_selector">
                                     <div class="layui-input-inline" style="min-width:100px;margin:0;">
@@ -283,25 +277,22 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- <input type="text" name="endCity" autocomplete="off" class="layui-input"> -->
                         </div>
                         
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label">收车地址</label><br>
-                            <div class="address-map layui-row">
-                                <div class="layui-input-inline layui-col-md9" style="width: 250px;margin-right: 0;">
-                                    <!-- <input type="text" name="endAddress" autocomplete="off" class="layui-input getAddressList"> -->
-                                    <input class="layui-input location-end-name" name="endAddress" id="seach-location-input" autocomplete="off" placeholder="请输入收车位置" value=""/>
-                                    <input name="endLat" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
-                                    <input name="endLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
-                                </div>
-                                <div class="layui-input-inline layui-col-md3" style="width: 50px;">
-                                    <a data-field="end" class="layui-btn showMap selectMapLocation">选择</a>
+                            <div class="address-map">
+                                <div class="layui-row">
+                                    <div class="layui-col-md8" style="margin-right: 0;">
+                                        <input class="layui-input location-end-name" name="endAddress" id="seach-location-input" autocomplete="off" placeholder="请输入收车位置" value=""/>
+                                        <input name="endLat" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;float:left;"/>
+                                        <input name="endLng" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;float:left;"/>
+                                    </div>
+                                    <div class="layui-col-md3">
+                                        <button data-field="end" type="button" class="layui-btn showMap selectMapLocation layui-btn-sm layui-btn-fluid">选择</button>
+                                    </div>
                                 </div>
                             </div>
-                            <!-- <div class="layui-input-inline">
-                                <input type="text" name="endAddress" autocomplete="off" class="layui-input">
-                            </div> -->
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
@@ -455,7 +446,8 @@
                                 <div class="layui-inline layui-col-md8" style="margin-right: 0;">
                                     <div class="layui-form-select driver_name_selector">
                                         <div class="layui-select-title">
-                                            <input data-context="normal" name="driverName" type="text" class="layui-input driver_name_input" autocomplete="off">
+                                            <input data-context="normal" name="driverName" type="text" class="layui-input driver_name_input" autocomplete="off" placeholder="请选择">
+                                            <i class="layui-edge"></i>
                                         </div>
                                         <dl class="layui-anim layui-anim-upbit driverName_options">
                                             <dd lay-value="" class="layui-select-tips">暂无数据</dd>
@@ -551,7 +543,7 @@
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.oilUnitPrice}} 升/百公里</div>
                                 <div class="blue">实际：{{d.feeDetail.oilUnitPrice}} 升/百公里</div>
-                                <input value="{{d.feeDetail.oilUnitPrice}}" type="text" name="oilUnitPrice" class="layui-input" style="width: 0;height: 0;opacity:0;">
+                                <input value="{{d.feeDetail.oilUnitPrice}}" type="text" name="oilUnitPrice" class="layui-input" style="width: 0;height: 0;opacity:0;float:left;">
                             </div>
                         </div>
                     </div>
@@ -566,9 +558,9 @@
                                 {{# if(dataPermission.canViewOrderCost != 'Y'){ }}
                                 <div class="blue">油箱容量：{{'****升'}}</div>
                                 {{# }else{ }}
-                                <div class="blue">油箱容量：{{d.feeDetail.oilCapacity > 100000 ? '无限' : d.feeDetail.oilCapacity * .95 + '升'}}</div>
+                                <div class="blue">油箱容量：{{d.feeDetail.oilCapacity > 100000 ? '无限' : d.feeDetail.oilCapacity * .9 + '升'}}</div>
                                 {{# } }}
-                                <input value="{{d.feeDetail.oilCapacity}}" type="text" name="oilCapacity" class="layui-input" style="width: 0;height: 0;opacity:0;">
+                                <input value="{{d.feeDetail.oilCapacity}}" type="text" name="oilCapacity" class="layui-input" style="width: 0;height: 0;opacity:0;float:left;">
                             </div>
                         </div>
                     </div>
@@ -609,7 +601,7 @@
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.freightUnitPrice}} 元/km</div>
                                 <div class="blue">实际：{{d.feeDetail.freightUnitPrice}} 元/km</div>
-                                <input value="{{d.feeDetail.freightUnitPrice}}" type="text" name="freightUnitPrice" class="layui-input" style="width: 0;height: 0;opacity:0;">
+                                <input value="{{d.feeDetail.freightUnitPrice}}" type="text" name="freightUnitPrice" class="layui-input" style="width: 0;height: 0;opacity:0;float:left;">
                             </div>
                         </div>
                     </div>
@@ -652,7 +644,7 @@
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.prePayRatio}}%</div>
                                 <div class="blue">实际：{{d.feeDetail.prePayRatio}}%</div>
-                                <input value="{{d.feeDetail.prePayRatio}}" type="text" name="prePayRatio" class="layui-input" style="width: 0;height: 0;opacity:0;">
+                                <input value="{{d.feeDetail.prePayRatio}}" type="text" name="prePayRatio" class="layui-input" style="width: 0;height: 0;opacity:0;float:left;">
                             </div>
                         </div>
                     </div>
@@ -666,7 +658,7 @@
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.arrivePayRatio}}%</div>
                                 <div class="blue">实际：{{d.feeDetail.arrivePayRatio}}%</div>
-                                <input value="{{d.feeDetail.arrivePayRatio}}" type="text" name="arrivePayRatio" class="layui-input" style="width: 0;height: 0;opacity:0;">
+                                <input value="{{d.feeDetail.arrivePayRatio}}" type="text" name="arrivePayRatio" class="layui-input" style="width: 0;height: 0;opacity:0;float:left;">
                             </div>
                         </div>
                     </div>
@@ -680,7 +672,7 @@
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.tailPayRatio}}%</div>
                                 <div class="blue">实际：{{d.feeDetail.tailPayRatio}}%</div>
-                                <input value="{{d.feeDetail.tailPayRatio}}" type="text" name="tailPayRatio" class="layui-input" style="width: 0;height: 0;opacity:0;">
+                                <input value="{{d.feeDetail.tailPayRatio}}" type="text" name="tailPayRatio" class="layui-input" style="width: 0;height: 0;opacity:0;float:left;">
                             </div>
                         </div>
                     </div>
@@ -769,10 +761,11 @@
                             <div class="layui-inline layui-col-md8" style="margin-right: 0;">
                                 <div class="layui-form-select driver_name_selector">
                                     <div class="layui-select-title">
-                                        <input data-context="duanbo" name="duanbo" type="text" class="layui-input driver_name_input" autocomplete="off">
-                                        <input name="duanboName" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
-                                        <input name="duanboPhone" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
-                                        <input name="duanboId" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                        <input data-context="duanbo" name="duanbo" type="text" class="layui-input driver_name_input" autocomplete="off" placeholder="请选择">
+                                        <i class="layui-edge"></i>
+                                        <input name="duanboName" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;float:left;"/>
+                                        <input name="duanboPhone" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;float:left;"/>
+                                        <input name="duanboId" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;float:left;"/>
                                     </div>
                                     <dl class="layui-anim layui-anim-upbit driverName_options">
                                         <dd lay-value="" class="layui-select-tips">暂无数据</dd>

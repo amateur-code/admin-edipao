@@ -1426,7 +1426,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     //   return;
     // }
     if(!_this.veriftParams(data)) return;
-    if(data.prePayOil * 1 > data.oilCapacity * 1 * .95 && _this.feeId){
+    if(data.prePayOil * 1 > data.oilCapacity * 1 * .9 && _this.feeId){
       layer.confirm('车辆油箱可能装不下这么多油，是否继续给这么多油？', {icon: 3, title:'提示'}, function(index){
         //do something
         var loadIndex = layer.load(1);
@@ -1438,7 +1438,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         layer.close(index);
       },
       function(index){
-        data.prePayOil = (_this.feeDetail.oilCapacity * 0.95).toFixed(2);
+        data.prePayOil = (_this.feeDetail.oilCapacity * 0.9).toFixed(2);
         if(_this.dataPermission.canViewOrderCost != "Y"){
           feeFormData = _this.feeDetail;
         }else{
@@ -1601,9 +1601,13 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             if(context == "normal"){
               form.val("form_dispatch", driverData);
             }else{
-
+              form.val("form_ascription", {
+                duanbo: data.name + data.phone,
+                duanboName: data.name,
+                duanboPhone: data.phone,
+                duanboId: data.id,
+              });
             }
-            
             $(".layui-table-view[lay-id=drivers_table]").remove();
             layer.close(index);
             $("#tables_container").html($("#tables_tpl").html());
@@ -2148,15 +2152,21 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     $(".driver_name_input").unbind().on("click", function(e){
       var context = e.target.dataset.context;
       var $selector = $(".driver_selector." + context);
-      _this.openSelectDriver($selector);
-      console.log($selector)
+      if(context == "normal"){
+        _this.openSelectDriver($selector);
+      }
       $selector.find(".driver_name_selector").addClass("layui-form-selected");
     });
-    $(".driver_selector.duanbo .driverName_options").on("click", function(e){
+    $(".driver_selector.duanbo .driverName_options").unbind().on("click", function(e){
       var data = e.target.dataset;
-      
+      form.val("form_ascription", {
+        duanbo: data.name + data.phone,
+        duanboName: data.name,
+        duanboPhone: data.phone,
+        duanboId: data.id,
+      });
     });
-    $(".driver_selector.normal .driverName_options").on("click", function(e){
+    $(".driver_selector.normal .driverName_options").unbind().on("click", function(e){
       var data = e.target.dataset;
       var driverData = {
         driverId: data.id,

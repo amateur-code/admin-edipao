@@ -35,6 +35,12 @@ var masterFlagData = [
     {key: "否", value: "上车"},
     {key: "是", value: "下车"},
 ]
+var dispatchTypeData = [
+    {key: "抢单", value: "抢单"},
+    {key: "人工调度", value: "人工调度"},
+    {key: "抢单转人工", value: "抢单转人工"},
+    {key: "抢单变人工", value: "抢单变人工"},
+]
 
 function DataNull(data) {
     if (data == null || data == "") {
@@ -127,6 +133,7 @@ layui.config({
         { field: 'dispatchTime', type: 'timeslot' },
         { field: 'openOperator', type: 'contract' },
         { field: 'deliveryOperator', type: 'contract' },
+        { field: 'dispatchType', type: 'checkbox', data: dispatchTypeData },
         { field: 'driverName', type: 'input' },
         { field: 'driverPhone', type: 'input' },
         { field: 'driverIdCard', type: 'input' },
@@ -1317,6 +1324,8 @@ layui.config({
                                         value = "";
                                     }
                                     break;
+                                case "dispatchType":
+                                    break;
                                 case 'masterFlag':
                                     if (item.orderType == 1) {
                                         value = "单车";
@@ -1646,17 +1655,29 @@ layui.config({
         {field: 'dispatchTime', title: '调度时间', sort: false, width: 200, templet: function(d){
             return d.dispatchTime ? d.dispatchTime : '- -';
         }},
-        {field: 'openOperator', title: '开单员', sort: false,width: 145, templet: function(d){
+        {field: 'openOperator', title: '开单员', sort: false, width: 145, templet: function(d){
             d.openOperator = d.openOperator || "";
             d.openOperatorPhone = d.openOperatorPhone || "";
             return (d.openOperator || d.openOperatorPhone) ? d.openOperator + d.openOperatorPhone : '- -';
         }},
-        {field: 'deliveryOperator', title: '发运经理', sort: false,minWidth:145, templet: function(d){
+        {field: 'deliveryOperator', title: '发运经理', sort: false, minWidth:145, templet: function(d){
             d.deliveryOperator = d.deliveryOperator || "";
             d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
             return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
         }},
-        {field: 'driverName', title: '司机姓名', sort: false,minWidth:130, templet: function (d) {
+        {field: 'dispatchType', title: '调度方式', sort: false, minWidth: 145, templet: function(d){
+            var result;
+            switch(d.dispatchType){
+                case 1:
+                    result = "抢单";
+                    break;
+                default:
+                    result = "- -";
+                    break;
+            }
+            return result;
+        }},
+        {field: 'driverName', title: '司机姓名', sort: false, minWidth: 130, templet: function (d) {
             var driverName = "<a class='table_a pointer blue list_driver_name' data-id="+ d.driverId +">{{}}</a>";
             if(d.driverName){
                 driverName = driverName.replace("{{}}", d.driverName);
@@ -1895,6 +1916,15 @@ layui.config({
             }
             return status;
         }},
+        {field: 'jingxiaoshangSign', title: '经销商签收', sort: false,minWidth:120, templet: function (d) {
+            return d.driverPhone || "- -";
+        }},
+        {field: 'jingxiaoshangComment', title: '经销商评价', sort: false,minWidth:120, templet: function (d) {
+            return d.driverPhone || "- -";
+        }},
+        {field: 'hegezhengSign', title: '合格证签收', sort: false,minWidth:120, templet: function (d) {
+            return d.driverPhone || "- -";
+        }},
     ];
     var showList = [
         "orderNo",
@@ -1918,6 +1948,7 @@ layui.config({
         "dispatchTime",
         "openOperator",
         "deliveryOperator",
+        "dispatchType",
         "driverName",
         "driverPhone",
         "driverIdCard",
@@ -1927,6 +1958,9 @@ layui.config({
         "fetchStatus",
         "startAuditStatus",
         "returnAuditStatus",
+        "jingxiaoshangSign",
+        "jingxiaoshangComment",
+        "hegezhengSign",
     ];
     var exportHead={};// 导出头部
     var toolField = {title: '操作', field: "operation", toolbar: '#barDemo', align: 'left', fixed: 'right', width: 390};
