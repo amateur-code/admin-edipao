@@ -317,7 +317,7 @@
 							<span class="layui-form-span form_span">联系人：</span>
 							<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.connectorName + d.detail.connectorPhone }}</span>
 						</div>
-						{{# if(d.check.connectorName || d.check.connectorPhone){ }}
+						{{# if(d.check.connectorName != undefined || d.check.connectorPhone != undefined){ }}
 						<div class="layui-row">
 							<span class="layui-form-span form_span red">待审：</span>
 							{{# if(d.check.connectorName && !d.check.connectorPhone){ }}
@@ -325,7 +325,7 @@
 							{{# }else if(d.check.connectorPhone && !d.check.connectorName){ }}
 							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.detail.connectorName + d.check.connectorPhone }}</span>
 							{{# }else{ }}
-							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.connectorName + d.check.connectorPhone }}</span>
+							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{(d.check.connectorName + d.check.connectorPhone) || '- -' }}</span>
 							{{# } }}
 						</div>
 						{{# } }}

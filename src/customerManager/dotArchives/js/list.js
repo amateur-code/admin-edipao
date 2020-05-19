@@ -434,10 +434,10 @@ layui
                   exportObj[index] = v["statusDesc"] || "- -";
                   break;
                 case "connectorName":
-                  if(!item.connectorName && !item.connectorPhone){
+                  if(!v.connectorName && !v.connectorPhone){
                     exportObj[index] = "- -";
                   }else{
-                    exportObj[index] = item.connectorName + item.connectorPhone;
+                    exportObj[index] = v.connectorName + v.connectorPhone;
                   }
                   break;
                 default:

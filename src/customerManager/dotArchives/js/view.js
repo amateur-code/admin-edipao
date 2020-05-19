@@ -90,6 +90,15 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
               if(item.feeId) _this.detail.feeJson.push(item);
             }
           });
+          Object.keys(_this.check).forEach(function (key) {
+            if(key != "feeJson"){
+              if(!_this.check[key]){
+                if(key != "connectorName" && key != "connectorPhone"){
+                  res.data[key] = res.data[key] || "- -";
+                }
+              }
+            }
+          });
           laytpl($("#preview").html()).render({check: _this.check, detail: _this.detail}, function (html) {
             $("#view").html(html);
             _this.bindEvents();
