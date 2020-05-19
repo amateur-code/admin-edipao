@@ -451,20 +451,19 @@
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
                             <label class="layui-form-label text_left form_label">司机姓名</label><br>
-                            <div id="driver_name_select" class="layui-input-inline layui-row">
+                            <div class="layui-input-inline layui-row driver_selector normal">
                                 <div class="layui-inline layui-col-md8" style="margin-right: 0;">
                                     <div class="layui-form-select driver_name_selector">
                                         <div class="layui-select-title">
-                                            <input id="driver_name" name="driverName" type="text" class="layui-input" autocomplete="off">
+                                            <input data-context="normal" name="driverName" type="text" class="layui-input driver_name_input" autocomplete="off">
                                         </div>
                                         <dl class="layui-anim layui-anim-upbit driverName_options">
                                             <dd lay-value="" class="layui-select-tips">暂无数据</dd>
                                         </dl>
                                     </div>
-                                    <!-- <input id="driver_name" type="tel" name="driverName" lay-verify="required" autocomplete="off" class="layui-input"> -->
                                 </div>
                                 <div class="layui-inline layui-col-md3">
-                                    <button id="select_driver_btn" type="button" class="layui-btn layui-btn-sm layui-btn-fluid">选择</button>
+                                    <button data-context="normal" type="button" class="layui-btn layui-btn-sm layui-btn-fluid select_driver_btn">选择</button>
                                 </div>
                                 <div id="driver_select_item_container"></div>
                             </div>
@@ -723,7 +722,7 @@
             <div class="form_item_container">
                 <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md3">
-                        <label class="layui-form-label text_left form_label">发运员</label><br>
+                        <label class="layui-form-label text_left form_label">发运经理</label><br>
                         <div class="layui-input-inline">
                             <div class="layui-row">
                                 <div class="layui-col-md8">
@@ -763,25 +762,30 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="layui-form-item layui-row">
+                <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md3">
                         <label class="layui-form-label text_left form_label">短驳司机</label><br>
-                        <div class="layui-input-inline">
-                            <div class="layui-row">
-                                <div class="layui-col-md8">
-                                    <select name="followOperator" lay-search>
-                                        {{#  layui.each(d.driverList, function(index, item){ }}
-                                            <option data-name="{{item.name}}" value="{{item.name + ',' + item.phone}}">{{item.name + item.phone}}</option>
-                                        {{#  }); }}
-                                    </select>
-                                </div>
-                                <div class="layui-col-md3">
-                                    <button data-field="followOperator" type="button" class="select_driver_btn layui-btn layui-btn-sm layui-btn-fluid">选择</button>
+                        <div class="layui-input-inline layui-row driver_selector duanbo">
+                            <div class="layui-inline layui-col-md8" style="margin-right: 0;">
+                                <div class="layui-form-select driver_name_selector">
+                                    <div class="layui-select-title">
+                                        <input data-context="duanbo" name="duanbo" type="text" class="layui-input driver_name_input" autocomplete="off">
+                                        <input name="duanboName" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                        <input name="duanboPhone" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                        <input name="duanboId" autocomplete="off" value="" style="width: 0;height: 0;opacity:0;"/>
+                                    </div>
+                                    <dl class="layui-anim layui-anim-upbit driverName_options">
+                                        <dd lay-value="" class="layui-select-tips">暂无数据</dd>
+                                    </dl>
                                 </div>
                             </div>
+                            <div class="layui-inline layui-col-md3">
+                                <button data-context="duanbo" type="button" class="layui-btn layui-btn-sm layui-btn-fluid select_driver_btn">选择</button>
+                            </div>
+                            <div id="driver_select_item_container"></div>
                         </div>
                     </div>
-                </div> -->
+                </div>
             </div>
         </form>
     </script>

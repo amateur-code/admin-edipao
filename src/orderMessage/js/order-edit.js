@@ -1529,10 +1529,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       layer.close(loadIndex);
     });
   }
-  Edit.prototype.openSelectDriver = function () {
+  Edit.prototype.openSelectDriver = function ($selector) {
     //选择司机
     var _this= this;
-    var $options = $(".driverName_options");
+    var $options = $selector.find(".driverName_options");
     edipao.request({
       url: "/admin/order/matchDriver/list",
       method: "GET",
@@ -1557,7 +1557,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       return html;
     }
   }
-  Edit.prototype.openSelectDriverTable = function (ascription) {
+  Edit.prototype.openSelectDriverTable = function (context) {
     var _this = this;
     var index = layer.open({
       type:1,
@@ -1598,12 +1598,12 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
               driverIdCard: data.idNum,
               driverCertificate: data.driveLicenceType,
             }
-            if(ascription){
-              form.val("form_ascription");
-            }else{
+            if(context == "normal"){
               form.val("form_dispatch", driverData);
+            }else{
+
             }
-            //$(".layui-layer-content").html("");
+            
             $(".layui-table-view[lay-id=drivers_table]").remove();
             layer.close(index);
             $("#tables_container").html($("#tables_tpl").html());
@@ -2087,14 +2087,13 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       var field = e.target.dataset.field;
       var index = layer.open({
         type: 1,
-        area: ["500px","400px"],
+        area: ["600px", "400px"],
         title: "选择员工",
         content: $("#staffList_table"),
         success: function () {
           table.render({
             elem: '#staffList_table'
             , url: layui.edipao.API_HOST+'/admin/staff/list'
-            // , url: "js/cars.json"
             , method: "get" // 请求方式  默认get
             , page: true //开启分页
             , limit: 10  //每页显示条数
@@ -2146,12 +2145,18 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         }
       });
     });
-    $("#driver_name").unbind().on("click", function(){
-      _this.openSelectDriver();
-      $(".driver_name_selector").addClass("layui-form-selected");
+    $(".driver_name_input").unbind().on("click", function(e){
+      var context = e.target.dataset.context;
+      var $selector = $(".driver_selector." + context);
+      _this.openSelectDriver($selector);
+      console.log($selector)
+      $selector.find(".driver_name_selector").addClass("layui-form-selected");
     });
-    var $driverNameOptions = $(".driverName_options");
-    $driverNameOptions.on("click", function(e){
+    $(".driver_selector.duanbo .driverName_options").on("click", function(e){
+      var data = e.target.dataset;
+      
+    });
+    $(".driver_selector.normal .driverName_options").on("click", function(e){
       var data = e.target.dataset;
       var driverData = {
         driverId: data.id,
@@ -2162,7 +2167,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
       form.val("form_dispatch", driverData);
     });
-    $("#driver_name").on("input", function (e) {
+    $(".driver_name_input").on("input", function (e) {
+      var context = e.target.dataset.context;
+      var $selector = $(".driver_selector." + context);
       var name = e.target.value;
       _this.driverTimer = setTimeout(function () {
         edipao.request({
@@ -2173,7 +2180,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
             if(!res.data) return;
             if(!res.data.driverInfoListDtoList || res.data.driverInfoListDtoList.length < 0) return;
             _this.driverInfoListDto = res.data.driverInfoListDtoList;
-            $driverNameOptions.html(returnOptions2(res.data.driverInfoListDtoList || []));
+            $selector.find(".driverName_options").html(returnOptions2(res.data.driverInfoListDtoList || []));
           }
         });
       }, 500);
@@ -2192,12 +2199,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }
     });
     $(".select_driver_btn").unbind().on("click", function (e) {
-      _this.openSelectDriverTable(true);
-    });
-    $("#select_driver_btn").unbind().on("click", function () {
+      var context = e.target.dataset.context;
       $('#match_driver_list').hide();
       $('#match_driver_list').remove();
-      _this.openSelectDriverTable();
+      _this.openSelectDriverTable(context);
     });
     $("#btn_confirm").unbind().on("click", function (e){
       _this.preSubmit();

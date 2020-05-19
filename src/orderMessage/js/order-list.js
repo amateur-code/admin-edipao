@@ -31,6 +31,18 @@ var tailPayStatusData = [
     {key: 4, value: "支付失败"},
     {key: 5, value: "未到期"},
 ]
+var masterFlagData = [
+    {key: "否", value: "上车"},
+    {key: "是", value: "下车"},
+]
+
+function DataNull(data) {
+    if (data == null || data == "") {
+        return "- -";
+    } else {
+        return data;
+    }
+}
 
 var provinceList = [];
 var cityCode = {};
@@ -100,7 +112,7 @@ layui.config({
         { field: 'tempLicense', type: 'input' },
         { field: 'orderStatus', type: 'checkbox', data: orderStatusData },
         { field: 'orderType', type: 'checkbox', data:orderTypeData },
-        { field: "", type: "checkbox"},
+        { field: "masterFlag", type: "checkbox", data: masterFlagData},
         { field: 'customerFullName', type: 'input' },
         { field: 'startWarehouse', type: 'input' },
         { field: 'startPark', type: 'input' },
@@ -120,6 +132,11 @@ layui.config({
         { field: 'driverIdCard', type: 'input' },
         { field: 'pricePerMeliage', type: 'numberslot' },
         { field: 'income', type: 'numberslot' },
+        { field: 'totalIncome', type: 'numberslot' },
+        { field: 'driverMileage', type: 'numberslot' },
+        { field: 'prePayTime', type: 'timeslot' },
+        { field: 'arrivePayTime', type: 'timeslot' },
+        { field: 'tailPayTime', type: 'timeslot' },
         { field: 'prePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'arrivePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'tailPayAmount', type: 'checkbox-numberslot', data: feeData },
@@ -1172,6 +1189,27 @@ layui.config({
                                 case 'driverPhone':
                                     value = item[i];
                                     break;
+                                case 'pricePerMeliage':
+                                    value = item[i] + "元/km";
+                                    if(dataPermission.canViewOrderCost != "Y"){
+                                        value = "****";
+                                    }
+                                    break;
+                                case 'income':
+                                case 'totalIncome':
+                                    value = item[i] +  + "元";
+                                    if(dataPermission.canViewOrderCost != "Y"){
+                                        value = "****";
+                                    }
+                                    break;
+                                case 'driverMileage':
+                                    value = item[i] + "km";
+                                    break;
+                                case 'prePayTime':
+                                case 'arrivePayTime':
+                                case 'tailPayTime':
+                                    value = DataNull(item[i]);
+                                    break;
                                 case 'prePayAmount':
                                     var payStatus = "";
                                     if(orderType == 2 && masterFlag == "否"){
@@ -1279,6 +1317,17 @@ layui.config({
                                         value = "";
                                     }
                                     break;
+                                case 'masterFlag':
+                                    if (item.orderType == 1) {
+                                        value = "单车";
+                                    } else {
+                                        if(item.masterFlag == "是"){
+                                            value =  "下车";
+                                        }else{
+                                            value =  "上车";
+                                        }
+                                    }
+                                    break;
                                 case 'returnUploadBtn':
                                     switch(item[i]){
                                         case 0:
@@ -1304,7 +1353,7 @@ layui.config({
                                     }
                                     break;
                                 default:
-                                    value = item[i] ? item[i] : '- -'
+                                    value = DataNull(item[i]);
                                     break;
                             }
                             newObj[i] = value;
@@ -1509,6 +1558,17 @@ layui.config({
                     return "非法类型";
                 }
         }},
+        {field: 'masterFlag', title: '上下车', sort: false, minWidth:100, templet: function (d) {
+                if (d.orderType == 1) {
+                    return "单车";
+                } else {
+                    if(d.masterFlag == "是"){
+                        return "下车";
+                    }else{
+                        return "上车";
+                    }
+                }
+        }},
         {field: 'orderStatus', title: '订单状态', sort: false,minWidth:100, templet: function (d) {
                 if (d.orderStatus == 1) {
                     return "待调度";
@@ -1559,6 +1619,30 @@ layui.config({
         {field: 'transportAssignTime', title: '运输商指派时间', sort: false,width: 200, templet: function(d){
             return d.transportAssignTime ? d.transportAssignTime : '- -';
         }},
+        {field: 'pricePerMeliage', title: '收入单价', sort: false,width: 150, templet: function(d){
+            if(dataPermission.canViewOrderCost != "Y") return "****";
+            return d.pricePerMeliage ? (d.pricePerMeliage + "元/km") : '- -';
+        }},
+        {field: 'income', title: '收入', sort: false,width: 150, templet: function(d){
+            if(dataPermission.canViewOrderCost != "Y") return "****";
+            return d.income ? (d.income + "元") : '- -';
+        }},
+        {field: 'totalIncome', title: '收入总金额', sort: false,width: 150, templet: function(d){
+            if(dataPermission.canViewOrderCost != "Y") return "****";
+            return d.totalIncome ? (d.totalIncome + "元") : '- -';
+        }},
+        {field: 'driverMileage', title: '承运里程', sort: false,width: 150, templet: function(d){
+            return d.driverMileage ? (d.driverMileage + "km") : '- -';
+        }},
+        {field: 'prePayTime', title: '预付款支付时间', sort: false,width: 150, templet: function(d){
+            return d.prePayTime ? d.prePayTime : '- -';
+        }},
+        {field: 'arrivePayTime', title: '到付款支付时间', sort: false,width: 150, templet: function(d){
+            return d.arrivePayTime ? d.arrivePayTime : '- -';
+        }},
+        {field: 'tailPayTime', title: '尾款支付时间', sort: false,width: 150, templet: function(d){
+            return d.tailPayTime ? d.tailPayTime : '- -';
+        }},
         {field: 'dispatchTime', title: '调度时间', sort: false, width: 200, templet: function(d){
             return d.dispatchTime ? d.dispatchTime : '- -';
         }},
@@ -1567,7 +1651,7 @@ layui.config({
             d.openOperatorPhone = d.openOperatorPhone || "";
             return (d.openOperator || d.openOperatorPhone) ? d.openOperator + d.openOperatorPhone : '- -';
         }},
-        {field: 'deliveryOperator', title: '发运员', sort: false,minWidth:145, templet: function(d){
+        {field: 'deliveryOperator', title: '发运经理', sort: false,minWidth:145, templet: function(d){
             d.deliveryOperator = d.deliveryOperator || "";
             d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
             return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
@@ -1819,6 +1903,7 @@ layui.config({
         "tempLicense",
         "orderStatus",
         "orderType",
+        "masterFlag",
         "customerFullName",
         "startWarehouse",
         "startPark",

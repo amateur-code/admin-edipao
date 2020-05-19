@@ -25,7 +25,7 @@ layui
     console.log(permissionList)
     window.form = form;
     var where = {};
-    var showList = ["company", "endProvince", "endAddress", "addrCode", "connectorName", "remark", "transportOrderNum", "status"];
+    var showList = ["company", "endProvince", "endAddress", "addrCode", "connectorName", "remark","manager", "feeJson","hot", "transportOrderNum", "status"];
     var exportHead = {}; // 导出头部
     var tableCols = [
       { checkbox: true },
@@ -75,6 +75,39 @@ layui
         field: "remark",
         title: "备注",
         width: 400,
+        templet: function (d) {
+          return d.remark ? d.remark : "- -";
+        },
+      },
+      {
+        field: "manager",
+        title: "发运经理",
+        width: 200,
+        templet: function (d) {
+          return d.remark ? d.remark : "- -";
+        },
+      },
+      {
+        field: "feeJson",
+        title: "费用模板",
+        width: 200,
+        templet: function (d) {
+          var feeJson, feeName = [];
+          try {
+            feeJson = JSON.parse(d.feeJson) || [];
+          } catch (error) {
+            feeJson = [];
+          }
+          feeJson.forEach(function (item) {
+            feeName.push(item.name);
+          });
+          return feeName.join("，");
+        },
+      },
+      {
+        field: "hot",
+        title: "抢单热度",
+        width: 200,
         templet: function (d) {
           return d.remark ? d.remark : "- -";
         },
@@ -342,6 +375,9 @@ layui
         { field: "endAddress", type: "input" },
         { field: "addrCode", type: "input" },
         { field: "connectorName", type: "contract" },
+        { field: "manager", type: "contract" },
+        { field: "feeJson", type: "input" },
+        { field: "hot", type: "numberslot" },
         // { field: "transportOrderNum", type: "numberslot" },
         { field: "status", type: "checkbox", data: statusData },
       ];

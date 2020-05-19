@@ -385,7 +385,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           item.manageFee = "****";
           item.income = "****";
         }
-        console.log(item)
         switch(item.settleWay * 1){
           case 0:
             item.settleWay = "- -";
@@ -401,7 +400,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             break;
         }
         
-        item.connector = item.connectorName + item.connectorPhone;
+        item.connector = item.connectorName + "(" + item.connectorPhone + ")";
         if(!item.returnImages) item.returnImages = [];
         else item.returnImages = item.returnImages.split(",");
         if(!item.fetchImages) item.fetchImages = [];

@@ -98,6 +98,23 @@
                 </div>
               </div>
             </div>
+            <div class="layui-col-md4">
+              <div class="layui-form-item">
+                <div>发运经理</div>
+                <div class="layui-input-block layui-row">
+                  <div class="layui-col-md8">
+                    <select id="manager" name="manager" class="city" lay-verify="required" lay-search lay-filter="manager">
+                      <option value="">请选择</option>
+                    </select>
+                    <input type="text" id="managerName" name="managerName" autocomplete="off" class="layui-input" style="width: 0;height: 0;opacity:0;">
+                    <input type="text" id="managerPhone" name="managerPhone" autocomplete="off" class="layui-input" style="width: 0;height: 0;opacity:0;">
+                  </div>
+                  <div class="layui-col-md3">
+                    <button type="button" class="layui-btn" id="openSelectStaff">选择</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div id="fee_container" class="layui-card layui-form" >

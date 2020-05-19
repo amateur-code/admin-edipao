@@ -93,9 +93,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
           Object.keys(_this.check).forEach(function (key) {
             if(key != "feeJson"){
               if(!_this.check[key]){
-                if(key != "connectorName" && key != "connectorPhone"){
-                  res.data[key] = res.data[key] || "- -";
-                }
+                res.data[key] = res.data[key] || "- -";
               }
             }
           });

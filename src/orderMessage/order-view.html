@@ -339,7 +339,7 @@
                         {{# if(d.updateData.connectorName || d.updateData.connectorPhone){ }}
                         <div class="layui-row">
                             <span class="layui-form-span form_span red">待审：</span>
-                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{(d.updateData.connectorName||d.connectorName) + (d.updateData.connectorPhone || d.connectorPhone)}}</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{(d.updateData.connectorName||d.connectorName) + '(' + (d.updateData.connectorPhone || d.connectorPhone) + ')'}}</span>
                         </div>
                         {{# } }}
                     </div>
@@ -695,7 +695,7 @@
                 <div class="form_item_container" style="padding-top:20px;">
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md4">
-                            <span class="layui-form-span form_span">发运员：</span>
+                            <span class="layui-form-span form_span">发运经理：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.deliveryOperator + d.orderData.deliveryOperatorPhone}}</span>
                             {{# if(d.deliveryOperator || d.deliveryOperatorPhone){ }}
                             <div class="check">
