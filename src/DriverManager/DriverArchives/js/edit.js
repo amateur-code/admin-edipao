@@ -311,27 +311,15 @@ layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
     form.on('select(depositStatusFilter)', function(data){
         if(depositStatusRecord=='1'||depositStatusRecord=='已支付'){
             if(data.value =='0'||data.value ==''){
-                $("#deposit").removeClass('layui-disabled');
                 $("#depositTradeNumberDiv").addClass('layui-hide');
-                $('#deposit').attr("disabled",false);
             }else{
                 $("#depositTradeNumberDiv").removeClass('layui-hide');
-                $("#deposit").addClass('layui-disabled');
-                $('#depositTradeNumber').addClass('layui-disabled');
-                $('#deposit').attr("disabled",'disabled');
-                $('#depositTradeNumber').attr("disabled",'disabled');
             }
         }else{
             if(data.value =='0'||data.value ==''){
-                $("#deposit").removeClass('layui-disabled');
                 $("#depositTradeNumberDiv").addClass('layui-hide');
-                $('#deposit').attr("disabled",false);
             }else{
                 $("#depositTradeNumberDiv").removeClass('layui-hide');
-                $("#deposit").removeClass('layui-disabled');
-                $('#depositTradeNumber').removeClass('layui-disabled');
-                $('#deposit').attr("disabled",false);
-                $('#depositTradeNumber').attr("disabled",false);
             }
         }
     });

@@ -531,3 +531,6 @@ table th, table td {
     font-size: 300px;
     color: #393D49;
 }
+.mask-layer-imgbox.auto-img-center img{
+    margin-left: 0px !important;
+}

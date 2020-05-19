@@ -284,18 +284,18 @@ layui
         var orderNo = e.target.dataset.no;
         xadmin.open('查看订单', '../orderMessage/order-view.html?orderNo=' + orderNo + "&orderId=" + key + "&action=view&perssionId=" + (pid || 200));
       });
-      $(".view_pic_btn").unbind().on("click", function (e) {
-        laytpl($("#view_pic_tpl").html()).render({pic: e.target.dataset.data}, function (html) {
-          console.log(html)
-          layer.open({
-            type: 1,
-            title: "查看",
-            content: html,
-            area: "600px",
-            success: function(){}
-          });
-        });
-      });
+      // $(".view_pic_btn").unbind().on("click", function (e) {
+      //   laytpl($("#view_pic_tpl").html()).render({pic: e.target.dataset.data}, function (html) {
+      //     layer.open({
+      //       type: 1,
+      //       title: "查看",
+      //       content: html,
+      //       area: "600px",
+      //       success: function(){}
+      //     });
+      //   });
+      // });
+      zoomImg();
       table.on("tool(balanceList)", handleEvent);
       $(".top_tool_bar").unbind().on("click", function (e) {
         handleEvent({ event: e.target.dataset.event, data: {} });

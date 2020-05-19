@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
   <link rel="stylesheet" href="./css/common.css?VERSION">
   <link rel="stylesheet" href="./css/balance-inquiry.css">
+  <link rel="stylesheet" href="../../lib/jqboxImg/boxImg.css">
+  <script src="../../lib/jqboxImg/boxImg.js"></script>
   <script type="text/javascript" src="../../js/jquery.min.js"></script>
   <script src="../../lib/layui/layui.js" charset="utf-8"></script>
   <script src="../js/common.js?VERSION"></script>
@@ -59,7 +61,7 @@
   </script>
   <script type="text/html" id="view_pic">
     {{# if(d.bankReceipt){ }}
-    <a data-data="{{d.bankReceipt}}" data-index="{{d.LAY_TABLE_INDEX}}" data-id="{{d.id}}" class="view_pic_btn" href="javascript:void(0);" style="cursor: pointer;color: #3490E9;">查看</a>
+    <a src="{{d.bankReceipt}}" data-data="{{d.bankReceipt}}" data-index="{{d.LAY_TABLE_INDEX}}" data-id="{{d.id}}" class="view_pic_btn boxZoomImg" href="javascript:void(0);" style="cursor: pointer;color: #3490E9;">查看</a>
     {{# }else{ }}
     - -
     {{# } }}
