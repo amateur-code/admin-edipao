@@ -1656,7 +1656,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     $(".car_income").each(function (index, item) {
       total += item.value * 1;
     });
-    $("." + filter).find(".car_manageFee").val((e.target.value * 1 * .045).toFixed(2));
+    $("." + filter).find(".car_manageFee").val((e.target.value * 1 * .058).toFixed(2));
     _this.handleManageFeeInput({target:{dataset: {filter: filter}}});
     $("#totalIncome").text(total + "元");
   }

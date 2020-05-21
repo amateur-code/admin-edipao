@@ -1065,6 +1065,11 @@ layui.config({
             });
         },
         bindEvents: function(){
+            if(location.href.indexOf("test.edipao.cn") > -1){
+                $("#test_title_btn").unbind().on("click", function () {
+                    top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html");
+                });
+            }
             // $(window).unbind().on("message", function (e) {
             //     console.log(e)
             //     var origin = e.origin || e.originalEvent.origin;  //域

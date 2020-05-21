@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en"  class="x-admin-sm">
+<head>
+  <meta charset="UTF-8">
+  <title>网点档案</title>
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+  <meta http-equiv="Expires" CONTENT="-1">
+  <meta http-equiv="Cache-Control" CONTENT="no-cache">
+  <meta http-equiv="Pragma" CONTENT="no-cache">
+  <link rel="stylesheet" href="../../css/font.css">
+  <link rel="stylesheet" href="../../lib/layAutoComplete/layuiAutocomplete.css">
+  <link rel="stylesheet" href="../../css/xadmin.css?VERSION">
+  <link rel="stylesheet" href="./css/all.css?VERSION">
+	<link rel="stylesheet" href="./css/add.css?VERSION">
+  <script src="../../js/jquery.min.js"></script>
+  <script src="../../lib/layui/layui.js" charset="utf-8"></script>
+  <script src="../../js/common.js?VERSION"></script>
+  <script src="./js/add.js?VERSION"></script>
+  <!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="layui-fluid dot-add">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <form class="layui-form" lay-filter="main_form">
+        <div class="layui-card layui-form">
+          <div class="layui-card-header">基础信息</div>
+          <div class="layui-card-body layui-row layui-col-space10">
+            <div class="layui-col-md4">
+              <div class="layui-form-item">
+                <div><span class="x-red">*</span>网点名称</div>
+                <div class="layui-input-block">
+                  <input id="company" type="text" name="company" lay-verify="nameVerify" placeholder="请输入网点名称" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+            </div>
+            <div class="layui-col-md12">
+              <div class="layui-form-item">
+                <div>备注</div>
+                <div class="layui-input-block">
+                  <textarea id="remark" name="remark" placeholder="请输入备注" class="layui-textarea"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-card layui-form" >
+          <div class="layui-card-header">图片</div>
+          <div class="layui-card-body layui-row layui-col-space10">
+            <div id="upload_pic_list" class="layui-col-md12" style="overflow: hidden;">
+              <div class="pic_item">
+                <div class="layui-input-block">
+                  <div id="upload_btn" class="upload_btn">+</div>
+                </div>
+              </div>
+              <div class="pic_item upload_pic_item">
+                <div class="layui-input-block">
+                  <div class="upload_img" src="{{item}}">
+                    <img src="{{item}}">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="layui-form-item layui-text-align">
+              <button class="layui-btn layui-bg-gray" lay-filter="cancel" id="addCancel" type="button">
+                  &emsp;取消&emsp;
+              </button>
+              <button class="layui-btn layui-bg-blue" lay-filter="submit" lay-submit>
+                  &emsp;确认&emsp;
+              </button>
+          </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>
