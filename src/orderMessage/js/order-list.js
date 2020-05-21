@@ -41,6 +41,18 @@ var dispatchTypeData = [
     {key: "抢单转人工", value: "抢单转人工"},
     {key: "抢单变人工", value: "抢单变人工"},
 ]
+var jingxiaoshangData = [
+    {key: "未收迟到", value: "未收迟到"},
+    {key: "未签收", value: "未签收"},
+    {key: "签收迟到", value: "签收迟到"},
+    {key: "正常", value: "正常"},
+]
+var hegezhengData = [
+    {key: "未收迟到", value: "未收迟到"},
+    {key: "未签收", value: "未签收"},
+    {key: "签收迟到", value: "签收迟到"},
+    {key: "正常", value: "正常"},
+]
 
 function DataNull(data) {
     if (data == null || data == "") {
@@ -151,6 +163,9 @@ layui.config({
         { field: 'fetchStatus', type: 'checkbox', data: picData },
         { field: 'startAuditStatus', type: 'checkbox', data: picData },
         { field: 'returnAuditStatus', type: 'checkbox', data: picData },
+        { field: 'jingxiaoshangSign', type: 'checkbox', data: jingxiaoshangData },
+        { field: 'jingxiaoshangComment', type: 'input' },
+        { field: 'hegezhengSign', type: 'checkbox', data: hegezhengData },
         // { field: 'operation', type: 'radio', data: operationData },
     ]
     initPermission();
@@ -1846,7 +1861,7 @@ layui.config({
             }
             return status;
         }},
-        {field: 'startAuditStatus', title: '发车照片', sort: false,width: 130, hide: false, templet: function(d){
+        {field: 'startAuditStatus', title: '发车时间', sort: false,width: 130, hide: false, templet: function(d){
             var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + " data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + "  data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
             var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='6' data-order="+ d.orderNo +"  data-type='1' data-key='startImages' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
