@@ -2,6 +2,8 @@ layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
     var $ = layui.jquery,
         edipao = layui.edipao;
     form = layui.form;
+
+    var driver = {};
     // 获取所有司机状态  key和val交换
     var driverStatusData = parent.driverStatusData;
     var driverStatusVal = {};
@@ -41,10 +43,15 @@ layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
 
     var depositStatusRecord = ''
     function initData(data){
+        driver = data;
         data.depositStatus = depositStatusVal[data.depositStatus];
         data.driverType = driverTypesVal[data.driverType];
         data.status = driverStatusVal[data.status];
-
+        if(data.idLicenceValidity == "长期"){
+            data.idLicenceValidity = "";
+            data.idLicenceValidityCheck = "on";
+            $("#idLicenceValidity").val("").attr("disabled", "disabled");
+        }
         form.val("driverEdit", data);
         // 开户省市
         if(data.accountCity!=null&&data.accountCity!=''){
@@ -153,6 +160,9 @@ layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
     // 监听提交
     form.on('submit(add)',
         function(data) {
+            if(data.field.idLicenceValidityCheck == "on"){
+                data.field.idLicenceValidity = $("#idLicenceValidityCheck")[0].title;
+            }
             var wishJourneyVal = []
             $('.wishJourney').each(function () {
                 var startVal1 = $(this).find('.start select[name="province"]').val();
@@ -282,8 +292,12 @@ layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
                     'accountBankAddress':data.field.accountBankAddress,
                     'accountNumber':data.field.accountNumber,
                     'accountName':data.field.accountName,
+                    'emergencyRelation':data.field.emergencyRelation,
+                    'emergencyContact':data.field.emergencyContact,
+                    'emergencyPhone':data.field.emergencyPhone,
                     'accountCity':accountCity,
-                    'loginStaffId':edipao.getLoginStaffId()
+                    'loginStaffId':edipao.getLoginStaffId(),
+
                 }
                 edipao.request({
                     type: 'POST',
@@ -324,6 +338,6 @@ layui.use(['jquery', 'upload','form','laydate','autocomplete'], function(){
         }
     });
     setTimeout(function () {
-        $(".driveLicenceTypeClass").find("input").removeAttr("readonly");
+        $(".driveLicenceTypeClass").find("input").removeAttr("readonly").val(driver.driveLicenceType);;
     },200);
 });

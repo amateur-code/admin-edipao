@@ -21,6 +21,24 @@ layui.config({
                 }
             }
         },
+        nameVerify2: function (value) {
+            if(value && value.length > 15){
+                return '联系人姓名格式无效';
+            }
+        },
+        emergencyPhoneVerify: function (value) {
+            if(value!=''){
+                var reg = /^1\d{10}$/;
+                var reg2 = /^[+]{0,1}(\d){1,3}[ ]?([-]?((\d)|[ ]){1,12})+$/;
+                var flag = reg.test(value);
+                if(!flag){
+                    flag = reg2.test(value);
+                }
+                if(!flag){
+                    return '请输入正确的手机号';
+                }
+            }
+        },
         phoneVerify: function(value) {
             if(value!=''){
                 var reg = /^1\d{10}$/;
@@ -67,7 +85,7 @@ layui.config({
             }
         },
         idLicenceValidityVerify: function(value) {
-            if(value==''){
+            if(!$("#idLicenceValidityCheck")[0].checked && value==''){
                 return '请选择司机身份证有效期';
             }
         },
@@ -232,6 +250,10 @@ layui.config({
         idLicenceBackImgFlag = true;
         var endDate = data.data.ocrData.endDate;
         if(endDate!=null&&endDate!=''){
+            if($("#idLicenceValidityCheck")[0].checked) {
+                idLicenceValidityVal = $("#idLicenceValidityCheck")[0].title;
+                return;
+            }
             var dateFormat = getFormatDate(endDate);
             idLicenceValidityVal = dateFormat;
             $('#idLicenceValidity').val(dateFormat); // 身份证有效期
@@ -262,6 +284,13 @@ layui.config({
             var dateFormat = getFormatDate(endDate);
             driveLicenceValidityVal = dateFormat;
             $('#driveLicenceValidity').val(dateFormat); // 驾照有效期
+        }
+    });
+    form.on("checkbox(idLicenceValidityCheck)", function (obj) {
+        if(obj.elem.checked){
+            $("#idLicenceValidity").val("").attr("disabled", "disabled");
+        }else{
+            $("#idLicenceValidity").removeAttr("disabled");
         }
     });
     // 驾驶证-反

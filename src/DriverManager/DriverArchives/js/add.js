@@ -15,8 +15,9 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
     // 监听提交
     form.on('submit(add)',
         function(data) {
-            console.log(data)
-
+            if(data.field.idLicenceValidityCheck == "on"){
+                data.field.idLicenceValidity = $("#idLicenceValidityCheck")[0].title;
+            }
             var wishJourneyVal = []
             $('.wishJourney').each(function () {
                 var startVal1 = $(this).find('.start select[name="province"]').val();
@@ -138,6 +139,9 @@ layui.use(['jquery', 'upload','form','laydate'], function(){
                    'accountBankAddress':data.field.accountBankAddress,
                    'accountNumber':data.field.accountNumber,
                    'accountName':data.field.accountName,
+                   'emergencyRelation':data.field.emergencyRelation,
+                   'emergencyContact':data.field.emergencyContact,
+                   'emergencyPhone':data.field.emergencyPhone,
                    'accountCity':accountCity,
                    'loginStaffId':edipao.getLoginStaffId()
                }

@@ -317,8 +317,13 @@
                         <div class="layui-col-md4">
                             <div class="layui-form-item">
                                 <div><span class="x-red">*</span>身份证有效期</div>
-                                <div class="layui-input-block">
-                                    <input type="text" readonly name="idLicenceValidity" id="idLicenceValidity" lay-verify="idLicenceValidityVerify" placeholder="请选择时间" autocomplete="off" class="layui-input">
+                                <div class="layui-row layui-col-space10">
+                                    <div class="layui-col-md9">
+                                        <input type="text" readonly name="idLicenceValidity" id="idLicenceValidity" lay-verify="idLicenceValidityVerify" placeholder="请选择时间" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-col-md3">
+                                        <input type="checkbox" name="idLicenceValidityCheck" id="idLicenceValidityCheck" lay-filter="idLicenceValidityCheck" title="长期" lay-skin="primary">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -343,6 +348,27 @@
                                 <div><span class="x-red">*</span>当前住址</div>
                                 <div class="layui-input-block">
                                     <input type="text" name="address" id="address" lay-verify="addressVerify" placeholder="请输入现居地址" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4">
+                            <div class="layui-form-item">
+                                <div>紧急联系人</div>
+                                <div class="layui-row">
+                                    <div class="layui-col-md3" style="margin-right:0;">
+                                        <select name="emergencyRelation">
+                                            <option selected disabled value="">请选择关系</option>
+                                            <option value="夫妻">夫妻</option>
+                                            <option value="亲戚">亲戚</option>
+                                            <option value="朋友">朋友</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-col-md3" style="margin-right:0;">
+                                        <input type="text" name="emergencyContact" id="address" placeholder="请输入姓名" lay-verify="nameVerify2" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-col-md6" style="margin-right:0;">
+                                        <input type="text" name="emergencyPhone" id="address" placeholder="请输入手机号" lay-verify="" autocomplete="off" class="layui-input">
+                                    </div>
                                 </div>
                             </div>
                         </div>

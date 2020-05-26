@@ -196,6 +196,20 @@ layui.config({
             }
         },
         {
+            field: 'emergencyPhone', title: '紧急联系人',width: 200,
+            templet: function (data) {
+                var arr = [];
+                if(data.emergencyRelation && data.emergencyRelation != "null") arr.push(data.emergencyRelation);
+                if(data.emergencyContact && data.emergencyContact != "null") arr.push(data.emergencyContact);
+                if(data.emergencyPhone && data.emergencyPhone != "null") arr.push(data.emergencyPhone);
+                if(arr.length > 0){
+                    return arr.join("-");
+                }else{
+                    return "- -";
+                }
+            }
+        },
+        {
             field: 'status', title: '司机状态',width: 100,
             templet: function (data) {
                 var val = data.status;
@@ -215,7 +229,7 @@ layui.config({
     ];
 
 
-    var showList = [ "name", "phone","idNum","driverType","driveLicenceType", "drivingAge","wishJourney","oftenJourney","location","deposit","depositStatus","licenceWarn","status"];
+    var showList = [ "name", "phone","idNum","driverType","driveLicenceType", "drivingAge","wishJourney","oftenJourney","location","deposit","depositStatus","licenceWarn","emergencyPhone","status"];
     var exportHead={};// 导出头部
     edipao.request({
         type: 'GET',
@@ -366,6 +380,7 @@ layui.config({
             { field: 'deposit', type: 'numberslot' },
             { field: 'depositStatus', type: 'radio',data:depositStatusFilter },
             { field: 'licenceWarn', type: 'radio', data:licenceWarnFilter },
+            { field: 'emergencyPhone', type: 'contract' },
             { field: 'status', type: 'radio',data:driverStatusFilter },
             { field: 'approvalFlag', type: 'radio',data:approvalFlagFilter },
         ]
@@ -424,6 +439,16 @@ layui.config({
                             }
                         }
                         where['searchFieldDTOList['+ index +'].fieldValue'] = JSON.stringify(fieldValue);
+                    }else if(key == "emergencyPhone"){
+                        if(value[0]){
+                            where["searchFieldDTOList[" + index + "].fieldName"] = "emergencyContact";
+                            where["searchFieldDTOList[" + index + "].fieldValue"] = value[0];
+                        }
+                        if(value[0] && value[1]) index++;
+                        if(value[1]){
+                            where["searchFieldDTOList[" + index + "].fieldName"] = "emergencyPhone";
+                            where["searchFieldDTOList[" + index + "].fieldValue"] = value[1];
+                        }
                     }else if(key == 'drivingAge'||key == 'deposit'){
                         // 驾龄、押金
                         where['searchFieldDTOList['+ index +'].fieldName'] = key;
@@ -698,6 +723,17 @@ layui.config({
                         case 'approvalFlag':
                             // 审核状态-处理数据
                             exportObj[index] = approvalFlagData[item]
+                            break;
+                        case "emergencyPhone":
+                            var arr = [];
+                            if(v.emergencyRelation && v.emergencyRelation != "null") arr.push(v.emergencyRelation);
+                            if(v.emergencyContact && v.emergencyContact != "null") arr.push(v.emergencyContact);
+                            if(v.emergencyPhone && v.emergencyPhone != "null") arr.push(v.emergencyPhone);
+                            if(arr.length > 0){
+                                exportObj[index] = arr.join("-");
+                            }else{
+                                exportObj[index] = "- -";
+                            }
                             break;
                         default:
                             exportObj[index] = DataNull(item);

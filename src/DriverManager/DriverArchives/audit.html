@@ -472,6 +472,17 @@
         </div>
         <div class="layui-col-md4">
             <div class="layui-form-item">
+                <label class="layui-form-label">紧急联系人：</label>
+                <div class="layui-input-block">
+                    <span class="name-color" name="status" id="status">{{d.detail.emergencyRelation + '-' + d.detail.emergencyContact + '-' + d.detail.emergencyPhone}}</span>
+                </div>
+                {{# if(d.check.emergencyRelation || d.check.emergencyContact || d.check.emergencyPhone){ }}
+                <div class="check"><label class="layui-form-label x-red">待审：</label> <div class="layui-input-block">{{(d.check.emergencyRelation||d.detail.emergencyRelation||'- -') + '-' + (d.check.emergencyContact||d.detail.emergencyContact||'- -') + '-' + (d.check.emergencyPhone||d.detail.emergencyPhone||'- -')}}</div></div>
+                {{# } }}
+            </div>
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
                 <label class="layui-form-label">状态：</label>
                 <div class="layui-input-block">
                     <span class="name-color" name="status" id="status">{{d.detail.status}}</span>

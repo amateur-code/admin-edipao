@@ -15,6 +15,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
         { field: 'deposit', title: '押金' },
         { field: 'depositStatus', title: '押金状态' },
         { field: 'licenceWarn', title: '证件预警' },
+        { field: 'emergencyPhone', title: '紧急联系人' },
         { field: 'status', title: '司机状态' }
         // { field: 'approvalFlag', title: '审核状态' }
     ];
