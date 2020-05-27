@@ -371,6 +371,18 @@
                 <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md4">
                         <div class="layui-row">
+                            <span class="layui-form-span form_span">收入单价：</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.pricePerMeliage}}元/km</span>
+                        </div>
+                        {{# if(d.updateData.pricePerMeliage){ }}
+                        <div class="layui-row">
+                            <span class="layui-form-span form_span red">待审：</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.pricePerMeliage}}元/km</span>
+                        </div>
+                        {{# } }}
+                    </div>
+                    <div class="layui-inline layui-col-md4">
+                        <div class="layui-row">
                             <span class="layui-form-span form_span">收入金额：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.income}}元</span>
                         </div>
@@ -393,18 +405,7 @@
                         </div>
                         {{# } }}
                     </div>
-                    <div class="layui-inline layui-col-md4">
-                        <div class="layui-row">
-                            <span class="layui-form-span form_span">结算方式：</span>
-                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.settleWay||"- -"}}</span>
-                        </div>
-                        {{# if(d.updateData.settleWay){ }}
-                        <div class="layui-row">
-                            <span class="layui-form-span form_span red">待审：</span>
-                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.settleWay}}</span>
-                        </div>
-                        {{# } }}
-                    </div>
+                    
                 </div>
                 <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md4">
@@ -454,13 +455,13 @@
                 <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md4">
                         <div class="layui-row">
-                            <span class="layui-form-span form_span">收入单价：</span>
-                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.pricePerMeliage}}元/km</span>
+                            <span class="layui-form-span form_span">结算方式：</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.settleWay||"- -"}}</span>
                         </div>
-                        {{# if(d.updateData.pricePerMeliage){ }}
+                        {{# if(d.updateData.settleWay){ }}
                         <div class="layui-row">
                             <span class="layui-form-span form_span red">待审：</span>
-                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.pricePerMeliage}}元/km</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.settleWay}}</span>
                         </div>
                         {{# } }}
                     </div>
@@ -604,44 +605,17 @@
                 <div class="layui-inline">
                     <div class="layui-row">
                         <span class="layui-form-span form_span">提车时间：</span>
-                        <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.pricePerMeliage}}元/km</span>
+                        <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.fetchTruckTime || '- -'}}</span>
                     </div>
-                    {{# if(d.updateData.pricePerMeliage){ }}
+                    {{# if(d.updateData.fetchTruckTime != undefined){ }}
                     <div class="layui-row">
                         <span class="layui-form-span form_span red">待审：</span>
-                        <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.pricePerMeliage}}元/km</span>
+                        <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.fetchTruckTime || '- -'}}</span>
                     </div>
                     {{# } }}
                 </div>
             </div>
         </div>
-        <!-- <div class="layui-form-item layui-row">
-            <div class="layui-col-md12">
-                <span class="layui-form-span">提车图片：</span>
-                {{# if(!d.fetchImages||d.fetchImages.length==0){ }}
-                <span class="blue">- -</span>
-                {{# }else{ }}
-                   <div class="layui-row layui-col-space20">
-                        {{# layui.each(d.fetchImages, function(index, item){ }}
-                        <div style="" class="sample-graph boxZoomImg layui-col-md3" src="{{item}}">
-                            <img class="car_image" src="{{item}}">
-                        </div>
-                        {{# }); }}
-                   </div>
-                {{# } }}
-            </div>
-            {{# if(d.updateData.fetchImages && d.updateData.fetchImages.length > 0){ }}
-            <div class="layui-col-md12 margin_top10">
-                <span class="layui-form-span red">待审：</span>
-                {{# layui.each(d.updateData.fetchImages, function(index, item){ }}
-                <span class="sample-graph boxZoomImg" src="{{item}}">
-                    <img src="{{item}}" class="layui-hide">
-                    提车图片
-                </span>
-                {{# }); }}
-            </div>
-            {{# } }}
-        </div> -->
         <div class="layui-form-item layui-row">
             <div class="layui-col-md12">
                 <span class="layui-form-span form_span">收车图片：</span>
@@ -723,6 +697,18 @@
                             <div class="check">
                                 <label class="x-red layui-form-span form_span">待审：</label>
                                 <span class="">{{d.department}}</span>
+                            </div>
+                            {{# } }}
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                        <div class="layui-inline layui-col-md4">
+                            <span class="layui-form-span form_span">调度员：</span>
+                            <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.dispatchOperator + d.orderData.dispatchOperatorPhone}}</span>
+                            {{# if( d.dispatchOperator || d.dispatchOperatorPhone ){ }}
+                            <div class="check">
+                                <label class="x-red layui-form-span form_span">待审：</label>
+                                <span class="">{{ d.dispatchOperator + d.dispatchOperatorPhone }}</span>
                             </div>
                             {{# } }}
                         </div>

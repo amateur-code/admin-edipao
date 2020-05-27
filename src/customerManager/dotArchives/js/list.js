@@ -25,7 +25,7 @@ layui
     console.log(permissionList)
     window.form = form;
     var where = {};
-    var showList = ["company", "endProvince", "endAddress", "addrCode", "connectorName", "remark","manager", "feeJson","hot", "transportOrderNum", "status"];
+    var showList = ["company", "endProvince", "endAddress", "addrCode", "connectorName", "remark","deliveryOperator", "feeJson","grabOrderHot", "transportOrderNum", "status"];
     var exportHead = {}; // 导出头部
     var tableCols = [
       { checkbox: true },
@@ -80,11 +80,13 @@ layui
         },
       },
       {
-        field: "manager",
+        field: "deliveryOperator",
         title: "发运经理",
         width: 200,
         templet: function (d) {
-          return d.remark ? d.remark : "- -";
+            d.deliveryOperator = d.deliveryOperator || "";
+            d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
+            return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
         },
       },
       {
@@ -105,7 +107,7 @@ layui
         },
       },
       {
-        field: "hot",
+        field: "grabOrderHot",
         title: "抢单热度",
         width: 200,
         templet: function (d) {
@@ -375,9 +377,9 @@ layui
         { field: "endAddress", type: "input" },
         { field: "addrCode", type: "input" },
         { field: "connectorName", type: "contract" },
-        { field: "manager", type: "contract" },
+        { field: "deliveryOperator", type: "contract" },
         { field: "feeJson", type: "input" },
-        { field: "hot", type: "numberslot" },
+        { field: "grabOrderHot", type: "numberslot" },
         // { field: "transportOrderNum", type: "numberslot" },
         { field: "status", type: "checkbox", data: statusData },
       ];
@@ -411,6 +413,16 @@ layui
               if(value[0] && value[1]) index++;
               if(value[1]){
                 where["searchFieldDTOList[" + index + "].fieldName"] = "connectorPhone";
+                where["searchFieldDTOList[" + index + "].fieldValue"] = value[1];
+              }
+            }else if(key == "deliveryOperator"){
+              if(value[0]){
+                where["searchFieldDTOList[" + index + "].fieldName"] = "deliveryOperator";
+                where["searchFieldDTOList[" + index + "].fieldValue"] = value[0];
+              }
+              if(value[0] && value[1]) index++;
+              if(value[1]){
+                where["searchFieldDTOList[" + index + "].fieldName"] = "deliveryOperatorPhone";
                 where["searchFieldDTOList[" + index + "].fieldValue"] = value[1];
               }
             } else {
@@ -466,7 +478,6 @@ layui
             if (index && showList.indexOf(index) != -1) {
               switch (index) {
                 case "status":
-                  console.log(index, v["statusDesc"])
                   exportObj[index] = v["statusDesc"] || "- -";
                   break;
                 case "connectorName":
@@ -474,6 +485,13 @@ layui
                     exportObj[index] = "- -";
                   }else{
                     exportObj[index] = v.connectorName + v.connectorPhone;
+                  }
+                  break;
+                case "deliveryOperator":
+                  if(!v.deliveryOperator && !v.deliveryOperatorPhone){
+                    exportObj[index] = "- -";
+                  }else{
+                    exportObj[index] = v.deliveryOperator + v.deliveryOperatorPhone;
                   }
                   break;
                 default:

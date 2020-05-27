@@ -151,8 +151,8 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table'], function(){
       var data = obj.elem.selectedOptions[0].dataset;
       var name = data.name || "";
       var phone = data.phone || "";
-      $("#managerName").val(name);
-      $("#managerPhone").val(phone);
+      $("#deliveryOperator").val(name);
+      $("#deliveryOperatorPhone").val(phone);
     });
     form.on("select(feeId)", function (obj) {
       $(obj.othis).next().val($(obj.elem.selectedOptions).text());
@@ -192,9 +192,9 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table'], function(){
               var name = obj.data.name;
               var phone = obj.data.phone;
               form.val("main_form", {
-                manager: name + "" + phone,
-                managerName: name,
-                managerPhone: phone,
+                manager: deliveryOperator + "" + deliveryOperatorPhone,
+                deliveryOperator: name,
+                deliveryOperatorPhone: phone,
               });
               layer.close(index);
             });
@@ -297,6 +297,8 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table'], function(){
         endLat: data.endLat || "",
         connectorName: data.connectorName || "",
         connectorPhone: data.connectorPhone || "",
+        deliveryOperator: data.deliveryOperator || "",
+        deliveryOperatorPhone: data.deliveryOperatorPhone || "",
         remark: data.remark || "",
         endDistrict: data.endDistrict || "",
         feeJson: JSON.stringify(feeJson),

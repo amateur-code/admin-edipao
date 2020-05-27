@@ -35,11 +35,11 @@ var masterFlagData = [
     {key: "否", value: "上车"},
     {key: "是", value: "下车"},
 ]
-var dispatchTypeData = [
-    {key: "抢单", value: "抢单"},
-    {key: "人工调度", value: "人工调度"},
-    {key: "抢单转人工", value: "抢单转人工"},
-    {key: "抢单变人工", value: "抢单变人工"},
+var dispatchModeData = [
+    {key: 1, value: "抢单"},
+    {key: 0, value: "人工调度"},
+    {key: 2, value: "抢单转人工"},
+    {key: 3, value: "抢单变人工"},
 ]
 var jingxiaoshangData = [
     {key: "未收迟到", value: "未收迟到"},
@@ -145,7 +145,8 @@ layui.config({
         { field: 'dispatchTime', type: 'timeslot' },
         { field: 'openOperator', type: 'contract' },
         { field: 'deliveryOperator', type: 'contract' },
-        { field: 'dispatchType', type: 'checkbox', data: dispatchTypeData },
+        { field: 'dispatchOperator', type: 'contract' },
+        { field: 'dispatchMode', type: 'checkbox', data: dispatchModeData },
         { field: 'driverName', type: 'input' },
         { field: 'driverPhone', type: 'input' },
         { field: 'driverIdCard', type: 'input' },
@@ -160,8 +161,8 @@ layui.config({
         { field: 'arrivePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'tailPayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'tailPayStatus', type: 'checkbox', data: tailPayStatusData },
-        { field: 'fetchStatus', type: 'checkbox', data: picData },
-        { field: 'startAuditStatus', type: 'checkbox', data: picData },
+        { field: 'fetchTruckTime', type: 'timeslot' },
+        { field: 'startTruckTime', type: 'timeslot' },
         { field: 'returnAuditStatus', type: 'checkbox', data: picData },
         { field: 'jingxiaoshangSign', type: 'checkbox', data: jingxiaoshangData },
         { field: 'jingxiaoshangComment', type: 'input' },
@@ -263,6 +264,10 @@ layui.config({
                 filters.deliveryOperatorPhone =  filters.deliveryOperator[1];
                 filters.deliveryOperator =  filters.deliveryOperator[0];
             }
+            if(filters.dispatchOperator){
+                filters.dispatchOperatorPhone =  filters.dispatchOperator[1];
+                filters.dispatchOperator =  filters.dispatchOperator[0];
+            }
             if(!filters.operation) {
                 verifyFilter = false;
             }else{
@@ -274,7 +279,7 @@ layui.config({
                 if(key=='startProvince'||key=='endProvince'){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
-                }else if(key=="transportAssignTime"||key=="dispatchTime"){
+                }else if(key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     value = value.split(" 至 ");
                     where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
@@ -303,10 +308,10 @@ layui.config({
                         where['searchFieldDTOList['+ index +'].fieldName'] = key.replace("Amount", "Status");
                         where['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
                     }
-                }else if(key == "orderStatus" || key == "orderType" || key == "tailPayStatus"){
+                }else if(key == "orderStatus" || key == "orderType" || key == "tailPayStatus" || key == "masterFlag"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
-                }else if(key == "fetchStatus" || key == "startAuditStatus" || key == "returnAuditStatus"){
+                }else if(key == "returnAuditStatus" || key == "dispatchMode"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                 }else{
@@ -1163,6 +1168,8 @@ layui.config({
                         var openOperatorPhone = item.openOperatorPhone ? item.openOperatorPhone : '';
                         var deliveryOperator = item.deliveryOperator ? item.deliveryOperator : '';
                         var deliveryOperatorPhone = item.deliveryOperatorPhone ? item.deliveryOperatorPhone : '';
+                        var dispatchOperator = item.dispatchOperator ? item.dispatchOperator : '';
+                        var dispatchOperatorPhone = item.dispatchOperatorPhone ? item.dispatchOperatorPhone : '';
                         if(showList.indexOf(i) > -1){
                             var value = item[i];
                             switch(i){
@@ -1204,17 +1211,24 @@ layui.config({
                                             break;
                                     }
                                     break;
+                                case 'dispatchOperator':
+                                    if(item.dispatchMode == 1){
+                                        value = "系统调度";
+                                    }else{
+                                        value = (deliveryOperator + '' + deliveryOperatorPhone)||'- -';
+                                    }
+                                    break;
                                 case 'openOperator':
-                                    value = openOperator + '' + openOperatorPhone;
+                                    value = (openOperator + '' + openOperatorPhone) ||'- -';
                                     break;
                                 case 'deliveryOperator':
-                                    value = deliveryOperator + '' + deliveryOperatorPhone;
+                                    value = (deliveryOperator + '' + deliveryOperatorPhone) ||'- -';
                                     break;
                                 case 'driverName':
-                                    value = item[i];
+                                    value = item[i] || "- -";
                                     break;
                                 case 'driverPhone':
-                                    value = item[i];
+                                    value = item[i] || "- -";
                                     break;
                                 case 'pricePerMeliage':
                                     value = item[i] + "元/km";
@@ -1224,7 +1238,7 @@ layui.config({
                                     break;
                                 case 'income':
                                 case 'totalIncome':
-                                    value = item[i] +  + "元";
+                                    value = item[i] + "元";
                                     if(dataPermission.canViewOrderCost != "Y"){
                                         value = "****";
                                     }
@@ -1296,30 +1310,6 @@ layui.config({
                                     if(orderType == 2 && masterFlag == "否"){
                                         value = "";
                                     }
-                                case 'fetchUploadBtn':
-                                    switch(item[i]){
-                                        case 0:
-                                        case 1:
-                                            value = '未上传';
-                                            break;
-                                        case 2:
-                                        case 3:
-                                            value = '已上传';
-                                            break;
-                                        case 4:
-                                            value = '已驳回';
-                                            break;
-                                        default:
-                                            value = '非法状态';
-                                            break;
-                                    }
-                                    if(fetchApprovalBtn * 1 == 1){
-                                        value = '未审核';
-                                    }
-                                    if(orderType == 2 && masterFlag == "否"){
-                                        value = "";
-                                    }
-                                    break;
                                 case 'startUploadBtn':
                                     switch(item[i]){
                                         case 0:
@@ -1344,7 +1334,14 @@ layui.config({
                                         value = "";
                                     }
                                     break;
-                                case "dispatchType":
+                                case "dispatchMode":
+                                    value = "- -";
+                                    dispatchModeData.some(function(item){
+                                        if(item.key == d.dispatchMode){
+                                            value = item.value;
+                                            return true;
+                                        }
+                                    });
                                     break;
                                 case 'masterFlag':
                                     if (item.orderType == 1) {
@@ -1685,17 +1682,21 @@ layui.config({
             d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
             return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
         }},
-        {field: 'dispatchType', title: '调度方式', sort: false, minWidth: 145, templet: function(d){
-            var result;
-            switch(d.dispatchType){
-                case 1:
-                    result = "抢单";
-                    break;
-                default:
-                    result = "- -";
-                    break;
-            }
-            return result;
+        {field: 'dispatchOperator', title: '调度员', sort: false, minWidth:145, templet: function(d){
+            if(d.dispatchMode == 1) return "系统调度";
+            d.dispatchOperator = d.dispatchOperator || "";
+            d.dispatchOperatorPhone = d.dispatchOperatorPhone || "";
+            return (d.dispatchOperator || d.dispatchOperatorPhone) ? d.dispatchOperator + d.dispatchOperatorPhone : '- -';
+        }},
+        {field: 'dispatchMode', title: '调度方式', sort: false, minWidth: 145, templet: function(d){
+            var result = "";
+            dispatchModeData.some(function(item){
+                if(item.key == d.dispatchMode){
+                    result = item.value;
+                    return true;
+                }
+            });
+            return result || "- -";
         }},
         {field: 'driverName', title: '司机姓名', sort: false, minWidth: 130, templet: function (d) {
             var driverName = "<a class='table_a pointer blue list_driver_name' data-id="+ d.driverId +">{{}}</a>";
@@ -1831,75 +1832,11 @@ layui.config({
                     return "未到期";
             }
         }},
-        {field: 'fetchStatus', title: '提车照片', sort: false,width: 120, hide: false, templet: function(d){
-            var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='5' data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='2' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-key='fetchImages' data-orderId="+ d.id +" data-number='5' data-order="+ d.orderNo +"  data-type='3' data-field='fetchStatus' data-truck="+d.truckId+">{{}}</a>";
-            var status = "未上传";
-            if(permissionList.indexOf("提车照片上传") < 0){
-                str2 = "";
-            }
-            switch(d.fetchStatus*1){
-                case 0: 
-                case 1:
-                    status = "未上传";
-                    break;
-                case 2:
-                case 3:
-                    status = str.replace("{{}}","查看");
-                    break;
-                case 4:
-                    status = "已驳回";
-                    break;
-            }
-            if(d.fetchUploadBtn * 1 == 1){
-                status += str2.replace("{{}}"," 上传");
-            }
-            if(d.fetchApprovalBtn * 1 == 1){
-                status += str3.replace("{{}}"," 审核");
-            }
-            if(d.orderStatus == 6){
-                status = str.replace("{{}}","查看");
-            }
-            if(d.orderType == 2 && d.masterFlag == "否"){
-                status = "";
-            }
-            return status;
+        {field: 'fetchTruckTime', title: '提车时间', sort: false,width: 150, hide: false, templet: function(d){
+            return d.fetchTruckTime ? d.fetchTruckTime : '- -';
         }},
-        {field: 'startAuditStatus', title: '发车时间', sort: false,width: 130, hide: false, templet: function(d){
-            var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + " data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str2 = "<a class='list_picture pointer blue list_picture_upload' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-index=" + d.LAY_TABLE_INDEX + "  data-number='6' data-type='3' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
-            var str3 = "<a class='list_picture pointer blue list_picture_verify' data-orderId="+ d.id +" data-number='6' data-order="+ d.orderNo +"  data-type='1' data-key='startImages' data-field='startAuditStatus' data-truck="+d.truckId+">{{}}</a>";
-            var status = "未上传";
-            if(permissionList.indexOf("发车单-上传") < 0){
-                str2 = "";
-            }
-            switch(d.startAuditStatus*1){
-                case 0:
-                case 1:
-                    status = "未上传";
-                    break;
-                case 2:
-                case 3:
-                    status = str.replace("{{}}","查看");
-                    break;
-                case 4:
-                    status = "已驳回";
-                    break;
-            }
-            if(d.startUploadBtn * 1 == 1){
-                status += str2.replace("{{}}"," 上传");
-            }
-            if(d.startApprovalBtn * 1 == 1){
-                status += str3.replace("{{}}"," 审核");
-            }
-            if(d.orderStatus == 6){
-                status = str.replace("{{}}","查看");
-            }
-            if(d.orderType == 2 && d.masterFlag == "否"){
-                status = "";
-            }
-            return status;
+        {field: 'startTruckTime', title: '发车时间', sort: false,width: 150, templet: function(d){
+            return d.startTruckTime ? d.startTruckTime : '- -';
         }},
         {field: 'returnAuditStatus', title: '回单审核', sort: false,width: 120, hide: false, templet: function(d){
             var str = "<a class='list_picture pointer blue list_picture_view' data-orderId="+ d.id +" data-order="+ d.orderNo +"  data-number='3' data-type='5' data-field='returnAuditStatus' data-truck="+d.truckId+">{{}}</a>";
@@ -1968,15 +1905,16 @@ layui.config({
         "dispatchTime",
         "openOperator",
         "deliveryOperator",
-        "dispatchType",
+        "dispatchOperator",
+        "dispatchMode",
         "driverName",
         "driverPhone",
         "driverIdCard",
         "prePayAmount",
         "arrivePayAmount",
         "tailPayAmount",
-        "fetchStatus",
-        "startAuditStatus",
+        "fetchTruckTime",
+        "startTruckTime",
         "returnAuditStatus",
         "jingxiaoshangSign",
         "jingxiaoshangComment",

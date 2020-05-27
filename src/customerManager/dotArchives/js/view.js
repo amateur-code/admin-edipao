@@ -30,7 +30,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
           });
           if(!res.data.connectorName && !res.data.connectorPhone){
             res.data.connectorName = "- -";
-            res.data.connectorPhone = "";
+            res.data.connectorPhone = "- -";
           }
           _this.detail = res.data;
           try {
@@ -117,7 +117,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
           });
           if(!res.data.connectorName && !res.data.connectorPhone){
             res.data.connectorName = "- -";
-            res.data.connectorPhone = "";
+            res.data.connectorPhone = "- -";
           }
           try {
             res.data.feeJson = JSON.parse(res.data.feeJson);

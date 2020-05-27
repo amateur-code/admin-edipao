@@ -9,9 +9,9 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: 'addrCode', title: '地址代码'},
     { field: 'connectorName', title: '联系人'},
     { field: 'remark', title: '备注'},
-    { field: 'manager', title: '发运经理'},
+    { field: 'deliveryOperator', title: '发运经理'},
     { field: 'feeJson', title: '费用模板'},
-    { field: 'hot', title: '抢单热度'},
+    { field: 'grabOrderHot', title: '抢单热度'},
     { field: 'transportOrderNum', title: '发运趟数'},
     { field: 'status', title: '状态'},
   ];

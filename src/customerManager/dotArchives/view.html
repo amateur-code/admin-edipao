@@ -357,17 +357,17 @@
 					<div class="layui-col-md4">
 						<div class="layui-row">
 							<span class="layui-form-span form_span">发运经理：</span>
-							<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.managerName + '(' + d.detail.managerPhone + ')' }}</span>
+							<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.deliveryOperator + '(' + d.detail.deliveryOperatorPhone + ')' }}</span>
 						</div>
-						{{# if(d.check.managerName != undefined || d.check.managerPhone != undefined){ }}
+						{{# if(d.check.deliveryOperator != undefined || d.check.deliveryOperatorPhone != undefined){ }}
 						<div class="layui-row">
 							<span class="layui-form-span form_span red">待审：</span>
-							{{# if(d.check.managerName && !d.check.managerPhone){ }}
-							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.managerName + '(' + d.detail.managerPhone + ')' }}</span>
-							{{# }else if(d.check.managerPhone && !d.check.managerName){ }}
-							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.detail.managerName + '(' + d.check.managerPhone + ')' }}</span>
+							{{# if(d.check.deliveryOperator && !d.check.deliveryOperatorPhone){ }}
+							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.deliveryOperator + '(' + d.detail.deliveryOperatorPhone + ')' }}</span>
+							{{# }else if(d.check.deliveryOperatorPhone && !d.check.deliveryOperator){ }}
+							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.detail.deliveryOperator + '(' + d.check.deliveryOperatorPhone + ')' }}</span>
 							{{# }else{ }}
-							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.managerName + '(' + d.check.managerPhone + ')' }}</span>
+							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.deliveryOperator + '(' + d.check.deliveryOperatorPhone + ')' }}</span>
 							{{# } }}
 						</div>
 						{{# } }}
