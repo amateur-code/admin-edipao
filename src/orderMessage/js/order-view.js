@@ -12,7 +12,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     "startCity", "endCity", "startProvince", "endProvince", "connectorName", "connectorPhone", "handlingStatus"
   ]
   var orderKeys = [
-    "followOperator", "followOperatorPhone", "deliveryOperator", "deliveryOperatorPhone"
+    "followOperator", "followOperatorPhone", "deliveryOperator", "deliveryOperatorPhone", "dispatchOperatorPhone", "dispatchOperator"
   ]
   function View() {
     var qs = edipao.urlGet();
@@ -276,6 +276,13 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           data.followOperator = "- -";
           data.followOperatorPhone = "";
         }
+        if(!data.dispatchOperator && !data.dispatchOperatorPhone){
+          data.dispatchOperator = "- -";
+          data.dispatchOperatorPhone = "";
+          if(data.dispatchMode == 1){
+            data.dispatchOperator = "系统调度";
+          }
+        }
       }
       switch(data.tailPayBillType * 1){
         case 1:
@@ -385,7 +392,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           item.manageFee = "****";
           item.income = "****";
         }
-        console.log(item)
         switch(item.settleWay * 1){
           case 0:
             item.settleWay = "- -";
@@ -401,7 +407,13 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             break;
         }
         
-        item.connector = item.connectorName + item.connectorPhone;
+        if(item.connectorName && item.connectorPhone){
+          item.connector = item.connectorName + "(" + item.connectorPhone + ")";
+        }else if(!item.connectorName && !item.connectorPhone){
+          item.connector = "- -";
+        }else{
+          item.connector = item.connectorName || item.connectorPhone;
+        }
         if(!item.returnImages) item.returnImages = [];
         else item.returnImages = item.returnImages.split(",");
         if(!item.fetchImages) item.fetchImages = [];

@@ -22,121 +22,28 @@ layui
       tableFilterIns,
       reloadOption = null;
     window.permissionList = edipao.getMyPermission();
-    console.log(permissionList)
+    permissionList.push("新增");
     window.form = form;
     var where = {};
-    var showList = ["company", "endProvince", "endAddress", "addrCode", "connectorName", "remark","deliveryOperator", "feeJson","grabOrderHot", "transportOrderNum", "status"];
+    var showList = ["company", "endProvince", "endAddress", "addrCode", "connectorName", "remark","manager", "feeJson","hot", "transportOrderNum", "status"];
     var exportHead = {}; // 导出头部
     var tableCols = [
       { checkbox: true },
-      {
-        field: "company",
-        title: "网点名称",
-        width: 300,
-        templet: function (d) {
+      { field: "company", title: "时间", width: 300, templet: function (d) {
           return d.company ? d.company : "- -";
-        },
-      },
-      {
-        field: "endProvince",
-        title: "所在省市",
-        width: 130,
-        templet: function (d) {
-          if (!d.endProvince && !d.endCity) return "- -";
-          return d.endProvince + d.endCity;
-        },
-      },
-      {
-        field: "endAddress",
-        title: "详细地址",
-        width: 400,
-        templet: function (d) {
-          return d.endAddress ? d.endAddress : "- -";
-        },
-      },
-      {
-        field: "addrCode",
-        title: "地址代码",
-        width: 130,
-        templet: function (d) {
-          return d.addrCode ? d.addrCode : "- -";
-        },
-      },
-      {
-        field: "connectorName",
-        title: "联系人",
-        width: 150,
-        templet: function (d) {
-          if (!d.connectorName && !d.connectorPhone) return "- -";
-          return d.connectorName + d.connectorPhone;
-        },
-      },
-      {
-        field: "remark",
-        title: "备注",
-        width: 400,
-        templet: function (d) {
-          return d.remark ? d.remark : "- -";
-        },
-      },
-      {
-        field: "deliveryOperator",
-        title: "发运经理",
-        width: 200,
-        templet: function (d) {
-            d.deliveryOperator = d.deliveryOperator || "";
-            d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
-            return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
-        },
-      },
-      {
-        field: "feeJson",
-        title: "费用模板",
-        width: 200,
-        templet: function (d) {
-          var feeJson, feeName = [];
-          try {
-            feeJson = JSON.parse(d.feeJson) || [];
-          } catch (error) {
-            feeJson = [];
-          }
-          feeJson.forEach(function (item) {
-            feeName.push(item.name);
-          });
-          return feeName.join("，");
-        },
-      },
-      {
-        field: "grabOrderHot",
-        title: "抢单热度",
-        width: 200,
-        templet: function (d) {
-          return d.remark ? d.remark : "- -";
-        },
-      },
-      {
-        field: "transportOrderNum",
-        title: "发运趟数",
-        width: 100,
-        templet: function (d) {
-          return d.transportOrderNum || d.transportOrderNum == "0" ? d.transportOrderNum : "- -";
-        },
-      },
-      {
-        field: "status",
-        title: "状态",
-        width: 100,
-        templet: function (d) {
-          switch (d.status + "") {
-            case "1":
-              return "有效";
-            case "2":
-              return "失效";
-            default:
-              return "- -";
-          }
-        },
-      },
+      }},
+      { field: "company", title: "类型", width: 300, templet: function (d) {
+          return d.company ? d.company : "- -";
+      }},
+      { field: "company", title: "备注", width: 300, templet: function (d) {
+          return d.company ? d.company : "- -";
+      }},
+      { field: "company", title: "上传人", width: 300, templet: function (d) {
+          return d.company ? d.company : "- -";
+      }},
+      { field: "company", title: "状态", width: 300, templet: function (d) {
+          return d.company ? d.company : "- -";
+      }},
       { title: "操作", field: "operation", width: 320, fixed: "right", toolbar: "#rowBtns" },
     ];
     function DataNull(data) {
@@ -147,7 +54,7 @@ layui
       }
     }
     function List() {
-      this.tableKey = "customer-manager-dot-list-table";
+      this.tableKey = "order-vehicle-damage-list-table";
     }
     List.prototype.init = function () {
       var _this = this;
@@ -197,8 +104,8 @@ layui
     List.prototype.renderTable = function () {
       var _this = this;
       tableIns = table.render({
-        elem: "#dotList",
-        id: "dotList",
+        elem: "#damageList",
+        id: "damageList",
         url: edipao.API_HOST + "/admin/customer/truckNetwork/list",
         page: true,
         where: {
@@ -295,9 +202,9 @@ layui
       //   });
       // }
       var _this = this;
-      table.on("tool(dotList)", handleEvent);
-      table.on("toolbar(dotList)", handleEvent);
-      table.on("checkbox(dotList)", handleEvent);
+      table.on("tool(damageList)", handleEvent);
+      table.on("toolbar(damageList)", handleEvent);
+      table.on("checkbox(damageList)", handleEvent);
       function handleEvent(obj) {
         var data = obj.data;
         obj.event == "add" && permissionList.indexOf("新增") == -1 && (obj.event = "reject");
@@ -352,7 +259,7 @@ layui
             xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&type=10");
             break;
           case "reset_search":
-            edipao.resetSearch("dotList", function(){
+            edipao.resetSearch("damageList", function(){
                 location.reload();
             });
             break;
@@ -377,14 +284,14 @@ layui
         { field: "endAddress", type: "input" },
         { field: "addrCode", type: "input" },
         { field: "connectorName", type: "contract" },
-        { field: "deliveryOperator", type: "contract" },
+        { field: "manager", type: "contract" },
         { field: "feeJson", type: "input" },
-        { field: "grabOrderHot", type: "numberslot" },
+        { field: "hot", type: "numberslot" },
         // { field: "transportOrderNum", type: "numberslot" },
         { field: "status", type: "checkbox", data: statusData },
       ];
       tableFilterIns = tableFilter.render({
-        elem: "#dotList", //table的选择器
+        elem: "#damageList", //table的选择器
         mode: "self", //过滤模式
         filters: filters, //过滤项配置
         done: function (filters, reload) {
@@ -415,16 +322,6 @@ layui
                 where["searchFieldDTOList[" + index + "].fieldName"] = "connectorPhone";
                 where["searchFieldDTOList[" + index + "].fieldValue"] = value[1];
               }
-            }else if(key == "deliveryOperator"){
-              if(value[0]){
-                where["searchFieldDTOList[" + index + "].fieldName"] = "deliveryOperator";
-                where["searchFieldDTOList[" + index + "].fieldValue"] = value[0];
-              }
-              if(value[0] && value[1]) index++;
-              if(value[1]){
-                where["searchFieldDTOList[" + index + "].fieldName"] = "deliveryOperatorPhone";
-                where["searchFieldDTOList[" + index + "].fieldValue"] = value[1];
-              }
             } else {
               where["searchFieldDTOList[" + index + "].fieldName"] = key;
               where["searchFieldDTOList[" + index + "].fieldValue"] = value;
@@ -441,7 +338,7 @@ layui
     };
     List.prototype.exportExcel = function () {
       var _this = this;
-      var checkStatus = table.checkStatus("dotList");
+      var checkStatus = table.checkStatus("damageList");
       if (checkStatus.data.length > 0) {
         exportXlsx(checkStatus.data);
         return;
@@ -478,6 +375,7 @@ layui
             if (index && showList.indexOf(index) != -1) {
               switch (index) {
                 case "status":
+                  console.log(index, v["statusDesc"])
                   exportObj[index] = v["statusDesc"] || "- -";
                   break;
                 case "connectorName":
@@ -485,13 +383,6 @@ layui
                     exportObj[index] = "- -";
                   }else{
                     exportObj[index] = v.connectorName + v.connectorPhone;
-                  }
-                  break;
-                case "deliveryOperator":
-                  if(!v.deliveryOperator && !v.deliveryOperatorPhone){
-                    exportObj[index] = "- -";
-                  }else{
-                    exportObj[index] = v.deliveryOperator + v.deliveryOperatorPhone;
                   }
                   break;
                 default:

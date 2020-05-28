@@ -93,9 +93,9 @@ layui.use(['table', 'layer'], function (table, layer) {
             {
               field: 'connector', title: '联系人',
               templet: function (data) {
-                var val1 = data.connectorName;
-                var val2 = data.connectorPhone;
-                return val1 + ' ' + val2
+                var val1 = data.connectorName || "";
+                var val2 = data.connectorPhone || "";
+                return (val1 + '' + val2) || "- -";
               }
             },
             { field: 'statusDesc', title: '状态' },

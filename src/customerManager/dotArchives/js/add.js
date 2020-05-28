@@ -1,16 +1,17 @@
-layui.use(['jquery','form', 'layer', 'laytpl'], function(){
+layui.use(['jquery','form', 'layer', 'laytpl', 'table'], function(){
   var $ = layui.jquery,
       form = layui.form,
       layer = layui.layer,
       laytpl = layui.laytpl,
+      table = layui.table,
       edipao = layui.edipao;
   function Add(){
     var qs = edipao.urlGet();
-    console.log(qs)
     this.id = qs.id;
     this.action = qs.action;
     this.feeTpls = [];
     this.startParks = [];
+    this.staffList = [];
   }
   Add.prototype.init = function () {
     var _this = this;
@@ -19,7 +20,7 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
   Add.prototype.initData = function () {
     var _this = this;
     var loadIndex = layer.load(2);
-    $.when(_this.getFeeTpl(), _this.getStartPark(), _this.getDetail()).done(function(res1, res2, res3){
+    $.when(_this.getFeeTpl(), _this.getStartPark(), _this.getDetail(), _this.getStaffList()).done(function(res1, res2, res3){
       layer.close(loadIndex);
       res1 = res1[0];
       res2 = res2[0];
@@ -106,7 +107,30 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
       }
     });
   }
-  Add.prototype.getStartPark = function(){
+  Add.prototype.getStaffList = function(){
+    var _this = this;
+    return edipao.request({
+      url: "/admin/staff/list",
+      method: "GET",
+      data: {
+        pageNo: 1,
+        pageSize: 9999
+      }
+    }).done(function (res) {
+      if(res.code == "0"){
+        _this.staffList = res.data.staffDtoList || [];
+        $("#manager").html(_this.returnStaffOptions(_this.staffList));
+      }
+    });
+  }
+  Add.prototype.returnStaffOptions = function (list) {
+    var str = '<option disabled selected value="">请选择</option>';
+    list.forEach(function (item) {
+      str = str + '<option data-name=' + item.name + ' data-phone=' + item.phone + ' value=' + item.name + item.phone + '>' + item.name + item.phone + '</option>'
+    });
+    return str;
+  }
+  Add.prototype.getStartPark = function () {
     return edipao.request({
       url: "/admin/dictionary/getStartWarehouseList",
       method: "GET",
@@ -123,8 +147,74 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
   }
   Add.prototype.bindEvents = function(){
     var _this = this;
+    form.on("select(manager)", function (obj) {
+      var data = obj.elem.selectedOptions[0].dataset;
+      var name = data.name || "";
+      var phone = data.phone || "";
+      $("#deliveryOperator").val(name);
+      $("#deliveryOperatorPhone").val(phone);
+    });
     form.on("select(feeId)", function (obj) {
       $(obj.othis).next().val($(obj.elem.selectedOptions).text());
+    });
+    $("#openSelectStaff").unbind().on("click", function () {
+      var index = layer.open({
+        type: 1,
+        area: ["600px", "400px"],
+        title: "选择员工",
+        content: '<div style="padding:20px;"><div lay-filter="staffListTable" id="staffListTable"></div></div>',
+        success: function () {
+          table.render({
+            elem: '#staffListTable'
+            , url: layui.edipao.API_HOST+'/admin/staff/list'
+            , method: "get" // 请求方式  默认get
+            , page: true //开启分页
+            , limit: 10  //每页显示条数
+            , limits: [10, 20] //每页显示条数可选择
+            , id: "staffListTable"
+            , request: {
+                pageName: 'pageNo' //页码的参数名称，默认：page
+                , limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            , where: {
+              loginStaffId: edipao.getLoginStaffId(),
+            }
+            , parseData: function (res) {
+              return {
+                  "code": res.code, //解析接口状态
+                  "msg": res.message, //解析提示文本
+                  "count": res.data.totalSize, //解析数据长度
+                  "data": res.data.staffDtoList //解析数据列表
+              }
+          }
+          , done: function () {
+            table.on('row(staffListTable)', function(obj){
+              var name = obj.data.name;
+              var phone = obj.data.phone;
+              form.val("main_form", {
+                manager: deliveryOperator + "" + deliveryOperatorPhone,
+                deliveryOperator: name,
+                deliveryOperatorPhone: phone,
+              });
+              layer.close(index);
+            });
+          }
+            , height: 'full'
+            , autoSort: true
+            , text: {
+                none: "暂无数据"
+            }
+            , cols: [[
+                {field: 'name', title: '员工姓名', sort: false, width: 100},
+                {field: 'phone', title: '员工手机', sort: false, width: 120},
+                { field: 'dept', title: '所属部门', width: 100, templet: function(d){
+                  return d.dept || '- -';
+                } },
+                {field: 'status', title: '状态', sort: false,},
+            ]]
+          })
+        }
+      });
     });
     $(".view_fee").unbind().on("click", this.handleViewFee);
     $("#addrCode").unbind().on("input", function (e) {
@@ -207,6 +297,8 @@ layui.use(['jquery','form', 'layer', 'laytpl'], function(){
         endLat: data.endLat || "",
         connectorName: data.connectorName || "",
         connectorPhone: data.connectorPhone || "",
+        deliveryOperator: data.deliveryOperator || "",
+        deliveryOperatorPhone: data.deliveryOperatorPhone || "",
         remark: data.remark || "",
         endDistrict: data.endDistrict || "",
         feeJson: JSON.stringify(feeJson),
