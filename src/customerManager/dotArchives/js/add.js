@@ -186,19 +186,19 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table'], function(){
                   "count": res.data.totalSize, //解析数据长度
                   "data": res.data.staffDtoList //解析数据列表
               }
-          }
-          , done: function () {
-            table.on('row(staffListTable)', function(obj){
-              var name = obj.data.name;
-              var phone = obj.data.phone;
-              form.val("main_form", {
-                manager: deliveryOperator + "" + deliveryOperatorPhone,
-                deliveryOperator: name,
-                deliveryOperatorPhone: phone,
+            }
+            , done: function () {
+              table.on('row(staffListTable)', function(obj){
+                var name = obj.data.name;
+                var phone = obj.data.phone;
+                form.val("main_form", {
+                  manager: name + "" + phone,
+                  deliveryOperator: name,
+                  deliveryOperatorPhone: phone,
+                });
+                layer.close(index);
               });
-              layer.close(index);
-            });
-          }
+            }
             , height: 'full'
             , autoSort: true
             , text: {

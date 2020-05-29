@@ -6,6 +6,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
         { field: 'name', title: '司机姓名' },
         { field: 'phone', title: '司机手机' },
         { field: 'idNum', title: '身份证号' },
+        { field: 'address', title: '当前住址' },
         { field: 'driverType', title: '司机类型' },
         { field: 'driveLicenceType', title: '驾照类型' },
         { field: 'drivingAge', title: '驾龄' },
@@ -14,8 +15,17 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
         { field: 'location', title: '位置' },
         { field: 'deposit', title: '押金' },
         { field: 'depositStatus', title: '押金状态' },
+        { field: 'depositTradeNumber', title: '押金付流水' },
+        { field: 'idLicenceValidity', title: '身份证有效期' },
+        { field: 'driveLicenceValidity', title: '驾驶证有效期' },
+        { field: 'qualificationsValidity', title: '从业资格证有效期' },
         { field: 'licenceWarn', title: '证件预警' },
         { field: 'emergencyPhone', title: '紧急联系人' },
+        { field: 'accountName', title: '银行卡账户' },
+        { field: 'accountNumber', title: '银行卡账号' },
+        { field: 'accountBank', title: '开户银行' },
+        { field: 'accountCity', title: '开户省市' },
+        { field: 'accountBankAddress', title: '开户支行' },
         { field: 'status', title: '司机状态' }
         // { field: 'approvalFlag', title: '审核状态' }
     ];

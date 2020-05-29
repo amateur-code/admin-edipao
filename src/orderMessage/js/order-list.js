@@ -1874,13 +1874,13 @@ layui.config({
             return status;
         }},
         {field: 'jingxiaoshangSign', title: '经销商签收', sort: false,minWidth:120, templet: function (d) {
-            return d.driverPhone || "- -";
+            return d.jingxiaoshangSign || "- -";
         }},
         {field: 'jingxiaoshangComment', title: '经销商评价', sort: false,minWidth:120, templet: function (d) {
-            return d.driverPhone || "- -";
+            return d.jingxiaoshangComment || "- -";
         }},
         {field: 'hegezhengSign', title: '合格证签收', sort: false,minWidth:120, templet: function (d) {
-            return d.driverPhone || "- -";
+            return d.hegezhengSign || "- -";
         }},
     ];
     var showList = [

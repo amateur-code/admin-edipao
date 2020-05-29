@@ -120,6 +120,12 @@ layui.config({
                 return DataNull(val)
             }
         },
+        { field: 'address', title: '当前住址',width: 300,
+            templet: function (data) {
+                var val = data.address;
+                return DataNull(val)
+            }
+        },
         {
             field: 'driverType', title: '司机类型',width: 100,
             templet: function (data) {
@@ -178,6 +184,30 @@ layui.config({
                 }
             }
         },
+        { field: 'depositTradeNumber', title: '押金付流水',width: 150,
+            templet: function (data) {
+                var val = data.depositTradeNumber;
+               return DataNull(val)
+            }
+        },
+        { field: 'idLicenceValidity', title: '身份证有效期',width: 150,
+            templet: function (data) {
+                var val = data.idLicenceValidity;
+               return DataNull(val)
+            }
+        },
+        { field: 'driveLicenceValidity', title: '驾驶证有效期',width: 150,
+            templet: function (data) {
+                var val = data.driveLicenceValidity;
+               return DataNull(val)
+            }
+        },
+        { field: 'qualificationsValidity', title: '从业资格证有效期',width: 150,
+            templet: function (data) {
+                var val = data.qualificationsValidity;
+               return DataNull(val)
+            }
+        },
         {
             field: 'licenceWarn', title: '证件预警',width: 160,
             templet: function (data) {
@@ -209,6 +239,36 @@ layui.config({
                 }
             }
         },
+        { field: 'accountName', title: '银行卡账户', width: 150,
+            templet: function (data) {
+                var val = data.accountName;
+                return DataNull(val)
+        }
+        },
+        { field: 'accountNumber', title: '银行卡账号', width: 180,
+            templet: function (data) {
+                var val = data.accountNumber;
+                return DataNull(val)
+            }
+        },
+        { field: 'accountBank', title: '开户银行', width: 150,
+            templet: function (data) {
+                var val = data.accountBank;
+                return DataNull(val)
+            }
+        },
+        { field: 'accountCity', title: '开户省市', width: 150,
+            templet: function (data) {
+                var val = data.accountCity;
+                return DataNull(val)
+            }
+        },
+        { field: 'accountBankAddress', title: '开户支行', width: 150,
+            templet: function (data) {
+                var val = data.accountBankAddress;
+                return DataNull(val)
+            }
+        },
         {
             field: 'status', title: '司机状态',width: 100,
             templet: function (data) {
@@ -229,7 +289,7 @@ layui.config({
     ];
 
 
-    var showList = [ "name", "phone","idNum","driverType","driveLicenceType", "drivingAge","wishJourney","oftenJourney","location","deposit","depositStatus","licenceWarn","emergencyPhone","status"];
+    var showList = [ "name", "phone","idNum","address","driverType","driveLicenceType", "drivingAge","wishJourney","oftenJourney","location","deposit","depositStatus","idLicenceValidity","driveLicenceValidity","qualificationsValidity","licenceWarn","emergencyPhone","status"];
     var exportHead={};// 导出头部
     edipao.request({
         type: 'GET',
@@ -371,6 +431,7 @@ layui.config({
             { field: 'name', type: 'input' },
             { field: 'phone', type: 'input' },
             { field: 'idNum', type: 'input' },
+            { field: 'address', type: 'input' },
             { field: 'driverType', type: 'radio', data: driverTypeFilter },
             { field: 'driveLicenceType', type: 'radio', data: driveLicenceTypeFilter },
             { field: 'drivingAge', type: 'numberslot' },
@@ -379,8 +440,17 @@ layui.config({
             { field: 'location', type: 'input' },
             { field: 'deposit', type: 'numberslot' },
             { field: 'depositStatus', type: 'radio',data:depositStatusFilter },
+            { field: 'depositTradeNumber', type: 'input' },
+            { field: 'idLicenceValidity', type: 'timeslot' },
+            { field: 'driveLicenceValidity', type: 'timeslot' },
+            { field: 'qualificationsValidity', type: 'timeslot' },
             { field: 'licenceWarn', type: 'radio', data:licenceWarnFilter },
             { field: 'emergencyPhone', type: 'contract' },
+            { field: 'accountName', type: 'input' },
+            { field: 'accountNumber', type: 'input' },
+            { field: 'accountBank', type: 'input' },
+            { field: 'accountCity', type: 'input' },
+            { field: 'accountBankAddress', type: 'input' },
             { field: 'status', type: 'radio',data:driverStatusFilter },
             { field: 'approvalFlag', type: 'radio',data:approvalFlagFilter },
         ]
@@ -407,6 +477,11 @@ layui.config({
                         // 证件预警 比如预警是30天, 今天是3月8号, 传值4月8日。
                         where['searchFieldDTOList['+ index +'].fieldName'] = validityData[value];
                         where['searchFieldDTOList['+ index +'].fieldMaxValue'] = getDay(warnDataVal[value]);
+                    }else if(key=='idLicenceValidity'||key=='driveLicenceValidity'||key=='qualificationsValidity'){
+                        where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                        value = value.split(" 至 ");
+                        where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+                        where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
                     }else if(key=='wishJourney'||key=='oftenJourney'){
                         // 意向线路、常跑线路
                         where['searchFieldDTOList['+ index +'].fieldName'] = key;

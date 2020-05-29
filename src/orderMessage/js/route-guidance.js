@@ -145,7 +145,7 @@ layui.config({
                         _t.setLayPage(res.count);
                     }
                     if(reloadOption) {
-                        tableIns.reload(JSON.parse(JSON.stringify(reloadOption)));
+                        _t.tableIns.reload(JSON.parse(JSON.stringify(reloadOption)));
                         reloadOption = false;
                     }
                     _t.tableFilterIns && _t.tableFilterIns.reload() // 搜索

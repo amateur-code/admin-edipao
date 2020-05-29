@@ -143,7 +143,7 @@ tableFilter: 'TableFilter/tableFilter'
                 var count = trackHandler.getCount();
             });
             trackHandler.start();//开始
-
+            
             function getColor(){    
                 var c = ['#FF0000','#FAFAD2','#F08080','#EECFA1','#CD6090','#BDBDBD','#999999','#8B2252','#551A8B','#242424','#00FFFF','#EEEE00'];
                 rand = random(0, 12)

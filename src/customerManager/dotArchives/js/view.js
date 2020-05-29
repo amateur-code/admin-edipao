@@ -30,8 +30,13 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
           });
           if(!res.data.connectorName && !res.data.connectorPhone){
             res.data.connectorName = "- -";
-            res.data.connectorPhone = "- -";
+            res.data.connectorPhone = "";
           }
+          if(!res.data.deliveryOperator && !res.data.deliveryOperatorPhone){
+            res.data.deliveryOperator = "- -";
+            res.data.deliveryOperatorPhone = "";
+          }
+
           _this.detail = res.data;
           try {
             _this.detail.feeJson = JSON.parse(_this.detail.feeJson);
@@ -117,7 +122,11 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
           });
           if(!res.data.connectorName && !res.data.connectorPhone){
             res.data.connectorName = "- -";
-            res.data.connectorPhone = "- -";
+            res.data.connectorPhone = "";
+          }
+          if(!res.data.deliveryOperator && !res.data.deliveryOperatorPhone){
+            res.data.deliveryOperator = "- -";
+            res.data.deliveryOperatorPhone = "";
           }
           try {
             res.data.feeJson = JSON.parse(res.data.feeJson);
