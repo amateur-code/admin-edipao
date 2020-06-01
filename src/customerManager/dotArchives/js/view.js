@@ -113,7 +113,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
         if(res.code == 0){
           res.data = res.data || {};
           Object.keys(res.data).forEach(function (key) {
-            if(key != "connectorName" && key != "connectorPhone"){
+            if(key != "connectorName" && key != "connectorPhone" && key != "deliveryOperator" && key != "deliveryOperatorPhone"){
               res.data[key] = res.data[key] || "- -";
             }
             if(res.data[key] == null){

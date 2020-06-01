@@ -328,14 +328,14 @@
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收入金额</label><br>
                             <div class="layui-input-inline relative">
                                 <span class="input_unit">元</span>
-                                <input onkeyup="num(this)" {{d.income=='****'?'disabled':''}} data-filter="CARFORM" type="text" name="income" autocomplete="off" class="layui-input car_income">
+                                <input onchange="num(this)" {{d.income=='****'?'disabled':''}} data-filter="CARFORM" type="text" name="income" autocomplete="off" class="layui-input car_income">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>管理费</label><br>
                             <div class="layui-input-inline relative">
                                 <span class="input_unit">元</span>
-                                <input onkeyup="num(this)" {{d.manageFee=='****'?'disabled':''}} data-filter="CARFORM" type="text" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
+                                <input onchange="num(this)" {{d.manageFee=='****'?'disabled':''}} data-filter="CARFORM" type="text" name="manageFee" autocomplete="off" class="layui-input car_manageFee">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -354,7 +354,7 @@
                             <label class="layui-form-label text_left form_label"><span class="red">*</span>收入单价</label><br>
                             <div class="layui-input-inline relative">
                                 <span class="input_unit">元/km</span>
-                                <input onkeyup="num(this)" {{d.pricePerMeliage=='****'?'disabled':''}} type="text" name="pricePerMeliage" autocomplete="off" class="layui-input pricePerMeliage">
+                                <input onchange="num(this)" {{d.pricePerMeliage=='****'?'disabled':''}} type="text" name="pricePerMeliage" autocomplete="off" class="layui-input pricePerMeliage">
                             </div>
                         </div>
                         <div class="layui-inline layui-col-md3 layui-col-md-offset1">
@@ -538,7 +538,7 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">升</span>
-                                <input data-field="oil" value="{{d.feeDetail.oil}}" onkeyup="num(this)" type="text" name="oil" autocomplete="off" class="layui-input input_fee">
+                                <input data-field="oil" value="{{d.feeDetail.oil}}" onchange="num(this)" type="text" name="oil" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.oilUnitPrice}} 升/百公里</div>
@@ -552,7 +552,7 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">升</span>
-                                <input data-field="prePayOil" value="{{d.feeDetail.prePayOil}}" onkeyup="num(this)" type="text" name="prePayOil" lay-verify="required" autocomplete="off" class="layui-input input_fee">
+                                <input data-field="prePayOil" value="{{d.feeDetail.prePayOil}}" onchange="num(this)" type="text" name="prePayOil" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5 origin_fee">
                                 {{# if(dataPermission.canViewOrderCost != 'Y'){ }}
@@ -596,7 +596,7 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input data-field="amount" value="{{d.feeDetail.amount}}" onkeyup="num(this)" type="text" name="amount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
+                                <input data-field="amount" value="{{d.feeDetail.amount}}" onchange="num(this)" type="text" name="amount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.freightUnitPrice}} 元/km</div>
@@ -639,7 +639,7 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input data-field="prePayAmount" value="{{(d.feeDetail.prePayAmount * 1).toFixed(2)}}" onkeyup="num(this)" type="text" name="prePayAmount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
+                                <input data-field="prePayAmount" value="{{(d.feeDetail.prePayAmount * 1).toFixed(2)}}" onchange="num(this)" type="text" name="prePayAmount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.prePayRatio}}%</div>
@@ -653,7 +653,7 @@
                         <div class="layui-input-inline layui-row">
                             <div class="layui-col-md7 relative">
                                 <span class="input_unit">元</span>
-                                <input data-field="arrivePayAmount" value="{{(d.feeDetail.arrivePayAmount * 1).toFixed(2)}}" onkeyup="num(this)" type="text" name="arrivePayAmount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
+                                <input data-field="arrivePayAmount" value="{{(d.feeDetail.arrivePayAmount * 1).toFixed(2)}}" onchange="num(this)" type="text" name="arrivePayAmount" lay-verify="required" autocomplete="off" class="layui-input input_fee">
                             </div>
                             <div class="layui-col-md5 origin_fee">
                                 <div class="blue">规定：{{d.arrivePayRatio}}%</div>

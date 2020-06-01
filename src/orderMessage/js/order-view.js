@@ -12,7 +12,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     "startCity", "endCity", "startProvince", "endProvince", "connectorName", "connectorPhone", "handlingStatus"
   ]
   var orderKeys = [
-    "followOperator", "followOperatorPhone", "deliveryOperator", "deliveryOperatorPhone", "dispatchOperatorPhone", "dispatchOperator"
+    "followOperator", "followOperatorPhone", "deliveryOperator", "deliveryOperatorPhone", "dispatchOperatorPhone", "dispatchOperator", "dispatchMode"
   ]
   function View() {
     var qs = edipao.urlGet();
@@ -46,8 +46,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             _this.feeId = res.data.feeId;
             _this.getOrderFee().done(function (res1) {
               if(res.code == "0"){
-                _this.parseData(res.data);
                 _this.orderData = res.data;
+                _this.parseData(_this.orderData);
                 if(!_this.feeId){
                   _this.orderData.oil = _this.orderData.prePayOil || 0;
                   _this.orderData.amount =
@@ -283,6 +283,24 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             data.dispatchOperator = "系统调度";
           }
         }
+      }
+      console.log(data)
+      switch(data.dispatchMode * 1){
+        case 0:
+          data.dispatchMode = "人工调度";
+          break;
+        case 1:
+          data.dispatchMode = "抢单";
+          break;
+        case 2:
+          data.dispatchMode = "抢单转人工";
+          break;
+        case 3:
+          data.dispatchMode = "抢单变人工";
+          break;
+        default:
+          data.dispatchMode = "- -";
+          break;
       }
       switch(data.tailPayBillType * 1){
         case 1:

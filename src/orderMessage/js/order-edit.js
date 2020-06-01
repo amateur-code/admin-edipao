@@ -311,7 +311,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.setData = function(data){
     //渲染订单数据
     var _this =this;
-    laytpl($("#form_ascription_tpl").html()).render({orderData: _this.orderData, staffList: _this.staffList, driverList: _this.driverList}, function (html) {
+    laytpl($("#form_ascription_tpl").html()).render({orderData: _this.orderData, staffList: _this.staffList}, function (html) {
       $("#form_ascription_container").html(html);
       data.dispatchOperator = data.dispatchOperator + "," + data.dispatchOperatorPhone;
       data.followOperator = data.followOperator + "," + data.followOperatorPhone;
@@ -667,7 +667,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
   Edit.prototype.bindFeeInput = function () {
     var _this = this;
-    $(".input_fee").unbind().on("input", function (e) {
+    $(".input_fee").unbind().on("change", function (e) {
       if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
       _this.feeInputTimer = setTimeout(function () {
         var loadIndex = layer.load(1);
@@ -1544,7 +1544,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       if(res.code == "0"){
         if(!res.data) res.data = [];
         if(res.data.length < 1) return;
-        _this.driverInfoListDto = res.data;
+        _this.driverInfoListDto = res.data.filter(item => item.status == "待命中" || item.status == "工作中");
         $options.html(returnOptions2(res.data));
       }
     });
@@ -1585,7 +1585,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
                 "code": res.code, //解析接口状态
                 "msg": res.message, //解析提示文本
                 "count": res.data.totalSize, //解析数据长度
-                "data": res.data.driverInfoListDtoList //解析数据列表
+                "data": res.data.driverInfoListDtoList.filter(item => item.status == "待命中" || item.status == "工作中")
             }
         }
         , done: function () {
@@ -2189,8 +2189,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           if(res.code == "0"){
             if(!res.data) return;
             if(!res.data.driverInfoListDtoList || res.data.driverInfoListDtoList.length < 0) return;
-            _this.driverInfoListDto = res.data.driverInfoListDtoList;
-            $selector.find(".driverName_options").html(returnOptions2(res.data.driverInfoListDtoList || []));
+            _this.driverInfoListDto = res.data.driverInfoListDtoList.filter(item => item.status == "待命中" || item.status == "工作中");
+            $selector.find(".driverName_options").html(returnOptions2(_this.driverInfoListDto || []));
           }
         });
       }, 500);

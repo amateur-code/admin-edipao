@@ -48,6 +48,7 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table'], function(){
         });
         if(_this.action == "edit"){
           $("#accountCity").xcity(_this.detail.endProvince, _this.detail.endCity);
+          res3.data.manager = res3.data.deliveryOperator + res3.data.deliveryOperatorPhone;
           form.val("main_form", res3.data);
           feeList.forEach(function (item, index) {
             if(index > 0){

@@ -342,36 +342,38 @@
 						</div>
 						{{# } }}
 					</div>
-					<div class="layui-col-md4 info_row" style="padding-top: 15px;">
-						<div class="layui-row">
-							<span class="layui-form-span form_span">备注：</span>
-							<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.remark}}</span>
-						</div>
-						{{# if(d.check.remark){ }}
-						<div class="layui-row">
-								<span class="layui-form-span form_span red">待审：</span>
-								<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.remark}}</span>
-						</div>
-						{{# } }}
+			</div>
+			<div class="layui-card-body layui-row layui-col-space10">
+				<div class="layui-col-md4 info_row">
+					<div class="layui-row">
+						<span class="layui-form-span form_span">备注：</span>
+						<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.remark}}</span>
 					</div>
-					<div class="layui-col-md4">
-						<div class="layui-row">
-							<span class="layui-form-span form_span">发运经理：</span>
-							<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.deliveryOperator + d.detail.deliveryOperatorPhone }}</span>
-						</div>
-						{{# if(d.check.deliveryOperator != undefined || d.check.deliveryOperatorPhone != undefined){ }}
-						<div class="layui-row">
+					{{# if(d.check.remark){ }}
+					<div class="layui-row">
 							<span class="layui-form-span form_span red">待审：</span>
-							{{# if(d.check.deliveryOperator && !d.check.deliveryOperatorPhone){ }}
-							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.deliveryOperator + d.detail.deliveryOperatorPhone }}</span>
-							{{# }else if(d.check.deliveryOperatorPhone && !d.check.deliveryOperator){ }}
-							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.detail.deliveryOperator + d.check.deliveryOperatorPhone }}</span>
-							{{# }else{ }}
-							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.deliveryOperator + d.check.deliveryOperatorPhone }}</span>
-							{{# } }}
-						</div>
+							<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.remark}}</span>
+					</div>
+					{{# } }}
+				</div>
+				<div class="layui-col-md4">
+					<div class="layui-row">
+						<span class="layui-form-span form_span">发运经理：</span>
+						<span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.detail.deliveryOperator + d.detail.deliveryOperatorPhone }}</span>
+					</div>
+					{{# if(d.check.deliveryOperator != undefined || d.check.deliveryOperatorPhone != undefined){ }}
+					<div class="layui-row">
+						<span class="layui-form-span form_span red">待审：</span>
+						{{# if(d.check.deliveryOperator && !d.check.deliveryOperatorPhone){ }}
+						<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.deliveryOperator + d.detail.deliveryOperatorPhone }}</span>
+						{{# }else if(d.check.deliveryOperatorPhone && !d.check.deliveryOperator){ }}
+						<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.detail.deliveryOperator + d.check.deliveryOperatorPhone }}</span>
+						{{# }else{ }}
+						<span disabled type="text" name="endAddress" autocomplete="off" class="">{{d.check.deliveryOperator + d.check.deliveryOperatorPhone }}</span>
 						{{# } }}
 					</div>
+					{{# } }}
+				</div>
 			</div>
 		</div>
 		<div id="fee_container" class="layui-card layui-form">

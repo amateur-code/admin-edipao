@@ -279,7 +279,7 @@ layui.config({
                 if(key=='startProvince'||key=='endProvince'){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
-                }else if(key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
+                }else if(key=="arrivePayTime"||key=="prePayTime"||key=="tailPayTime"||key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     value = value.split(" 至 ");
                     where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
@@ -1236,8 +1236,10 @@ layui.config({
                                         value = "****";
                                     }
                                     break;
+                                case 'customerMileage':
+                                    value = item[i] ? item[i] + "km" : "- -";
+                                    break;
                                 case 'income':
-                                case 'totalIncome':
                                     value = item[i] + "元";
                                     if(dataPermission.canViewOrderCost != "Y"){
                                         value = "****";
@@ -1336,9 +1338,9 @@ layui.config({
                                     break;
                                 case "dispatchMode":
                                     value = "- -";
-                                    dispatchModeData.some(function(item){
-                                        if(item.key == d.dispatchMode){
-                                            value = item.value;
+                                    dispatchModeData.some(function(item2){
+                                        if(item2.key == item[i]){
+                                            value = item2.value;
                                             return true;
                                         }
                                     });
@@ -1645,17 +1647,16 @@ layui.config({
         {field: 'transportAssignTime', title: '运输商指派时间', sort: false,width: 200, templet: function(d){
             return d.transportAssignTime ? d.transportAssignTime : '- -';
         }},
+        {field: 'customerMileage', title: '收入里程', sort: false,width: 150, templet: function(d){
+            return d.customerMileage ? (d.customerMileage + "km") : '- -';
+        }},
         {field: 'pricePerMeliage', title: '收入单价', sort: false,width: 150, templet: function(d){
             if(dataPermission.canViewOrderCost != "Y") return "****";
             return d.pricePerMeliage ? (d.pricePerMeliage + "元/km") : '- -';
         }},
-        {field: 'income', title: '收入', sort: false,width: 150, templet: function(d){
+        {field: 'income', title: '收入金额', sort: false,width: 150, templet: function(d){
             if(dataPermission.canViewOrderCost != "Y") return "****";
             return d.income ? (d.income + "元") : '- -';
-        }},
-        {field: 'totalIncome', title: '收入总金额', sort: false,width: 150, templet: function(d){
-            if(dataPermission.canViewOrderCost != "Y") return "****";
-            return d.totalIncome ? (d.totalIncome + "元") : '- -';
         }},
         {field: 'driverMileage', title: '承运里程', sort: false,width: 150, templet: function(d){
             return d.driverMileage ? (d.driverMileage + "km") : '- -';
@@ -1725,15 +1726,15 @@ layui.config({
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var payStatus = "";
-                if (d.prePayApprovalBtn == 1 && amount > 0) {
+                if (d.prePayApprovalBtn == 1 && (amount > 0 || d.prePayOil * 1 > 0)) {
                     if(amount > 0){
                         payStatus = verifyStr3.replace("{{}}", " - 申请支付");
                     }else{
                         payStatus = "";
                     }
-                } else if (d.prePayApprovalBtn == 2 && amount > 0) {
+                } else if (d.prePayApprovalBtn == 2 && (amount > 0 || d.prePayOil * 1 > 0)) {
                     payStatus = verifyStr.replace("{{}}", "-审核");
-                } else if (d.prePayApprovalBtn == 3 && amount > 0) {
+                } else if (d.prePayApprovalBtn == 3 && (amount > 0 || d.prePayOil * 1 > 0)) {
                     payStatus = verifyStr2.replace("{{}}", "-支付");
                 } else if (d.prePayApprovalBtn == 4) {
                     payStatus = "-已支付";

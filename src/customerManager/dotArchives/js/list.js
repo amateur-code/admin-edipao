@@ -101,7 +101,7 @@ layui
             feeJson = [];
           }
           feeJson.forEach(function (item) {
-            feeName.push(item.name);
+            feeName.push(item.startWarehouse + "-" + item.name);
           });
           return feeName.join("，");
         },
@@ -111,7 +111,7 @@ layui
         title: "抢单热度",
         width: 200,
         templet: function (d) {
-          return d.remark ? d.remark : "- -";
+          return (d.grabOrderHot || d.grabOrderHot == 0) ? d.grabOrderHot : "- -";
         },
       },
       {
@@ -477,6 +477,18 @@ layui
           layui.each(v, function (index, item) {
             if (index && showList.indexOf(index) != -1) {
               switch (index) {
+                case "feeJson":
+                  var feeJson, feeName = [];
+                  try {
+                    feeJson = JSON.parse(v["feeJson"]) || [];
+                  } catch (error) {
+                    feeJson = [];
+                  }
+                  feeJson.forEach(function (item) {
+                    feeName.push(item.startWarehouse + "-" + item.name);
+                  });
+                  exportObj[index] = feeName.join("，") || "- -";
+                  break;
                 case "status":
                   exportObj[index] = v["statusDesc"] || "- -";
                   break;
