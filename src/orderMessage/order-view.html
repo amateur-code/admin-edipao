@@ -535,7 +535,7 @@
                     </div>
                 </div>
                 IMAGESTR
-                <div class="layui-form-item layui-row">
+                <!-- <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md4">
                         <div class="layui-row">
                             <span class="layui-form-span form_span">经销商签收：</span>
@@ -574,7 +574,7 @@
                         </div>
                         {{# } }}
                     </div>
-                </div>
+                </div> -->
             </div>
         </form>
       </script>
@@ -787,12 +787,6 @@
                         <div class="layui-inline layui-col-md4">
                             <span class="layui-form-span form_span">调度方式：</span>
                             <span disabled type="text" autocomplete="off" class="blue">{{d.orderData.dispatchMode}}</span>
-                            {{# if(d.dispatchMode){ }}
-                            <div class="check">
-                                <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.dispatchMode}}</span>
-                            </div>
-                            {{# } }}
                         </div>
                     </div>
                     <div id="fee_list_container"></div>

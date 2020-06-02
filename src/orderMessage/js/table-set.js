@@ -43,9 +43,9 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "fetchTruckTime", title: "提车时间" },
       { field: "startTruckTime", title: "发车时间" },
       { field: "returnAuditStatus", title: "回单审核" },
-      { field: "jingxiaoshangSign", title: "经销商签收" },
-      { field: "jingxiaoshangComment", title: "经销商评价" },
-      { field: "hegezhengSign", title: "合格证签收" },
+    //   { field: "jingxiaoshangSign", title: "经销商签收" },
+    //   { field: "jingxiaoshangComment", title: "经销商评价" },
+    //   { field: "hegezhengSign", title: "合格证签收" },
     ];
     routeTableHeaderList = [
       {field: 'startAddress', title: '出发地'},

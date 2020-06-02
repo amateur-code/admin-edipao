@@ -102,6 +102,13 @@
 <a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.receiveCarNetworkCount}}</a>
 </script>
 <script type="text/javascript">
+function DataNull (data) {
+  if(data == null||(data == ''&&(data + '' != '0'))){
+      return '- -'
+  }else{
+      return  data
+  }
+}
 layui.config({
   base: '../../lib/'
 }).extend({
@@ -117,7 +124,7 @@ layui.config({
       { field: 'name', title: '费用名称', width: 300 },
       { field: 'receiveCarNetworkCount', title: '关联网点数', templet: '#stffList', width: 400 },
       { field: 'grabOrderHot', title: '抢单热度', width: 120, templet: function(d){
-        return d.grabOrderHot || "- -";
+        return DataNull(d.grabOrderHot);
       }},
       {
         field: 'remark', title: '备注', width: 300, templet: function (d) {
@@ -265,7 +272,7 @@ layui.config({
           };
         layui.each(filters, function (key, value) {
           where['searchFieldDTOList[' + index + '].fieldName'] = key;
-          if (key == 'receiveCarNetworkCount') {
+          if (key == 'receiveCarNetworkCount' || key == 'grabOrderHot') {
             where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
             where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
           } else if (key == 'status') {
@@ -380,7 +387,11 @@ layui.config({
           if (index2 == 0) {
             dataItem[item.field] = item.title;
           } else {
-            dataItem[item.field] = item2[item.field] || '- -'
+            if(item.field == "grabOrderHot"){
+              dataItem[item.field] = DataNull(item2[item.field]);
+            }else{
+              dataItem[item.field] = item2[item.field] || '- -';
+            }
           }
         }
       })

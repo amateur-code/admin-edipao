@@ -279,23 +279,27 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         if(!data.dispatchOperator && !data.dispatchOperatorPhone){
           data.dispatchOperator = "- -";
           data.dispatchOperatorPhone = "";
-          if(data.dispatchMode == 1){
+          if(data.dispatchMode == 2){
             data.dispatchOperator = "系统调度";
           }
         }
       }
-      console.log(data)
-      switch(data.dispatchMode * 1){
+      switch(data.dispatchMode){
+        case undefined:
+          break;
         case 0:
-          data.dispatchMode = "人工调度";
+          data.dispatchMode = "- -";
           break;
         case 1:
-          data.dispatchMode = "抢单";
+          data.dispatchMode = "人工调度";
           break;
         case 2:
-          data.dispatchMode = "抢单转人工";
+          data.dispatchMode = "抢单";
           break;
         case 3:
+          data.dispatchMode = "抢单转人工";
+          break;
+        case 4:
           data.dispatchMode = "抢单变人工";
           break;
         default:

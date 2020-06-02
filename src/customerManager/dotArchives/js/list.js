@@ -380,7 +380,7 @@ layui
         { field: "deliveryOperator", type: "contract" },
         { field: "feeJson", type: "input" },
         { field: "grabOrderHot", type: "numberslot" },
-        // { field: "transportOrderNum", type: "numberslot" },
+        { field: "transportOrderNum", type: "numberslot" },
         { field: "status", type: "checkbox", data: statusData },
       ];
       tableFilterIns = tableFilter.render({
@@ -394,9 +394,10 @@ layui
             loginStaffId: edipao.getLoginStaffId(),
           };
           layui.each(filters, function (key, value) {
-            if (key == "licenceWarn") {
-              where["searchFieldDTOList[" + index + "].fieldName"] = validityData[value];
-              where["searchFieldDTOList[" + index + "].fieldMaxValue"] = getDay(warnDataVal[value]);
+            if(key == "grabOrderHot" || key == "transportOrderNum"){
+              where["searchFieldDTOList[" + index + "].fieldName"] = key;
+              where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
+              where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
             } else if (key == "endProvince") {
               where["searchFieldDTOList[" + index + "].fieldName"] = "endProvince";
               where["searchFieldDTOList[" + index++ + "].fieldValue"] = value.province;
