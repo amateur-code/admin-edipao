@@ -246,7 +246,11 @@
           transform: translateY(-50%);
   right: -3px;
 }
-.form_fee input:disabled {
+.form_fee input:-moz-read-only {
+  pointer-events: none;
+  background-color: #eeeeee;
+}
+.form_fee input:read-only {
   pointer-events: none;
   background-color: #eeeeee;
 }

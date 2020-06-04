@@ -67,6 +67,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     this.vinCodeTimer = null;
     this.endParkTimer = null;
     this.mapAddress = {};
+    this.gettingFee = false;
   }
   Edit.prototype.getOrderJson = function(){
     return $.ajax({
@@ -522,6 +523,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     };
     console.log(carInfo)
     if(carInfo.masterEndAddrCode && carInfo.masterStartWarehouse && carInfo.masterProductNo && carInfo.masterStartLat && carInfo.masterStartLng){
+      _this.gettingFee = true;
       var params = {
         orderNo: _this.orderNo,
         orderType: $(".car_info_form").length > 1 ? 2 : 1,
@@ -532,6 +534,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         method: "POST",
         data: params
       }).done(function (res) {
+        _this.gettingFee = false;
         if(res.code == "0"){
           if(res.data.feeItemDTO){
             _this.feeId = res.data.feeItemDTO.feeId;
@@ -542,7 +545,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         }else{
           layer.close(loadIndex);
         }
-      });
+      }).fail(function () { _this.gettingFee = false; });
     }else{
       layer.close(loadIndex);
     }
@@ -565,12 +568,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         }
       });
       _this.originFeeRate.feeDetail = feeDetail;
-      // Object.keys(_this.originFeeRate.feeDetail).forEach(function(key){
-      //   if(typeof (_this.originFeeRate.feeDetail[key] * 1) == "number"){
-      //     _this.originFeeRate.feeDetail[key] = (_this.originFeeRate.feeDetail[key] * 1).toFixed(2);
-      //   }
-      // });
       laytpl($("#fee_form_tpl").html()).render(_this.originFeeRate, function (html) {
+        _this.gettingFee = false;
         $("#form_fee_container").html(html);
         _this.bindFeeInput();
         if(_this.dataPermission.canViewOrderCost != "Y"){
@@ -641,7 +640,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         //     originFeeRate.feeDetail[key] = (originFeeRate.feeDetail[key] * 1).toFixed(2);
         //   }
         // });
-        console.log(originFeeRate)
         laytpl($("#fee_form_tpl").html()).render(originFeeRate, function (html) {
           if(_this.feeDetail.tailPayBillType * 1 == 3){
             html = html.replace("tailPayBillDate hide", "tailPayBillDate");
@@ -668,8 +666,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.bindFeeInput = function () {
     var _this = this;
     $(".input_fee").unbind().on("change", function (e) {
-      if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
-      _this.feeInputTimer = setTimeout(function () {
+      _this.gettingFee = true;
+      // if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
+      // _this.feeInputTimer = setTimeout(function () {
         var loadIndex = layer.load(1);
         var field = e.target.dataset.field;
         var value = e.target.value * 1;
@@ -694,6 +693,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           closestOilPrice: _this.feeDetail.closestOilPrice,
         });
         _this.getCalOrderFee(feeFormData, field).done(function (res) {
+          _this.gettingFee = false;
           layer.close(loadIndex)
           if(res.code == "0"){
             Object.assign(_this.feeDetail, res.data);
@@ -707,8 +707,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           }else{
             e.target.value = _this.feeDetail[field];
           }
-        });
-      }, 500);
+        }).fail(function () { _this.gettingFee = false; });
+      // }, 500);
     });
   }
   Edit.prototype.getCalOrderFee = function(data, field){
@@ -1202,6 +1202,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     }
   }
   Edit.prototype.preSubmit = function () {
+    if(this.gettingFee){
+      layer.msg("正在计算费用");
+      return;
+    }
     var _this = this;
     var truckUpdateReqList = [];
     var orderData = JSON.parse(JSON.stringify(_this.orderData));
@@ -1653,6 +1657,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.handleIncomeInput = function (e) {
     var filter = e.target.dataset.filter, _this = this;
     var total = 0;
+    if(e.target.value.substr(-1) == "."){
+      e.target.value = e.target.value.substr(0, e.target.value.length - 1);
+    }
     $(".car_income").each(function (index, item) {
       total += item.value * 1;
     });
@@ -1922,7 +1929,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   }
   Edit.prototype.bindInputLimit = function () {
     var _this = this;
-    $(".customerMileage").unbind().on("input", function (e) {
+    $(".customerMileage").unbind().on("change", function (e) {
       var arr = [];
       if(_this.dataPermission.canViewOrderCost != "Y") return clearTimeout(_this.feeInputTimer);
       if(_this.orderDataBackUp.orderStatus != 1) return clearTimeout(_this.feeInputTimer);
@@ -1932,8 +1939,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       if(_this.feeDetail.driverMileage == Math.max.apply(null, arr)) return clearTimeout(_this.feeInputTimer);
 			$(".driverMileage").val(Math.max.apply(null,arr));
       _this.feeDetail.driverMileage = Math.max.apply(null,arr);
-      if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
-      _this.feeInputTimer = setTimeout(function () {
+      // if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
+      // _this.feeInputTimer = setTimeout(function () {
         var loadIndex = layer.load(1);
         var field = "driverMileage";
         var value = _this.feeDetail.driverMileage * 1;
@@ -1951,7 +1958,9 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           oilCapacity: _this.feeDetail.oilCapacity,
           closestOilPrice: _this.feeDetail.closestOilPrice,
         });
+        _this.gettingFee = true;
         _this.getCalOrderFee(feeFormData, field).done(function (res) {
+          _this.gettingFee = false;
           layer.close(loadIndex);
           if(res.code == "0"){
             Object.assign(_this.feeDetail, res.data);
@@ -1959,8 +1968,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
           }else{
             e.target.value = _this.feeDetail[field];
           }
-        });
-      }, 500);
+        }).fail(function () { _this.gettingFee = false; });
+      // }, 500);
     });
     $(".vinCode_input").on("input", function (e) {
       if(e.target.value.length > 17) e.target.value = e.target.value.slice(0, 17);
@@ -2037,13 +2046,15 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         oilCapacity: _this.feeDetail.oilCapacity,
         closestOilPrice: _this.feeDetail.closestOilPrice,
       });
+      _this.gettingFee = true;
       _this.getCalOrderFee(feeFormData, field).done(function (res) {
+        _this.gettingFee = false;
         layer.close(loadIndex)
         if(res.code == "0"){
           Object.assign(_this.feeDetail, res.data);
           _this.renderFee({}, _this.feeDetail);
         }
-      });
+      }).fail(function () { _this.gettingFee = false; });
     }, 500);
   }
   Edit.prototype.getProductInfo = function (e) {
@@ -2223,7 +2234,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     $("#btn_cancel").unbind().on("click", function (e) {
       xadmin.close();
     });
-    $(".car_income").unbind().on("input", function (e) {
+    $(".car_income").unbind().on("change", function (e) {
       _this.handleIncomeInput(e);
     });
     $(".car_manageFee").unbind().on("input", function (e) {
@@ -2318,7 +2329,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         $(".del_car_btn").unbind().on("click", function(e){
           _this.handleDeleteCar(e);
         });
-        $(".car_income").unbind().on("input", function (e) {
+        $(".car_income").unbind().on("change", function (e) {
           _this.handleIncomeInput(e);
         });
         $(".car_manageFee").unbind().on("input", function (e) {

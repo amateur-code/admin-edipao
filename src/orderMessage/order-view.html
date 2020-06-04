@@ -628,9 +628,11 @@
                 {{# }else{ }}
                     <span class="layui-row layui-col-space20">
                         {{# layui.each(d.returnImages, function(index, item){ }}
-                        <span style="cursor:pointer;" class="boxZoomImg" src="{{item}}">
-                            <img class="car_image" src="{{item}}">
-                        </span>
+                            {{# if(item){ }}
+                            <span style="cursor:pointer;" class="boxZoomImg" src="{{item}}">
+                                <img class="car_image" src="{{item}}">
+                            </span>
+                            {{# } }}
                         {{# }); }}
                     </span>
                 {{# } }}

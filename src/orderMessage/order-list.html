@@ -12,9 +12,11 @@
     <link rel="stylesheet" href="../lib/TableFilter/tableFilter.css?VERSION">
     <link rel="stylesheet" href="./css/common.css?VERSION">
     <link rel="stylesheet" href="./css/order-list.css?VERSION">
+    <link rel="stylesheet" href="../lib/jqboxImg/boxImg.css">
     <script src="./js/polyfill.js"></script>
     <script src="../js/jquery.min.js"></script>
     <script src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script src="../lib/jqboxImg/boxImg.js"></script>
     <script src="../lib/TableFilter/tableFiltercopy.js?VERSION"></script>
     <script src="../js/common.js?VERSION"></script>
     <script src="../js/xcity.js?VERSION"></script>
@@ -79,55 +81,6 @@
         </form>
     </div>
 </script>
-<script id="pic_view_list_tpl" type="text/html">
-    <div style="margin-top:20px;" class="view_pic_container">
-        {{#  if(d.field == 'fetchStatus'){ }}
-        <div class="layui-card">
-            <div class="layui-card-header">提车图片</div>
-            <div class="layui-card-body">
-                <div class="layui-row">
-                    {{#  layui.each(d.fetchImages, function(index, item){ }}
-                    <img class="pic_view_image" src="{{item}}">
-                    {{#  }); }}
-                    {{# if(d.fetchImages.length == 0){ }}
-                    <div style="color:#666;text-align:center;">暂无数据</div>
-                    {{# } }}
-                </div>
-            </div>
-        </div>
-        {{#  } }} 
-        {{#  if(d.field == 'startAuditStatus'){ }}
-        <div class="layui-card">
-            <div class="layui-card-header">发车单</div>
-            <div class="layui-card-body">
-                <div class="layui-row">
-                    {{#  layui.each(d.startImages, function(index, item){ }}
-                    <img class="pic_view_image" src="{{item}}">
-                    {{#  }); }}
-                    {{# if(d.startImages.length == 0){ }}
-                    <div style="color:#666;text-align:center;">暂无数据</div>
-                    {{# } }}
-                </div>
-            </div>
-        </div>
-        {{#  } }} 
-        {{#  if(d.field == 'returnAuditStatus'){ }}
-        <div class="layui-card">
-            <div class="layui-card-header">交车单</div>
-            <div class="layui-card-body">
-                <div class="layui-row">
-                    {{#  layui.each(d.returnImages, function(index, item){ }}
-                    <img class="pic_view_image" src="{{item}}">
-                    {{#  }); }}
-                    {{# if(d.returnImages.length == 0){ }}
-                    <div style="color:#666;text-align:center;">暂无数据</div>
-                    {{# } }}
-                </div>
-            </div>
-        </div>
-        {{#  } }} 
-    </div>
-</script>
 <script id="pic_verify_tpl" type="text/html">
     <div style="padding: 20px;background:#e6e6e6;">
         <form lay-filter="verifyPic" class="layui-form">
@@ -139,7 +92,7 @@
                         {{#  layui.each(item[d.key], function(index2, item2){ }}
                             {{# if(item2) { }}
                             <div style="margin-bottom:10px;margin-right: 10px;" class="layui-col-md3">
-                                <img width="100%" src="{{item2}}">
+                                <span class="pointer boxZoomImg" src="{{item2}}"><img width="100%" src="{{item2}}"></span>
                             </div>
                             {{# } }}
                         {{#  }); }}
@@ -147,6 +100,29 @@
                 </div>
             </div>
             {{#  }); }}
+            {{#  if(d.driverBodyImg){ }}
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-row">
+                        <div style="margin-bottom:10px;margin-right: 10px;" class="layui-col-md3">
+                            半身照
+                            <span class="pointer boxZoomImg" src="{{d.driverBodyImg}}">
+                                <img width="100%" src="{{d.driverBodyImg}}">
+                            </span>
+                        </div>
+                        {{#  if(d.idLicenceFrontImg){ }}
+                        <div style="margin-bottom:10px;margin-right: 10px;" class="layui-col-md3">
+                            身份证正面
+                            <span class="pointer boxZoomImg" src="{{d.idLicenceFrontImg}}">
+                                <img width="100%" src="{{d.idLicenceFrontImg}}">
+                            </span>
+                        </div>
+                        {{#  } }}
+                    </div>
+                </div>
+            </div>
+            {{#  } }}
+            {{#  if(d.action == 'verify'){ }}
             <div class="layui-card">
                 <div class="layui-card-header">审核</div>
                 <div class="layui-card-body">
@@ -169,6 +145,7 @@
                     </div>
                 </div>
             </div>
+            {{#  } }}
         </form>
     </div>
 </script>
@@ -256,7 +233,7 @@
                     <div class="layui-card-body">
                         <select name="vinCode" lay-verify="">
                             {{#  layui.each(d.list, function(index, item){ }}
-                            <option {{index==0?'selected':''}} value="{{item.id}}">{{item.vinCode}}</option>
+                            <option {{index==0?'selected':''}} value="{{item.id}}">{{item.vinCode + (item.masterFlag == '是' ? '（下车）' : '')}}</option>
                             {{#  }); }}
                         </select> 
                     </div>
@@ -267,73 +244,31 @@
     </div>
 </script>
 <script id="upload_pic_list_tpl" type="text/html">
-    {{# if(d.type == 2){ }}
-    <div class="layui-card">
-        <div class="layui-card-header">提车图片</div>
-        <div class="layui-card-body">
-            {{#  layui.each(d.uploadData.fetchImagesList, function(index, item){ }}
-            <div class="layui-row upload_start_row">
-                <div class="layui-col-md5">
-                    <div id="{{'upload_get_holder_' + index}}" data-index="{{index}}" class="upload_start_holder {{item?'pre':''}}">
-                        <div data-field="fetchImagesList" data-index="{{index}}" class="pic_del_btn">x</div>
-                        {{# if(item){ }}
-                        <div class="pre_image_holder_inner"><img src="{{item}}" class="layui-upload-img pre_img"></div>
-                        {{# } }}
-                        +
-                    </div>
-                </div>
-                <div id="{{'upload_get_pre_'+index}}" class="upload_get_pre layui-col-md5 layui-col-md-offset1">
-                    <img src="{{d.holders.fetchImagesHolder[index]}}" class="layui-upload-img pre_img">
-                </div>
-            </div>
-            {{#  }); }}
-        </div>
-    </div>
-    {{# } }}
-    {{# if(d.type == 3){ }}
-    <div class="layui-card">
-        <div class="layui-card-header">发车单</div>
-        <div class="layui-card-body">
-            {{#  layui.each(d.uploadData.startImagesList, function(index, item){ }}
-            {{index == 0?'发车照片':''}}
-            {{index == 5?'发车单':''}}
-            <div class="layui-row upload_start_row">
-                <div class="layui-col-md5">
-                    <div id="{{'upload_start_holder_' + index}}" data-index="{{index}}" class="upload_start_holder {{item?'pre':''}}">
-                        <div data-field="startImagesList" data-index="{{index}}" class="pic_del_btn">x</div>
-                        {{# if(item){ }}
-                        <div class="pre_image_holder_inner"><img src="{{item}}" class="layui-upload-img pre_img"></div>
-                        {{# } }}
-                        +
-                    </div>
-                </div>
-                <div id="{{'upload_start_pre_'+index}}" class="upload_get_pre layui-col-md5 layui-col-md-offset1">
-                    <img src="{{d.holders.startImagesHolder[index]}}" class="layui-upload-img pre_img">
-                </div>
-            </div>
-            {{#  }); }}
-        </div>
-    </div>
-    {{# } }}
     {{# if(d.type == 5){ }}
     <div class="layui-card">
         <div class="layui-card-header">交车单</div>
         <div class="layui-card-body">
             {{# layui.each(d.uploadData.returnImagesList, function(index, item){ }}
-            <div class="layui-row upload_start_row">
-                <div class="layui-col-md5">
-                    <div id="{{'upload_give_holder_' + index}}" data-index="{{index}}" class="upload_start_holder {{item?'pre':''}}">
-                        <div data-field="returnImagesList" data-index="{{index}}" class="pic_del_btn">x</div>
-                        {{# if(item){ }}
-                        <div class="pre_image_holder_inner"><img src="{{item}}" class="layui-upload-img pre_img"></div>
-                        {{# } }}
-                        +
+                {{# if(index < 2 || (index == 2 && d.uploadData.masterFlag)){ }}
+                    {{index != 2?'交车图片':''}}
+                    {{index == 2?'半身照':''}}
+                    <div class="layui-row upload_start_row">
+                        <div class="layui-col-md5">
+                            <div id="{{'upload_give_holder_' + index}}" data-index="{{index}}" class="upload_start_holder {{item?'pre':''}}">
+                                <div data-field="returnImagesList" data-index="{{index}}" class="pic_del_btn">x</div>
+                                {{# if(item){ }}
+                                <div class="pre_image_holder_inner">
+                                    <img src="{{item}}" class="layui-upload-img pre_img">
+                                </div>
+                                {{# } }}
+                                +
+                            </div>
+                        </div>
+                        <div id="{{'upload_give_pre_'+index}}" class="upload_get_pre layui-col-md5 layui-col-md-offset1">
+                            <div class="pointer boxZoomImg" src="{{d.holders.returnImagesHolder[index]}}"><img src="{{d.holders.returnImagesHolder[index]}}" class="layui-upload-img pre_img"></div>
+                        </div>
                     </div>
-                </div>
-                <div id="{{'upload_give_pre_'+index}}" class="upload_get_pre layui-col-md5 layui-col-md-offset1">
-                    <img src="{{d.holders.returnImagesHolder[index]}}" class="layui-upload-img pre_img">
-                </div>
-            </div>
+                {{# } }}
             {{# }); }}
         </div>
     </div>

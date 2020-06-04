@@ -1,5 +1,5 @@
 .upload_start_row {
-  margin-top: 20px;
+  margin-bottom: 20px;
   text-align: center;
 }
 .upload_start_row .upload_get_pre {
@@ -110,4 +110,13 @@
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
   left: 45px;
+}
+.pointer {
+  cursor: pointer;
+}
+.mask-layer {
+  z-index: 999999999999999 !important;
+}
+.inline-block {
+  display: inline-block;
 }

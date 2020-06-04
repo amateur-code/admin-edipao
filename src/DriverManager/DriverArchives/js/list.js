@@ -689,6 +689,9 @@ layui.config({
             case 'export':
                 exportExcel();
                 break;
+            case 'exportRecruit':
+                exportRecruit();
+                break;
             case 'tableSet':
                 xadmin.open('表格设置', './table-set.html', 600, 600);
                 break;
@@ -739,6 +742,40 @@ layui.config({
                 break;
         };
 
+    }
+    function exportRecruit () {
+        var exportData = [];
+        exportData.push({
+            name: "司机姓名",
+            phone: "联系电话",
+            driverLicenceType: "驾照类型",
+        });
+        edipao.request({
+            url: "/admin/driver/info/recruit/exportList",
+            method: "GET",
+        }).done(function (res) {
+            if(res.code == 0){
+                res.data = res.data || [];
+                res.data.forEach(function (item) {
+                    var itemData = {};
+                    for (var key in item) {
+                        switch(key){
+                            case "name":
+                            case "phone":
+                            case "driverLicenceType":
+                                itemData[key] = item[key] || "- -";
+                                break;
+                            default:
+                                //do nothing
+                        }
+                    }
+                    exportData.push(itemData);
+                });
+                excel.exportExcel({
+                    sheet1: exportData
+                }, '司机招募信息.xlsx', 'xlsx');
+            }
+        });
     }
     // 导出
     function exportExcel() {
