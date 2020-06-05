@@ -749,6 +749,7 @@ layui.config({
             name: "司机姓名",
             phone: "联系电话",
             driverLicenceType: "驾照类型",
+            createTime: "填报时间"
         });
         edipao.request({
             url: "/admin/driver/info/recruit/exportList",
@@ -765,6 +766,9 @@ layui.config({
                             case "driverLicenceType":
                                 itemData[key] = item[key] || "- -";
                                 break;
+                            case "createTime":
+                                itemData[key] = format(item[key]);
+                                break;
                             default:
                                 //do nothing
                         }
@@ -776,6 +780,17 @@ layui.config({
                 }, '司机招募信息.xlsx', 'xlsx');
             }
         });
+        function format(value) {
+            value = value + "";
+            if(!value) return "- -";
+            var year = value.slice(0,4);
+            var month = value.slice(4,6);
+            var day = value.slice(6, 8);
+            var h = value.slice(8, 10);
+            var m = value.slice(10, 12);
+            var s = value.slice(12, 14);
+            return year + "-" + month + "-" + day + " " + h + ":" + m + ":" + s;
+        }
     }
     // 导出
     function exportExcel() {
