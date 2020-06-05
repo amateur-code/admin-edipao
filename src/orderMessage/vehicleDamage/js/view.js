@@ -14,23 +14,49 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
   }
   View.prototype.init = function () {
     var _this = this;
-    _this.action = "verify"
     if(_this.action == "verify"){
       $("#verify").removeClass("hide");
       form.render();
+      $.when(_this.getDetail(), _this.getUpdate()).done(function (res1, res2) {
+        res1 = res1[0];
+        res2 = res2[0];
+        
+      });
     }else{
-      var list = [
-        "http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/truck/fetch/1/1.jpg",
-        "http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/truck/fetch/1/1.jpg",
-        "http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/truck/fetch/1/1.jpg",
-        "http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/truck/fetch/1/1.jpg",
-        "http://jenny.oss-cn-beijing.aliyuncs.com/test/edipao/truck/fetch/1/1.jpg",
-      ]
-      var detail = {type: "车损", remark: "备注备注备注备注备注", list: list}
-      laytpl($("#preview").html()).render({detail: detail, check: detail}, function (html) {
-        $("#view").html(html);
+      _this.getDetail().done(function (res) {
+        if(res.code == 0){
+          _this.detail = res.data;
+          _this.detail.list = res.data.images.split(",");
+          laytpl($("#preview").html()).render({detail: _this.detail, check: _this.detail}, function (html) {
+            $("#view").html(html);
+            zoomImg();
+          });
+        }
       });
     }
+  }
+  View.prototype.getUpdate = function () {
+    var _this = this;
+    return edipao.request({
+      url: "/admin/log/last-modify/get",
+      method: "GET",
+      data:{
+        loginStaffId: edipao.getLoginStaffId(),
+        operationModule: "15",
+        dataPk: _this.id
+      }
+    });
+  }
+  View.prototype.getDetail = function () {
+    var _this = this;
+    return edipao.request({
+      url: "/admin/order/damage/get",
+      data: {
+        loginStaffId: edipao.getLoginStaffId(),
+        id: _this.id,
+      },
+      method: "POST",
+    })
   }
   View.prototype.bindEvents = function () {
     var _this = this;

@@ -8,7 +8,8 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table', 'upload'], function(){
   window.form = form;
   function Add(){
     var qs = edipao.urlGet();
-    this.id = qs.id;
+    this.id = qs.id || "";
+    this.orderNo = qs.orderNo;
     this.action = qs.action;
     this.picList = [];
   }
@@ -16,21 +17,67 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table', 'upload'], function(){
     var _this = this;
     this.verifyForm();
     if(_this.action == "edit"){
-
+      _this.getDetail();
     }else{
       this.renderUpload();
-      this.bindEvents();
     }
+    this.bindEvents();
   }
   Add.prototype.bindEvents = function () {
+    var _this = this;
     form.on("submit(submit)", function (data) {
+      if(_this.picList.length == 0){
+        layer.msg("请上传相关图片！", {icon: 2});
+        return false;
+      }
       data = data.field;
-      console.log(data)
+      var params = {
+        loginStaffId: edipao.getLoginStaffId(),
+        orderNo: _this.orderNo,
+        type: data.type,
+        remark: data.remark,
+        images: _this.picList.join(","),
+      }
+      var url = "/admin/order/damage/add";
+      if(_this.action == "edit") {
+        params.id = _this.id;
+        url = "/admin/order/damage/update";
+      }
+      edipao.request({
+        url: url,
+        data: params,
+        method: "POST",
+      }).done(function (res) {
+        if(res.code == "0"){
+          layer.msg("提交成功", {icon: 1});
+          setTimeout(function () {
+            xadmin.father_reload();
+            xadmin.close();
+          }, 1000);
+        }
+      });
       return false;
     });
     $('#addCancel').click(function () {
       xadmin.close();
       return false;
+    });
+  }
+  Add.prototype.getDetail = function () {
+    var _this = this;
+    edipao.request({
+      url: "/admin/order/damage/get",
+      data: {
+        loginStaffId: edipao.getLoginStaffId(),
+        id: _this.id,
+      },
+      method: "POST",
+    }).done(function (res) {
+      if(res.code == "0"){
+        form.val("main_form", res.data);
+        _this.picList = res.data.images.split(",");
+        _this.renderUploadPic();
+      }
     });
   }
   Add.prototype.renderUpload = function () {
@@ -41,16 +88,18 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table', 'upload'], function(){
       ,accept: 'images' //只允许上传图片
       ,acceptMime: 'image/*' //只筛选图片
       ,multiple: false
-      ,url: layui.edipao.API_HOST+'/admin/truck/upload/image' //上传接口
+      ,url: layui.edipao.API_HOST + '/admin/order/damage/upload/image' //上传接口
       , data: {
+        orderNo: _this.orderNo,
         loginStaffId: edipao.getLoginStaffId(),
-        type: 2,
-        truckId: "1",
-        index: _this.picList.length + 1,
       }
       ,done: function(res, index, upload){ //上传后的回调
         if(res.code == "0"){
           var pic = res.data;
+          if(_this.picList.length == 20){
+            layer.msg("最多上传20张图片", {icon: 2});
+            return false;
+          }
           _this.picList.push(pic);
           _this.renderUploadPic();
         }

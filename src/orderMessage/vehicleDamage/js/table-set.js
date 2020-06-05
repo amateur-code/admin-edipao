@@ -3,11 +3,11 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       edipao = layui.edipao,
       tableKey = edipao.urlGet().tableKey;
   var dotTableHeaderList = [
-    { field: 'company', title: '时间'},
-    { field: 'company', title: '类型'},
-    { field: 'company', title: '备注'},
-    { field: 'company', title: '上传人'},
-    { field: 'company', title: '状态'},
+    { field: 'createTime', title: '时间'},
+    { field: 'type', title: '类型'},
+    { field: 'remark', title: '备注'},
+    { field: 'createUser', title: '上传人'},
+    { field: 'status', title: '状态'},
   ];
   var tableHeaderList = dotTableHeaderList;
   laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){

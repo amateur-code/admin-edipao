@@ -61,7 +61,6 @@ function DataNull(data) {
         return data;
     }
 }
-
 var provinceList = [];
 var cityCode = {};
 var loadLayer = null;
@@ -164,6 +163,7 @@ layui.config({
         { field: 'fetchTruckTime', type: 'timeslot' },
         { field: 'startTruckTime', type: 'timeslot' },
         { field: 'returnAuditStatus', type: 'checkbox', data: picData },
+        { field: 'damage', type: 'numberslot' },
         { field: 'jingxiaoshangSign', type: 'checkbox', data: jingxiaoshangData },
         { field: 'jingxiaoshangComment', type: 'input' },
         { field: 'hegezhengSign', type: 'checkbox', data: hegezhengData },
@@ -1070,11 +1070,6 @@ layui.config({
             });
         },
         bindEvents: function(){
-            if(location.href.indexOf("test.edipao.cn") > -1){
-                $("#test_title_btn").unbind().on("click", function () {
-                    top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html");
-                });
-            }
             // $(window).unbind().on("message", function (e) {
             //     console.log(e)
             //     var origin = e.origin || e.originalEvent.origin;  //域
@@ -1115,6 +1110,11 @@ layui.config({
             $(".list_driver_name").unbind().on("click", function (e) {
                 var id = e.target.dataset.id;
                 xadmin.open('司机信息','../DriverManager/DriverArchives/info.html?id=' + id);
+            });
+            $(".damage_link").unbind().on("click", function (e) {
+                var id = e.target.dataset.id;
+                var pid = edipao.urlGet().perssionId;
+                top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html?orderNo=" + id + "&perssionId=" + pid, false, "focus");
             });
         },
         getExportData: function (cb) {
@@ -1873,6 +1873,7 @@ layui.config({
             }
             return status;
         }},
+        {field: 'damage', title: '车损/报备', sort: false, width: 100, templet: "#damageTpl"},
         {field: 'jingxiaoshangSign', title: '经销商签收', sort: false,minWidth:120, templet: function (d) {
             return d.driverPhone || "- -";
         }},
