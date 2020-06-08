@@ -18,9 +18,8 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table', 'upload'], function(){
     this.verifyForm();
     if(_this.action == "edit"){
       _this.getDetail();
-    }else{
-      this.renderUpload();
     }
+    this.renderUpload();
     this.bindEvents();
   }
   Add.prototype.bindEvents = function () {
@@ -81,6 +80,7 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table', 'upload'], function(){
     });
   }
   Add.prototype.renderUpload = function () {
+    var loadIndex;
     var _this = this;
     upload.render({
       elem: '#upload_btn'
@@ -93,7 +93,14 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table', 'upload'], function(){
         orderNo: _this.orderNo,
         loginStaffId: edipao.getLoginStaffId(),
       }
+      , before: function () {
+        loadIndex = layer.load(1);
+      }
+      , error: function () {
+        layer.close(loadIndex);
+      }
       ,done: function(res, index, upload){ //上传后的回调
+        layer.close(loadIndex);
         if(res.code == "0"){
           var pic = res.data;
           if(_this.picList.length == 20){
