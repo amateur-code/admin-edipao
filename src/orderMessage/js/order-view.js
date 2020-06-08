@@ -1,3 +1,6 @@
+function isNull(val) {
+  return (val == "" || val == null || val == undefined) && (val + "" != "0") && !Array.isArray(val);
+}
 layui.use(['form', 'jquery', 'laytpl'], function () {
   var laytpl = layui.laytpl;
   var $ = layui.jquery;
@@ -5,11 +8,11 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
   var form= layui.form;
   var feeKeys = [
     "amount", "arrivePayAmount","arrivePayRatio","closestOilPrice","freightUnitPrice","oil","oilAmount","totalAmount",
-    "oilCapacity","oilUnitPrice","prePayAmount","prePayRatio","prePayOil","tailPayAmount","tailPayRatio",
+    "oilCapacity","oilUnitPrice","prePayAmount","prePayRatio","prePayOil","tailPayAmount","tailPayRatio","totalIncome","totalManageFee","manageFee"
     
   ]
   var truckKeys = [
-    "startCity", "endCity", "startProvince", "endProvince", "connectorName", "connectorPhone", "handlingStatus"
+    "startCity", "endCity", "startProvince", "endProvince", "connectorName", "connectorPhone", "handlingStatus","tempLicenseBackImage", "fetchImages", "returnImages", "startImages"
   ]
   var orderKeys = [
     "followOperator", "followOperatorPhone", "deliveryOperator", "deliveryOperatorPhone", "dispatchOperatorPhone", "dispatchOperator", "dispatchMode"
@@ -145,10 +148,12 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
                     (res2.data.tailPayAmount ? (res2.data.tailPayAmount * 1) : 0);
                   res2.data.totalAmount = res2.data.amount;
                 }
-                _this.parseTruckData(res3.data);
-                _this.parseData(res2.data);
-                _this.parseData(_this.updateData, true);
                 _this.orderData = res2.data;
+                _this.truckUpdateData = res3.data || {add:[],update:{},delete:[]};
+
+                _this.parseTruckData(_this.truckUpdateData);
+                _this.parseData(_this.orderData);
+                _this.parseData(_this.updateData, true);
                 if(res4.code == "0"){
                   _this.orderData.originFee = res4.data || {};
                   _this.orderData.subsidy = res4.data.subsidy || 0;
@@ -156,7 +161,6 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
                   _this.orderData.originFee = {};
                   _this.orderData.subsidy = 0;
                 }
-                _this.truckUpdateData = res3.data || {add:[],update:{},delete:[]};
     
                 if(_this.action == "verify"){
                   _this.truckUpdateData.add && _this.truckUpdateData.add.forEach(function (item) {
@@ -224,7 +228,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         var item = data[key];
 				Object.keys(item).forEach(function (key2) {
 					if(truckKeys.indexOf(key2) < 0){
-            if(!item[key2] || item[key2] == "undefined"){
+            if(isNull(item[key2]) || item[key2] == "undefined"){
               item[key2] = "- -";
             }
             switch(item[key2].settleWay * 1){
@@ -256,13 +260,14 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
 					case 3:
 						item.settleWay = "账期";
             break;
-				}
+        }
       });
+      
 		},
     parseData: function (data, update) {
       Object.keys(data).forEach(function (key) {
         if(feeKeys.indexOf(key) < 0 && orderKeys.indexOf(key) < 0){
-          if(!data[key] || data[key] == "undefined"){
+          if(isNull(data[key]) || data[key] == "undefined"){
             if(key != "driverMileage") data[key] = "- -";
           }
         }
@@ -302,6 +307,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         case 4:
           data.dispatchMode = "抢单变人工";
           break;
+        case 5:
+          data.dispatchMode = "短驳直发";
+          break;
         default:
           data.dispatchMode = "- -";
           break;
@@ -317,6 +325,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           data.tailPayBillType = "账期";
           break;
       }
+      
     },
     getTruckUpdate: function () {
       var _this = this;
@@ -407,7 +416,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       var carFormStr = "";
       var carFormHtml = $("#car_info_tpl").html();
       var imageStr = $("#image_tpl").html();
-      data.truckDTOList.forEach(function (item, index) {
+      data.truckDTOList && data.truckDTOList.forEach(function (item, index) {
 				var truck = item;
         if(_this.dataPermission.canViewOrderIncome != "Y"){
           item.pricePerMeliage = "****";
@@ -460,8 +469,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           else updateData.startBillImage = updateData.startBillImage.split(",");
           if(!updateData.tempLicenseBackImage) updateData.tempLicenseBackImage = [];
           else updateData.tempLicenseBackImage = updateData.tempLicenseBackImage.split(",");
+          console.log(updateData)
           Object.keys(updateData).forEach(function (key) {
-            if(!updateData[key] || updateData[key] == "undefined") updateData[key] = "- -";
+            if(isNull(updateData[key]) || updateData[key] == "undefined") updateData[key] = "- -";
           });
           truck.updateData = updateData;
           _this.truckUpdateData.delete && _this.truckUpdateData.delete.some(function (item) {
@@ -474,7 +484,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         }
         Object.keys(truck).forEach(function (key) {
           if(truckKeys.indexOf(key) < 0){
-            if(!truck[key] || truck[key] == "undefined"){
+            if(isNull(truck[key]) || truck[key] == "undefined"){
               truck[key] = "- -";
             }
           }

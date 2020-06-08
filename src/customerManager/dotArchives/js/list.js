@@ -1,3 +1,4 @@
+var provinceList;
 layui
   .config({
     base: "../../lib/",
@@ -151,8 +152,11 @@ layui
     }
     List.prototype.init = function () {
       var _this = this;
+      edipao.getCitys(function (data) {
+        provinceList = data;
+        _this.setTableFilter();
+      });
       // _this.renderTable();
-      _this.setTableFilter();
       _this.bindTableEvents();
       edipao
         .request({

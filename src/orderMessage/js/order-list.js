@@ -40,6 +40,7 @@ var dispatchModeData = [
     {key: 2, value: "抢单"},
     {key: 3, value: "抢单转人工"},
     {key: 4, value: "抢单变人工"},
+    {key: 5, value: "短驳直发"},
 ]
 var jingxiaoshangData = [
     {key: "未收迟到", value: "未收迟到"},
@@ -53,6 +54,7 @@ var hegezhengData = [
     {key: "签收迟到", value: "签收迟到"},
     {key: "正常", value: "正常"},
 ]
+var exportLoading = false;
 
 function DataNull(data) {
     if (data == null || data == "") {
@@ -63,7 +65,6 @@ function DataNull(data) {
 }
 
 var provinceList = [];
-var cityCode = {};
 var loadLayer = null;
 var paying = false;
 var reloadOption = null;
@@ -222,10 +223,8 @@ layui.config({
                         code:n.code,
                         areaList:[]
                     });
-                    cityCode[n.city] = n.code;
                 }
             })
-            cityCode[v.name] = v.code;
         });
         return val;
     }
@@ -534,9 +533,8 @@ layui.config({
                 }
             });
             $.when.apply($, promiseList).done(function (res1, res2) {
-                res1 = res1[0];
-                res2 = res2[0];
                 if(promiseList.length > 0){
+                    console.log(res1)
                     if(res1 && res1.code != 0){
                         layer.close(loadLayer);
                         successFlag = false;
@@ -1044,17 +1042,24 @@ layui.config({
             var _this = this;
             var checkStatus = table.checkStatus('orderList');
             if(checkStatus.data.length < 1){
+                if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
+                layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
+                exportLoading = true;
                 var param = where;
                 param['pageNo']= 1;
-                param['pageSize'] = 10000;
+                param['pageSize'] = 99999;
                 edipao.request({
                     type: 'GET',
                     url: '/admin/order/list',
-                    data: param
+                    data: param,
+                    timeout: 100000,
                 }).done(function (res) {
+                    exportLoading = false;
                     res.data = res.data || {};
                     res.data.orderDTOList = res.data.orderDTOList || [];
                     cb(res.data.orderDTOList);
+                }).fail(function () {
+                    exportLoading = false;
                 });
             }else{
                 cb(checkStatus.data);
@@ -1063,7 +1068,6 @@ layui.config({
         },
         exportData: function exportExcel() {
             var _this = this;
-            var loadIndex = layer.load(1);
             method.getExportData(function (data) {
                 var params = {
                     loginStaffId: user.staffId,
@@ -1081,18 +1085,12 @@ layui.config({
                         var orderType = item.orderType;
                         var masterFlag = item.masterFlag;
                         var prePayOil = item.prePayOil ? item.prePayOil : '';
-                        var fetchApprovalBtn = item.fetchApprovalBtn;
                         var startApprovalBtn = item.startApprovalBtn;
                         var returnApprovalBtn = item.returnApprovalBtn;
-                        var prePayApprovalBtn = item.prePayApprovalBtn;
-                        var tailPayApprovalBtn = item.tailPayApprovalBtn;
-                        var arrivePayApprovalBtn = item.arrivePayApprovalBtn;
                         var openOperator = item.openOperator ? item.openOperator : '';
                         var openOperatorPhone = item.openOperatorPhone ? item.openOperatorPhone : '';
                         var deliveryOperator = item.deliveryOperator ? item.deliveryOperator : '';
                         var deliveryOperatorPhone = item.deliveryOperatorPhone ? item.deliveryOperatorPhone : '';
-                        var dispatchOperator = item.dispatchOperator ? item.dispatchOperator : '';
-                        var dispatchOperatorPhone = item.dispatchOperatorPhone ? item.dispatchOperatorPhone : '';
                         if(showList.indexOf(i) > -1){
                             var value = item[i];
                             switch(i){
@@ -1313,7 +1311,6 @@ layui.config({
                     exportData.push(newObj);
                 })
                 // 导出
-                layer.close(loadIndex);
                 excel.exportExcel({
                     sheet1: exportData
                 }, '订单.xlsx', 'xlsx');

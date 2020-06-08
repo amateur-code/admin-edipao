@@ -82,7 +82,7 @@
     </div>
 </script>
 <script id="pic_verify_tpl" type="text/html">
-    <div style="padding: 20px;background:#e6e6e6;">
+    <div style="padding: 20px;background:#e6e6e6;min-height: 100%;">
         <form lay-filter="verifyPic" class="layui-form">
             {{#  layui.each(d.list, function(index, item){ }}
             <div class="layui-card">
@@ -96,6 +96,9 @@
                             </div>
                             {{# } }}
                         {{#  }); }}
+                        {{# if(!item[d.key] || !item[d.key].length){ }}
+                        <div style="text-align: center;color: #666;">暂无数据</div>
+                        {{# } }}
                     </div>
                 </div>
             </div>

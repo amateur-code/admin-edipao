@@ -18,6 +18,61 @@ layui.define([], function(exports) {
         }
     }
 
+    Common.prototype.getCitys = function (cb) {
+        this.request({
+            url: '/admin/city/all',
+        }).done(res=>{
+            if(res.code == 0){
+                var data = res.data;
+                if(data){
+                    cb && cb(toTree(data));
+                }
+            }else{
+                layer.msg(res.message)
+            }
+        })
+        function toTree(data) {
+             var val = [
+                     {
+                         name: '请选择省份',
+                         code:'',
+                         cityList: [
+                             { name: '请选择市级', areaList: [],code:'', },
+                         ]
+                     }
+                 ];
+            var level2 = [];
+            layui.each(data,function (index,item) {
+                if(item.level == 1){
+                    var cityList = []
+                    if(item.province.indexOf('北京')=='-1'&&item.province.indexOf('天津')=='-1'&&item.province.indexOf('上海')=='-1'&&item.province.indexOf('重庆')=='-1'){
+                        cityList = [{ name: '全部', areaList: []}]
+                    }
+                    val.push({
+                        name: item.province,
+                        code:item.code,
+                        cityList:cityList
+                    })
+                }else{
+                    level2.push(item)
+                }
+            });
+    
+            layui.each(val,function (k,v) {
+                layui.each(level2,function (m,n) {
+                    if(v.name==n.province){
+                        val[k]['cityList'].push({
+                            name: n.city,
+                            code:n.code,
+                            areaList:[]
+                        });
+                    }
+                })
+            });
+            return val;
+        }
+    }
+
     Common.prototype.request = function(options) {
         var that = this;
         options = $.extend({}, this.requestDefaultOption, options)

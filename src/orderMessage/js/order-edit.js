@@ -19,6 +19,7 @@ function num(obj) {
       obj.value = fa + obj.value
 }
 layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function () {
+  var provinceList = parent.provinceList;
   var form = layui.form;
   var layer = layui.layer;
   var laydate = layui.laydate;
@@ -555,7 +556,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 		var _this = this;
     if(feeDetail){
       if(!this.feeId) return;
-      if(!feeDetail.driverMileage) feeDetail.driverMileage = _this.feeDetail.driverMileage || _this.orderData.driverMileage;
+      if(!feeDetail.driverMileage) feeDetail.driverMileage = _this.feeDetail.driverMileage;
       feeDetail.prePayRatio = (feeDetail.prePayRatio * 1).toFixed(2);
       feeDetail.arrivePayRatio = (feeDetail.arrivePayRatio * 1).toFixed(2);
       feeDetail.tailPayRatio = (feeDetail.tailPayRatio * 1).toFixed(2);
@@ -1283,7 +1284,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         connectorName: itemData.connectorName||"",
         connectorPhone: itemData.connectorPhone||"",
         latestArriveTime: itemData.latestArriveTime||"",
-        customerMileage: itemData.customerMileage||"",
+        customerMileage: itemData.customerMileage||0,
         pricePerMeliage: itemData.pricePerMeliage||0,
         income: itemData.income||0,
         manageFee: itemData.manageFee||0,
@@ -1316,7 +1317,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
         if(_this.orderDataBackUp.truckDTOList[index]){
           truckItem.customerMileage = _this.orderDataBackUp.truckDTOList[index].customerMileage;
         }else{
-          truckItem.customerMileage = "";
+          truckItem.customerMileage = 0;
         }
       }
       truckUpdateReqList.push(truckItem);
@@ -1347,11 +1348,11 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 		data.driverMileage = (_this.feeDetail.driverMileage * 1).toFixed(2);
     data.oilCapacity = _this.feeDetail.oilCapacity;
     if(_this.dataPermission.canViewOrderIncome != "Y"){
-      data.totalIncome = _this.orderDataBackUp.totalIncome || "";
-      data.totalManageFee = _this.orderDataBackUp.totalManageFee || "";
+      data.totalIncome = _this.orderDataBackUp.totalIncome || 0;
+      data.totalManageFee = _this.orderDataBackUp.totalManageFee || 0;
     }else{
-      data.totalIncome = totalIncome || "";
-      data.totalManageFee = totalManageFee || "";
+      data.totalIncome = totalIncome || 0;
+      data.totalManageFee = totalManageFee || 0;
     }
     if(data.totalIncome) data.totalIncome = (data.totalIncome*1).toFixed(2);
     if(data.totalManageFee) data.totalManageFee = (data.totalManageFee*1).toFixed(2);
@@ -1939,6 +1940,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       if(_this.feeDetail.driverMileage == Math.max.apply(null, arr)) return clearTimeout(_this.feeInputTimer);
 			$(".driverMileage").val(Math.max.apply(null,arr));
       _this.feeDetail.driverMileage = Math.max.apply(null,arr);
+      console.log(arr, Math.max.apply(null,arr), _this.feeDetail)
       // if(_this.feeInputTimer) clearTimeout(_this.feeInputTimer);
       // _this.feeInputTimer = setTimeout(function () {
         var loadIndex = layer.load(1);
@@ -2023,6 +2025,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       }else{
         _this.feeDetail.oilCapacity = 2147483647;
       }
+      console.log(Math.max.apply(null,arr))
       $(".driverMileage").val(Math.max.apply(null,arr));
       _this.feeDetail.driverMileage = Math.max.apply(null,arr);
       var loadIndex = layer.load(1);

@@ -364,7 +364,7 @@
                             <span class="layui-form-span form_span">客户里程：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.customerMileage}}km</span>
                         </div>
-                        {{# if(d.updateData.customerMileage){ }}
+                        {{# if(d.updateData.customerMileage != undefined){ }}
                         <div class="layui-row">
                             <span class="layui-form-span form_span red">待审：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.customerMileage}}km</span>
@@ -378,7 +378,7 @@
                             <span class="layui-form-span form_span">收入单价：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.pricePerMeliage}}元/km</span>
                         </div>
-                        {{# if(d.updateData.pricePerMeliage){ }}
+                        {{# if(d.updateData.pricePerMeliage != undefined){ }}
                         <div class="layui-row">
                             <span class="layui-form-span form_span red">待审：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.pricePerMeliage}}元/km</span>
@@ -390,7 +390,7 @@
                             <span class="layui-form-span form_span">收入金额：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.income}}元</span>
                         </div>
-                        {{# if(d.updateData.income){ }}
+                        {{# if(d.updateData.income != undefined){ }}
                         <div class="layui-row">
                             <span class="layui-form-span form_span red">待审：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.income}}元</span>
@@ -402,7 +402,7 @@
                             <span class="layui-form-span form_span">管理费：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.manageFee}}元</span>
                         </div>
-                        {{# if(d.updateData.manageFee){ }}
+                        {{# if(d.updateData.manageFee != undefined){ }}
                         <div class="layui-row">
                             <span class="layui-form-span form_span red">待审：</span>
                             <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.updateData.manageFee}}元</span>
@@ -597,7 +597,7 @@
                 <div class="layui-col-md12 margin_top10">
                     <span class="layui-form-span form_span red">待审：</span>
                     {{# layui.each(d.updateData.tempLicenseBackImage, function(index, item){ }}
-                    <span class="sample-graph boxZoomImg" src="{{item}}">
+                    <span class="sample-graph boxZoomImg" src="{{item}}" style="margin-right: 20px;">
                         <img src="{{item}}" class="layui-hide">
                         行驶证图片
                     </span>
@@ -629,7 +629,7 @@
                     <span class="layui-row layui-col-space20">
                         {{# layui.each(d.returnImages, function(index, item){ }}
                             {{# if(item){ }}
-                            <span style="cursor:pointer;" class="boxZoomImg" src="{{item}}">
+                            <span class="pointer boxZoomImg" src="{{item}}">
                                 <img class="car_image" src="{{item}}">
                             </span>
                             {{# } }}
