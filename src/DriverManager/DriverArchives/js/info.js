@@ -80,6 +80,7 @@ layui.use(['jquery','form','laytpl'], function() {
     })
 
     function render(){
+        if(location.href.indexOf("info.html") > -1) check = {};
         laytpl(preview.innerHTML).render({detail: detail, check: check}, function(html) {
             document.getElementById('info').innerHTML = html;
             zoomImg ()

@@ -426,14 +426,14 @@
         </div>
         <div class="layui-col-md4">
             <div class="layui-form-item">
-                <label class="layui-form-label">当前住址：</label>
-                <div style="position:absolute;top:12px;left:30px;line-height:15px;max-width:200px;" class="layui-input-block">
+                <label class="layui-form-label" style="position:absolute;">当前住址：</label>
+                <div style="float:left;top:12px;left:30px;line-height:14px;max-width:200px;" class="layui-input-block">
                     <span class="name-color" name="address" id="address">{{d.detail.address}}</span>
                 </div>
                 {{# if(d.check.address){ }}
                 <div class="check">
-                    <label class="layui-form-label x-red">待审：</label> 
-                    <div style="position:absolute;top:12px;left:30px;line-height:15px;max-width:200px;" class="layui-input-block">{{d.check.address}}</div>
+                    <label class="layui-form-label x-red" style="position:absolute;margin-top: 5px;">待审：</label> 
+                    <div style="margin-top: 5px;float:left;left:30px;top:12px;line-height:14px;max-width:200px;" class="layui-input-block">{{d.check.address}}</div>
                 </div>
                 {{# } }}
             </div>

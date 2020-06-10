@@ -4,6 +4,7 @@ var orderStatusData = [
     {key: 1, value: "待调度"},
     {key: 2, value: "待发车"},
     {key: 3, value: "运输中"},
+    {key: 44, value: "已收车未扫码"},
     {key: 4, value: "已收车"},
     {key: 5, value: "已完结"},
     {key: 6, value: "已取消"},
@@ -94,7 +95,7 @@ layui.config({
     window.dataPermission = dataPermission;
     var permissionList = edipao.getMyPermission();
     window.permissionList = permissionList;
-    var loadLayer = layer.load(2);
+    var loadLayer = layer.load(1);
     var exportHead = {};
     var where = {
         loginStaffId: user.staffId,
@@ -148,9 +149,9 @@ layui.config({
         { field: 'fetchTruckTime', type: 'timeslot' },
         { field: 'startTruckTime', type: 'timeslot' },
         { field: 'returnAuditStatus', type: 'checkbox', data: picData },
-        { field: 'jingxiaoshangSign', type: 'checkbox', data: jingxiaoshangData },
-        { field: 'jingxiaoshangComment', type: 'input' },
-        { field: 'hegezhengSign', type: 'checkbox', data: hegezhengData },
+        { field: 'dealerSignTime', type: 'timeslot' },
+        { field: 'dealerEval', type: 'input' },
+        { field: 'certificateSignTime', type: 'timeslot' },
         // { field: 'operation', type: 'radio', data: operationData },
     ]
     initPermission();
@@ -265,11 +266,6 @@ layui.config({
                     where["searchFieldDTOList[" + index + "].fieldName"] = key;
                     where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
                     where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
-                }else if(key=="arrivePayTime"||key=="prePayTime"||key=="tailPayTime"||key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
-                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
-                    value = value.split(" 至 ");
-                    where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
-                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
                 }else if(key=='startCity'||key=='endCity'){ 
                     if(value.city == "全部") value.city = "";
                     if(key == "startCity"){
@@ -294,7 +290,37 @@ layui.config({
                         where['searchFieldDTOList['+ index +'].fieldName'] = key.replace("Amount", "Status");
                         where['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
                     }
-                }else if(key == "orderStatus" || key == "orderType" || key == "tailPayStatus" || key == "masterFlag"){
+                }else if(key == "orderStatus"){
+                    var checkSign, checkFetch;
+                    checkFetch = value.indexOf("4") > -1;
+                    checkSign = value.indexOf("44") > -1;
+                    value = value.filter(function (item) {
+                        return item != "44";
+                    });
+                    value = value || [];
+                    if(checkSign && checkFetch){
+                        where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                        where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+                    }else if(checkSign && !checkFetch){
+                        value.push("4");
+                        where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                        where['searchFieldDTOList['+ index++ +'].fieldListValue'] = value.join(',');
+                        where['searchFieldDTOList['+ index +'].fieldName'] = "dealerSignTime";
+                        where['searchFieldDTOList['+ index +'].fieldMinValue'] = "0";
+                        where['searchFieldDTOList['+ index +'].fieldMaxValue'] = "1";
+                    }else if(!checkSign && checkFetch){
+                        where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                        where['searchFieldDTOList['+ index++ +'].fieldListValue'] = value.join(',');
+                        where['searchFieldDTOList['+ index +'].fieldName'] = "dealerSignTime";
+                        where['searchFieldDTOList['+ index +'].fieldMinValue'] = "1";
+                        where['searchFieldDTOList['+ index +'].fieldMaxValue'] = "2999-01-01 00:00:00";
+                    }
+                }else if(key == "dealerSignTime" || key == "certificateSignTime" || key=="arrivePayTime"||key=="prePayTime"||key=="tailPayTime"||key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
+                    where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                    value = value.split(" 至 ");
+                    where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+                    where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+                }else if(key == "orderType" || key == "tailPayStatus" || key == "masterFlag"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                 }else if(key == "returnAuditStatus" || key == "dispatchMode"){
@@ -1095,42 +1121,25 @@ layui.config({
                             var value = item[i];
                             switch(i){
                                 case 'orderType':
-                                    switch(item[i]){
-                                        case 1:
-                                            value = '单车单';
-                                            break;
-                                        case 2:
-                                            value = '背车单';
-                                            break;
-                                        default:
-                                            value = '非法类型';
-                                            break;
-                                    }
+                                    value = '- -';
+                                    orderTypeData.some(function (status) {
+                                        if(status.key == item[i]){
+                                            value = status.value;
+                                            return true;
+                                        }
+                                    });
                                     break;
                                 case 'orderStatus':
-                                    switch(item[i]){
-                                        case 1:
-                                            value = '待调度';
-                                            break;
-                                        case 2:
-                                            value = '待发车';
-                                            break;
-                                        case 3:
-                                            value = '运输中';
-                                            break;
-                                        case 4:
-                                            value = '已收车';
-                                            break;
-                                        case 5:
-                                            value = '已完结';
-                                            break;
-                                        case 6:
-                                            value = '已取消';
-                                            break;
-                                        default:
-                                            value = '非法状态';
-                                            break;
-                                    }
+                                    value = '- -';
+                                    orderStatusData.some(function (status) {
+                                        if(status.key == item[i]){
+                                            value = status.value;
+                                            if(status.key == 4 && !item.dealerSignTime){
+                                                value = "收车未扫码";
+                                            }
+                                            return true;
+                                        }
+                                    });
                                     break;
                                 case 'dispatchOperator':
                                     if(item.dispatchMode == 2){
@@ -1211,28 +1220,17 @@ layui.config({
                                     }
                                     break;
                                 case 'tailPayStatus':
-                                    switch(item[i] * 1){
-                                        case 1:
-                                            value = "待支付";
-                                            break;
-                                        case 2:
-                                            value = "支付中";
-                                            break;
-                                        case 3:
-                                            value = "支付成功";
-                                            break;
-                                        case 4:
-                                            value = "支付失败";
-                                            break;
-                                        case 5:
-                                            value = "未到期";
-                                            break;
-                                        default:
-                                            value = "非法状态";
-                                    }
+                                    value = '- -';
+                                    tailPayStatusData.some(function (status) {
+                                        if(status.key == item[i]){
+                                            value = status.value;
+                                            return true;
+                                        }
+                                    });
                                     if(orderType == 2 && masterFlag == "否"){
                                         value = "";
                                     }
+                                    break;
                                 case 'startUploadBtn':
                                     switch(item[i]){
                                         case 0:
@@ -1498,13 +1496,14 @@ layui.config({
             return d.tempLicense ? d.tempLicense : '- -';
         }},
         {field: 'orderType', title: '订单类型', sort: false,minWidth:100, templet: function (d) {
-                if (d.orderType == 1) {
-                    return "单车单";
-                } else if (d.orderType == 2) {
-                    return "背车单";
-                } else {
-                    return "非法类型";
+            var value = '- -';
+            orderTypeData.some(function (status) {
+                if(status.key == d.orderType){
+                    value = status.value;
+                    return true;
                 }
+            });
+            return value;
         }},
         {field: 'masterFlag', title: '上下车', sort: false, minWidth:100, templet: function (d) {
                 if (d.orderType == 1) {
@@ -1518,21 +1517,17 @@ layui.config({
                 }
         }},
         {field: 'orderStatus', title: '订单状态', sort: false,minWidth:100, templet: function (d) {
-                if (d.orderStatus == 1) {
-                    return "待调度";
-                } else if (d.orderStatus == 2) {
-                    return "待发车";
-                } else if (d.orderStatus == 3) {
-                    return "运输中";
-                } else if (d.orderStatus == 4) {
-                    return "已收车";
-                } else if (d.orderStatus == 5) {
-                    return "已完结";
-                } else if (d.orderStatus == 6) {
-                    return "已取消";
-                } else {
-                    return "非法状态";
+            var value = '- -';
+            orderStatusData.some(function (status) {
+                if(status.key == d.orderStatus){
+                    value = status.value;
+                    if(status.key == 4 && !d.dealerSignTime){
+                        value = "收车未扫码";
+                    }
+                    return true;
                 }
+            });
+            return value;
         }},
         {field: 'customerFullName', title: '客户全称', sort: false, width: 120, templet: function(d){
             return d.customerFullName ? d.customerFullName : '- -';
@@ -1736,18 +1731,14 @@ layui.config({
             if(d.orderType == 2 && d.masterFlag == "否"){
                 return "";
             }
-            switch(d.tailPayStatus * 1){
-                case 1:
-                    return "待支付";
-                case 2:
-                    return "支付中";
-                case 3:
-                    return "支付成功";
-                case 4:
-                    return "支付失败";
-                case 5:
-                    return "未到期";
-            }
+            var value = '- -';
+            tailPayStatusData.some(function (status) {
+                if(status.key == d.tailPayStatus){
+                    value = status.value;
+                    return true;
+                }
+            });
+            return value;
         }},
         {field: 'fetchTruckTime', title: '提车时间', sort: false, width: 150, hide: false, templet: function(d){
             if(d.orderType == 2 && d.masterFlag == "否"){
@@ -1796,15 +1787,15 @@ layui.config({
             }
             return status;
         }},
-        // {field: 'jingxiaoshangSign', title: '经销商签收', sort: false,minWidth:120, templet: function (d) {
-        //     return d.jingxiaoshangSign || "- -";
-        // }},
-        // {field: 'jingxiaoshangComment', title: '经销商评价', sort: false,minWidth:120, templet: function (d) {
-        //     return d.jingxiaoshangComment || "- -";
-        // }},
-        // {field: 'hegezhengSign', title: '合格证签收', sort: false,minWidth:120, templet: function (d) {
-        //     return d.hegezhengSign || "- -";
-        // }},
+        {field: 'dealerSignTime', title: '经销商签收时间', sort: false,minWidth:150, templet: function (d) {
+            return d.dealerSignTime || "- -";
+        }},
+        {field: 'dealerEval', title: '经销商评价', sort: false,minWidth:120, templet: function (d) {
+            return d.dealerEval || "- -";
+        }},
+        {field: 'certificateSignTime', title: '合格证签收时间', sort: false,minWidth:150, templet: function (d) {
+            return d.certificateSignTime || "- -";
+        }},
     ];
     var showList = [
         "orderNo",
@@ -1839,9 +1830,9 @@ layui.config({
         "fetchTruckTime",
         "startTruckTime",
         "returnAuditStatus",
-        // "jingxiaoshangSign",
-        // "jingxiaoshangComment",
-        // "hegezhengSign",
+        "dealerSignTime",
+        "dealerEval",
+        "certificateSignTime",
     ];
     var exportHead={};// 导出头部
     var toolField = {title: '操作', field: "operation", toolbar: '#barDemo', align: 'left', fixed: 'right', width: 390};
