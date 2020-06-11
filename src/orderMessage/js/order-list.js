@@ -298,7 +298,7 @@ layui.config({
                         return item != "44";
                     });
                     value = value || [];
-                    if(checkSign && checkFetch){
+                    if((checkSign && checkFetch) || (!checkSign && !checkFetch)){
                         where['searchFieldDTOList['+ index +'].fieldName'] = key;
                         where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                     }else if(checkSign && !checkFetch){
@@ -312,7 +312,7 @@ layui.config({
                         where['searchFieldDTOList['+ index +'].fieldName'] = key;
                         where['searchFieldDTOList['+ index++ +'].fieldListValue'] = value.join(',');
                         where['searchFieldDTOList['+ index +'].fieldName'] = "dealerSignTime";
-                        where['searchFieldDTOList['+ index +'].fieldMinValue'] = "1";
+                        where['searchFieldDTOList['+ index +'].fieldMinValue'] = "1980-01-01 00:00:00";
                         where['searchFieldDTOList['+ index +'].fieldMaxValue'] = "2999-01-01 00:00:00";
                     }
                 }else if(key == "dealerSignTime" || key == "certificateSignTime" || key=="arrivePayTime"||key=="prePayTime"||key=="tailPayTime"||key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
@@ -1275,6 +1275,30 @@ layui.config({
                                         }
                                     }
                                     break;
+                                case 'returnAuditStatus':
+                                    switch(item[i]){
+                                        case 0:
+                                        case 1:
+                                            value = '未上传';
+                                            break;
+                                        case 2:
+                                        case 3:
+                                            value = '已上传';
+                                            break;
+                                        case 4:
+                                            value = '已驳回';
+                                            break;
+                                        default:
+                                            value = '非法状态';
+                                            break;
+                                    }
+                                    if(item.returnApprovalBtn * 1 == 1){
+                                        value = '待审核';
+                                    }
+                                    if(item.orderType == 2 && item.masterFlag == "否"){
+                                        value = "";
+                                    }
+                                    break;
                                 case 'returnUploadBtn':
                                     switch(item[i]){
                                         case 0:
@@ -1292,10 +1316,10 @@ layui.config({
                                             value = '非法状态';
                                             break;
                                     }
-                                    if(returnApprovalBtn * 1 == 1){
-                                        value = '未审核';
+                                    if(item.returnApprovalBtn * 1 == 1){
+                                        value = '待审核';
                                     }
-                                    if(orderType == 2 && masterFlag == "否"){
+                                    if(item.orderType == 2 && item.masterFlag == "否"){
                                         value = "";
                                     }
                                     break;

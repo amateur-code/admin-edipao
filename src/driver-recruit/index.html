@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no" />
+    <title>司机招募</title>
+    <script type="text/javascript">
+        function adapt(designWidth, rem2px) {
+            var d = window.document.createElement('div');
+            d.style.width = '1rem';
+            d.style.display = "none";
+            var head = window.document.getElementsByTagName('head')[0];
+            head.appendChild(d);
+            var defaultFontSize = parseFloat(window.getComputedStyle(d, null).getPropertyValue('width'));
+            document.documentElement.style.fontSize = window.innerWidth / designWidth * rem2px / defaultFontSize * 100 +
+                '%';
+            var st = document.createElement('style');
+            var portrait = "@media screen and (min-width: " + window.innerWidth + "px) {html{font-size:" + ((window
+                .innerWidth /
+                (designWidth / rem2px) / defaultFontSize) * 100) + "%;}}";
+            var landscape = "@media screen and (min-width: " + window.innerHeight + "px) {html{font-size:" + ((window
+                .innerHeight /
+                (designWidth / rem2px) / defaultFontSize) * 100) + "%;}}"
+            st.innerHTML = portrait + landscape;
+            head.appendChild(st);
+            return defaultFontSize
+        };
+        var defaultFontSize = adapt(750, 100);
+    </script>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/index.css?VERSION">
+</head>
+
+<body>
+    <div class="container">
+        <img class="itemImg" src="img/01.png?VERSION" alt="">
+        <img class="itemImg" src="img/02.png?VERSION" alt="">
+        <img class="itemImg" src="img/03.png?VERSION" alt="">
+        <div class="form">
+            <div class="form-item">
+                <div class="left">司机姓名</div>
+                <div class="right">
+                    <input id="name" type="text" placeholder="请输入司机姓名" maxlength="15">
+                </div>
+            </div>
+            <div class="form-item">
+                <div class="left">联系电话</div>
+                <div class="right">
+                    <input id="phone" type="text" placeholder="请输入手机号">
+                </div>
+            </div>
+            <div class="form-item">
+                <div class="left">驾照类型</div>
+                <div class="right">
+                    <div class="select_box"><span class="txt">请选择类型</span><i></i></div>
+                    <ul class="select_list">
+                        <li>A1</li>
+                        <li>A2</li>
+                        <li>A3</li>
+                        <li>B1</li>
+                        <li>B2</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="submit-btn">提交</div>
+        </div>
+        <img class="itemImg" src="img/04.png?VERSION" alt="">
+    </div>
+    <script src="js/jquery-1.8.3.min.js"></script>
+    <script src="js/jquery.md5.js"></script>
+    <script src="js/common.js?VERSION"></script>
+    <script src="js/index.js?VERSION"></script>
+</body>
+</html>
