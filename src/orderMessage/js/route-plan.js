@@ -67,11 +67,82 @@ tableFilter: 'TableFilter/tableFilter'
                     laytpl(getTabConentTpl).render(res.data, function(html){
                         tabConent.innerHTML = html;
                     });
+                     _t.lineDetail = res.data
                     _t.line = JSON.parse(res.data.line);
+
+                    _t.renderDrivingRoute()
+
                     _t.bindLineEvents();
                 }
             })
         },
+        // 设置地图导航
+        renderDrivingRoute(){
+            var _t = this, Driving;
+            var opts = {
+                "map" : _t.map,
+                "policy" : CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
+                "multi":1,
+                viaStyle:true,
+                "autoDragging" : true,
+                "onSearchComplete" : function(obj){
+                    var point_num = 0;
+                    var pointData =[]
+                    var plan = obj.getPlan(0);
+                    for(var i in plan.uidinfo){
+                        for(var j in plan.uidinfo[i].shapepoint){
+                            pointData.push(new Careland.Point(plan.uidinfo[i].shapepoint[j].x,plan.uidinfo[i].shapepoint[j].y))
+                        }
+                    }
+                    console.log(pointData)
+
+                    edipao.request({
+                        type: 'POST',
+                        url: '/admin/lineTrack/updateLineTrack',
+                        data: {
+                            lineId:  this.guideLineId,
+                            lineSource:  _t.lineDetail.lineSource,
+                            trackUrl: '',
+                            trackContent: JSON.stringify(pointData)
+                        }
+                    })
+
+                    Driving.getDrivingRouteData(function(res){
+                        var blob = new Blob([res], {
+                          type: "application/octet-stream"
+                        });
+                        var file = new File([blob], '', {type: "application/octet-stream"})
+                        console.log(file)
+                        let formData = new FormData()
+                        formData.append('file', file)
+                        $.ajax({
+                            type: 'POST',
+                            url: edipao.API_HOST +  '/admin/lineTrack/upload/routeFile', 
+                            data: formData,
+                            processData : false,
+                            contentType : false,
+                        })
+
+
+                    });
+                }
+            };
+            Driving = new Careland.DrivingRoute(_t.map, opts);
+            _t.map.setCenter(new Careland.Point(411108755, 81904366))
+
+            // var pointStr = _t.line.routeInfo[0].partPoints.join(';');
+            // var pointList = pointStr.split(';');
+            // var trackInfo = []
+            // for(var pointStr of pointList){
+            //     console.log(pointStr)
+            //     var pointList = pointStr.split(',');
+            //     var point = Careland.DrawTool.GbPointToKldPoint(pointList[0],pointList[1]);
+            //     trackInfo.push({"x":point.x,"y":point.y,"utctime":0,"speed":0,"direction":0})
+            // }
+            // Driving.search(trackInfo[0],trackInfo[trackInfo.length - 1],{trackInfo:trackInfo, via:[]})
+            Driving.search(_t.lineDetail.startAddress,_t.lineDetail.endAddress)
+        },
+
         // 地图规划
         updateLine: function(){
             var _t = this;
@@ -304,8 +375,8 @@ tableFilter: 'TableFilter/tableFilter'
                 }
             })
         },
-         // 绑定tab事件
-         bindLineEvents: function(){
+        // 绑定tab事件
+        bindLineEvents: function(){
             var _t = this;
             $('.limit-choose').off('click').on('click', function(e){
                 layer.msg('该功能未开放', {
