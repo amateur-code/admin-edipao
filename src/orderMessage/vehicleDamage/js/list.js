@@ -36,19 +36,19 @@ layui
     var exportHead = {}; // 导出头部
     var tableCols = [
       { checkbox: true },
-      { field: "createTime", title: "时间", width: 300, templet: function (d) {
+      { field: "createTime", title: "时间", width: 200, templet: function (d) {
           return d.createTime ? d.createTime : "- -";
       }},
-      { field: "type", title: "类型", width: 300, templet: function (d) {
+      { field: "type", title: "类型", width: 200, templet: function (d) {
           return d.type ? d.type : "- -";
       }},
-      { field: "remark", title: "备注", width: 300, templet: function (d) {
+      { field: "remark", title: "备注", width: 400, templet: function (d) {
           return d.remark ? d.remark : "- -";
       }},
       { field: "createUser", title: "上传人", width: 300, templet: function (d) {
           return d.createUser ? d.createUser : "- -";
       }},
-      { field: "status", title: "状态", width: 300, templet: function (d) {
+      { field: "status", title: "状态", width: 200, templet: function (d) {
           return d.status ? d.status : "- -";
       }},
       { title: "操作", field: "operation", width: 320, fixed: "right", toolbar: "#rowBtns" },
@@ -310,6 +310,9 @@ layui
               value = value.split(" 至 ");
               where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
               where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+            }else if(key == "createUser"){
+              where['searchFieldDTOList['+ index +'].fieldName'] = key;
+              where["searchFieldDTOList[" + index + "].fieldValue"] = value;
             }else if(key == "type" || key == "status"){
               where['searchFieldDTOList['+ index +'].fieldName'] = key;
               where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
