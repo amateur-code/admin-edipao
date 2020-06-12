@@ -2228,6 +2228,18 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       $('#match_driver_list').remove();
       _this.openSelectDriverTable(context);
     });
+    $(".delete_driver_btn").unbind().on("click", function (e) {
+      $('#match_driver_list').hide();
+      $('#match_driver_list').remove();
+      var driverData = {
+        driverId: "",
+        driverName: "",
+        driverPhone: "",
+        driverIdCard: "",
+        driverCertificate: "",
+      }
+      form.val("form_dispatch", driverData);
+    });
     $("#btn_confirm").unbind().on("click", function (e){
       _this.preSubmit();
     });
