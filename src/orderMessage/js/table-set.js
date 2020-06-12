@@ -40,12 +40,15 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "arrivePayAmount", title: "到付款金额" },
       { field: "tailPayAmount", title: "尾款金额" },
       { field: "tailPayStatus", title: "尾款状态", },
+      { field: "feeName", title: "费用模板", },
+      { field: "carModel", title: "费用车型", },
       { field: "fetchTruckTime", title: "提车时间" },
       { field: "startTruckTime", title: "发车时间" },
       { field: "returnAuditStatus", title: "回单审核" },
       { field: "dealerSignTime", title: "经销商签收时间" },
       { field: "dealerEval", title: "经销商评价" },
       { field: "certificateSignTime", title: "合格证签收时间" },
+      { field: "dealerRemark", title: "经销商备注" },
     ];
     routeTableHeaderList = [
       {field: 'startAddress', title: '出发地'},

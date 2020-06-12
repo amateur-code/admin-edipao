@@ -1145,7 +1145,6 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     _this.carFormList.forEach(function (item, index) {
       if(item.filter == filter) carFormListIndex = index;
     });
-    console.log(_this.feeDetail);
     $("." + filter).remove();
     _this.setDriverMileage();
     if(id != undefined){

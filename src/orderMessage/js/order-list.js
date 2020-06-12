@@ -146,12 +146,15 @@ layui.config({
         { field: 'arrivePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'tailPayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'tailPayStatus', type: 'checkbox', data: tailPayStatusData },
+        { field: 'feeName', type: 'input' },
+        { field: 'carModel', type: 'input' },
         { field: 'fetchTruckTime', type: 'timeslot' },
         { field: 'startTruckTime', type: 'timeslot' },
         { field: 'returnAuditStatus', type: 'checkbox', data: picData },
         { field: 'dealerSignTime', type: 'timeslot' },
         { field: 'dealerEval', type: 'input' },
         { field: 'certificateSignTime', type: 'timeslot' },
+        { field: 'dealerRemark', type: 'input' },
         // { field: 'operation', type: 'radio', data: operationData },
     ]
     initPermission();
@@ -326,6 +329,9 @@ layui.config({
                 }else if(key == "returnAuditStatus" || key == "dispatchMode"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+                }else if(key == "carModel"){
+                    where['searchFieldDTOList['+ index +'].fieldName'] = "feeItemJson";
+                    where['searchFieldDTOList['+ index +'].fieldValue'] = value;
                 }else{
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldValue'] = value;
@@ -1092,6 +1098,39 @@ layui.config({
             }
             
         },
+        // getExportData: function (cb) {
+        //     var _this = this;
+        //     var checkStatus = table.checkStatus('orderList');
+        //     if(checkStatus.data.length < 1){
+        //         if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
+        //         layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
+        //         exportLoading = true;
+        //         edipao.exportData({
+        //             params: where,
+        //             url: "/admin/order/list",
+        //             method: "GET",
+        //             pageSize: "pageSize",
+        //             limit: 99999,
+        //             checkFunction: function(res){
+        //                 return !(!res.data || !res.data["orderDTOList"] || res.data["orderDTOList"].length == 0);
+        //             }
+        //         }).done(function (res) {
+        //             var data = [];
+        //             exportLoading = false;
+        //             if(res.length > 0){
+        //                 res.forEach(function (item) {
+        //                     data = data.concat(item.orderDTOList);
+        //                 });
+        //                 cb(data);
+        //             }else{
+        //                 exportLoading = false;
+        //             }
+        //         });
+        //     }else{
+        //         cb(checkStatus.data);
+        //     }
+            
+        // },
         exportData: function exportExcel() {
             var _this = this;
             method.getExportData(function (data) {
@@ -1764,6 +1803,12 @@ layui.config({
             });
             return value;
         }},
+        {field: 'feeName', title: '费用模板', sort: false,minWidth:200, templet: function (d) {
+            return d.feeName || "- -";
+        }},
+        {field: 'carModel', title: '费用车型', sort: false,minWidth:200, templet: function (d) {
+            return d.carModel || "- -";
+        }},
         {field: 'fetchTruckTime', title: '提车时间', sort: false, width: 150, hide: false, templet: function(d){
             if(d.orderType == 2 && d.masterFlag == "否"){
                 return "";
@@ -1820,44 +1865,14 @@ layui.config({
         {field: 'certificateSignTime', title: '合格证签收时间', sort: false,minWidth:150, templet: function (d) {
             return d.certificateSignTime || "- -";
         }},
+        {field: 'dealerRemark', title: '经销商备注', sort: false,minWidth:200, templet: function (d) {
+            return d.dealerRemark || "- -";
+        }},
     ];
-    var showList = [
-        "orderNo",
-        "warehouseNo",
-        "vinCode",
-        "tempLicense",
-        "orderStatus",
-        "orderType",
-        "masterFlag",
-        "customerFullName",
-        "startWarehouse",
-        "startPark",
-        "startProvince",
-        "startCity",
-        "startAddress",
-        "endPark",
-        "endProvince",
-        "endCity",
-        "endAddress",
-        "transportAssignTime",
-        "dispatchTime",
-        "openOperator",
-        "deliveryOperator",
-        "dispatchOperator",
-        "dispatchMode",
-        "driverName",
-        "driverPhone",
-        "driverIdCard",
-        "prePayAmount",
-        "arrivePayAmount",
-        "tailPayAmount",
-        "fetchTruckTime",
-        "startTruckTime",
-        "returnAuditStatus",
-        "dealerSignTime",
-        "dealerEval",
-        "certificateSignTime",
-    ];
+    var showList = [];
+    tableCols.forEach(function (item) {
+        showList.push(item.field);
+    });
     var exportHead={};// 导出头部
     var toolField = {title: '操作', field: "operation", toolbar: '#barDemo', align: 'left', fixed: 'right', width: 390};
 

@@ -18,6 +18,52 @@ layui.define([], function(exports) {
         }
     }
 
+    Common.prototype.exportData = function (options) {
+        var _this = this;
+        var promise = $.Deferred();
+        var fieldName = options.fieldName;
+        var pageSize = options.pageSize;
+        var pageNo = 1;
+        var url = options.url;
+        var method = options.method || "GET";
+        var limit = options.limit;
+        var params = options.params;
+        var result = [];
+        var step = 200;
+        var checkFunction = options.checkFunction;
+        get();
+        function get() {
+            if(step * (pageNo - 1) >= limit){
+                promise.resolve(result);
+                return;
+            }
+            params.pageNo = pageNo;
+            params[pageSize] = step;
+            _this.request({
+                method: method,
+                data: params,
+                url: url,
+                timeout: 100000
+            }).done(function (res) {
+                if(res.code == 0){
+                    if(checkFunction(res)){
+                        pageNo++;
+                        result.push(res.data);
+                        get();
+                    }else{
+                        promise.resolve(result);
+                    }
+                }else{
+                    promise.resolve(result);
+                }
+            }).fail(function () {
+                promise.resolve(result);
+                
+            });
+        }
+        return promise.promise();
+    }
+
     Common.prototype.getCitys = function (cb) {
         this.request({
             url: '/admin/city/all',
