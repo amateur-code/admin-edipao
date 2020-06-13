@@ -1507,6 +1507,8 @@ layui.config({
                     });
                 } else if (layEvent === 'log') {//日志
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=4');
+                } else if(layEvent == 'line'){ //轨迹
+                    xadmin.open('轨迹', './order-line.html?orderNo=' + data.orderNo + "&orderId=" + data.id);
                 }
             });
         },

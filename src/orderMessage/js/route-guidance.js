@@ -306,7 +306,7 @@ layui.config({
                 var data = obj.data;
                 var layEvent = obj.event; 
                 if (layEvent === 'edit') { 
-                    xadmin.open('线路规划', './route-plan.html?guideLineId=' + data.guideLineId)
+                    xadmin.open('线路规划', './route-plan.html?lineId=' + data.lineId)
                 }
             });
             table.on('toolbar(routeList)', function (obj) {

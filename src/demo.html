@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://mapapi.careland.com.cn/api/?key=6012dcd6278a2d4db3840604&v=1.3"></script>
+</head>
+<body>
+  <div id="map" style="width: 800px;height:500px;"></div>
+  <button id="button">下载</button>
+  <script>
+    document.getElementById("button").addEventListener("click", function(){
+      route.getDrivingRouteData(function(res){
+        console.log(res)
+        var blob = new Blob([res], {
+          type: "application/octet-stream"
+        });
+        console.log(blob)
+        var objectURL = window.URL.createObjectURL(blob);
+        console.log(objectURL)
+        var link = document.createElement('a');
+        link.href = objectURL;
+        link.download = "route";
+        link.click();
+      });
+    });
+    var myGeo = new Careland.Geocoder();
+    var point = new Careland.GbPoint(411067452, 81446126); //创建坐标点
+    var map = new Careland.Map("map", point, 12);
+    map.enableAutoResize(); //启用自动适应容器尺寸变化
+    map.load();
+    var route = new Careland.DrivingRoute(map, {
+      map: map,
+      "autoDragging" : false,
+      "policy" : CLDMAP_DRIVING_POLICY_SYSTEM_DEFAULT,
+    });
+    var start = new Careland.GbPoint(39.95285575566585, 116.45549286816404); //北京
+    var end = new Careland.GbPoint(37.867207343660674, 112.65422333691404); //太原
+    route.search(start, end);
+  </script>
+</body>
+</html>
