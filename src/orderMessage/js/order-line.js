@@ -237,6 +237,7 @@ tableFilter: 'TableFilter/tableFilter'
                 }
                 var l = data[d].length;
                 data[d][l] = {};
+                data[d][l].Text = {value:_t.line[i].locTime,textOffsetX:-100,textOffsetY:-40,fontSize:15,fontColor:'#e91e63',fontBold:true,textWidth:200,textAlign:'center'};
                 data[d][l].Point = new Careland.GbPoint( _t.line[i].lat,_t.line[i].lng);
                 data[d][l].IconType = CLDMAP_TRACK_ICON_TRUCK;
             }

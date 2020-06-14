@@ -29,6 +29,7 @@ tableFilter: 'TableFilter/tableFilter'
         this.map = null;
     }
 
+
     _routePlan.prototype = {
         // 初始化
         init: function(){
@@ -42,7 +43,7 @@ tableFilter: 'TableFilter/tableFilter'
                 this.map = map;
                 this.Driving = new Careland.DrivingRoute(map, {
                     "map" : map,
-                    "policy" : CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
+                    "policy" : CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS,
                     "multi":1,
                     viaStyle:true,
                     "autoDragging" : true,
@@ -85,6 +86,11 @@ tableFilter: 'TableFilter/tableFilter'
                 tabConent = document.getElementById('tabConent');
             laytpl(getTabConentTpl).render(_t.lineDetail, function(html){
                 tabConent.innerHTML = html;
+
+                setTimeout(function(){
+                    form.render('checkbox'); 
+                },1000)
+                
             });
         },
         // 设置地图导航
@@ -440,16 +446,27 @@ tableFilter: 'TableFilter/tableFilter'
             element.on('tab(docDemoTabBrief)', function(data){
                 let source = this.getAttribute('lay-id');
                 if(source == 1){
+                     _t.lineDetail.lineSource = 1;
                     // _t.getOrderListByLineId()
                     // _t.getOrderLineTrack('OR00001414')
                 }else if(source == 2){
 
                 }else if(source == 3){
-
+                    _t.lineDetail.lineSource = 3;
                 }
 
                  console.log(source)
             });
+
+            form.on('switch(policy)', function(data){
+                console.log(data)
+                if(data.elem.checked){
+                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS)
+                }else{
+                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS)
+                }
+                _t.renderDrivingRoute()
+            });  
 
             $('#tabConent').on('click','.order-choose',function(e){
                 _t.getOrderListByLineId()
