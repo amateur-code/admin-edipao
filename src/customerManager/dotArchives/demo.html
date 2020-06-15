@@ -37,6 +37,14 @@
     });
     var start = new Careland.GbPoint(39.95285575566585, 116.45549286816404); //北京
     var end = new Careland.GbPoint(37.867207343660674, 112.65422333691404); //太原
+    route.setSearchCompleteCallback(function(res){
+      var DrivingRouteResult = route.getResults();
+      console.log(DrivingRouteResult.getViaPois())
+      var RoutePlan = DrivingRouteResult.getPlan(0);
+      var Route = RoutePlan.getRoute(0);
+
+      console.log(Route.getNumSteps())
+    });
     route.search(start, end);
   </script>
 </body>
