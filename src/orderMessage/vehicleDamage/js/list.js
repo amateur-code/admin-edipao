@@ -31,7 +31,9 @@ layui
       reloadOption = null;
     window.permissionList = edipao.getMyPermission();
     window.form = form;
-    var where = {};
+    var where = {
+      loginStaffId: edipao.getLoginStaffId(),
+    };
     var showList = ["createTime", "type", "remark", "createUser", "status"];
     var exportHead = {}; // 导出头部
     var tableCols = [
@@ -64,6 +66,8 @@ layui
       var qs = edipao.urlGet();
       this.tableKey = "order-vehicle-damage-list-table";
       this.orderNo = qs.orderNo;
+      where["searchFieldDTOList[0].fieldName"] = "orderNo";
+      where["searchFieldDTOList[0].fieldValue"] = this.orderNo;
     }
     List.prototype.init = function () {
       var _this = this;
@@ -118,10 +122,7 @@ layui
         url: edipao.API_HOST + "/admin/order/damage/list",
         method: "post",
         page: true,
-        where: {
-          loginStaffId: edipao.getLoginStaffId(),
-          orderNo: _this.orderNo,
-        },
+        where: where,
         request: {
           pageName: "pageNo", //页码的参数名称
           limitName: "pageSize", //每页数据量的参数名
@@ -287,6 +288,7 @@ layui
       }
     };
     List.prototype.setTableFilter = function () {
+      var _this = this;
       var filters = [
         { field: "createTime", type: "timeslot" },
         { field: "type", type: "checkbox", data: typeData },
@@ -300,10 +302,8 @@ layui
         filters: filters, //过滤项配置
         done: function (filters, reload) {
           filters = $.extend({},filters);
-          var index = 0;
-          where = {
-            loginStaffId: edipao.getLoginStaffId(),
-          };
+          var index = 1;
+          where = Object.assign({}, where);
           layui.each(filters, function (key, value) {
             if (key == "createTime") {
               where['searchFieldDTOList['+ index +'].fieldName'] = key;
