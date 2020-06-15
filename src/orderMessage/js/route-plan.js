@@ -412,7 +412,7 @@ tableFilter: 'TableFilter/tableFilter'
                         type: 1,
                         title: "选择订单",
                         area: ['450px', '530px'],
-                        content:$("#select-order-dialog") ,
+                        content:$("#select-order-dialog"),
                         btn: ['关闭'],
                         btnAlign: 'c',
                         zIndex:9990, //层优先级
