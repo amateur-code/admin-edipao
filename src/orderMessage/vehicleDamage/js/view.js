@@ -25,13 +25,24 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
           _this.detail.list = res1.data.images.split(",");
           var updateData = {};
           try {
-            updateData = JSON.parse(res2.data.modifyAfterJson.newMap);
-          } catch (error) {}
+            var afterJson = JSON.parse(res2.data.modifyAfterJson) || [];
+            afterJson.forEach(function(item){
+              if(item.name == "images"){
+                updateData[item.name] = item.value.split(",");
+              }else{
+                updateData[item.name] = item.value;
+              }
+            });
+          } catch (error) {console.log(error)}
           laytpl($("#preview").html()).render({detail: _this.detail, check: updateData}, function (html) {
             $("#view").html(html);
+            if(!res2.data){
+              $("#add_verify_text").removeClass("hide");
+            }
             zoomImg();
           });
         }
+        _this.bindEvents();
       });
     }else{
       _this.getDetail().done(function (res) {
@@ -43,6 +54,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
             zoomImg();
           });
         }
+        _this.bindEvents();
       });
     }
   }
@@ -85,14 +97,14 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
         url: "/admin/order/damage/approval",
         method: "POST",
         data: {
-          dataPk: _this.id,
+          id: _this.id,
           orderNo: _this.detail.orderNo,
           checkResult: data.approvalResult,
           checkRemark: data.approvalRemark,
         }
       }).done(function (res) {
         if(res.code == "0"){
-          layer.alert("提交成功", function () {
+          layer.alert("提交成功", {icon: 1}, function () {
             xadmin.close();
             xadmin.father_reload();
           });

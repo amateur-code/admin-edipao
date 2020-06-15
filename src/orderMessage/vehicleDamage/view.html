@@ -70,7 +70,10 @@
 	</div>
 	<script id="preview" type="text/html">
 		<div class="layui-card layui-form">
-			<div class="layui-card-header">车损/报备信息</div>
+			<div class="layui-card-header">
+				车损/报备信息
+				<span id="add_verify_text" class="hide x-red">待审：新增</span>
+			</div>
 			<div class="layui-card-body layui-row layui-col-space10 info_row">
 				<div class="layui-col-md4">
 					<div class="layui-row">
@@ -111,11 +114,11 @@
               {{# }); }}
             </div>
           </div>
-          {{# if(d.check.list){ }}
+          {{# if(d.check.images){ }}
           <div class="layui-row">
             <span class="layui-form-span form_span red">待审：</span>
             <div id="upload_pic_list" class="layui-col-md12 images_container">
-              {{# layui.each(d.check.list, function(index, item){ }}
+              {{# layui.each(d.check.images, function(index, item){ }}
               <div class="pic_item upload_pic_item">
                 <div class="layui-input-block" style="margin-left: 0;">
                   <div class="upload_img boxZoomImg" src="{{item}}">

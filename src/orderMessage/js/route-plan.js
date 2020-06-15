@@ -123,9 +123,8 @@ tableFilter: 'TableFilter/tableFilter'
                 var blob = new Blob([res], {
                     type: "application/octet-stream"
                 });
-                var file = new File([blob], '', {type: "application/octet-stream"})
                 let formData = new FormData()
-                formData.append('file', file)
+                formData.append('file', blob)
                 formData.append('loginStaffId',edipao.getLoginStaffId())
                 $.ajax({
                     type: 'POST',

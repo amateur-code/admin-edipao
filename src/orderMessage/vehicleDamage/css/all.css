@@ -11,3 +11,6 @@
 .float-right {
   float: right;
 }
+.hide {
+  display: none !important;
+}
