@@ -133,18 +133,18 @@ tableFilter: 'TableFilter/tableFilter'
                     data: formData,
                     processData : false,
                     contentType : false,
-                }).done(res=>{
+                }).done(function(res){
                     if(res.code == 0){
                         edipao.request({
                             type: 'POST',
                             url: '/admin/lineTrack/updateLineTrack',
                             data: {
-                                lineId:  this.lineId,
+                                lineId:  _t.lineId,
                                 lineSource:  _t.lineDetail.lineSource,
                                 trackUrl: res.data.url,
                                 trackContent: JSON.stringify(pointData)
                             }
-                        }).then(res=>{
+                        }).then(function(res){
                             if(res.code == 0){
                                 _t.line = pointData
                             }
@@ -397,7 +397,7 @@ tableFilter: 'TableFilter/tableFilter'
                 data: {
                     lineId: _t.lineId,
                 }
-            }).then(res=>{
+            }).then(function(res){
                 if(res.code == 0){
                 
                     var orderListTplStr = orderListTpl.innerHTML;
@@ -430,7 +430,7 @@ tableFilter: 'TableFilter/tableFilter'
                 data: {
                     orderNo: orderNo,
                 }
-            }).then(res=>{
+            }).then(function(res){
                 if(res.code == 0){
                     _t.lineDetail.orderNo = orderNo;
                     _t.lineDetail.lineSource = 1;
