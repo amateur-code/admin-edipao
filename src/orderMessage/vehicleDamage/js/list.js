@@ -303,7 +303,11 @@ layui
         done: function (filters, reload) {
           filters = $.extend({},filters);
           var index = 1;
-          where = Object.assign({}, where);
+          var where = Object.assign({
+            loginStaffId: edipao.getLoginStaffId(),
+          }, where);
+          where["searchFieldDTOList[0].fieldName"] = "orderNo";
+          where["searchFieldDTOList[0].fieldValue"] = _this.orderNo;
           layui.each(filters, function (key, value) {
             if (key == "createTime") {
               where['searchFieldDTOList['+ index +'].fieldName'] = key;

@@ -20,14 +20,25 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
       $.when(_this.getDetail(), _this.getUpdate()).done(function (res1, res2) {
         res1 = res1[0];
         res2 = res2[0];
-        
+        if(res1.code == 0){
+          _this.detail = res1.data;
+          _this.detail.list = res1.data.images.split(",");
+          var updateData = {};
+          try {
+            updateData = JSON.parse(res2.data.modifyAfterJson.newMap);
+          } catch (error) {}
+          laytpl($("#preview").html()).render({detail: _this.detail, check: updateData}, function (html) {
+            $("#view").html(html);
+            zoomImg();
+          });
+        }
       });
     }else{
       _this.getDetail().done(function (res) {
         if(res.code == 0){
           _this.detail = res.data;
           _this.detail.list = res.data.images.split(",");
-          laytpl($("#preview").html()).render({detail: _this.detail, check: _this.detail}, function (html) {
+          laytpl($("#preview").html()).render({detail: _this.detail, check: {}}, function (html) {
             $("#view").html(html);
             zoomImg();
           });
@@ -71,10 +82,11 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
         return;
       }
       edipao.request({
-        url: "/admin/customer/truckNetwork/approval/result/save",
+        url: "/admin/order/damage/approval",
         method: "POST",
         data: {
           dataPk: _this.id,
+          orderNo: _this.detail.orderNo,
           checkResult: data.approvalResult,
           checkRemark: data.approvalRemark,
         }
