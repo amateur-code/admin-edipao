@@ -42,9 +42,9 @@
                     <!-- tabs切换 -->
                     <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
                         <ul class="layui-tab-title">
-                            <li>订单轨迹</li>
-                            <li>导入轨迹</li>
-                            <li class="layui-this">地图规划</li>
+                            <li lay-id="1">订单轨迹</li>
+                            <li lay-id="2">导入轨迹</li>
+                            <li class="layui-this" lay-id="3">地图规划</li>
                         </ul>
                         <div class="layui-tab-content" style="height: 120px;" id="tabConent"></div>
                     </div> 
@@ -91,27 +91,29 @@
             <button type="button" class="layui-btn layui-btn-sm select-btn" id="regionMapPoint">搜索</button>
         </div>
     </div>
+    <div class="select-order-dialog" id="select-order-dialog">
+        
+    </div>
 </body>
 <!-- tab切换内容模板 -->
 <script id="tabConentTpl" type="text/html">
-    <div class="layui-tab-item">
+    <div class="layui-tab-item {{d.lineSource == 1? 'layui-show' : ''}}">
         {{# if(d.lineSource && d.lineSource == 1){ }}
-            <div class="desc">轨迹数据来源订单OR00000001</div>
+            <div class="desc">轨迹数据来源订单{{d.orderNo}}</div>
             <div class="slelected">
                 <button class="layui-btn layui-btn-disabled">正在使用该方式</button>
-                <button class="layui-btn layui-btn-normal">播放轨迹</button>
-                <button class="layui-btn layui-btn-primary">重新规划</button>
+                <button class="layui-btn layui-btn-normal playLine">播放轨迹</button>
             </div>
         {{# } else { }}
             <div class="upload-handler">
                 <text class="label">订单号：</text>
                 <text class="upload-name">请选择订单号</text>
-                <button type="button" class="layui-btn layui-btn-lg upload-btn limit-choose">选择</button>
+                <button type="button" class="layui-btn layui-btn-lg upload-btn order-choose">选择</button>
             </div>
-            <button class="layui-btn layui-btn-lg choose-btn limit-choose">使用该方式</button>
+            <button class="layui-btn layui-btn-lg choose-btn">使用该方式</button>
         {{# } }}
     </div>
-    <div class="layui-tab-item">
+    <div class="layui-tab-item {{d.lineSource == 2? 'layui-show' : ''}}">
         {{# if(d.lineSource && d.lineSource == 2){ }}
             <div class="desc">数据来源于导入经纬度数据，下载数据</div>
             <div class="slelected">
@@ -128,15 +130,22 @@
             <button class="layui-btn layui-btn-lg choose-btn limit-choose">使用该方式</button>
         {{# } }}
     </div>
-    <div class="layui-tab-item layui-show">
+    <div class="layui-tab-item {{d.lineSource == 3? 'layui-show' : ''}}">
         <div class="desc">由地图自动生成一条规划线路。</div>
         {{# if(d.lineSource && d.lineSource == 3){ }}
+            <form class="layui-form">
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input type="checkbox" name="policy" checked="" lay-skin="switch" lay-text="高速优先|不走高速" lay-filter="policy" />
+                    </div>
+                </div>
+            </form>
             <div class="slelected">
                 <button class="layui-btn layui-btn-disabled">正在使用该方式</button>
                 <button class="layui-btn layui-btn-normal playLine">播放轨迹</button>
             </div>
         {{# } else { }}
-            <button class="layui-btn layui-btn-lg choose-btn choose-map-line">使用该方式</button>
+            <button class="layui-btn layui-btn-lg choose-btn">使用该方式</button>
         {{# } }}
     </div>
 </script>
@@ -158,7 +167,7 @@
                 {{# } else if(item.type == 2){ }}
                     <text class="it-txt">限行：{{item.startTime}} - {{item.endTime}}</text>
                 {{# } else if(item.type == 3) { }}
-                    <text class="it-txt">收费：{{item.price}}远</text>
+                    <text class="it-txt">收费：{{item.price}}元</text>
                 {{# } else { }}
                     <text class="it-txt">拆车：{{item.price}}元</text>
                 {{# } }}
@@ -305,6 +314,30 @@
         {{# } }}
         
     </div>
+</script>
+<!-- 订单选择模版 -->
+<script id="orderListTpl" type="text/html">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <table class="layui-table" >
+              <thead>
+                <tr>
+                  <th>订单号</th>
+                  <th>操作</th>
+                </tr> 
+              </thead>
+              <tbody>
+                {{#  layui.each(d.orderNoList, function(index, item){ }}
+                <tr>
+                  <td>{{item}}</td>
+                  <td> <a class="layui-btn layui-btn-normal order-select" data-no="{{item}}">选择</a></td>
+                </tr>
+                {{# }) }}
+              </tbody>
+            </table>
+        </div>
+    </div>
+    
 </script>
 
 <script src="https://mapapi.careland.com.cn/api/?key=6012dcd6278a2d4db3840604&v=1.3"></script>
