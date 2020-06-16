@@ -1069,34 +1069,6 @@ layui.config({
                 top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html?orderNo=" + id + "&perssionId=" + pid, false, "focus");
             });
         },
-        getExportData: function (cb) {
-            var _this = this;
-            var checkStatus = table.checkStatus('orderList');
-            if(checkStatus.data.length < 1){
-                if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
-                layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
-                exportLoading = true;
-                var param = where;
-                param['pageNo']= 1;
-                param['pageSize'] = 99999;
-                edipao.request({
-                    type: 'GET',
-                    url: '/admin/order/list',
-                    data: param,
-                    timeout: 100000,
-                }).done(function (res) {
-                    exportLoading = false;
-                    res.data = res.data || {};
-                    res.data.orderDTOList = res.data.orderDTOList || [];
-                    cb(res.data.orderDTOList);
-                }).fail(function () {
-                    exportLoading = false;
-                });
-            }else{
-                cb(checkStatus.data);
-            }
-            
-        },
         // getExportData: function (cb) {
         //     var _this = this;
         //     var checkStatus = table.checkStatus('orderList');
@@ -1104,32 +1076,60 @@ layui.config({
         //         if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
         //         layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
         //         exportLoading = true;
-        //         edipao.exportData({
-        //             params: where,
-        //             url: "/admin/order/list",
-        //             method: "GET",
-        //             pageSize: "pageSize",
-        //             limit: 99999,
-        //             checkFunction: function(res){
-        //                 return !(!res.data || !res.data["orderDTOList"] || res.data["orderDTOList"].length == 0);
-        //             }
+        //         var param = where;
+        //         param['pageNo']= 1;
+        //         param['pageSize'] = 99999;
+        //         edipao.request({
+        //             type: 'GET',
+        //             url: '/admin/order/list',
+        //             data: param,
+        //             timeout: 100000,
         //         }).done(function (res) {
-        //             var data = [];
         //             exportLoading = false;
-        //             if(res.length > 0){
-        //                 res.forEach(function (item) {
-        //                     data = data.concat(item.orderDTOList);
-        //                 });
-        //                 cb(data);
-        //             }else{
-        //                 exportLoading = false;
-        //             }
+        //             res.data = res.data || {};
+        //             res.data.orderDTOList = res.data.orderDTOList || [];
+        //             cb(res.data.orderDTOList);
+        //         }).fail(function () {
+        //             exportLoading = false;
         //         });
         //     }else{
         //         cb(checkStatus.data);
         //     }
             
         // },
+        getExportData: function (cb) {
+            var _this = this;
+            var checkStatus = table.checkStatus('orderList');
+            if(checkStatus.data.length < 1){
+                if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
+                layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
+                exportLoading = true;
+                edipao.exportData({
+                    params: where,
+                    url: "/admin/order/list",
+                    method: "GET",
+                    pageSize: "pageSize",
+                    limit: 99999,
+                    checkFunction: function(res){
+                        return !(!res.data || !res.data["orderDTOList"] || res.data["orderDTOList"].length == 0);
+                    }
+                }).done(function (res) {
+                    var data = [];
+                    exportLoading = false;
+                    if(res.length > 0){
+                        res.forEach(function (item) {
+                            data = data.concat(item.orderDTOList);
+                        });
+                        cb(data);
+                    }else{
+                        exportLoading = false;
+                    }
+                });
+            }else{
+                cb(checkStatus.data);
+            }
+            
+        },
         exportData: function exportExcel() {
             var _this = this;
             method.getExportData(function (data) {

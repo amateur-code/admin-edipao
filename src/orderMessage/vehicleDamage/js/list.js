@@ -274,7 +274,7 @@ layui
             });
             break;
           case "exportLog":
-            xadmin.open('导出日志', '../../OperateLog/log.html?type=10&action=exportLog');
+            xadmin.open('导出日志', '../../OperateLog/log.html?type=15&action=exportLog');
             break;
         }
       }

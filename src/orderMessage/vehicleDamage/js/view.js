@@ -99,8 +99,8 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
         data: {
           id: _this.id,
           orderNo: _this.detail.orderNo,
-          checkResult: data.approvalResult,
-          checkRemark: data.approvalRemark,
+          approvalResult: data.approvalResult == "reject" ? "1" : "0",
+          approvalRemark: data.approvalRemark,
         }
       }).done(function (res) {
         if(res.code == "0"){

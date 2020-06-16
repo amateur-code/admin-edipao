@@ -1,3 +1,4 @@
+window.firstUpload = true;
 layui.config({
 base: '../lib/'
 }).extend({
@@ -48,6 +49,7 @@ tableFilter: 'TableFilter/tableFilter'
                     viaStyle:true,
                     "autoDragging" : true,
                     onSearchComplete : function(obj){
+                        // if(firstUpload) return firstUpload = false;
                         _t.lineSelectCallback(obj);
                     }
                 }); 
@@ -72,7 +74,9 @@ tableFilter: 'TableFilter/tableFilter'
             }).done(function(res) {
                 if (res.code == 0) {
                     _t.lineDetail = res.data
-                    _t.line = JSON.parse(res.data.trackContent);
+                    try {
+                        _t.line = JSON.parse(res.data.trackContent);
+                    } catch (error) {}
                     _t.renderTabContent();
                     _t.renderDrivingRoute();
 
@@ -106,6 +110,9 @@ tableFilter: 'TableFilter/tableFilter'
                 _t.map.setCenter(trackInfo[0])
                 _t.Driving.search(trackInfo[0],trackInfo[trackInfo.length - 1],{trackInfo:trackInfo, via:[]})
             }else{
+                // var start = new Careland.GbPoint(39.95285575566585, 116.45549286816404); //北京
+                // var end = new Careland.GbPoint(37.867207343660674, 112.65422333691404); //太原
+                // _t.Driving.search(start, end)
                 _t.Driving.search(_t.lineDetail.startAddress,_t.lineDetail.endAddress)
             }
         },
@@ -120,6 +127,7 @@ tableFilter: 'TableFilter/tableFilter'
                 }
             }
             _t.Driving.getDrivingRouteData(function(res){
+                console.log(res)
                 var blob = new Blob([res], {
                     type: "application/octet-stream"
                 });
