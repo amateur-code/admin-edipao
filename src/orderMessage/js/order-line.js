@@ -1,27 +1,15 @@
-layui.config({
-base: '../lib/'
-}).extend({
-excel: 'layui_exts/excel.min',
-tableFilter: 'TableFilter/tableFilter'
-}).use(['jquery', 'table','layer','excel','tableFilter','form', 'upload', 'laytpl', 'laypage', 'laydate', 'element'], function () {
-    var table = layui.table;
+layui.use(['jquery','layer'], function () {
     var $ = layui.jquery;
-    var form = layui.form;
     var layer = layui.layer;
-    var upload = layui.upload;
-    var laytpl = layui.laytpl;
     var edipao = layui.edipao;
-    var excel = layui.excel;
-    var laypage = layui.laypage
-    var laydate = layui.laydate
-    var element = layui.element
 
     function OrderLine(){
-        this.user = JSON.parse(sessionStorage.user);
         this.orderNo =  edipao.urlGet().orderNo;
         this.orderId = edipao.urlGet().orderId;
         this.line = [];
         this.map = null;
+        this.guideLine = null;//规划的路径
+        this.line = null;//实际的路线
     }
 
     OrderLine.prototype = {
@@ -36,13 +24,14 @@ tableFilter: 'TableFilter/tableFilter'
                 map.load();
                 this.map = map;
                 this.Driving = new Careland.DrivingRoute(map, {
-                    "map" : map,
-                    "policy" : CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
-                    "multi":1,
-                    viaStyle:true
+                    "map": map,
+                    "policy": CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
+                    "multi": 1,
+                    viaStyle: true
                 }); 
-                this.trackHandler = new Careland.Track()
-               
+                this.trackHandler = new Careland.Track();
+                this.layer = new Careland.Layer('point', 'layer');        //创建点图层
+                this.map.addLayer(_t.layer);
             } catch (err){
                 console.log(err)
             }
@@ -93,9 +82,97 @@ tableFilter: 'TableFilter/tableFilter'
             }).done(function(res) {
                 if (res.code == 0) {
                     _t.guideLine = JSON.parse(res.data.trackContent);
+                    _t.guideDetail = res.data;
                     _t.addGuideLine = new Careland.Layer('polyline', 'addGuideLine');  
                     _t.map.addLayer(_t.addGuideLine);
                     _t.showGuideLine();
+                    _t.getDriverReportList(lineId);
+                }
+            })
+        },
+        getDriverReportList(lineId){
+            var _t = this;
+            edipao.request({
+                type: 'GET',
+                url: '/admin/order/report/getReportByLine',
+                data: {
+                    page: 1,
+                    pageSize: 5,
+                    lineId: lineId
+                }
+            }).done(function(res) {
+                if (res.code == 0) {
+                    if(_t.pageNumber == 1){
+                        _t.setLayPage(res.data.count);
+                    }
+
+                    _t.layer.clear();
+                    var baseStyle = {
+                      width: 23,
+                      height: 29,
+                      offsetX: -13,
+                      offsetY: -34,
+                      textOffsetX: -5,
+                      textOffsetY: -30,
+                      fontColor: "#FFF",
+                    }
+                    var style = new Careland.PointStyle(Object.assign({}, baseStyle, {
+                        src: location.origin + "/images/map_sign_pass.png",
+                    }));
+                    var startStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
+                        src: location.origin + "/images/map_sign_start.png",
+                    }));
+                    var endStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
+                        src: location.origin + "/images/map_sign_end.png",
+                    }));
+                    //创建文本标注点
+                    res.data.reports.push({
+                        lat: _t.guideLine[0].lat,
+                        lng: _t.guideLine[0].lng,
+                        address: _t.guideDetail.startAddress,
+                        type: "start",
+                    });
+                    res.data.reports.push({
+                        lat: _t.guideLine[_t.guideLine.length - 1].lat,
+                        lng: _t.guideLine[_t.guideLine.length - 1].lng,
+                        address: _t.guideDetail.endAddress,
+                        type: "end",
+                    });
+                    for(var report of res.data.reports){
+                        var marker = new Careland.Marker('image');
+                        if(report.type == "start"){
+                            marker.setStyle(startStyle);
+                        }else if(report.type == "end"){
+                            marker.setStyle(endStyle);
+                        }else{
+                            marker.setStyle(style);
+                        }
+                        var point = new Careland.GbPoint(report.lat,report.lng);
+                        marker.setPoint(point); 
+                        var text = '';
+                        if(report.type == 1){
+                            text = '限高：'+report.height+ '米';
+                        }else if(report.type == 2){
+                            text= '限行：'+report.startTime+' - '+report.endTime;
+                        }else if(report.type == 3){
+                            text= '收费：'+ report.price + '元';
+                        }else if(report.type == 4){
+                            text= '拆车：'+report.price+ '元';
+                        }
+                        _t.layer.add(marker);
+                        (function(marker,text,report,point){
+                            marker.addEventListener("click", function(){  
+                                var opts = {
+                                    point: point,
+                                    content: (text ? text + '</br>' : text) + report.address,
+                                    enableAutoPan: true
+                                };
+                                var mapInfoWin = new Careland.InfoWindow(opts);        
+                                _t.map.openInfoWindow(mapInfoWin, point);//通过核心类接口打开窗口
+                            });
+                        })(marker,text,report,point)
+                        
+                    }
                 }
             })
         },

@@ -3,7 +3,7 @@ layui.config({
 }).extend({
     excel: 'layui_exts/excel.min',
     tableFilter: 'TableFilter/tableFiltercopy'
-}).use(['jquery', 'table','layer','excel','tableFilter', 'laytpl', 'laypage'], function () {
+}).use(['jquery', 'table','layer','excel', 'tableFilter', 'laytpl', 'laypage'], function () {
     var table = layui.table,
         $ = layui.jquery,
         layer = layui.layer,

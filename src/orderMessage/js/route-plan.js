@@ -2,17 +2,14 @@ window.firstUpload = true;
 layui.config({
 base: '../lib/'
 }).extend({
-excel: 'layui_exts/excel.min',
-tableFilter: 'TableFilter/tableFilter'
-}).use(['jquery', 'table','layer','excel','tableFilter','form', 'upload', 'laytpl', 'laypage', 'laydate', 'element'], function () {
-    var table = layui.table;
+    excel: 'layui_exts/excel.min',
+    tableFilter: 'TableFilter/tableFilter'
+}).use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function () {
     var $ = layui.jquery;
     var form = layui.form;
     var layer = layui.layer;
-    var upload = layui.upload;
     var laytpl = layui.laytpl;
     var edipao = layui.edipao;
-    var excel = layui.excel;
     var laypage = layui.laypage
     var laydate = layui.laydate
     var element = layui.element
@@ -28,6 +25,7 @@ tableFilter: 'TableFilter/tableFilter'
         this.loc = {};
         this.line = '';
         this.map = null;
+        this.topLoadIndex = null;
     }
 
 
@@ -35,6 +33,7 @@ tableFilter: 'TableFilter/tableFilter'
         // 初始化
         init: function(){
             var _t = this;
+            this.topLoadIndex = layer.load(1);
             try{
                 //凯立德地图API功能
                 var point = new Careland.Point(419364916, 143908009);    //创建坐标点
@@ -72,17 +71,21 @@ tableFilter: 'TableFilter/tableFilter'
                     lineId: this.lineId
                 })
             }).done(function(res) {
+                layer.close(_t.topLoadIndex);
                 if (res.code == 0) {
                     _t.lineDetail = res.data
                     try {
-                        _t.line = JSON.parse(res.data.trackContent);
+                        _t.lineDetail.trackContent = JSON.parse(_t.lineDetail.trackContent);
+                        _t.line = _t.lineDetail.trackContent;
                     } catch (error) {}
                     _t.renderTabContent();
                     _t.renderDrivingRoute();
 
                     _t.bindLineEvents();
                 }
-            })
+            }).fail(function () { 
+                layer.close(_t.topLoadIndex);
+             });
         },
         renderTabContent(){
             var _t = this;
@@ -98,7 +101,7 @@ tableFilter: 'TableFilter/tableFilter'
             });
         },
         // 设置地图导航
-        renderDrivingRoute(){   
+        renderDrivingRoute(policy){
             var _t = this;         
             var trackInfo = [];
             if(Array.isArray(_t.line)){
@@ -106,9 +109,13 @@ tableFilter: 'TableFilter/tableFilter'
                     trackInfo.push(Careland.DrawTool.GbPointToKldPoint(point.lng,point.lat))
                 }
             }
-            if(trackInfo.length > 0){
-                _t.map.setCenter(trackInfo[0])
-                _t.Driving.search(trackInfo[0],trackInfo[trackInfo.length - 1],{trackInfo:trackInfo, via:[]})
+            var start = trackInfo[0];
+            var end = trackInfo[trackInfo.length - 1];
+            if(policy){
+                _t.Driving.search(start, end, {trackInfo:[], via: [start, end]})
+            }else if(trackInfo.length > 0){
+                _t.map.setCenter(start)
+                _t.Driving.search(start, end,{trackInfo: trackInfo, via:[]})
             }else{
                 // var start = new Careland.GbPoint(39.95285575566585, 116.45549286816404); //北京
                 // var end = new Careland.GbPoint(37.867207343660674, 112.65422333691404); //太原
@@ -126,8 +133,8 @@ tableFilter: 'TableFilter/tableFilter'
                     pointData.push({lng:gbPoint.lng,lat:gbPoint.lat});
                 }
             }
+            _t.line = pointData;
             _t.Driving.getDrivingRouteData(function(res){
-                console.log(res)
                 var blob = new Blob([res], {
                     type: "application/octet-stream"
                 });
@@ -241,7 +248,7 @@ tableFilter: 'TableFilter/tableFilter'
                     _t.bindEvents();
                     
                     _t.layer.clear();
-                    var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'https://open.careland.com.cn/docs/jsgeneric/example/image/poiMarker.png',fontColor:'#FFF'});
+                    var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src: location.origin + '/images/map_sign_pass.png',fontColor:'#FFF'});
                     //创建文本标注点
                     for(var report of res.data.reports){
                         var marker = new Careland.Marker('image');
@@ -453,32 +460,49 @@ tableFilter: 'TableFilter/tableFilter'
             element.on('tab(docDemoTabBrief)', function(data){
                 let source = this.getAttribute('lay-id');
                 if(source == 1){
-                     _t.lineDetail.lineSource = 1;
+                     // _t.lineDetail.lineSource = 1;
                     // _t.getOrderListByLineId()
                     // _t.getOrderLineTrack('OR00001414')
                 }else if(source == 2){
 
                 }else if(source == 3){
-                    _t.lineDetail.lineSource = 3;
+                    // _t.lineDetail.lineSource = 3;
                 }
-
-                 console.log(source)
             });
 
             form.on('switch(policy)', function(data){
-                console.log(data)
                 if(data.elem.checked){
+                    console.log("走高速")
                     _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS)
                 }else{
+                    console.log("不走高速")
                     _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS)
                 }
-                _t.renderDrivingRoute()
+                _t.renderDrivingRoute(true)
             });  
 
             $('#tabConent').on('click','.order-choose',function(e){
                 _t.getOrderListByLineId()
             })
-               
+            $("#tabConent").on("click", ".choose-btn",function (e) {
+                var source = e.target.dataset.source * 1;
+                switch(source){
+                    case 1:
+                        if(_t.lineDetail.lineSource != 1){
+                            layer.msg("请先选择订单");
+                            return;
+                        }
+                        break;
+                        case 2:
+                            break;
+                    case 3:
+                        _t.lineDetail.lineSource = source;
+                        _t.line = _t.lineDetail.trackContent;
+                        _t.renderDrivingRoute();
+                        _t.renderTabContent();
+                        break;
+                }
+            });
             $('#tabConent').on('click','.playLine',function(e){
                 if(!_t.line) return;
                 _t.paintLine();

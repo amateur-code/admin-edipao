@@ -34,7 +34,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
               }
             });
           } catch (error) {console.log(error)}
-          laytpl($("#preview").html()).render({detail: _this.detail, check: updateData}, function (html) {
+          laytpl($("#preview").html()).render({detail: _this.parseData(_this.detail), check: _this.parseData(updateData)}, function (html) {
             $("#view").html(html);
             if(!res2.data){
               $("#add_verify_text").removeClass("hide");
@@ -49,13 +49,26 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
         if(res.code == 0){
           _this.detail = res.data;
           _this.detail.list = res.data.images.split(",");
-          laytpl($("#preview").html()).render({detail: _this.detail, check: {}}, function (html) {
+          laytpl($("#preview").html()).render({detail: _this.parseData(_this.detail), check: {}}, function (html) {
             $("#view").html(html);
             zoomImg();
           });
         }
         _this.bindEvents();
       });
+    }
+  }
+  View.prototype.parseData = function (data) {
+    var entries = ["remark"];
+    Object.keys(data).forEach(function (key) {
+      if(entries.includes(key)) data[key] = dataNull(data[key]);
+    });
+    function dataNull(val) {
+      if((val == "" || val == null || val == undefined) && String(val) != "0"){
+        return "- -";
+      }else{
+        return val;
+      }
     }
   }
   View.prototype.getUpdate = function () {
