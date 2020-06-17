@@ -138,6 +138,12 @@ layui.use(['jquery','layer'], function () {
                         address: _t.guideDetail.endAddress,
                         type: "end",
                     });
+                    // res.data.reports.push({
+                    //     lat: "40.010684166666664",
+                    //     lng: "116.46739555555556",
+                    //     address: _t.guideDetail.endAddress,
+                    //     type: "",
+                    // });
                     for(var report of res.data.reports){
                         var marker = new Careland.Marker('image');
                         if(report.type == "start"){
@@ -187,7 +193,7 @@ layui.use(['jquery','layer'], function () {
             _t.map.setCenter(trackInfo[0])
             var polyline = new Careland.Polyline();
             polyline.setPoints(trackInfo);  
-            polyline.setStyle(new Careland.LineStyle({color:'red',size:5,opacity:100}));      
+            polyline.setStyle(new Careland.LineStyle({color:'rgb(105, 170, 0)',size:5,opacity:100}));      
             _t.addGuideLine.add(polyline); 
         },
 
@@ -256,8 +262,10 @@ layui.use(['jquery','layer'], function () {
                 if(text == '隐藏订单路线'){
                     $(e.target).text('展示订单路线');
                     _t.addOrderLine.clear();
+                    _t.trackHandler.hide();
                 }else{
                     _t.renderDrivingRoute();
+                    _t.trackHandler.show();
                     $(e.target).text('隐藏订单路线');
                 }
             })
@@ -274,8 +282,8 @@ layui.use(['jquery','layer'], function () {
             })
         },
 
-        // 设置地图导航
-        renderDrivingRoute(){   
+        // 真实路径
+        renderDrivingRoute(){
             var _t = this;
             var trackInfo = []
             for(var point of _t.line){
@@ -284,7 +292,8 @@ layui.use(['jquery','layer'], function () {
             _t.map.setCenter(trackInfo[0])
             var polyline = new Careland.Polyline();
             polyline.setPoints(trackInfo);  
-            polyline.setStyle(new Careland.LineStyle({color:'blue',size:5,opacity:100}));      
+            polyline.setStyle(new Careland.LineStyle({color:'rgb(17, 140, 255)',size:5,opacity:100}));      
+            return;
             _t.addOrderLine.add(polyline); 
         },
 
@@ -310,7 +319,7 @@ layui.use(['jquery','layer'], function () {
                 if(i%100 == 0){//每100个切割一段轨迹，
                     d++;
                     data[d] = [];
-                    linestyles[linestyles.length] = new Careland.LineStyle({color:getColor(),selectedColor:getColor(),size:6,selectedSize:6,opacity:50});
+                    linestyles[linestyles.length] = new Careland.LineStyle({color:"rgb(17, 140, 255)",selectedColor:getColor(),size:6,selectedSize:6,opacity:100});
                 }
                 var l = data[d].length;
                 data[d][l] = {};
@@ -330,28 +339,10 @@ layui.use(['jquery','layer'], function () {
             }
 
             this.trackHandler.clear();
-            this.trackHandler.setDefaultStyles({trackLineStyles:linestyles})
+            this.trackHandler.setDefaultStyles({trackLineStyles:linestyles});
             this.trackHandler.init(data);
             this.trackHandler.setSpeed(speed);
         },
-        // 根据轨迹回放
-        paintLine: function(){
-            var trackHandler = new Careland.Track();
-            trackHandler.clear();
-            trackHandler.setLoop(false); //是否播放结束继续播放
-            trackHandler.isShowPoint = false; 
-            trackHandler.isShowline = true;
-            trackHandler.isShowPointTip = true;
-            trackHandler.isShowPointText = false;
-            trackHandler.setDefaultStyles({trackLineStyles:linestyles})
-            var trackOrderCache = trackHandler.init(data);
-            trackHandler.setSpeed(speed);
-            trackHandler.addEventListener('onPlay', function (index) {
-                var count = trackHandler.getCount();
-            });
-            trackHandler.start();//开始
-        }
-
     }
     
     var orderLine = new OrderLine();

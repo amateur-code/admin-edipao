@@ -1,10 +1,5 @@
 window.firstUpload = true;
-layui.config({
-base: '../lib/'
-}).extend({
-    excel: 'layui_exts/excel.min',
-    tableFilter: 'TableFilter/tableFilter'
-}).use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function () {
+layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function () {
     var $ = layui.jquery;
     var form = layui.form;
     var layer = layui.layer;
@@ -26,6 +21,7 @@ base: '../lib/'
         this.line = '';
         this.map = null;
         this.topLoadIndex = null;
+        this.vias = [];
     }
 
 
@@ -48,7 +44,7 @@ base: '../lib/'
                     viaStyle:true,
                     "autoDragging" : true,
                     onSearchComplete : function(obj){
-                        // if(firstUpload) return firstUpload = false;
+                        if(firstUpload) return firstUpload = false;
                         _t.lineSelectCallback(obj);
                     }
                 }); 
@@ -75,6 +71,7 @@ base: '../lib/'
                 if (res.code == 0) {
                     _t.lineDetail = res.data
                     try {
+                        if(_t.lineDetail.wayPointJson) _t.vias = JSON.parse(_t.lineDetail.wayPointJson);
                         _t.lineDetail.trackContent = JSON.parse(_t.lineDetail.trackContent);
                         _t.line = _t.lineDetail.trackContent;
                     } catch (error) {}
@@ -112,15 +109,24 @@ base: '../lib/'
             var start = trackInfo[0];
             var end = trackInfo[trackInfo.length - 1];
             if(policy){
-                _t.Driving.search(start, end, {trackInfo:[], via: [start, end]})
+                var vias = [start, end].concat(_t.vias);
+                vias = vias.map(function (item) {
+                    return (Careland.DrawTool.GbPointToKldPoint(item.lat, item.lng));
+                });
+                _t.Driving.search(start, end, {trackInfo:[], via: vias})
             }else if(trackInfo.length > 0){
+                var vias = _t.vias;
+                vias = vias.map(function (item) {
+                    return (Careland.DrawTool.GbPointToKldPoint(item.lat, item.lng));
+                });
                 _t.map.setCenter(start)
-                _t.Driving.search(start, end,{trackInfo: trackInfo, via:[]})
+                _t.Driving.search(start, end,{trackInfo: trackInfo, via: vias})
             }else{
-                // var start = new Careland.GbPoint(39.95285575566585, 116.45549286816404); //北京
-                // var end = new Careland.GbPoint(37.867207343660674, 112.65422333691404); //太原
-                // _t.Driving.search(start, end)
-                _t.Driving.search(_t.lineDetail.startAddress,_t.lineDetail.endAddress)
+                var vias = _t.vias;
+                vias = vias.map(function (item) {
+                    return (Careland.DrawTool.GbPointToKldPoint(item.lat, item.lng));
+                });
+                _t.Driving.search(_t.lineDetail.startAddress,_t.lineDetail.endAddress, {trackInfo:[], via: vias});
             }
         },
         // 路线选择回掉
@@ -205,7 +211,6 @@ base: '../lib/'
             trackHandler.isShowPointTip = true;
             trackHandler.isShowPointText = false;
             trackHandler.setDefaultStyles({trackLineStyles:linestyles})
-            var trackOrderCache = trackHandler.init(data);
             trackHandler.setSpeed(speed);
             trackHandler.addEventListener('onPlay', function (index) {
                 var count = trackHandler.getCount();
@@ -248,7 +253,16 @@ base: '../lib/'
                     _t.bindEvents();
                     
                     _t.layer.clear();
-                    var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src: location.origin + '/images/map_sign_pass.png',fontColor:'#FFF'});
+                    var style = new Careland.PointStyle({
+                      width: 23,
+                      height: 29,
+                      offsetX: -13,
+                      offsetY: -34,
+                      textOffsetX: -5,
+                      textOffsetY: -30,
+                      fontColor: "#FFF",
+                      src: location.origin + "/images/map_sign_pass.png",
+                    });
                     //创建文本标注点
                     for(var report of res.data.reports){
                         var marker = new Careland.Marker('image');
@@ -392,7 +406,7 @@ base: '../lib/'
                         case 2:
                             txt = '已采纳';
                             break; 
-                        case 3:
+                        case 1:
                             txt = '取消采纳';
                             break;  
                     }

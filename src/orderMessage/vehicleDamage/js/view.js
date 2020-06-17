@@ -63,6 +63,7 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
     Object.keys(data).forEach(function (key) {
       if(entries.includes(key)) data[key] = dataNull(data[key]);
     });
+    return data;
     function dataNull(val) {
       if((val == "" || val == null || val == undefined) && String(val) != "0"){
         return "- -";
