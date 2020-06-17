@@ -54,6 +54,7 @@
             {{# if(permissionList.indexOf('交易记录导出') != -1){ }}    
             <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
             {{# } }}
+            <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
             <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
         </div>
     </script>
@@ -115,6 +116,8 @@
             permissionList = edipao.getMyPermission(); 
         window.permissionList = permissionList;    
         var params = edipao.urlGet();
+        var key = params.key;
+        var logKey = key == "productNo" ? 17 : 16;
         var tableKey ='BackService-' + params.key + '-trade-record';
         var tableWhere  = {
             [params.key]: params.id,
@@ -242,6 +245,9 @@
                 case 'export':
                 	exportData()
                     break;
+                case 'exportLog':
+                    xadmin.open('导出日志', '../OperateLog/log.html?type=' + logKey + '&action=exportLog');
+                    break;
                 case 'tableSet':
                 	xadmin.open('表格设置', './table-set.html?tableKey='+tableKey, 600)
                     break;
@@ -305,6 +311,11 @@
                 data.push(dataItem)
             })
             excel.exportExcel({sheet1: data}, '交易记录.xlsx', 'xlsx');
+            var params = {
+                operationModule: logKey,
+                operationRemark: key == "productNo" ? "导出后服产品交易记录" : "导出供应商档案交易记录"
+            }
+            edipao.exportLog(params);
         }
 
         table.on('toolbar(list)', handleEvent);

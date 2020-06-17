@@ -1,17 +1,10 @@
-layui.config({
-base: '../lib/'
-}).extend({
-excel: 'layui_exts/excel.min',
-tableFilter: 'TableFilter/tableFilter'
-}).use(['jquery', 'table','layer','excel','tableFilter','form', 'upload', 'laytpl', 'laypage', 'laydate', 'element'], function () {
-    var table = layui.table;
+window.firstUpload = true;
+layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function () {
     var $ = layui.jquery;
     var form = layui.form;
     var layer = layui.layer;
-    var upload = layui.upload;
     var laytpl = layui.laytpl;
     var edipao = layui.edipao;
-    var excel = layui.excel;
     var laypage = layui.laypage
     var laydate = layui.laydate
     var element = layui.element
@@ -27,12 +20,16 @@ tableFilter: 'TableFilter/tableFilter'
         this.loc = {};
         this.line = '';
         this.map = null;
+        this.topLoadIndex = null;
+        this.vias = [];
     }
+
 
     _routePlan.prototype = {
         // 初始化
         init: function(){
             var _t = this;
+            this.topLoadIndex = layer.load(1);
             try{
                 //凯立德地图API功能
                 var point = new Careland.Point(419364916, 143908009);    //创建坐标点
@@ -42,11 +39,12 @@ tableFilter: 'TableFilter/tableFilter'
                 this.map = map;
                 this.Driving = new Careland.DrivingRoute(map, {
                     "map" : map,
-                    "policy" : CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
+                    "policy" : CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS,
                     "multi":1,
                     viaStyle:true,
                     "autoDragging" : true,
                     onSearchComplete : function(obj){
+                        if(firstUpload) return firstUpload = false;
                         _t.lineSelectCallback(obj);
                     }
                 }); 
@@ -69,15 +67,22 @@ tableFilter: 'TableFilter/tableFilter'
                     lineId: this.lineId
                 })
             }).done(function(res) {
+                layer.close(_t.topLoadIndex);
                 if (res.code == 0) {
                     _t.lineDetail = res.data
-                    _t.line = JSON.parse(res.data.trackContent);
+                    try {
+                        if(_t.lineDetail.wayPointJson) _t.vias = JSON.parse(_t.lineDetail.wayPointJson);
+                        _t.lineDetail.trackContent = JSON.parse(_t.lineDetail.trackContent);
+                        _t.line = _t.lineDetail.trackContent;
+                    } catch (error) {}
                     _t.renderTabContent();
                     _t.renderDrivingRoute();
 
                     _t.bindLineEvents();
                 }
-            })
+            }).fail(function () { 
+                layer.close(_t.topLoadIndex);
+             });
         },
         renderTabContent(){
             var _t = this;
@@ -85,10 +90,15 @@ tableFilter: 'TableFilter/tableFilter'
                 tabConent = document.getElementById('tabConent');
             laytpl(getTabConentTpl).render(_t.lineDetail, function(html){
                 tabConent.innerHTML = html;
+
+                setTimeout(function(){
+                    form.render('checkbox'); 
+                },1000)
+                
             });
         },
         // 设置地图导航
-        renderDrivingRoute(){   
+        renderDrivingRoute(policy){
             var _t = this;         
             var trackInfo = [];
             if(Array.isArray(_t.line)){
@@ -96,11 +106,27 @@ tableFilter: 'TableFilter/tableFilter'
                     trackInfo.push(Careland.DrawTool.GbPointToKldPoint(point.lng,point.lat))
                 }
             }
-            if(trackInfo.length > 0){
-                _t.map.setCenter(trackInfo[0])
-                _t.Driving.search(trackInfo[0],trackInfo[trackInfo.length - 1],{trackInfo:trackInfo, via:[]})
+            var start = trackInfo[0];
+            var end = trackInfo[trackInfo.length - 1];
+            if(policy){
+                var vias = [start, end].concat(_t.vias);
+                vias = vias.map(function (item) {
+                    return (Careland.DrawTool.GbPointToKldPoint(item.lat, item.lng));
+                });
+                _t.Driving.search(start, end, {trackInfo:[], via: vias})
+            }else if(trackInfo.length > 0){
+                var vias = _t.vias;
+                vias = vias.map(function (item) {
+                    return (Careland.DrawTool.GbPointToKldPoint(item.lat, item.lng));
+                });
+                _t.map.setCenter(start)
+                _t.Driving.search(start, end,{trackInfo: trackInfo, via: vias})
             }else{
-                _t.Driving.search(_t.lineDetail.startAddress,_t.lineDetail.endAddress)
+                var vias = _t.vias;
+                vias = vias.map(function (item) {
+                    return (Careland.DrawTool.GbPointToKldPoint(item.lat, item.lng));
+                });
+                _t.Driving.search(_t.lineDetail.startAddress,_t.lineDetail.endAddress, {trackInfo:[], via: vias});
             }
         },
         // 路线选择回掉
@@ -113,13 +139,13 @@ tableFilter: 'TableFilter/tableFilter'
                     pointData.push({lng:gbPoint.lng,lat:gbPoint.lat});
                 }
             }
+            _t.line = pointData;
             _t.Driving.getDrivingRouteData(function(res){
                 var blob = new Blob([res], {
                     type: "application/octet-stream"
                 });
-                var file = new File([blob], '', {type: "application/octet-stream"})
                 let formData = new FormData()
-                formData.append('file', file)
+                formData.append('file', blob)
                 formData.append('loginStaffId',edipao.getLoginStaffId())
                 $.ajax({
                     type: 'POST',
@@ -127,18 +153,18 @@ tableFilter: 'TableFilter/tableFilter'
                     data: formData,
                     processData : false,
                     contentType : false,
-                }).done(res=>{
+                }).done(function(res){
                     if(res.code == 0){
                         edipao.request({
                             type: 'POST',
                             url: '/admin/lineTrack/updateLineTrack',
                             data: {
-                                lineId:  this.lineId,
+                                lineId:  _t.lineId,
                                 lineSource:  _t.lineDetail.lineSource,
                                 trackUrl: res.data.url,
                                 trackContent: JSON.stringify(pointData)
                             }
-                        }).then(res=>{
+                        }).then(function(res){
                             if(res.code == 0){
                                 _t.line = pointData
                             }
@@ -185,7 +211,6 @@ tableFilter: 'TableFilter/tableFilter'
             trackHandler.isShowPointTip = true;
             trackHandler.isShowPointText = false;
             trackHandler.setDefaultStyles({trackLineStyles:linestyles})
-            var trackOrderCache = trackHandler.init(data);
             trackHandler.setSpeed(speed);
             trackHandler.addEventListener('onPlay', function (index) {
                 var count = trackHandler.getCount();
@@ -228,7 +253,16 @@ tableFilter: 'TableFilter/tableFilter'
                     _t.bindEvents();
                     
                     _t.layer.clear();
-                    var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:'https://open.careland.com.cn/docs/jsgeneric/example/image/poiMarker.png',fontColor:'#FFF'});
+                    var style = new Careland.PointStyle({
+                      width: 23,
+                      height: 29,
+                      offsetX: -13,
+                      offsetY: -34,
+                      textOffsetX: -5,
+                      textOffsetY: -30,
+                      fontColor: "#FFF",
+                      src: location.origin + "/images/map_sign_pass.png",
+                    });
                     //创建文本标注点
                     for(var report of res.data.reports){
                         var marker = new Careland.Marker('image');
@@ -372,7 +406,7 @@ tableFilter: 'TableFilter/tableFilter'
                         case 2:
                             txt = '已采纳';
                             break; 
-                        case 3:
+                        case 1:
                             txt = '取消采纳';
                             break;  
                     }
@@ -391,7 +425,7 @@ tableFilter: 'TableFilter/tableFilter'
                 data: {
                     lineId: _t.lineId,
                 }
-            }).then(res=>{
+            }).then(function(res){
                 if(res.code == 0){
                 
                     var orderListTplStr = orderListTpl.innerHTML;
@@ -406,7 +440,7 @@ tableFilter: 'TableFilter/tableFilter'
                         type: 1,
                         title: "选择订单",
                         area: ['450px', '530px'],
-                        content:$("#select-order-dialog") ,
+                        content:$("#select-order-dialog"),
                         btn: ['关闭'],
                         btnAlign: 'c',
                         zIndex:9990, //层优先级
@@ -424,7 +458,7 @@ tableFilter: 'TableFilter/tableFilter'
                 data: {
                     orderNo: orderNo,
                 }
-            }).then(res=>{
+            }).then(function(res){
                 if(res.code == 0){
                     _t.lineDetail.orderNo = orderNo;
                     _t.lineDetail.lineSource = 1;
@@ -440,21 +474,49 @@ tableFilter: 'TableFilter/tableFilter'
             element.on('tab(docDemoTabBrief)', function(data){
                 let source = this.getAttribute('lay-id');
                 if(source == 1){
+                     // _t.lineDetail.lineSource = 1;
                     // _t.getOrderListByLineId()
                     // _t.getOrderLineTrack('OR00001414')
                 }else if(source == 2){
 
                 }else if(source == 3){
-
+                    // _t.lineDetail.lineSource = 3;
                 }
-
-                 console.log(source)
             });
+
+            form.on('switch(policy)', function(data){
+                if(data.elem.checked){
+                    console.log("走高速")
+                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS)
+                }else{
+                    console.log("不走高速")
+                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS)
+                }
+                _t.renderDrivingRoute(true)
+            });  
 
             $('#tabConent').on('click','.order-choose',function(e){
                 _t.getOrderListByLineId()
             })
-               
+            $("#tabConent").on("click", ".choose-btn",function (e) {
+                var source = e.target.dataset.source * 1;
+                switch(source){
+                    case 1:
+                        if(_t.lineDetail.lineSource != 1){
+                            layer.msg("请先选择订单");
+                            return;
+                        }
+                        break;
+                        case 2:
+                            break;
+                    case 3:
+                        _t.lineDetail.lineSource = source;
+                        _t.line = _t.lineDetail.trackContent;
+                        _t.renderDrivingRoute();
+                        _t.renderTabContent();
+                        break;
+                }
+            });
             $('#tabConent').on('click','.playLine',function(e){
                 if(!_t.line) return;
                 _t.paintLine();

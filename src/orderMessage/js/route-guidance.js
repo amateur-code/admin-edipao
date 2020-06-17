@@ -3,7 +3,7 @@ layui.config({
 }).extend({
     excel: 'layui_exts/excel.min',
     tableFilter: 'TableFilter/tableFiltercopy'
-}).use(['jquery', 'table','layer','excel','tableFilter', 'laytpl', 'laypage'], function () {
+}).use(['jquery', 'table','layer','excel', 'tableFilter', 'laytpl', 'laypage'], function () {
     var table = layui.table,
         $ = layui.jquery,
         layer = layui.layer,
@@ -18,7 +18,7 @@ layui.config({
     function _tableClass(){
         this.user = JSON.parse(sessionStorage.user);
         this.request = { loginStaffId: this.user.staffId };
-        this.pageNo = 1,
+        this.pageNo = 1;
         this.pageSize = 10;
         this.exportSize = 100000;
         this.exportHead = [];
@@ -51,10 +51,7 @@ layui.config({
         this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 200};
         this.tableFilterIns = null;
         this.tableIns = null;
-        this.where = Object.assign(this.request, {
-            pageNo: this.pageNo,
-            pageSize: this.pageSize
-        });
+        this.where = Object.assign({},this.request);
     }
 
     
@@ -119,7 +116,7 @@ layui.config({
                 url: layui.edipao.API_HOST+'/admin/line/list',
                 title: '订单列表',
                 method: "get",
-                page: false,
+                page: true,
                 request: {
                     pageName: 'pageNo',
                     limitName: 'pageSize'
@@ -142,7 +139,6 @@ layui.config({
                 },
                 done: function (res) {//表格渲染完成的回调
                     if(_t.pageNo == 1){
-                        _t.setLayPage(res.count);
                     }
                     if(reloadOption) {
                         _t.tableIns.reload(JSON.parse(JSON.stringify(reloadOption)));
@@ -160,24 +156,24 @@ layui.config({
             
         },
         // 设置分页
-        setLayPage: function(total){
-            var _t = this;
-            laypage.render({
-                elem: 'footer-laypage',
-                count: total,
-                layout: ['count', 'prev', 'page', 'next'],
-                limit: _t.pageSize,
-                jump: function(obj, first){
-                    _t.pageNo = obj.curr;
-                    _t.where = Object.assign(_t.request, {
-                        pageNo: obj.curr,
-                        pageSize: _t.pageSize
-                    });
-                    if(first) return;
-                    _t.tableRender();
-                }
-            });
-        },
+        // setLayPage: function(total){
+        //     var _t = this;
+        //     laypage.render({
+        //         elem: 'footer-laypage',
+        //         count: total,
+        //         layout: ['count', 'prev', 'page', 'next'],
+        //         limit: _t.pageSize,
+        //         jump: function(obj, first){
+        //             _t.pageNo = obj.curr;
+        //             _t.where = Object.assign(_t.request, {
+        //                 pageNo: obj.curr,
+        //                 pageSize: _t.pageSize
+        //             });
+        //             if(first) return;
+        //             _t.tableRender();
+        //         }
+        //     });
+        // },
         // 过滤
         filterData: function(){
             var _t = this;
@@ -237,11 +233,10 @@ layui.config({
                     if(reload){
                         reloadOption = { where: _t.where, page: { curr: 1 }};
                     }else{
-                        _t.tableIns.reload( { where: _t.where});
+                        _t.tableIns.reload( { where: _t.where, page: { curr: 1 }});
                     }
                 }
             })
-
 
         },
         // 导出
@@ -250,7 +245,10 @@ layui.config({
             edipao.request({
                 type: 'GET',
                 url: '/admin/line/list',
-                data: _t.where
+                data: Object.assign({},_t.where,{
+                    pageNo: 1,
+                    pageSize: this.exportSize
+                })
             }).done(function(res) {
                 if (res.code == 0) {
                     if(res.data){

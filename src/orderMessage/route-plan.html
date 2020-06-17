@@ -106,11 +106,11 @@
             </div>
         {{# } else { }}
             <div class="upload-handler">
-                <text class="label">订单号：</text>
-                <text class="upload-name">请选择订单号</text>
+                <span class="label">订单号：</span>
+                <span class="upload-name">请选择订单号</span>
                 <button type="button" class="layui-btn layui-btn-lg upload-btn order-choose">选择</button>
             </div>
-            <button class="layui-btn layui-btn-lg choose-btn">使用该方式</button>
+            <button data-source="1" class="layui-btn layui-btn-lg choose-btn">使用该方式</button>
         {{# } }}
     </div>
     <div class="layui-tab-item {{d.lineSource == 2? 'layui-show' : ''}}">
@@ -123,22 +123,29 @@
             </div>
         {{# } else { }}
             <div class="upload-handler">
-                <text class="label">轨迹数据：</text>
-                <text class="upload-name">请选择文件</text>
+                <span class="label">轨迹数据：</span>
+                <span class="upload-name">请选择文件</span>
                 <button type="button" class="layui-btn layui-btn-lg upload-btn limit-choose">选择</button>
             </div>
-            <button class="layui-btn layui-btn-lg choose-btn limit-choose">使用该方式</button>
+            <button data-source="2" class="layui-btn layui-btn-lg choose-btn limit-choose">使用该方式</button>
         {{# } }}
     </div>
     <div class="layui-tab-item {{d.lineSource == 3? 'layui-show' : ''}}">
         <div class="desc">由地图自动生成一条规划线路。</div>
         {{# if(d.lineSource && d.lineSource == 3){ }}
+            <form class="layui-form">
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input type="checkbox" name="policy" checked="" lay-skin="switch" lay-text="高速优先|不走高速" lay-filter="policy" />
+                    </div>
+                </div>
+            </form>
             <div class="slelected">
                 <button class="layui-btn layui-btn-disabled">正在使用该方式</button>
                 <button class="layui-btn layui-btn-normal playLine">播放轨迹</button>
             </div>
         {{# } else { }}
-            <button class="layui-btn layui-btn-lg choose-btn">使用该方式</button>
+            <button data-source="3" class="layui-btn layui-btn-lg choose-btn">使用该方式</button>
         {{# } }}
     </div>
 </script>
@@ -156,16 +163,16 @@
         <div class="layui-col-xs9">
             <div class="item-title">
                 {{#  if(item.type == 1){ }}
-                    <text class="it-txt">限高：{{item.height}}米</text>
+                    <span class="it-txt">限高：{{item.height}}米</span>
                 {{# } else if(item.type == 2){ }}
-                    <text class="it-txt">限行：{{item.startTime}} - {{item.endTime}}</text>
+                    <span class="it-txt">限行：{{item.startTime}} - {{item.endTime}}</span>
                 {{# } else if(item.type == 3) { }}
-                    <text class="it-txt">收费：{{item.price}}元</text>
+                    <span class="it-txt">收费：{{item.price}}元</span>
                 {{# } else { }}
-                    <text class="it-txt">拆车：{{item.price}}元</text>
+                    <span class="it-txt">拆车：{{item.price}}元</span>
                 {{# } }}
                 {{#  if(item.status != 4){ }}
-                    <text class="it-del" data-id="{{item.id}}">删除</text>
+                    <span class="it-del" data-id="{{item.id}}">删除</span>
                 {{# } }}
             </div>
             <div class="location-name">{{item.address}}</div>
@@ -254,7 +261,7 @@
                         <div class="layui-input-inline">
                             <input type="text" name="price" lay-verify="title" autocomplete="off" placeholder="0.00" class="layui-input">
                         </div>
-                        <text class="unit">元</text>
+                        <span class="unit">元</span>
                     </div>
                 </div>
             </div>
@@ -273,7 +280,7 @@
                         <div class="layui-input-inline">
                             <input type="text" name="price" lay-verify="title" autocomplete="off" placeholder="0.00" class="layui-input">
                         </div>
-                        <text class="unit">元</text>
+                        <span class="unit">元</text>
                     </div>
                 </div>
             </div>
@@ -333,6 +340,7 @@
     
 </script>
 
-<script src="https://mapapi.careland.com.cn/api/?key=6012dcd6278a2d4db3840604&v=1.3"></script>
+<!-- <script src="https://mapapi.careland.com.cn/api/?key=6012dcd6278a2d4db3840604&v=1.3"></script> -->
+<script src="https://test.careland.com.cn/kz/web/release_test/api/?key=888888888888888888888888&v=1.3"></script>
 <script src="./js/route-plan.js"></script>
 </html>
