@@ -76,7 +76,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">
             </label>
-            <button class="layui-btn margin_top15">取消</button>
+            <button class="layui-btn margin_top15" id="cancel">取消</button>
             <button class="layui-btn margin_top15" lay-filter="update" lay-submit>
                 确定
             </button>
@@ -316,7 +316,7 @@
                         <input type="text" name="deviateWay" id="deviateWay" value="{{d.detail.deviateWay}}"
                                lay-verify="deviateWayVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
-                        <div class="lay-xs">小时</div>
+                        <div class="lay-xs">KM</div>
                     </div>
                 </div>
             </div>
@@ -438,7 +438,7 @@
         // $('.layui-icon-help').on('click', function(){
         //     alert(1)
 
-            
+
             // layer.tips("<span>车辆轨迹</span><span>关联人员</span>", this, {tips:[2, '#663ff'], time:3000});
             // var that = this;
             // layer.tips('hahahaha', that); //在元素的事件回调体中，follow直接赋予this即可
@@ -491,14 +491,23 @@
             laytpl(feeInfo.innerHTML).render({detail: detail}, function (html) {
                 document.getElementById('view').innerHTML = html;
                 bindEvents();
+                btn1();
             })
         }
         function bindEvents(){
-            $(".w16").mouseover(function(e) {
+            $(".w16").click(function(e) {
                 layer.tips(tipMap[e.target.dataset.tip], this, {
                     tips: [1, "#000"]
                 });
             });
+        }
+        function btn1() {
+            $('#cancel').click(function () {
+                var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                // layer.closeAll();
+                parent.layer.close(index);
+            })
+
         }
     })
 </script>

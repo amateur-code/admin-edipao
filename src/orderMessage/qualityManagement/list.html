@@ -172,10 +172,20 @@
                         return dateConvert(d.transportAssignTime) || '- -'
                     }
                 },
-                {field: 'endPark', title: '收车网点', width: 200, align: 'center'},
+                {field: 'endPark', title: '收车网点', width: 200, align: 'center',templet:function (d) {
+                    return d.endPark || '- -'
+                    }},
                 {
                     field: 'driverName', title: '司机信息', width: 200, align: 'center', templet: function (d) {
-                        return d.driverName + d.driverPhone || '- -'
+                        if(d.driverName && d.driverPhone){
+                            return d.driverName +'-'+ d.driverPhone
+                        } else if(d.driverName==='' && d.driverPhone){
+                            return d.driverPhone
+                        } else if(d.driverName && d.driverPhone === ''){
+                            return d.driverName
+                        } else if(d.driverName=== '' && d.driverPhone === ''){
+                            return '- -'
+                        }
                     }
                 },
                 {
@@ -205,7 +215,7 @@
                 {
                     field: 'createOrderStatus', title: '转单', width: 200, align: 'center', templet: function (d) {
                         if (d.createOrderStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.createOrderTime === 0 ? '' : d.createOrderTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.createOrderTime === 0 ? '' : dateConvert(d.createOrderTime)) + '</p>'
                         } else if (d.createOrderStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.createOrderDelay + '小时<p style="line-height: 14px;">' + (d.createOrderTime === 0 ? '' : dateConvert(d.createOrderTime)) + '</p>'
                         }
@@ -214,7 +224,7 @@
                 {
                     field: 'dispatchStatus', title: '调度', width: 200, align: 'center', templet: function (d) {
                         if (d.dispatchStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.dispatchTime === 0 ? '' : d.dispatchTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.dispatchTime === 0 ? '' : dateConvert(d.dispatchTime)) + '</p>'
                         } else if (d.dispatchStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.dispatchDelay + '小时<p style="line-height: 14px;">' + (d.dispatchTime === 0 ? '' : dateConvert(d.dispatchTime)) + '</p>'
                         }
@@ -223,7 +233,7 @@
                 {
                     field: 'startStatus', title: '发车', width: 200, align: 'center', templet: function (d) {
                         if (d.startStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.startTime === 0 ? '' : d.startTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.startTime === 0 ? '' : dateConvert(d.startTime)) + '</p>'
                         } else if (d.startStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.startDelay + '小时<p style="line-height: 14px;">' + (d.startTime === 0 ? '' : dateConvert(d.startTime)) + '</p>'
                         }
@@ -232,7 +242,7 @@
                 {
                     field: 'outCityStatus', title: '出城', width: 200, align: 'center', templet: function (d) {
                         if (d.outCityStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.outCityTime === 0 ? '' : d.outCityTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.outCityTime === 0 ? '' : dateConvert(d.outCityTime)) + '</p>'
                         } else if (d.outCityStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.outCityDelay + '小时<p style="line-height: 14px;">' + (d.outCityTime === 0 ? '' : dateConvert(d.outCityTime)) + '</p>'
                         }
@@ -240,7 +250,15 @@
                 },
                 {
                     field: 'location', title: '当前位置', width: 200, align: 'center', templet: function (d) {
-                        return (d.location + dateConvert(d.locationTime)) || '- -'
+                        if(d.location !=='' && d.locationTime !== 0){
+                            return '<p style="line-height: 14px">' +d.location +'</p><p style="line-height: 14px">' + dateConvert(d.locationTime) + '</p>'
+                        } else if(d.location === '' && d.locationTime !== 0){
+                            return '<p style="line-height: 14px">' + dateConvert(d.locationTime) + '</p>'
+                        } else if(d.location !== '' && d.locationTime === 0){
+                            return '<p style="line-height: 14px">' +d.location +'</p>'
+                        } else {
+                            return '- -'
+                        }
                     }
                 },
                 {
@@ -256,7 +274,7 @@
                 {
                     field: 'returnStatus', title: '交车迟到', width: 200, align: 'center', templet: function (d) {
                         if (d.returnStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.returnTime === 0 ? '' : d.returnTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.returnTime === 0 ? '' : dateConvert(d.returnTime)) + '</p>'
                         } else if (d.returnStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.returnDelay + '小时<p style="line-height: 14px;">' + (d.returnTime === 0 ? '' : dateConvert(d.returnTime)) + '</p>'
                         }
@@ -265,7 +283,7 @@
                 {
                     field: 'dealerReceiveStatus', title: '扫码收车', width: 200, align: 'center', templet: function (d) {
                         if (d.dealerReceiveStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.dealerReceiveTime === 0 ? '' : d.dealerReceiveTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.dealerReceiveTime === 0 ? '' : dateConvert(d.dealerReceiveTime)) + '</p>'
                         } else if (d.dealerReceiveStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.dealerReceiveDelay + '小时<p style="line-height: 14px;">' + (d.dealerReceiveTime === 0 ? '' : dateConvert(d.dealerReceiveTime)) + '</p>'
                         }
@@ -274,7 +292,7 @@
                 {
                     field: 'dealerSignStatus', title: '合格证签收', width: 200, align: 'center', templet: function (d) {
                         if (d.dealerSignStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.dealerSignTime === 0 ? '' : d.dealerSignTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.dealerSignTime === 0 ? '' : dateConvert(d.dealerSignTime)) + '</p>'
                         } else if (d.dealerSignStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.dealerSignDelay + '小时<p style="line-height: 14px;">' + (d.dealerSignTime === 0 ? '' : dateConvert(d.dealerSignTime)) + '</p>'
                         }
@@ -283,7 +301,7 @@
                 {
                     field: 'timeInvalidStatus', title: '时效违背', width: 200, align: 'center', templet: function (d) {
                         if (d.timeInvalidStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.timeInvalid === 0 ? '' : d.timeInvalid) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.timeInvalid === 0 ? '' : dateConvert(d.timeInvalid)) + '</p>'
                         } else if (d.timeInvalidStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.timeInvalidDelay + '小时<p style="line-height: 14px;">' + (d.timeInvalid === 0 ? '' : dateConvert(d.timeInvalid)) + '</p>'
                         }
@@ -296,7 +314,7 @@
                     align: 'center',
                     templet: function (d) {
                         if (d.returnImgApprovalStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.returnImgApprovalTime === 0 ? '' : d.returnImgApprovalTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.returnImgApprovalTime === 0 ? '' : dateConvert(d.returnImgApprovalTime)) + '</p>'
                         } else if (d.returnImgApprovalStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.returnImgApprovalDelay + '小时<p style="line-height: 14px;">' + (d.returnImgApprovalTime === 0 ? '' : dateConvert(d.returnImgApprovalTime)) + '</p>'
                         }
@@ -305,7 +323,7 @@
                 {
                     field: 'prePayStatus', title: '预付款支付', width: 200, align: 'center', templet: function (d) {
                         if (d.prePayStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.prePayTime === 0 ? '' : d.prePayTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.prePayTime === 0 ? '' : dateConvert(d.prePayTime)) + '</p>'
                         } else if (d.prePayStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.prePayDelay + '小时<p style="line-height: 14px;">' + (d.prePayTime === 0 ? '' : dateConvert(d.prePayTime)) + '</p>'
                         }
@@ -314,7 +332,7 @@
                 {
                     field: 'arrivePayStatus', title: '到付款支付', width: 200, align: 'center', templet: function (d) {
                         if (d.arrivePayStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.arrivePayTime === 0 ? '' : d.arrivePayTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.arrivePayTime === 0 ? '' : dateConvert(d.arrivePayTime)) + '</p>'
                         } else if (d.arrivePayStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.arrivePayDelay + '小时<p style="line-height: 14px;">' + (d.arrivePayTime === 0 ? '' : dateConvert(d.arrivePayTime)) + '</p>'
                         }
@@ -323,7 +341,7 @@
                 {
                     field: 'tailPayStatus', title: '尾款支付', width: 200, align: 'center', templet: function (d) {
                         if (d.tailPayStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.tailPayTime === 0 ? '' : d.tailPayTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.tailPayTime === 0 ? '' : dateConvert(d.tailPayTime)) + '</p>'
                         } else if (d.tailPayStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.tailPayDelay + '小时<p style="line-height: 14px;">' + (d.tailPayTime === 0 ? '' : dateConvert(d.tailPayTime)) + '</p>'
                         }
@@ -332,7 +350,7 @@
                 {
                     field: 'reportHandleStatus', title: '上报处理', width: 200, align: 'center', templet: function (d) {
                         if (d.reportHandleStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.reportHandleTime === 0 ? '' : d.reportHandleTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.reportHandleTime === 0 ? '' : dateConvert(d.reportHandleTime)) + '</p>'
                         } else if (d.reportHandleStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.reportHandleDelay + '小时<p style="line-height: 14px;">' + (d.reportHandleTime === 0 ? '' : dateConvert(d.reportHandleTime)) + '</p>'
                         }

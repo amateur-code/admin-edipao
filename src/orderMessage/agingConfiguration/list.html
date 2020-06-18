@@ -236,7 +236,7 @@
                     <div class="layui-row">
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">线路偏移：</label>
-                            <span>{{d.detail.deviateWay}}小时</span>
+                            <span>{{d.detail.deviateWay}}KM</span>
                             <span data-tip="tip20" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
@@ -341,7 +341,7 @@
             $('#view3').on('click', function () {
                 xadmin.open('修改', './edit.html', 1150);
             })
-            $('.w16').mouseover(function (e) {
+            $('.w16').click(function (e) {
                 layer.tips(tipMap[e.target.dataset.tip], $(this), {
                     tips: [1, "#000"]
                 });

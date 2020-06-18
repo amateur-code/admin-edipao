@@ -130,7 +130,7 @@
                 {
                     field: 'outCarportStatus', title: '出库时间', width: 200, align: 'center', templet: function (d) {
                         if (d.outCarportStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.outCarportTime === 0 ? '' : d.outCarportTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.outCarportTime === 0 ? '' : dateConvert(d.outCarportTime)) + '</p>'
                         } else if (d.outCarportStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.outCarportDelay + '小时<p style="line-height: 14px;">' + (d.outCarportTime === 0 ? '' : dateConvert(d.outCarportTime)) + '</p>'
                         }
@@ -139,7 +139,7 @@
                 {
                     field: 'fetchStatus', title: '提车', width: 200, align: 'center', templet: function (d) {
                         if (d.fetchStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.fetchTime === 0 ? '' : d.fetchTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.fetchTime === 0 ? '' : dateConvert(d.fetchTime)) + '</p>'
                         } else if (d.fetchStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.fetchDelay + '小时<p style="line-height: 14px;">' + (d.fetchTime === 0 ? '' : dateConvert(d.fetchTime)) + '</p>'
                         }
@@ -148,7 +148,7 @@
                 {
                     field: 'fetchBillStatus', title: '提车单', width: 200, align: 'center', templet: function (d) {
                         if (d.fetchBillStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.fetchBillTime === 0 ? '' : d.fetchBillTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.fetchBillTime === 0 ? '' : dateConvert(d.fetchBillTime)) + '</p>'
                         } else if (d.fetchBillStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.fetchBillDelay + '小时<p style="line-height: 14px;">' + (d.fetchBillTime === 0 ? '' : dateConvert(d.fetchBillTime)) + '</p>'
                         }
@@ -157,7 +157,7 @@
                 {
                     field: 'relayBillStatus', title: '交接单', width: 200, align: 'center', templet: function (d) {
                         if (d.relayBillStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.relayBillTime === 0 ? '' : d.relayBillTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.relayBillTime === 0 ? '' : dateConvert(d.relayBillTime)) + '</p>'
                         } else if (d.relayBillStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.relayBillDelay + '小时<p style="line-height: 14px;">' + (d.relayBillTime === 0 ? '' : dateConvert(d.relayBillTime)) + '</p>'
                         }
@@ -166,7 +166,7 @@
                 {
                     field: 'serviceNoteGetStatus', title: '服务手册', width: 200, align: 'center', templet: function (d) {
                         if (d.serviceNoteGetStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.serviceNoteGetTime === 0 ? '' : d.serviceNoteGetTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.serviceNoteGetTime === 0 ? '' : dateConvert(d.serviceNoteGetTime)) + '</p>'
                         } else if (d.serviceNoteGetStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.serviceNoteGetDelay + '小时<p style="line-height: 14px;">' + (d.serviceNoteGetTime === 0 ? '' : dateConvert(d.serviceNoteGetTime)) + '</p>'
                         }
@@ -175,7 +175,7 @@
                 {
                     field: 'qualifiedStatus', title: '合格证', width: 200, align: 'center', templet: function (d) {
                         if (d.qualifiedStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.qualifiedTime === 0 ? '' : d.qualifiedTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.qualifiedTime === 0 ? '' : dateConvert(d.qualifiedTime)) + '</p>'
                         } else if (d.qualifiedStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.qualifiedDelay + '小时<p style="line-height: 14px;">' + (d.qualifiedTime === 0 ? '' : dateConvert(d.qualifiedTime)) + '</p>'
                         }
@@ -184,7 +184,7 @@
                 {
                     field: 'tempLicenseStatus', title: '临牌', width: 200, align: 'center', templet: function (d) {
                         if (d.tempLicenseStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.tempLicenseTime === 0 ? '' : d.tempLicenseTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.tempLicenseTime === 0 ? '' : dateConvert(d.tempLicenseTime)) + '</p>'
                         } else if (d.tempLicenseStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.tempLicenseDelay + '小时<p style="line-height: 14px;">' + (d.tempLicenseTime === 0 ? '' : dateConvert(d.tempLicenseTime)) + '</p>'
                         }
@@ -193,7 +193,7 @@
                 {
                     field: 'materialPackageStatus', title: '资料打包', width: 200, align: 'center', templet: function (d) {
                         if (d.materialPackageStatus === 1) {
-                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.materialPackageTime === 0 ? '' : d.materialPackageTime) + '</p>'
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.materialPackageTime === 0 ? '' : dateConvert(d.materialPackageTime)) + '</p>'
                         } else if (d.materialPackageStatus === 2) {
                             return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.materialPackageDelay + '小时<p style="line-height: 14px;">' + (d.materialPackageTime === 0 ? '' : dateConvert(d.materialPackageTime)) + '</p>'
                         }
@@ -201,7 +201,15 @@
                 },
                 {
                     field: 'driverName', title: '短驳司机', width: 200, align: 'center', templet: function (d) {
-                        return d.driverName + d.driverPhone || '- -'
+                        if(d.driverName && d.driverPhone){
+                            return d.driverName +'-'+ d.driverPhone
+                        } else if(d.driverName==='' && d.driverPhone){
+                            return d.driverPhone
+                        } else if(d.driverName && d.driverPhone === ''){
+                            return d.driverName
+                        } else if(d.driverName=== '' && d.driverPhone === ''){
+                            return '- -'
+                        }
                     }
                 },
                 {
@@ -216,9 +224,6 @@
                 },
                 {
                     field: 'waybillType', title: '类型', width: 200, align: 'center', templet: function (d) {
-                        // if(d.waybillType ==1){
-                        // return d.waybillType || '- -'
-                        // }
                         if (d.waybillType === 1) {
                             return '单车'
                         } else if (d.waybillType === 2) {
