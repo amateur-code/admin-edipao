@@ -1,0 +1,572 @@
+<!doctype html>
+<html class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>E地跑运营平台</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <meta http-equiv="Expires" CONTENT="-1">
+    <meta http-equiv="Cache-Control" CONTENT="no-cache">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css">
+    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
+    <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../lib/layui/layui.js"></script>
+    <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+        // 是否开启刷新记忆tab功能
+        // var is_remember = false;
+    </script>
+    <style type="text/css">
+        .layui-table-tool-temp {
+            padding-right: 0;
+        }
+
+        .layui-btn-container {
+            text-align: right;
+        }
+
+        .opeartion_icon {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 45px;
+        }
+    </style>
+</head>
+<body>
+<div class="x-nav">
+        <span class="layui-breadcrumb">
+            <a>品质管理</a>
+            <a>
+                <cite>车辆</cite>
+            </a>
+        </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()"
+       title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+    </a>
+</div>
+<div class="layui-fluid" style="background-color: #fff;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <table id="costList1" lay-filter="costList1"></table>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="headerBtns">
+    <div class="layui-btn-container">
+        <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索
+        </button>
+        <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
+        <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
+    </div>
+</script>
+<script type="text/html" id="stffList">
+    <a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.receiveCarNetworkCount}}</a>
+</script>
+<script type="text/javascript">
+    //定义时间转换函数
+    function dateConvert(dateParms) {
+        if (dateParms && dateParms != 0 && dateParms != undefined && dateParms != null) {
+            var r = dateParms.toString().replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6")
+        }
+        //返回处理结果
+        return r;
+    }
+
+    layui.config({
+        base: '../../lib/'
+    }).extend({
+        excel: 'layui_exts/excel.min',
+        tableFilter: 'TableFilter/tableFiltercopy'
+    }).use(['table', 'layer', 'excel', 'tableFilter', 'element'], function (table, layer, excel, tableFilter, element) {
+        var reloadOption = null;
+        var xadmin = layui.xadmin,
+            edipao = layui.edipao,
+            tableKey = 'SystemSetting-CostAllocation-list',
+            tableCols = [ //表头
+                {checkbox: true},
+                {
+                    field: 'vinCode', title: 'vin码', width: 200, templet: function (d) {
+                        return d.vinCode || '- -'
+                    }
+                },
+                {
+                    field: 'waybillStatus', title: '状态', width: 200, templet: function (d) {
+                        if (d.waybillStatus === 1) {
+                            return '待调度'
+                        } else if (d.waybillStatus === 2) {
+                            return '待发车'
+                        } else if (d.waybillStatus === 3) {
+                            return '运输中'
+                        } else if (d.waybillStatus === 4) {
+                            return '已收车'
+                        } else if (d.waybillStatus === 5) {
+                            return '已完结'
+                        } else if (d.waybillStatus === 6) {
+                            return '已取消'
+                        } else {
+                            return '- -'
+                        }
+                    }
+                },
+                {
+                    field: 'transportAssignTime', title: '运输商指派时间', width: 200, templet: function (d) {
+                        return dateConvert(d.transportAssignTime) || '- -'
+                    }
+                },
+                {
+                    field: 'outCarportStatus', title: '出库时间', width: 200, align: 'center', templet: function (d) {
+                        if (d.outCarportStatus === 1) {
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.outCarportTime === 0 ? '' : d.outCarportTime) + '</p>'
+                        } else if (d.outCarportStatus === 2) {
+                            return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.outCarportDelay + '小时<p style="line-height: 14px;">' + (d.outCarportTime === 0 ? '' : dateConvert(d.outCarportTime)) + '</p>'
+                        }
+                    }
+                },
+                {
+                    field: 'fetchStatus', title: '提车', width: 200, align: 'center', templet: function (d) {
+                        if (d.fetchStatus === 1) {
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.fetchTime === 0 ? '' : d.fetchTime) + '</p>'
+                        } else if (d.fetchStatus === 2) {
+                            return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.fetchDelay + '小时<p style="line-height: 14px;">' + (d.fetchTime === 0 ? '' : dateConvert(d.fetchTime)) + '</p>'
+                        }
+                    }
+                },
+                {
+                    field: 'fetchBillStatus', title: '提车单', width: 200, align: 'center', templet: function (d) {
+                        if (d.fetchBillStatus === 1) {
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.fetchBillTime === 0 ? '' : d.fetchBillTime) + '</p>'
+                        } else if (d.fetchBillStatus === 2) {
+                            return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.fetchBillDelay + '小时<p style="line-height: 14px;">' + (d.fetchBillTime === 0 ? '' : dateConvert(d.fetchBillTime)) + '</p>'
+                        }
+                    }
+                },
+                {
+                    field: 'relayBillStatus', title: '交接单', width: 200, align: 'center', templet: function (d) {
+                        if (d.relayBillStatus === 1) {
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.relayBillTime === 0 ? '' : d.relayBillTime) + '</p>'
+                        } else if (d.relayBillStatus === 2) {
+                            return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.relayBillDelay + '小时<p style="line-height: 14px;">' + (d.relayBillTime === 0 ? '' : dateConvert(d.relayBillTime)) + '</p>'
+                        }
+                    }
+                },
+                {
+                    field: 'serviceNoteGetStatus', title: '服务手册', width: 200, align: 'center', templet: function (d) {
+                        if (d.serviceNoteGetStatus === 1) {
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.serviceNoteGetTime === 0 ? '' : d.serviceNoteGetTime) + '</p>'
+                        } else if (d.serviceNoteGetStatus === 2) {
+                            return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.serviceNoteGetDelay + '小时<p style="line-height: 14px;">' + (d.serviceNoteGetTime === 0 ? '' : dateConvert(d.serviceNoteGetTime)) + '</p>'
+                        }
+                    }
+                },
+                {
+                    field: 'qualifiedStatus', title: '合格证', width: 200, align: 'center', templet: function (d) {
+                        if (d.qualifiedStatus === 1) {
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.qualifiedTime === 0 ? '' : d.qualifiedTime) + '</p>'
+                        } else if (d.qualifiedStatus === 2) {
+                            return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.qualifiedDelay + '小时<p style="line-height: 14px;">' + (d.qualifiedTime === 0 ? '' : dateConvert(d.qualifiedTime)) + '</p>'
+                        }
+                    }
+                },
+                {
+                    field: 'tempLicenseStatus', title: '临牌', width: 200, align: 'center', templet: function (d) {
+                        if (d.tempLicenseStatus === 1) {
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.tempLicenseTime === 0 ? '' : d.tempLicenseTime) + '</p>'
+                        } else if (d.tempLicenseStatus === 2) {
+                            return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.tempLicenseDelay + '小时<p style="line-height: 14px;">' + (d.tempLicenseTime === 0 ? '' : dateConvert(d.tempLicenseTime)) + '</p>'
+                        }
+                    }
+                },
+                {
+                    field: 'materialPackageStatus', title: '资料打包', width: 200, align: 'center', templet: function (d) {
+                        if (d.materialPackageStatus === 1) {
+                            return '<p style="line-height: 14px">正常</p><p style="line-height: 14px">' + (d.materialPackageTime === 0 ? '' : d.materialPackageTime) + '</p>'
+                        } else if (d.materialPackageStatus === 2) {
+                            return '<p style="line-height: 14px;color: #EE5B22;">延迟' + d.materialPackageDelay + '小时<p style="line-height: 14px;">' + (d.materialPackageTime === 0 ? '' : dateConvert(d.materialPackageTime)) + '</p>'
+                        }
+                    }
+                },
+                {
+                    field: 'driverName', title: '短驳司机', width: 200, align: 'center', templet: function (d) {
+                        return d.driverName + d.driverPhone || '- -'
+                    }
+                },
+                {
+                    field: 'parkAddress', title: '停放位置', width: 200, align: 'center', templet: function (d) {
+                        return d.parkAddress || '- -'
+                    }
+                },
+                {
+                    field: 'keyAddress', title: '钥匙', width: 200, align: 'center', templet: function (d) {
+                        return d.keyAddress || '- -'
+                    }
+                },
+                {
+                    field: 'waybillType', title: '类型', width: 200, align: 'center', templet: function (d) {
+                        // if(d.waybillType ==1){
+                        // return d.waybillType || '- -'
+                        // }
+                        if (d.waybillType === 1) {
+                            return '单车'
+                        } else if (d.waybillType === 2) {
+                            return '背车'
+                        } else {
+                            return '- -'
+                        }
+                    }
+                },
+                {
+                    field: 'relationVinCode', title: '关联vin码', width: 200, align: 'center', templet: function (d) {
+                        return d.relationVinCode || '- -'
+                    }
+                },
+                {
+                    field: 'relationOrderNo', title: '关联订单号', width: 200, align: 'center', templet: function (d) {
+                        return d.relationOrderNo || '- -'
+                    }
+                }
+            ],
+            tableIns,
+            tableFilterIns,
+            tableWhere = {
+                loginStaffId: edipao.getLoginStaffId()
+            },
+            permissionList = edipao.getMyPermission();
+        window.permissionList = permissionList;
+
+        edipao.request({
+            type: 'GET',
+            url: '/admin/table/show-field/get',
+            data: {
+                tableName: tableKey
+            }
+        }).done(function (res) {
+            if (res.code == 0) {
+                if (res.data) {
+                    var showList = [];
+                    try {
+                        showList = JSON.parse(res.data);
+                    } catch (e) {
+                    }
+                    layui.each(tableCols, function (index, item) {
+                        if (item.field == "operation") return;
+                        if (item.field && showList.indexOf(item.field) == -1) {
+                            item.hide = true;
+                        }
+                    })
+                }
+                renderTable();
+            }
+        })
+        var resizeTime = null;
+
+        function resizeTable() {
+            var w = "100px";
+            var backw = "350px";
+            var backl = "-1px";
+            var l = "-250px";
+            var dur = 500;
+            $(".opeartion_icon").removeClass("layui-icon-next").addClass("layui-icon-prev");
+            if (resizeTime) clearTimeout(resizeTime);
+            resizeTime = setTimeout(function () {
+                $(".layui-table-main td[data-field=operation]").css("border-color", "#ffffff").css("background", "#ffffff").find(".layui-table-cell").css("width", w).html("");
+                $(".layui-table-box>.layui-table-header th[data-field=operation]").css("border", "none").css("color", "#f2f2f2");
+                var $fixed = $(".layui-table-fixed.layui-table-fixed-r");
+                $fixed.removeClass("layui-hide").find(".layui-table-body").css("height", "auto");
+                $fixed.find(".layui-table-header").css("overflow", "visible")
+                $fixed.find(".layui-table-filter").css("left", "60px");
+                $fixed.find("thead .layui-table-cell").css("position", "relative");
+                if (!$fixed.find(".opeartion_icon").length) $fixed.find("thead .layui-table-cell").append("<i class='layui-icon opeartion_icon layui-icon-prev'></i>");
+                $fixed.animate({"right": l}, 500, function () {
+                    $(".opeartion_icon").unbind().on("click", function (e) {
+                        var $this = $(this);
+                        if ($this.hasClass("layui-icon-prev")) {
+                            $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", backw);
+                            $this.removeClass("layui-icon-prev").addClass("layui-icon-next");
+                            $fixed.animate({"right": backl}, 500);
+                        } else {
+                            $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", w);
+                            $this.removeClass("layui-icon-next").addClass("layui-icon-prev");
+                            $fixed.animate({"right": l}, 500);
+                        }
+                    });
+                });
+            }, dur);
+        }
+
+        function renderTable() {
+            tableIns = table.render({
+                id: 'costList1',
+                elem: '#costList1',
+                // method: 'post',
+                url: edipao.API_HOST + '/admin/quality/truck/list',
+                request: {
+                    pageName: 'pageNo',
+                    limitName: 'pageSize'
+                },
+                where: tableWhere,
+                parseData: function (res) { //res 即为原始返回的数据
+                    edipao.codeMiddleware(res);
+                    console.log(res)
+                    return {
+                        code: res.code, //解析接口状态
+                        msg: res.message, //解析提示文本
+                        count: res.data.totalSize, //解析数据长度
+                        data: res.data.qualityTruckList //解析数据列表
+                    };
+                },
+                page: true,
+                cols: [tableCols],
+                toolbar: '#headerBtns',
+                defaultToolbar: [],
+                done: function (res, curr, count) {
+                    $(window).unbind("resize");
+                    resizeTable();
+                    if (res.data == null) {
+                        $('.layui-table-header').css('overflow-x', 'scroll')
+                    } else {
+                        $('.layui-table-header').css('overflow', 'hidden')
+                    }
+                    if (reloadOption) {
+                        tableIns.reload(JSON.parse(JSON.stringify(reloadOption)));
+                        reloadOption = false;
+                    }
+                    tableFilterIns && tableFilterIns.reload() // 搜索
+                }
+            });
+
+            let filtersHeader = [];
+            layui.each(tableCols, function (index, el) {
+                if (el.field) {
+                    let item = {field: el.field};
+                    if (el.field == 'receiveCarNetworkCount') {
+                        item.type = 'numberslot'
+                    } else if (el.field == 'status') {
+                        item.type = 'checkbox'
+                        item.data = [
+                            {"key": "有效", "value": "有效"},
+                            {"key": "无效", "value": "无效"}
+                        ]
+                    }
+                    if (el.field != "operation") {
+                        filtersHeader.push(item)
+                    }
+                }
+            });
+            tableFilterIns = tableFilter.render({
+                elem: '#costList1',
+                mode: 'self',
+                filters: filtersHeader,//过滤项配置
+                done: function (filters, reload) {
+                    filters = $.extend({}, filters);
+                    let index = 0,
+                        where = {
+                            loginStaffId: edipao.getLoginStaffId()
+                        };
+                    layui.each(filters, function (key, value) {
+                        where['searchFieldDTOList[' + index + '].fieldName'] = key;
+                        if (key == 'receiveCarNetworkCount') {
+                            where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
+                            where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+                        } else if (key == 'status') {
+                            where['searchFieldDTOList[' + index + '].fieldListValue'] = value.join(',');
+                        } else {
+                            where['searchFieldDTOList[' + index + '].fieldValue'] = value;
+                        }
+                        index++;
+                    })
+                    tableWhere = where;
+                    if (reload) {
+                        reloadOption = {where: where, page: {curr: 1}};
+                    } else {
+                        tableIns.reload({where: where, page: {curr: 1}});
+                    }
+                }
+            })
+
+        }
+
+        function handleEvent(obj) {
+            var data = obj.data;
+            obj.event == 'export' && permissionList.indexOf('导出') == -1 && (obj.event = 'reject');
+
+            switch (obj.event) {
+                case 'reject':
+                    layer.alert('你没有访问权限', {icon: 2});
+                    break;
+                case 'export':
+                    exportData();
+                    break;
+                case 'tableSet':
+                    xadmin.open('表格设置', './table-set.html', 600);
+                    break;
+                case "reset_search":
+                    edipao.resetSearch("costList1", function () {
+                        location.reload();
+                    });
+                    break;
+            }
+        }
+
+        function exportData() {
+            var checkStatus = table.checkStatus('costList1');
+            if (checkStatus.data.length > 0) {
+                exportXlsx(checkStatus.data)
+                return;
+            }
+            let where = JSON.parse(JSON.stringify(tableWhere));
+            where.pageNo = 1;
+            where.pageSize = 10000;
+            edipao.request({
+                type: 'GET',
+                url: '/admin/quality/truck/list',
+                data: where
+            }).then(function (res) {
+                if (res.code == 0) {
+                    exportXlsx(res.data.qualityTruckList);
+                }
+            })
+        }
+
+        function exportXlsx(list) {
+            console.log(list)
+            list.forEach(item => {
+                if (item.transportAssignTime) {
+                    item.transportAssignTime = dateConvert(item.transportAssignTime)
+                }
+                if (item.outCarportStatus === 1) {
+                    item.outCarportStatus = '正常'
+                } else if (item.outCarportStatus === 1 && item.outCarportTime !== 0) {
+                    item.outCarportStatus = '正常' + dateConvert(item.outCarportTime)
+                } else if (item.outCarportStatus === 2) {
+                    item.outCarportStatus = '延迟'
+                } else if (item.outCarportStatus === 2 && item.outCarportDelay !== 0) {
+                    item.outCarportStatus = '延迟' + item.outCarportDelay
+                } else if (item.outCarportStatus === 2 && item.outCarportDelay !== 0 && item.outCarportTime !== 0) {
+                    item.outCarportStatus = '延迟' + item.outCarportDelay + dateConvert(item.outCarportTime)
+                }
+                if (item.fetchStatus === 1) {
+                    item.fetchStatus = '正常'
+                } else if (item.fetchStatus === 1 && item.fetchTime !== 0) {
+                    item.fetchStatus = '正常' + dateConvert(item.fetchTime)
+                } else if (item.fetchStatus === 2) {
+                    item.fetchStatus = '延迟'
+                } else if (item.fetchStatus === 2 && item.fetchDelay !== 0) {
+                    item.fetchStatus = '延迟' + item.fetchDelay
+                } else if (item.fetchStatus === 2 && item.fetchDelay !== 0 && item.fetchTime !== 0) {
+                    item.fetchStatus = '延迟' + item.fetchDelay + dateConvert(item.fetchTime)
+                }
+                if (item.fetchBillStatus === 1) {
+                    item.fetchBillStatus = '正常'
+                } else if (item.fetchStatus === 1 && item.fetchBillTime !== 0) {
+                    item.fetchBillStatus = '正常' + dateConvert(item.fetchBillTime)
+                } else if (item.fetchBillStatus === 2) {
+                    item.fetchBillStatus = '延迟'
+                } else if (item.fetchBillStatus === 2 && item.fetchBillDelay !== 0) {
+                    item.fetchBillStatus = '延迟' + item.fetchBillDelay
+                } else if (item.fetchBillStatus === 2 && item.fetchBillDelay !== 0 && item.fetchBillTime !== 0) {
+                    item.fetchBillStatus = '延迟' + item.fetchBillDelay + dateConvert(item.fetchBillTime)
+                }
+                if (item.relayBillStatus === 1) {
+                    item.relayBillStatus = '正常'
+                } else if (item.relayBillStatus === 1 && item.relayBillTime !== 0) {
+                    item.relayBillStatus = '正常' + dateConvert(item.relayBillTime)
+                } else if (item.relayBillStatus === 2) {
+                    item.relayBillStatus = '延迟'
+                } else if (item.relayBillStatus === 2 && item.relayBillDelay !== 0) {
+                    item.relayBillStatus = '延迟' + item.relayBillDelay
+                } else if (item.relayBillStatus === 2 && item.relayBillDelay !== 0 && item.relayBillTime !== 0) {
+                    item.relayBillStatus = '延迟' + item.relayBillDelay + dateConvert(item.relayBillTime)
+                }
+                if (item.serviceNoteGetStatus === 1) {
+                    item.serviceNoteGetStatus = '正常'
+                } else if (item.serviceNoteGetStatus === 1 && item.serviceNoteGetTime !== 0) {
+                    item.serviceNoteGetStatus = '正常' + dateConvert(item.serviceNoteGetTime)
+                } else if (item.serviceNoteGetStatus === 2) {
+                    item.serviceNoteGetStatus = '延迟'
+                } else if (item.serviceNoteGetStatus === 2 && item.serviceNoteGetDelay !== 0) {
+                    item.serviceNoteGetStatus = '延迟' + item.serviceNoteGetDelay
+                } else if (item.serviceNoteGetStatus === 2 && item.serviceNoteGetDelay !== 0 && item.serviceNoteGetTime !== 0) {
+                    item.serviceNoteGetStatus = '延迟' + item.serviceNoteGetDelay + dateConvert(item.serviceNoteGetTime)
+                }
+                if (item.qualifiedStatus === 1) {
+                    item.qualifiedStatus = '正常'
+                } else if (item.qualifiedStatus === 1 && item.qualifiedTime !== 0) {
+                    item.qualifiedStatus = '正常' + dateConvert(item.qualifiedTime)
+                } else if (item.qualifiedStatus === 2){
+                    item.qualifiedStatus = '延迟'
+                } else if (item.qualifiedStatus === 2 && item.qualifiedDelay !== 0) {
+                    item.qualifiedStatus = '延迟' + item.qualifiedDelay
+                } else if (item.qualifiedStatus === 2 && item.qualifiedDelay !== 0 && item.qualifiedTime !== 0) {
+                    item.qualifiedStatus = '延迟' + item.qualifiedDelay + dateConvert(item.qualifiedTime)
+                }
+                if (item.tempLicenseStatus === 1) {
+                    item.tempLicenseStatus = '正常'
+                } else if (item.qualifiedStatus === 1 && item.tempLicenseTime !== 0) {
+                    item.tempLicenseStatus = '正常' + dateConvert(item.tempLicenseTime)
+                } else if(item.tempLicenseStatus === 2) {
+                    item.tempLicenseStatus = '延迟'
+                } else if (item.tempLicenseStatus === 2 && item.tempLicenseDelay !== 0) {
+                    item.tempLicenseStatus = '延迟' + item.tempLicenseDelay
+                } else if (item.tempLicenseStatus === 2 && item.tempLicenseDelay !== 0 && item.tempLicenseTime !== 0) {
+                    item.tempLicenseStatus = '延迟' + item.tempLicenseDelay + dateConvert(item.tempLicenseTime)
+                }
+                if (item.materialPackageStatus === 1) {
+                    item.materialPackageStatus = '正常'
+                } else if (item.materialPackageStatus === 1 && item.materialPackageTime !== 0) {
+                    item.materialPackageStatus = '正常' + dateConvert(item.materialPackageTime)
+                } else if (item.materialPackageStatus === 2) {
+                    item.materialPackageStatus = '延迟'
+                } else if (item.materialPackageStatus === 2 && item.materialPackageDelay !== 0) {
+                    item.materialPackageStatus = '延迟' + item.materialPackageDelay
+                } else if (item.materialPackageStatus === 2 && item.materialPackageDelay !== 0 && item.materialPackageTime !== 0) {
+                    item.materialPackageStatus = '延迟' + item.materialPackageDelay + dateConvert(item.materialPackageTime)
+                }
+            })
+            var data = [], list = [{}].concat(list);
+            layui.each(list, function (index2, item2) {
+                var dataItem = {};
+                layui.each(tableCols, function (index, item) {
+                    if (item.field && item.hide != true && item.field != 'operation') {
+                        if (index2 == 0) {
+                            dataItem[item.field] = item.title;
+                        } else {
+                            dataItem[item.field] = item2[item.field] || '- -'
+                        }
+                    }
+                })
+                data.push(dataItem)
+            })
+            excel.exportExcel({sheet1: data}, '车辆.xlsx', 'xlsx');
+            // exportLog();
+        }
+
+        // function exportLog () {
+        //     var params = {
+        //         operationModule: 8,
+        //         operationRemark: "导出费用数据"
+        //     }
+        //     edipao.exportLog(params);
+        // }
+
+
+        table.on('toolbar(costList1)', handleEvent);
+        table.on('tool(costList1)', handleEvent);
+        table.on('checkbox(costList1)', handleEvent);
+    })
+</script>
+</body>
+</html>
