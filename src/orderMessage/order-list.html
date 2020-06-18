@@ -278,7 +278,7 @@
     {{# } }}
 </script>
 <script type="text/html" id="damageTpl">
-    <a class="blue damage_link" data-id="{{d.orderNo}}" href="javascript:void(0);">{{d.carDamageCount || 0}}</a>
+    <a class="blue damage_link" data-status="{{d.orderStatus}}" data-id="{{d.orderNo}}" href="javascript:void(0);">{{d.carDamageCount || 0}}</a>
 </script>
 <script type="text/html" id="barDemo">
     {{# if(d.showBtn * 1 == 1){ }}

@@ -136,7 +136,7 @@
             <form class="layui-form">
                 <div class="layui-inline">
                     <div class="layui-input-inline">
-                        <input type="checkbox" name="policy" checked="" lay-skin="switch" lay-text="高速优先|不走高速" lay-filter="policy" />
+                        <input type="checkbox" name="policy" {{d.isHighway == 1 ? 'checked': ''}} lay-skin="switch" lay-text="高速优先|不走高速" lay-filter="policy" />
                     </div>
                 </div>
             </form>

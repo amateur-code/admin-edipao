@@ -154,6 +154,7 @@ layui.config({
         { field: 'dealerEval', type: 'input' },
         { field: 'certificateSignTime', type: 'timeslot' },
         { field: 'dealerRemark', type: 'input' },
+        { field: 'carDamageCount', type: 'numberslot' },
         // { field: 'operation', type: 'radio', data: operationData },
     ]
     initPermission();
@@ -264,7 +265,7 @@ layui.config({
                 if(key=='startProvince'||key=='endProvince'){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
-                }else if(key == "customerMileage" || key == "pricePerMeliage" || key == "income" || key == "driverMileage"){
+                }else if(key == "customerMileage" || key == "pricePerMeliage" || key == "income" || key == "driverMileage"||key=="carDamageCount"){
                     where["searchFieldDTOList[" + index + "].fieldName"] = key;
                     where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
                     where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
@@ -1065,8 +1066,9 @@ layui.config({
             });
             $(".damage_link").unbind().on("click", function (e) {
                 var id = e.target.dataset.id;
+                var orderStatus = e.target.dataset.status;
                 var pid = edipao.urlGet().perssionId;
-                top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html?orderNo=" + id + "&perssionId=" + pid, false, "focus");
+                top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html?orderStatus=" + orderStatus + "&orderNo=" + id + "&perssionId=" + pid, false, "focus");
             });
         },
         // getExportData: function (cb) {

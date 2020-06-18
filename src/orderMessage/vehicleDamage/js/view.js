@@ -104,7 +104,11 @@ layui.use(['jquery', 'layer', 'laytpl', 'form'], function(){
     $("#verify_submit").unbind().on("click", function (e) {
       var data = form.val("verify");
       if(data.approvalResult == "reject" && !data.approvalRemark){
-        layer.msg("请填写审核备注", {icon: 2});
+        layer.msg("请填写审核备注！", {icon: 2});
+        return;
+      }
+      if(data.approvalRemark.length > 300){
+        layer.msg("审核备注不能超过300个字符！", {icon: 2});
         return;
       }
       edipao.request({
