@@ -19,6 +19,7 @@
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js"></script>
     <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+    <script src="./tips.js?VERSION"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -113,46 +114,46 @@
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">出库时限：</label>
                             <span>{{d.detail.outPark}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip1" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">短驳提车时限：</label>
                             <span>{{d.detail.shortBarge}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip2" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">提车单时限：</label>
                             <span>{{d.detail.fetchTruck}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip3" class="w16">?</span>
                         </div>
                     </div>
                     <div class="layui-row">
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">交接单时限：</label>
                             <span>{{d.detail.returnTruck}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip4" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">服务手册时限：</label>
                             <span>{{d.detail.serviceNote}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip5" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">合格证时限：</label>
                             <span>{{d.detail.certificate}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip6" class="w16">?</span>
                         </div>
                     </div>
                     <div class="layui-row">
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">临牌时限：</label>
                             <span>{{d.detail.tempLicence}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip7" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">物料装包时限：</label>
                             <span>{{d.detail.materialPackage}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip8" class="w16">?</span>
                         </div>
                     </div>
                 </div>
@@ -166,46 +167,46 @@
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">转单时限：</label>
                             <span>{{d.detail.createOrder}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip9" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">审核运费时限：</label>
                             <span>{{d.detail.approvalFreight}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip10" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">审核订单时限：</label>
                             <span>{{d.detail.approvalOrder}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip11" class="w16">?</span>
                         </div>
                     </div>
                     <div class="layui-row">
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">车损/报备审核时限：</label>
                             <span>{{d.detail.truckDamageReport}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip12" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">回单审核时限：</label>
                             <span>{{d.detail.returnApproval}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip13" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">预付款支付时限：</label>
                             <span>{{d.detail.perPay}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip14" class="w16">?</span>
                         </div>
                     </div>
                     <div class="layui-row">
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">到付款支付时限：</label>
                             <span>{{d.detail.arrivePay}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip15" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">尾款支付时限：</label>
                             <span>{{d.detail.tailPay}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip16" class="w16">?</span>
                         </div>
                     </div>
                 </div>
@@ -219,41 +220,41 @@
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">调度时限：</label>
                             <span>{{d.detail.dispatch}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip17" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">发车时限：</label>
                             <span>{{d.detail.startTruck}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip18" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">出城时限：</label>
                             <span>{{d.detail.outCity}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip19" class="w16">?</span>
                         </div>
                     </div>
                     <div class="layui-row">
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">线路偏移：</label>
                             <span>{{d.detail.deviateWay}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip20" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">经销商扫码时限：</label>
                             <span>{{d.detail.dealerSign}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip21" class="w16">?</span>
                         </div>
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">上报处理：</label>
                             <span>{{d.detail.reportDeal}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip22" class="w16">?</span>
                         </div>
                     </div>
                     <div class="layui-row">
                         <div class="layui-col-xs4 layui-col-xs4-p10">
                             <label class="layui-inline-block">司机资料审核：</label>
                             <span>{{d.detail.driverInfoApproval}}小时</span>
-                            <span class="w16">?</span>
+                            <span data-tip="tip23" class="w16">?</span>
                         </div>
                     </div>
                 </div>
@@ -333,18 +334,19 @@
         function render() {
             laytpl(feeInfo.innerHTML).render({detail: detail}, function (html) {
                 document.getElementById('view').innerHTML = html;
+                bindEvents();
             })
         }
-
-        $('#view3').on('click', function () {
-            xadmin.open('修改', './edit.html', 1150);
-        })
-        $('.w14').on('mouseover', function () {
-            alert(1)
-            // layer.tips('拖拽图片至输入框内皆可上传图片', this, {
-            //     tips: [1, "#000"]
-            // });
-        })
+        function bindEvents(){
+            $('#view3').on('click', function () {
+                xadmin.open('修改', './edit.html', 1150);
+            })
+            $('.w16').mouseover(function (e) {
+                layer.tips(tipMap[e.target.dataset.tip], $(this), {
+                    tips: [1, "#000"]
+                });
+            })
+        }
 
     })
 </script>
