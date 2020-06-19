@@ -57,6 +57,7 @@
         var params = edipao.urlGet();
         console.log(params)
         var action = params.action;
+        var dataPk = params.dataPk || "";
         var apiUrl = "/admin/log/list";
         var where = {
             operationModule: params.type,
@@ -64,6 +65,7 @@
         }
         if(action == "exportLog"){
             apiUrl = "/admin/log/export-log/list";
+            where.dataPk = dataPk;
         }else{
             where.dataPk = params.id;
         }

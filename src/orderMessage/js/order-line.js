@@ -76,7 +76,8 @@ layui.use(['jquery','layer'], function () {
             edipao.request({
                 type: 'GET',
                 url: '/admin/line/detail',
-                data:{
+                timeout: 60000,
+                data: {
                     lineId: lineId
                 }
             }).done(function(res) {
@@ -117,7 +118,7 @@ layui.use(['jquery','layer'], function () {
                       fontColor: "#FFF",
                     }
                     var style = new Careland.PointStyle(Object.assign({}, baseStyle, {
-                        src: location.origin + "/images/map_sign_pass.png",
+                        src: location.origin + "/images/map_sign_event.png",
                     }));
                     var startStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
                         src: location.origin + "/images/map_sign_start.png",
@@ -325,10 +326,14 @@ layui.use(['jquery','layer'], function () {
                 data[d][l] = {};
                 data[d][l].Text = {value:_t.line[i].locTime,textOffsetX:-100,textOffsetY:-40,fontSize:15,fontColor:'#e91e63',fontBold:true,textWidth:200,textAlign:'center'};
                 data[d][l].Point = new Careland.GbPoint( _t.line[i].lat,_t.line[i].lng);
-                data[d][l].IconType = CLDMAP_TRACK_ICON_TRUCK;
+                data[d][l].Icon = {
+                    src: location.origin + "/images/truck.png",
+                    offsetY: -22,
+                    offsetX: -10
+                };
             }
 
-            function getColor(){    
+            function getColor(){
                 var c = ['#FF0000','#FAFAD2','#F08080','#EECFA1','#CD6090','#BDBDBD','#999999','#8B2252','#551A8B','#242424','#00FFFF','#EEEE00'];
                 rand = random(0, 12)
                 return c[rand]
@@ -337,7 +342,8 @@ layui.use(['jquery','layer'], function () {
             function random(lower, upper) {
                 return Math.floor(Math.random() * (upper - lower)) + lower;
             }
-
+            this.trackHandler.isShowPoint = false; 
+            // this.trackHandler.setIconType(CLDMAP_TRACK_ICON_TRUCK);
             this.trackHandler.clear();
             this.trackHandler.setDefaultStyles({trackLineStyles:linestyles});
             this.trackHandler.init(data);

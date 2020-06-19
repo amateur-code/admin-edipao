@@ -20,8 +20,10 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
         this.loc = {};
         this.line = '';
         this.map = null;
+        this.trackHandler = null;
         this.topLoadIndex = null;
         this.vias = [];
+        this.isHighway = 0;
     }
 
 
@@ -31,20 +33,42 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
             var _t = this;
             this.topLoadIndex = layer.load(1);
             try{
+                var baseStyle = {
+                    width: 23,
+                    height: 29,
+                    offsetX: -13,
+                    offsetY: -34,
+                    textOffsetX: -5,
+                    textOffsetY: -30,
+                    fontColor: "#FFF",
+                  }
+                var viaStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
+                    src: location.origin + "/images/map_sign_pass.png",
+                }));
+                var startStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
+                    src: location.origin + "/images/map_sign_start.png",
+                }));
+                var endStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
+                    src: location.origin + "/images/map_sign_end.png",
+                }));
                 //凯立德地图API功能
                 var point = new Careland.Point(419364916, 143908009);    //创建坐标点
                 var map = new Careland.Map('map', point, 12);             //实例化地图对象
                 map.enableAutoResize();                                 //启用自动适应容器尺寸变化
                 map.load();
+                this.trackHandler = new Careland.Track();
                 this.map = map;
                 this.Driving = new Careland.DrivingRoute(map, {
-                    "map" : map,
-                    "policy" : CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS,
-                    "multi":1,
-                    viaStyle:true,
-                    "autoDragging" : true,
-                    onSearchComplete : function(obj){
-                        if(firstUpload) return firstUpload = false;
+                    "map": map,
+                    "policy": CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS,
+                    "multi": 1,
+                    viaStyle: viaStyle,
+                    startStyle: startStyle,
+                    endStyle: endStyle,
+                    "autoDragging": true,
+                    onSearchComplete: function(obj){
+                        layer.close(_t.topLoadIndex);
+                        // if(firstUpload) return firstUpload = false;
                         _t.lineSelectCallback(obj);
                     }
                 }); 
@@ -63,6 +87,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
             edipao.request({
                 type: 'GET',
                 url: '/admin/line/detail',
+                timeout: 60000,
                 data: $.extend({}, _t.request, {
                     lineId: this.lineId
                 })
@@ -73,6 +98,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                     try {
                         if(_t.lineDetail.wayPointJson) _t.vias = JSON.parse(_t.lineDetail.wayPointJson);
                         _t.lineDetail.trackContent = JSON.parse(_t.lineDetail.trackContent);
+                        _t.isHighway = _t.lineDetail.isHighway;
                         _t.line = _t.lineDetail.trackContent;
                     } catch (error) {}
                     _t.renderTabContent();
@@ -99,38 +125,38 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
         },
         // 设置地图导航
         renderDrivingRoute(policy){
+            this.topLoadIndex = layer.load(1);
             var _t = this;         
             var trackInfo = [];
             if(Array.isArray(_t.line)){
                 for(var point of _t.line){
-                    trackInfo.push(Careland.DrawTool.GbPointToKldPoint(point.lng,point.lat))
+                    trackInfo.push(Careland.DrawTool.GbPointToKldPoint(point.lng,point.lat));
                 }
             }
             var start = trackInfo[0];
             var end = trackInfo[trackInfo.length - 1];
             if(policy){
-                var vias = [start, end].concat(_t.vias);
-                vias = vias.map(function (item) {
-                    return (Careland.DrawTool.GbPointToKldPoint(item.lat, item.lng));
+                var vias = _t.vias.map(function (item) {
+                    return (new Careland.GbPoint(item.lat, item.lng));
                 });
-                _t.Driving.search(start, end, {trackInfo:[], via: vias})
-            }else if(trackInfo.length > 0){
-                var vias = _t.vias;
-                vias = vias.map(function (item) {
-                    return (Careland.DrawTool.GbPointToKldPoint(item.lat, item.lng));
+                _t.Driving.search(start, end, {trackInfo:[], via: vias});
+            }else if(trackInfo.length > 1){
+                var vias = _t.vias.map(function (item) {
+                    return (new Careland.GbPoint(item.lat, item.lng));
                 });
-                _t.map.setCenter(start)
-                _t.Driving.search(start, end,{trackInfo: trackInfo, via: vias})
+                _t.Driving.search(start, end, {trackInfo: trackInfo, via: vias});
+                _t.map.setCenter(start);
             }else{
-                var vias = _t.vias;
-                vias = vias.map(function (item) {
-                    return (Careland.DrawTool.GbPointToKldPoint(item.lat, item.lng));
+                var vias = _t.vias.map(function (item) {
+                    return (new Careland.GbPoint(item.lat, item.lng));
                 });
-                _t.Driving.search(_t.lineDetail.startAddress,_t.lineDetail.endAddress, {trackInfo:[], via: vias});
+                _t.Driving.search(_t.lineDetail.startAddress, _t.lineDetail.endAddress, {trackInfo:[], via: vias});
+                layer.close(_t.topLoadIndex);
             }
         },
         // 路线选择回掉
         lineSelectCallback(obj){
+            console.log(obj)
             var _t = this, pointData =[];
             var plan = obj.getPlan(0);
             for(var i in plan.uidinfo){
@@ -162,11 +188,12 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                                 lineId:  _t.lineId,
                                 lineSource:  _t.lineDetail.lineSource,
                                 trackUrl: res.data.url,
-                                trackContent: JSON.stringify(pointData)
+                                trackContent: JSON.stringify(pointData),
+                                isHighway: _t.isHighway,
                             }
                         }).then(function(res){
                             if(res.code == 0){
-                                _t.line = pointData
+                                _t.line = pointData;
                             }
                         })
                     }
@@ -196,28 +223,26 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                 if(i%100 == 0){//每100个切割一段轨迹，
                     d++;
                     data[d] = [];
-                    linestyles[linestyles.length] = new Careland.LineStyle({color:getColor(),selectedColor:getColor(),size:6,selectedSize:6,opacity:50});
+                    linestyles[linestyles.length] = new Careland.LineStyle({color:"rgb(17, 140, 255)",selectedColor:getColor(),size:6,selectedSize:6,opacity:100});
                 }
                 var l = data[d].length;
                 data[d][l] = {};
+                data[d][l].Text = {value:"111",textOffsetX:-100,textOffsetY:-40,fontSize:15,fontColor:'#e91e63',fontBold:true,textWidth:200,textAlign:'center'};
                 data[d][l].Point = new Careland.GbPoint( _t.line[i].lat,_t.line[i].lng);
-                data[d][l].IconType = CLDMAP_TRACK_ICON_TRUCK;
+                data[d][l].Icon = {
+                    src: location.origin + "/images/truck.png",
+                    offsetY: -22,
+                    offsetX: -10
+                };
             }
-            var trackHandler = new Careland.Track();
-            trackHandler.clear();
-            trackHandler.setLoop(false); //是否播放结束继续播放
-            trackHandler.isShowPoint = false; 
-            trackHandler.isShowline = true;
-            trackHandler.isShowPointTip = true;
-            trackHandler.isShowPointText = false;
-            trackHandler.setDefaultStyles({trackLineStyles:linestyles})
-            trackHandler.setSpeed(speed);
-            trackHandler.addEventListener('onPlay', function (index) {
-                var count = trackHandler.getCount();
-            });
-            trackHandler.start();//开始
+            this.trackHandler.isShowPoint = false; 
+            // this.trackHandler.setIconType(CLDMAP_TRACK_ICON_TRUCK);
+            this.trackHandler.setDefaultStyles({trackLineStyles:linestyles});
+            this.trackHandler.init(data);
+            this.trackHandler.setSpeed(speed);
+            this.trackHandler.play();//开始
             
-            function getColor(){    
+            function getColor(){
                 var c = ['#FF0000','#FAFAD2','#F08080','#EECFA1','#CD6090','#BDBDBD','#999999','#8B2252','#551A8B','#242424','#00FFFF','#EEEE00'];
                 rand = random(0, 12)
                 return c[rand]
@@ -261,7 +286,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                       textOffsetX: -5,
                       textOffsetY: -30,
                       fontColor: "#FFF",
-                      src: location.origin + "/images/map_sign_pass.png",
+                      src: location.origin + "/images/map_sign_event.png",
                     });
                     //创建文本标注点
                     for(var report of res.data.reports){
@@ -460,6 +485,8 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                 }
             }).then(function(res){
                 if(res.code == 0){
+                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS);
+                    _t.isHighway = 0;
                     _t.lineDetail.orderNo = orderNo;
                     _t.lineDetail.lineSource = 1;
                     _t.line = res.data;
@@ -487,12 +514,23 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
             form.on('switch(policy)', function(data){
                 if(data.elem.checked){
                     console.log("走高速")
-                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS)
+                    _t.isHighway = 1;
+                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS);
+                    if(_t.lineDetail.isHighway == 1){
+                        _t.renderDrivingRoute();
+                    }else{
+                        _t.renderDrivingRoute(true);
+                    }
                 }else{
                     console.log("不走高速")
-                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS)
+                    _t.isHighway = 0;
+                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS);
+                    if(_t.lineDetail.isHighway == 1){
+                        _t.renderDrivingRoute(true);
+                    }else{
+                        _t.renderDrivingRoute();
+                    }
                 }
-                _t.renderDrivingRoute(true)
             });  
 
             $('#tabConent').on('click','.order-choose',function(e){
@@ -510,6 +548,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                         case 2:
                             break;
                     case 3:
+                        _t.isHighway = _t.lineDetail.isHighway;
                         _t.lineDetail.lineSource = source;
                         _t.line = _t.lineDetail.trackContent;
                         _t.renderDrivingRoute();

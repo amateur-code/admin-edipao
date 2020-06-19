@@ -66,6 +66,8 @@ layui
       var qs = edipao.urlGet();
       this.tableKey = "order-vehicle-damage-list-table";
       this.orderNo = qs.orderNo;
+      this.orderStatus = qs.orderStatus;
+      window.orderStatus = this.orderStatus;
       where["searchFieldDTOList[0].fieldName"] = "orderNo";
       where["searchFieldDTOList[0].fieldValue"] = this.orderNo;
     }
@@ -274,7 +276,7 @@ layui
             });
             break;
           case "exportLog":
-            xadmin.open('导出日志', '../../OperateLog/log.html?type=15&action=exportLog');
+            xadmin.open('导出日志', '../../OperateLog/log.html?type=15&action=exportLog&dataPk=' + _this.orderNo);
             break;
         }
       }
@@ -293,7 +295,7 @@ layui
         { field: "createTime", type: "timeslot" },
         { field: "type", type: "checkbox", data: typeData },
         { field: "remark", type: "input" },
-        { field: "createUser", type: "input" },
+        { field: "createUser", type: "contract" },
         { field: "status", type: "checkbox", data: statusData },
       ];
       tableFilterIns = tableFilter.render({
@@ -315,8 +317,14 @@ layui
               where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
               where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
             }else if(key == "createUser"){
-              where['searchFieldDTOList['+ index +'].fieldName'] = key;
-              where["searchFieldDTOList[" + index + "].fieldValue"] = value;
+              value = value.filter(function (item) {
+                return String(item) != "";
+              });
+              value.forEach(function(item, index2){
+                where['searchFieldDTOList['+ (index + index2 * 1) +'].fieldName'] = key;
+                where["searchFieldDTOList[" + (index + index2 * 1) + "].fieldValue"] = item;
+              });
+
             }else if(key == "type" || key == "status"){
               where['searchFieldDTOList['+ index +'].fieldName'] = key;
               where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
@@ -393,6 +401,7 @@ layui
       function exportLog() {
         var params = {
           operationModule: 15,
+          dataPk: _this.orderNo,
           operationRemark: "导出车损/报备数据",
         };
         edipao.exportLog(params);
