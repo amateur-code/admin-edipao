@@ -95,7 +95,7 @@
                     </div>
                     <div class="layui-input-block">
                         <input type="text" name="outPark" id="outPark" value="{{d.detail.outPark}}"
-                               lay-verify="outParkVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|outParkVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -106,7 +106,7 @@
                     <div>短驳提车时限<span data-tip="tip2" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="shortBarge" value="{{d.detail.shortBarge}}"
-                               id="shortBarge" lay-verify="shortBargeVerify" onkeyup="clearNoNumOne(this)"
+                               id="shortBarge" lay-verify="required|shortBargeVerify" onkeyup="clearNoNumOne(this)"
                                placeholder="0.0" autocomplete="off" class="layui-input">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -116,7 +116,7 @@
                 <div class="layui-form-item">
                     <div>提车单时限<span data-tip="tip3" class="w16">?</span></div>
                     <div class="layui-input-block">
-                        <input type="text" name="fetchTruck" id="fetchTruck" lay-verify="fetchTruckVerify"
+                        <input type="text" name="fetchTruck" id="fetchTruck" lay-verify="required|fetchTruckVerify"
                                placeholder="0.0" value="{{d.detail.fetchTruck}}" onkeyup="clearNoNumOne(this)"
                                autocomplete="off" class="layui-input">
                         <div class="lay-xs">小时</div>
@@ -128,7 +128,7 @@
                     <div>交接单时限<span data-tip="tip4" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="returnTruck" id="returnTruck" onkeyup="clearNoNumOne(this)"
-                               lay-verify="returnTruckVerify" value="{{d.detail.returnTruck}}"
+                               lay-verify="required|returnTruckVerify" value="{{d.detail.returnTruck}}"
                                placeholder="0.0" autocomplete="off" class="layui-input">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -139,7 +139,7 @@
                     <div>服务手册时限<span data-tip="tip5" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="serviceNote" id="serviceNote" value="{{d.detail.serviceNote}}"
-                               lay-verify="serviceNoteVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|serviceNoteVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -150,7 +150,7 @@
                     <div>合格证时限<span data-tip="tip6" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="certificate" id="certificate" onkeyup="clearNoNumOne(this)"
-                               lay-verify="certificateVerify" value="{{d.detail.certificate}}"
+                               lay-verify="required|certificateVerify" value="{{d.detail.certificate}}"
                                placeholder="0.0" autocomplete="off" class="layui-input">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -161,7 +161,7 @@
                     <div>临牌时限<span data-tip="tip7" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="tempLicence" id="tempLicence"
-                               lay-verify="tempLicenceVerify" value="{{d.detail.tempLicence}}"
+                               lay-verify="required|tempLicenceVerify" value="{{d.detail.tempLicence}}"
                                placeholder="0.0" autocomplete="off" class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -172,7 +172,7 @@
                     <div>物料装包时限<span data-tip="tip8" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="materialPackage" id="materialPackage" value="{{d.detail.materialPackage}}"
-                               lay-verify="materialPackageVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|materialPackageVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -188,7 +188,7 @@
                     <div>转单时限<span data-tip="tip9" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="createOrder" id="createOrder" value="{{d.detail.createOrder}}"
-                               lay-verify="createOrderVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|createOrderVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -199,7 +199,7 @@
                     <div>审核运费时限<span data-tip="tip10" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="approvalFreight" id="approvalFreight" value="{{d.detail.approvalFreight}}"
-                               lay-verify="approvalFreightVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|approvalFreightVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -210,7 +210,7 @@
                     <div>审核订单时限<span data-tip="tip11" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="approvalOrder" id="approvalOrder" value="{{d.detail.approvalOrder}}"
-                               lay-verify="approvalOrderVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|approvalOrderVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -221,7 +221,7 @@
                     <div>车损/报备审核时限<span data-tip="tip12" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="truckDamageReport" id="truckDamageReport" value="{{d.detail.truckDamageReport}}"
-                               lay-verify="truckDamageReportVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|truckDamageReportVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -232,7 +232,7 @@
                     <div>回单审核时限<span data-tip="tip13" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="returnApproval" id="returnApproval" value="{{d.detail.returnApproval}}"
-                               lay-verify="returnApprovalVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|returnApprovalVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -243,7 +243,7 @@
                     <div>预付款支付时限<span data-tip="tip14" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="perPay" id="perPay" value="{{d.detail.perPay}}"
-                               lay-verify="perPayVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|perPayVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -254,7 +254,7 @@
                     <div>到付款支付时限<span data-tip="tip15" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="arrivePay" id="arrivePay" value="{{d.detail.arrivePay}}"
-                               lay-verify="arrivePayVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|arrivePayVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -265,7 +265,7 @@
                     <div>尾款支付时限<span data-tip="tip16" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="tailPay" id="tailPay" value="{{d.detail.tailPay}}"
-                               lay-verify="tailPayVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|tailPayVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -281,7 +281,7 @@
                     <div>调度时限<span data-tip="tip17" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="dispatch" id="dispatch" value="{{d.detail.dispatch}}"
-                               lay-verify="dispatchVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|dispatchVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -292,7 +292,7 @@
                     <div>发车时限<span data-tip="tip18" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="startTruck" id="startTruck" value="{{d.detail.startTruck}}"
-                               lay-verify="startTruckVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|startTruckVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -303,7 +303,7 @@
                     <div>出城时限<span data-tip="tip19" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="outCity" id="outCity" value="{{d.detail.outCity}}"
-                               lay-verify="outCityVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|outCityVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -314,7 +314,7 @@
                     <div>线路偏移<span data-tip="tip20" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="deviateWay" id="deviateWay" value="{{d.detail.deviateWay}}"
-                               lay-verify="deviateWayVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|deviateWayVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">KM</div>
                     </div>
@@ -325,7 +325,7 @@
                     <div>经销商扫码时限<span data-tip="tip21" class="w16">?</span></div>
                     <div class="layui-input-block">
                         <input type="text" name="dealerSign" id="dealerSign" value="{{d.detail.dealerSign}}"
-                               lay-verify="dealerSignVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|dealerSignVerify" placeholder="0.0" autocomplete="off"
                                class="layui-input" onkeyup="clearNoNumOne(this)">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -348,7 +348,7 @@
                     <div class="layui-input-block">
                         <input type="text" name="driverInfoApproval" onkeyup="clearNoNumOne(this)"
                                id="driverInfoApproval"
-                               lay-verify="driverInfoApprovalVerify" placeholder="0.0" autocomplete="off"
+                               lay-verify="required|driverInfoApprovalVerify" placeholder="0.0" autocomplete="off"
                                value="{{d.detail.driverInfoApproval}}" class="layui-input">
                         <div class="lay-xs">小时</div>
                     </div>
@@ -443,6 +443,65 @@
             // var that = this;
             // layer.tips('hahahaha', that); //在元素的事件回调体中，follow直接赋予this即可
         // });
+        //自定义验证规则
+        form.verify({
+            name: function (value) {
+                var i,
+                    code,
+                    str = value.length
+                for (i = 0; i < value.length; i++) {
+                    code = value.charCodeAt(i);
+                    if (code > 255) {
+                        str = str + 1
+                    } else {
+                        str = str
+                    }
+                }
+                if (str > 50) {
+                    return '费用名称不能超过50个字符';
+                }
+            },
+            remark: function (value) {
+                var i,
+                    code,
+                    str = value.length
+                for (i = 0; i < value.length; i++) {
+                    code = value.charCodeAt(i);
+                    if (code > 255) {
+                        str = str + 1
+                    } else {
+                        str = str
+                    }
+                }
+                if (str > 300) {
+                    return '费用名称不能超过300个字符';
+                }
+            },
+            numberOne: function (value) {
+                if (value.length > 0) {
+                    if (value >= 0) {
+                    } else if (value < 0) {
+                        return '输入值必须大于等于0';
+                    } else {
+                        return '输入有误，请重新输入';
+                    }
+                }
+            },
+            // 校验0-100保留两位小数
+            numberTwo: function (value) {
+                if (value.length > 0) {
+                    if (value >= 0 && value <= 100) {
+
+                    } else if (value > 100) {
+                        return '输入数值不能大于100';
+                    } else if (value < 0) {
+                        return '输入数值不能小于0';
+                    } else {
+                        return '输入格式有误,请输入0-100的数值';
+                    }
+                }
+            }
+        });
         form.on('submit(update)', function (data) {
             let Arr = new Array()
             let map = data.field
