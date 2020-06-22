@@ -20,6 +20,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
         this.loc = {};
         this.line = '';
         this.map = null;
+        this.reportMap = null;
         this.trackHandler = null;
         this.topLoadIndex = null;
         this.vias = [];
@@ -53,13 +54,12 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                 }));
                 //凯立德地图API功能
                 var point = new Careland.Point(419364916, 143908009);    //创建坐标点
-                var map = new Careland.Map('map', point, 12);             //实例化地图对象
-                map.enableAutoResize();                                 //启用自动适应容器尺寸变化
-                map.load();
+                this.map = new Careland.Map('map', point, 12);             //实例化地图对象
+                this.map.enableAutoResize();                                 //启用自动适应容器尺寸变化
+                this.map.load();
                 this.trackHandler = new Careland.Track();
-                this.map = map;
-                this.Driving = new Careland.DrivingRoute(map, {
-                    "map": map,
+                this.Driving = new Careland.DrivingRoute(this.map, {
+                    "map": this.map,
                     "policy": CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS,
                     "multi": 1,
                     viaStyle: viaStyle,
@@ -73,7 +73,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                     }
                 }); 
                 _t.layer = new Careland.Layer('point', 'layer');        //创建点图层
-                _t.map.addLayer(_t.layer);
+                this.map.addLayer(_t.layer);
             } catch (err){
                 console.log(err)
             }
@@ -341,14 +341,14 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
         // 监听司机上报类型的选择 和表单提交
         bindDriverReportType(){
             var _t = this;
-            form.on('select(driverReportType)', function(data){
+            form.on('select(driverReportType)', function(data) {
                 _t.driverReportType =  data.value;
-                var getAddReportTpl = addReportTpl.innerHTML,
-                    addReportDetail = document.getElementById('add-report-detail');
+                var getAddReportTpl = $("#addReportTpl").html(),
+                    addReportDetail = $("#add-report-detail");
                 laytpl(getAddReportTpl).render({
                     type: data.value
                 }, function(html){
-                    addReportDetail.innerHTML = html;
+                    addReportDetail.html(html);
                     form.render('select');
 
                     _t.selectReportAddress();
@@ -574,7 +574,8 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                     btnAlign: 'c',
                     zIndex:9990, //层优先级
                     end: function () {
-                        document.getElementById('add-report-detail').innerHTML = '';
+                        $("#add-report-detail").html("");
+                        $("#select-map").html();
                         form.val("report-form", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
                             "driverReportType": ""
                         });
@@ -613,12 +614,18 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                     type: 1,
                     title: "选择位置",
                     area: ['900px', '600px'],
-                    content: $("#select-map-dialog"),
+                    content: $("#map"),
                     btn: ['取消', '确定'],
                     btnAlign: 'c',
                     zIndex:9991, //层优先级
                     cancel: function () {
                         _t.loc = {};
+                        _t.map.closeInfoWindow();
+                        _t.map.removeEventListener("click");
+                    },
+                    end: function () {
+                        _t.map.closeInfoWindow();
+                        _t.map.removeEventListener("click");
                     },
                     btn2: function(){
                         if(!$('#seachLocation').val()){
@@ -626,24 +633,26 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                             return false;
                         }
                         if(_t.loc){
+                            _t.map.closeInfoWindow();
+                            _t.map.removeEventListener("click");
                             $('#seach-location-input').val(_t.loc.name);
                         }
                     },
                     success: function () {
                         //凯立德地图API功能
-                        var point = new Careland.Point(419364916, 143908009);
-                        var map = new Careland.Map('select-map', point, 15); 
-                        map.enableAutoResize();      
-                        map.load(); 
-
-                        _t.regionMapView(map);
+                        // var point = new Careland.Point(419364916, 143908009);
+                        // _t.reportMap = new Careland.Map('select-map', point, 15);
+                        // _t.reportMap.enableAutoResize();
+                        // _t.reportMap.load(); 
+                        _t.regionMapView();
                     }
                 })
             })
         },
         // 获取点击点的坐标数据
-        regionMapView(map){
+        regionMapView(){
             var _t = this;
+            var map = _t.map;
 
             var myGeo = new Careland.Geocoder();
 

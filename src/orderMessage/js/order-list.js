@@ -367,6 +367,12 @@ layui.config({
                 }
             });
         },
+        bindRejectTips: function () {
+            $(".icon_fee_tips").unbind().on("click", function (e) {
+                var text = e.target.dataset.text;
+                layer.tips(text, $(this));
+            });
+        },
         bindUpload: function () {
             $(".list_picture_upload").unbind().on("click", function(e){
                 var elem;
@@ -1425,6 +1431,7 @@ layui.config({
                     method.resizeTable();
                     method.bindUpload();
                     method.bindVerify();
+                    method.bindRejectTips();
                     method.bindViewPic();
                     method.bindPicVerify();
                     method.bindPay();
@@ -1706,6 +1713,7 @@ layui.config({
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
+                var icon = '<i data-text="被驳回的原因" class="layui-icon layui-icon-about icon_fee_tips" style="font-size: 14px; color: #FF5722; margin-left: 10px"></i>';
                 var payStatus = "";
                 if (d.prePayApprovalBtn == 1 && (amount > 0 || d.prePayOil * 1 > 0) ) {
                     payStatus = verifyStr3.replace("{{}}", " - 申请支付");
