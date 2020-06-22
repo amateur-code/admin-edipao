@@ -471,6 +471,15 @@
                 if (item.transportAssignTime) {
                     item.transportAssignTime = dateConvert(item.transportAssignTime)
                 }
+                if(item.driverName !== '' && item.driverPhone !== ''){
+                    item.driverName = item.driverName + '-' + item.driverPhone
+                } else if(item.driverName !== '' && item.driverPhone === ''){
+                    item.driverName = item.driverName
+                } else if(item.driverName === '' && item.driverPhone !== ''){
+                    item.driverName = item.driverPhone
+                } else if(item.driverName === '' && item.driverPhone === ''){
+                    item.driverName = '- -'
+                }
                 if (item.outCarportStatus === 1 && item.outCarportTime === 0) {
                     item.outCarportStatus = '正常'
                 } else if (item.outCarportStatus === 1 && item.outCarportTime !== 0) {
@@ -478,9 +487,9 @@
                 } else if (item.outCarportStatus === 2 && item.outCarportDelay === 0) {
                     item.outCarportStatus = '延迟'
                 } else if (item.outCarportStatus === 2 && item.outCarportDelay !== 0) {
-                    item.outCarportStatus = '延迟' + item.outCarportDelay
+                    item.outCarportStatus = '延迟' + item.outCarportDelay + '小时'
                 } else if (item.outCarportStatus === 2 && item.outCarportDelay !== 0 && item.outCarportTime !== 0) {
-                    item.outCarportStatus = '延迟' + item.outCarportDelay + dateConvert(item.outCarportTime)
+                    item.outCarportStatus = '延迟' + item.outCarportDelay + '小时' + dateConvert(item.outCarportTime)
                 }
                 if (item.fetchStatus === 1 && item.fetchTime === 0) {
                     item.fetchStatus = '正常'
@@ -489,9 +498,9 @@
                 } else if (item.fetchStatus === 2 && item.fetchDelay === 0) {
                     item.fetchStatus = '延迟'
                 } else if (item.fetchStatus === 2 && item.fetchDelay !== 0) {
-                    item.fetchStatus = '延迟' + item.fetchDelay
+                    item.fetchStatus = '延迟' + item.fetchDelay + '小时'
                 } else if (item.fetchStatus === 2 && item.fetchDelay !== 0 && item.fetchTime !== 0) {
-                    item.fetchStatus = '延迟' + item.fetchDelay + dateConvert(item.fetchTime)
+                    item.fetchStatus = '延迟' + item.fetchDelay + '小时' + dateConvert(item.fetchTime)
                 }
                 if (item.fetchBillStatus === 1 && item.fetchBillTime === 0) {
                     item.fetchBillStatus = '正常'
@@ -500,9 +509,9 @@
                 } else if (item.fetchBillStatus === 2 && item.fetchBillDelay === 0) {
                     item.fetchBillStatus = '延迟'
                 } else if (item.fetchBillStatus === 2 && item.fetchBillDelay !== 0) {
-                    item.fetchBillStatus = '延迟' + item.fetchBillDelay
+                    item.fetchBillStatus = '延迟' + item.fetchBillDelay + '小时'
                 } else if (item.fetchBillStatus === 2 && item.fetchBillDelay !== 0 && item.fetchBillTime !== 0) {
-                    item.fetchBillStatus = '延迟' + item.fetchBillDelay + dateConvert(item.fetchBillTime)
+                    item.fetchBillStatus = '延迟' + item.fetchBillDelay + '小时' + dateConvert(item.fetchBillTime)
                 }
                 if (item.relayBillStatus === 1 && item.relayBillTime === 0) {
                     item.relayBillStatus = '正常'
@@ -511,9 +520,9 @@
                 } else if (item.relayBillStatus === 2 && item.relayBillDelay === 0) {
                     item.relayBillStatus = '延迟'
                 } else if (item.relayBillStatus === 2 && item.relayBillDelay !== 0) {
-                    item.relayBillStatus = '延迟' + item.relayBillDelay
+                    item.relayBillStatus = '延迟' + item.relayBillDelay + '小时'
                 } else if (item.relayBillStatus === 2 && item.relayBillDelay !== 0 && item.relayBillTime !== 0) {
-                    item.relayBillStatus = '延迟' + item.relayBillDelay + dateConvert(item.relayBillTime)
+                    item.relayBillStatus = '延迟' + item.relayBillDelay + '小时' + dateConvert(item.relayBillTime)
                 }
                 if (item.serviceNoteGetStatus === 1 && item.serviceNoteGetTime === 0) {
                     item.serviceNoteGetStatus = '正常'
@@ -522,9 +531,9 @@
                 } else if (item.serviceNoteGetStatus === 2 && item.serviceNoteGetDelay === 0) {
                     item.serviceNoteGetStatus = '延迟'
                 } else if (item.serviceNoteGetStatus === 2 && item.serviceNoteGetDelay !== 0) {
-                    item.serviceNoteGetStatus = '延迟' + item.serviceNoteGetDelay
+                    item.serviceNoteGetStatus = '延迟' + item.serviceNoteGetDelay + '小时'
                 } else if (item.serviceNoteGetStatus === 2 && item.serviceNoteGetDelay !== 0 && item.serviceNoteGetTime !== 0) {
-                    item.serviceNoteGetStatus = '延迟' + item.serviceNoteGetDelay + dateConvert(item.serviceNoteGetTime)
+                    item.serviceNoteGetStatus = '延迟' + item.serviceNoteGetDelay + '小时' + dateConvert(item.serviceNoteGetTime)
                 }
                 if (item.qualifiedStatus === 1 && item.qualifiedTime === 0) {
                     item.qualifiedStatus = '正常'
@@ -533,9 +542,9 @@
                 } else if (item.qualifiedStatus === 2 && item.qualifiedDelay === 0){
                     item.qualifiedStatus = '延迟'
                 } else if (item.qualifiedStatus === 2 && item.qualifiedDelay !== 0) {
-                    item.qualifiedStatus = '延迟' + item.qualifiedDelay
+                    item.qualifiedStatus = '延迟' + item.qualifiedDelay + '小时'
                 } else if (item.qualifiedStatus === 2 && item.qualifiedDelay !== 0 && item.qualifiedTime !== 0) {
-                    item.qualifiedStatus = '延迟' + item.qualifiedDelay + dateConvert(item.qualifiedTime)
+                    item.qualifiedStatus = '延迟' + item.qualifiedDelay + '小时' + dateConvert(item.qualifiedTime)
                 }
                 if (item.tempLicenseStatus === 1 && item.tempLicenseTime === 0) {
                     item.tempLicenseStatus = '正常'
@@ -544,9 +553,9 @@
                 } else if(item.tempLicenseStatus === 2 && item.tempLicenseDelay === 0) {
                     item.tempLicenseStatus = '延迟'
                 } else if (item.tempLicenseStatus === 2 && item.tempLicenseDelay !== 0) {
-                    item.tempLicenseStatus = '延迟' + item.tempLicenseDelay
+                    item.tempLicenseStatus = '延迟' + item.tempLicenseDelay + '小时'
                 } else if (item.tempLicenseStatus === 2 && item.tempLicenseDelay !== 0 && item.tempLicenseTime !== 0) {
-                    item.tempLicenseStatus = '延迟' + item.tempLicenseDelay + dateConvert(item.tempLicenseTime)
+                    item.tempLicenseStatus = '延迟' + item.tempLicenseDelay + '小时' + dateConvert(item.tempLicenseTime)
                 }
                 if (item.materialPackageStatus === 1 && item.materialPackageTime === 0) {
                     item.materialPackageStatus = '正常'
@@ -555,9 +564,9 @@
                 } else if (item.materialPackageStatus === 2 && item.materialPackageDelay === 0) {
                     item.materialPackageStatus = '延迟'
                 } else if (item.materialPackageStatus === 2 && item.materialPackageDelay !== 0) {
-                    item.materialPackageStatus = '延迟' + item.materialPackageDelay
+                    item.materialPackageStatus = '延迟' + item.materialPackageDelay + '小时'
                 } else if (item.materialPackageStatus === 2 && item.materialPackageDelay !== 0 && item.materialPackageTime !== 0) {
-                    item.materialPackageStatus = '延迟' + item.materialPackageDelay + dateConvert(item.materialPackageTime)
+                    item.materialPackageStatus = '延迟' + item.materialPackageDelay + '小时' + dateConvert(item.materialPackageTime)
                 }
             })
             var data = [], list = [{}].concat(list);

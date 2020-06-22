@@ -444,6 +444,7 @@ layui.config({
       },
       where: tableWhere,
       parseData: function (res) { //res 即为原始返回的数据
+        console.log(res)
         edipao.codeMiddleware(res);
         return {
           code: res.code, //解析接口状态
@@ -594,8 +595,16 @@ layui.config({
   }
 
   function exportXlsx (list) {
-    console.log(list)
     list.forEach(item => {
+      if(item.driverName !== '' && item.driverPhone !== ''){
+        item.driverName = item.driverName + '-' + item.driverPhone
+      } else if(item.driverName !== '' && item.driverPhone === ''){
+        item.driverName = item.driverName
+      } else if(item.driverName === '' && item.driverPhone !== ''){
+        item.driverName = item.driverPhone
+      } else if(item.driverName === '' && item.driverPhone === ''){
+        item.driverName = '- -'
+      }
       if (item.orderType == 1) {
         item.orderType = '单车单'
       } else if (item.orderType == 2) {
@@ -637,9 +646,9 @@ layui.config({
       } else if (item.createOrderStatus === 2 && item.createOrderDelay === 0) {
         item.createOrderStatus = '延迟'
       } else if (item.createOrderStatus === 2 && item.createOrderDelay !== 0) {
-        item.createOrderStatus = '延迟' + item.createOrderDelay
+        item.createOrderStatus = '延迟' + item.createOrderDelay + '小时'
       } else if (item.createOrderStatus === 2 && item.createOrderDelay !== 0 && item.createOrderTime !== 0) {
-        item.createOrderStatus = '延迟' + item.createOrderDelay + dateConvert(item.createOrderTime)
+        item.createOrderStatus = '延迟' + item.createOrderDelay + '小时' + dateConvert(item.createOrderTime)
       }
       if (item.dispatchStatus === 1 && item.dispatchTime === 0) {
         item.dispatchStatus = '正常'
@@ -648,9 +657,9 @@ layui.config({
       } else if (item.dispatchStatus === 2  && item.dispatchDelay === 0) {
         item.dispatchStatus = '延迟'
       } else if (item.dispatchStatus === 2 && item.dispatchDelay !== 0) {
-        item.dispatchStatus = '延迟' + item.dispatchDelay
+        item.dispatchStatus = '延迟' + item.dispatchDelay + '小时'
       } else if (item.dispatchStatus === 2 && item.dispatchDelay !== 0 && item.dispatchTime !== 0) {
-        item.dispatchStatus = '延迟' + item.dispatchDelay + dateConvert(item.dispatchTime)
+        item.dispatchStatus = '延迟' + item.dispatchDelay + '小时' + dateConvert(item.dispatchTime)
       }
       if (item.startStatus === 1 && item.startTime === 0) {
         item.startStatus = '正常'
@@ -659,9 +668,9 @@ layui.config({
       } else if (item.startStatus === 2 && item.startDelay === 0) {
         item.startStatus = '延迟'
       } else if (item.startStatus === 2 && item.startDelay !== 0) {
-        item.startStatus = '延迟' + item.startDelay
+        item.startStatus = '延迟' + item.startDelay + '小时'
       } else if (item.startStatus === 2 && item.startDelay !== 0 && item.startTime !== 0) {
-        item.startStatus = '延迟' + item.startDelay + dateConvert(item.startTime)
+        item.startStatus = '延迟' + item.startDelay + '小时' + dateConvert(item.startTime)
       }
       if (item.outCityStatus === 1 && item.outCityTime === 0) {
         item.outCityStatus = '正常'
@@ -670,9 +679,9 @@ layui.config({
       } else if (item.outCityStatus === 2 && item.outCityDelay === 0) {
         item.outCityStatus = '延迟'
       } else if (item.outCityStatus === 2 && item.outCityDelay !== 0) {
-        item.outCityStatus = '延迟' + item.outCityDelay
+        item.outCityStatus = '延迟' + item.outCityDelay + '小时'
       } else if (item.outCityStatus === 2 && item.outCityDelay !== 0 && item.outCityTime !== 0) {
-        item.outCityStatus = '延迟' + item.outCityDelay + dateConvert(item.outCityTime)
+        item.outCityStatus = '延迟' + item.outCityDelay + '小时' + dateConvert(item.outCityTime)
       }
       if (item.returnStatus === 1 && item.returnTime === 0) {
         item.returnStatus = '正常'
@@ -681,9 +690,9 @@ layui.config({
       } else if (item.returnStatus === 2 && item.returnDelay === 0) {
         item.returnStatus = '延迟'
       } else if (item.returnStatus === 2 && item.returnDelay !== 0) {
-        item.returnStatus = '延迟' + item.returnDelay
+        item.returnStatus = '延迟' + item.returnDelay + '小时'
       } else if (item.returnStatus === 2 && item.returnDelay !== 0 && item.returnTime !== 0) {
-        item.returnStatus = '延迟' + item.returnDelay + dateConvert(item.returnTime)
+        item.returnStatus = '延迟' + item.returnDelay + '小时' + dateConvert(item.returnTime)
       }
       if (item.dealerReceiveStatus === 1 && item.dealerReceiveTime === 0) {
         item.dealerReceiveStatus = '正常'
@@ -692,9 +701,9 @@ layui.config({
       } else if (item.dealerReceiveStatus === 2 && item.dealerReceiveDelay === 0) {
         item.dealerReceiveStatus = '延迟'
       } else if (item.dealerReceiveStatus === 2 && item.dealerReceiveDelay !== 0) {
-        item.dealerReceiveStatus = '延迟' + item.dealerReceiveDelay
+        item.dealerReceiveStatus = '延迟' + item.dealerReceiveDelay + '小时'
       } else if (item.dealerReceiveStatus === 2 && item.dealerReceiveDelay !== 0 && item.dealerReceiveTime !== 0) {
-        item.dealerReceiveStatus = '延迟' + item.dealerReceiveDelay + dateConvert(item.dealerReceiveTime)
+        item.dealerReceiveStatus = '延迟' + item.dealerReceiveDelay + '小时' + dateConvert(item.dealerReceiveTime)
       }
       if (item.dealerSignStatus === 1 && item.dealerSignTime === 0) {
         item.dealerSignStatus = '正常'
@@ -703,9 +712,9 @@ layui.config({
       } else if (item.dealerSignStatus === 2 && item.dealerSignDelay === 0) {
         item.dealerSignStatus = '延迟'
       } else if (item.dealerSignStatus === 2 && item.dealerSignDelay !== 0) {
-        item.dealerSignStatus = '延迟' + item.dealerSignDelay
+        item.dealerSignStatus = '延迟' + item.dealerSignDelay + '小时'
       } else if (item.dealerSignStatus === 2 && item.dealerSignDelay !== 0 && item.dealerSignTime !== 0) {
-        item.dealerSignStatus = '延迟' + item.dealerSignDelay + dateConvert(item.dealerSignTime)
+        item.dealerSignStatus = '延迟' + item.dealerSignDelay + '小时' + dateConvert(item.dealerSignTime)
       }
       if (item.timeInvalidStatus === 1) {
         item.timeInvalidStatus = '正常'
@@ -714,9 +723,9 @@ layui.config({
       } else if (item.timeInvalidStatus === 2) {
         item.timeInvalidStatus = '延迟'
       } else if (item.timeInvalidStatus === 2 && item.timeInvalidDelay !== 0) {
-        item.timeInvalidStatus = '延迟' + item.timeInvalidDelay
+        item.timeInvalidStatus = '延迟' + item.timeInvalidDelay + '小时'
       } else if (item.timeInvalidStatus === 2 && item.timeInvalidDelay !== 0 && item.timeInvalid !== 0) {
-        item.timeInvalidStatus = '延迟' + item.timeInvalidDelay + dateConvert(item.timeInvalid)
+        item.timeInvalidStatus = '延迟' + item.timeInvalidDelay + '小时' + dateConvert(item.timeInvalid)
       }
       if (item.returnImgApprovalStatus === 1 && item.returnImgApprovalTime === 0) {
         item.returnImgApprovalStatus = '正常'
@@ -725,9 +734,9 @@ layui.config({
       } else if (item.returnImgApprovalStatus === 2 && item.returnImgApprovalDelay === 0) {
         item.returnImgApprovalStatus = '延迟'
       } else if (item.returnImgApprovalStatus === 2 && item.returnImgApprovalDelay !== 0) {
-        item.returnImgApprovalStatus = '延迟' + item.returnImgApprovalDelay
+        item.returnImgApprovalStatus = '延迟' + item.returnImgApprovalDelay + '小时'
       } else if (item.returnImgApprovalStatus === 2 && item.returnImgApprovalDelay !== 0 && item.returnImgApprovalTime !== 0) {
-        item.returnImgApprovalStatus = '延迟' + item.returnImgApprovalDelay + dateConvert(item.returnImgApprovalTime)
+        item.returnImgApprovalStatus = '延迟' + item.returnImgApprovalDelay + '小时' + dateConvert(item.returnImgApprovalTime)
       }
       if (item.prePayStatus === 1 && item.prePayTime === 0) {
         item.prePayStatus = '正常'
@@ -736,9 +745,9 @@ layui.config({
       } else if (item.prePayStatus === 2 && item.prePayDelay === 0) {
         item.prePayStatus = '延迟'
       } else if (item.prePayStatus === 2 && item.prePayDelay !== 0) {
-        item.prePayStatus = '延迟' + item.prePayDelay
+        item.prePayStatus = '延迟' + item.prePayDelay + '小时'
       } else if (item.prePayStatus === 2 && item.prePayDelay !== 0 && item.prePayTime !== 0) {
-        item.prePayStatus = '延迟' + item.prePayDelay + dateConvert(item.prePayTime)
+        item.prePayStatus = '延迟' + item.prePayDelay + '小时' + dateConvert(item.prePayTime)
       }
       if (item.arrivePayStatus === 1 && item.arrivePayTime === 0) {
         item.arrivePayStatus = '正常'
@@ -747,9 +756,9 @@ layui.config({
       } else if (item.arrivePayStatus === 2 && item.arrivePayDelay === 0) {
         item.arrivePayStatus = '延迟'
       } else if (item.arrivePayStatus === 2 && item.arrivePayDelay !== 0) {
-        item.arrivePayStatus = '延迟' + item.arrivePayDelay
+        item.arrivePayStatus = '延迟' + item.arrivePayDelay + '小时'
       } else if (item.arrivePayStatus === 2 && item.arrivePayDelay !== 0 && item.arrivePayTime !== 0) {
-        item.arrivePayStatus = '延迟' + item.arrivePayDelay + dateConvert(item.arrivePayTime)
+        item.arrivePayStatus = '延迟' + item.arrivePayDelay + '小时' + dateConvert(item.arrivePayTime)
       }
       if (item.tailPayStatus === 1 && item.tailPayTime === 0) {
         item.tailPayStatus = '正常'
@@ -758,9 +767,9 @@ layui.config({
       } else if (item.tailPayStatus === 2 && item.tailPayDelay === 0) {
         item.tailPayStatus = '延迟'
       } else if (item.tailPayStatus === 2 && item.tailPayDelay !== 0) {
-        item.tailPayStatus = '延迟' + item.tailPayDelay
+        item.tailPayStatus = '延迟' + item.tailPayDelay + '小时'
       } else if (item.tailPayStatus === 2 && item.tailPayDelay !== 0 && item.tailPayTime !== 0) {
-        item.tailPayStatus = '延迟' + item.tailPayDelay + dateConvert(item.tailPayTime)
+        item.tailPayStatus = '延迟' + item.tailPayDelay + '小时' + dateConvert(item.tailPayTime)
       }
       if (item.reportHandleStatus === 1 && item.reportHandleTime === 0) {
         item.reportHandleStatus = '正常'
@@ -769,9 +778,9 @@ layui.config({
       } else if (item.reportHandleStatus === 2 && item.reportHandleDelay === 0) {
         item.reportHandleStatus = '延迟'
       } else if (item.reportHandleStatus === 2 && item.reportHandleDelay !== 0) {
-        item.reportHandleStatus = '延迟' + item.reportHandleDelay
+        item.reportHandleStatus = '延迟' + item.reportHandleDelay + '小时'
       } else if (item.reportHandleStatus === 2 && item.reportHandleDelay !== 0 && item.reportHandleTime !== 0) {
-        item.reportHandleStatus = '延迟' + item.reportHandleDelay + dateConvert(item.reportHandleTime)
+        item.reportHandleStatus = '延迟' + item.reportHandleDelay + '小时' + dateConvert(item.reportHandleTime)
       }
       if (item.damageApprovalStatus === 1 && item.damageApprovalTime === 0) {
         item.damageApprovalStatus = '正常'
@@ -780,9 +789,9 @@ layui.config({
       } else if (item.damageApprovalStatus === 2 && item.damageApprovalDelay === 0) {
         item.damageApprovalStatus = '延迟'
       } else if (item.damageApprovalStatus === 2 && item.damageApprovalDelay !== 0) {
-        item.damageApprovalStatus = '延迟' + item.damageApprovalDelay
+        item.damageApprovalStatus = '延迟' + item.damageApprovalDelay + '小时'
       } else if (item.damageApprovalStatus === 2 && item.damageApprovalDelay !== 0 && item.damageApprovalTime !== 0) {
-        item.damageApprovalStatus = '延迟' + item.damageApprovalDelay + dateConvert(item.damageApprovalTime)
+        item.damageApprovalStatus = '延迟' + item.damageApprovalDelay + '小时' + dateConvert(item.damageApprovalTime)
       }
       if (item.deviateWay) {
         item.deviateWay = item.deviateWay + 'KM'
