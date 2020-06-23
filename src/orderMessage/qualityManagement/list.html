@@ -111,6 +111,7 @@
   {{# if(permissionList.indexOf('导出') != -1){ }}
   <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
   {{# } }}
+  <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
   <button class="layui-btn layui-btn-sm" id="aaaaaa" lay-event="tableSet">表格设置</button>
 </div>
 </script>
@@ -126,9 +127,6 @@
 <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
 {{# } }}
 <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="log">日志</a>
-</script>
-<script type="text/html" id="stffList">
-<a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.receiveCarNetworkCount}}</a>
 </script>
 <script type="text/javascript">
 //定义时间转换函数
@@ -149,7 +147,7 @@ layui.config({
   var reloadOption = null;
   var xadmin = layui.xadmin,
     edipao = layui.edipao,
-    tableKey = 'SystemSetting-CostAllocation-list',
+    tableKey = 'qualityManagement-list',
     tableCols = [ //表头
       { checkbox: true },
       { field: 'orderNo', title: '业务单号', width: 200 },
@@ -261,7 +259,12 @@ layui.config({
       },
       {
         field: 'deviateWay', title: '线路偏移', width: 200, align: 'center', templet: function (d) {
-          return d.deviateWay + 'KM' || '- -'
+          if (d.deviateWay === 0) {
+            return '- -'
+          } else {
+            return d.deviateWay + 'KM'
+          }
+
         }
       },
       {
@@ -477,9 +480,7 @@ layui.config({
     layui.each(tableCols, function (index, el) {
       if (el.field) {
         let item = { field: el.field };
-        if (el.field == 'receiveCarNetworkCount') {
-          item.type = 'numberslot'
-        } else if (el.field == "transportAssignTime" || el.field == "latestArriveTime" || el.field == "createOrderStatus" || el.field == "dispatchStatus" || el.field == "startStatus" || el.field == "outCityStatus" || el.field == "estimatedArriveTime" || el.field == "returnStatus" || el.field == "dealerReceiveStatus" || el.field == "dealerSignStatus" || el.field == "timeInvalidStatus" || el.field == "returnImgApprovalStatus" || el.field == "prePayStatus" || el.field == "arrivePayStatus" || el.field == "tailPayStatus" || el.field == "reportHandleStatus") {
+        if (el.field == "transportAssignTime" || el.field == "latestArriveTime" || el.field == "createOrderStatus" || el.field == "dispatchStatus" || el.field == "startStatus" || el.field == "outCityStatus" || el.field == "estimatedArriveTime" || el.field == "returnStatus" || el.field == "dealerReceiveStatus" || el.field == "dealerSignStatus" || el.field == "timeInvalidStatus" || el.field == "returnImgApprovalStatus" || el.field == "prePayStatus" || el.field == "arrivePayStatus" || el.field == "tailPayStatus" || el.field == "reportHandleStatus") {
           item.type = 'timeslot'
         } else if (el.field == 'orderType') {
           item.type = 'checkbox'
@@ -499,6 +500,8 @@ layui.config({
           ]
         } else if (el.field == 'driverName') {
           item.type = "contract"
+        } else if (el.field == 'deviateWay') {
+          item.type = 'numberslot'
         }
         if (el.field != "operation") {
           filtersHeader.push(item)
@@ -517,12 +520,12 @@ layui.config({
           };
         layui.each(filters, function (key, value) {
           where['searchFieldDTOList[' + index + '].fieldName'] = key;
-          if (key == 'receiveCarNetworkCount') {
+          if (key == 'deviateWay') {
             where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
             where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
-          } else if (key == 'orderType') {
+          } else if (key == 'orderType' || key == 'orderStatus') {
             where['searchFieldDTOList[' + index + '].fieldListValue'] = value.join(',');
-          } else if (key == "transportAssignTime" || key == "latestArriveTime" || key == "createOrderStatus" || key == "dispatchStatus" || key == "startStatus" || key == "outCityStatus" || key == "location" || key == "estimatedArriveTime" || key == "returnStatus" || key == "dealerReceiveStatus" || key == "dealerSignStatus" || key == "timeInvalidStatus" || key == "returnImgApprovalStatus" || key == "prePayStatus" || key == "arrivePayStatus" || key == "tailPayStatus" || key == "reportHandleStatus") {
+          } else if (key == "transportAssignTime" || key == "latestArriveTime" || key == "createOrderStatus" || key == "dispatchStatus" || key == "startStatus" || key == "outCityStatus" || key == "estimatedArriveTime" || key == "returnStatus" || key == "dealerReceiveStatus" || key == "dealerSignStatus" || key == "timeInvalidStatus" || key == "returnImgApprovalStatus" || key == "prePayStatus" || key == "arrivePayStatus" || key == "tailPayStatus" || key == "reportHandleStatus") {
             // where['searchFieldDTOList[' + index + '].fieldName'] = key;
             value = value.split(" 至 ");
             where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
@@ -566,6 +569,9 @@ layui.config({
       case 'tableSet':
         xadmin.open('表格设置', './table-set.html', 600);
         break;
+      case "exportLog":
+        xadmin.open('导出日志', '../../OperateLog/log.html?type=8&action=exportLog');
+        break;
       case "reset_search":
         edipao.resetSearch("costList3", function () {
           location.reload();
@@ -596,13 +602,13 @@ layui.config({
 
   function exportXlsx (list) {
     list.forEach(item => {
-      if(item.driverName !== '' && item.driverPhone !== ''){
+      if (item.driverName !== '' && item.driverPhone !== '') {
         item.driverName = item.driverName + '-' + item.driverPhone
-      } else if(item.driverName !== '' && item.driverPhone === ''){
+      } else if (item.driverName !== '' && item.driverPhone === '') {
         item.driverName = item.driverName
-      } else if(item.driverName === '' && item.driverPhone !== ''){
+      } else if (item.driverName === '' && item.driverPhone !== '') {
         item.driverName = item.driverPhone
-      } else if(item.driverName === '' && item.driverPhone === ''){
+      } else if (item.driverName === '' && item.driverPhone === '') {
         item.driverName = '- -'
       }
       if (item.orderType == 1) {
@@ -654,7 +660,7 @@ layui.config({
         item.dispatchStatus = '正常'
       } else if (item.dispatchStatus === 1 && item.dispatchTime !== 0) {
         item.dispatchStatus = '正常' + dateConvert(item.dispatchTime)
-      } else if (item.dispatchStatus === 2  && item.dispatchDelay === 0) {
+      } else if (item.dispatchStatus === 2 && item.dispatchDelay === 0) {
         item.dispatchStatus = '延迟'
       } else if (item.dispatchStatus === 2 && item.dispatchDelay !== 0) {
         item.dispatchStatus = '延迟' + item.dispatchDelay + '小时'
@@ -796,6 +802,15 @@ layui.config({
       if (item.deviateWay) {
         item.deviateWay = item.deviateWay + 'KM'
       }
+      if (item.location !== '' && item.locationTime !== 0) {
+        item.location = item.location + dateConvert(item.locationTime)
+      } else if (item.location === '' && item.locationTime !== 0) {
+        item.location = dateConvert(item.locationTime)
+      } else if (item.location !== '' && item.locationTime === 0) {
+        item.location = item.location
+      } else {
+        item.location = '- -'
+      }
     })
 
     var data = [], list = [{}].concat(list);
@@ -813,16 +828,16 @@ layui.config({
       data.push(dataItem)
     })
     excel.exportExcel({ sheet1: data }, '订单列表.xlsx', 'xlsx');
-    // exportLog();
+    exportLog();
   }
 
-  // function exportLog () {
-  //   var params = {
-  //     operationModule: 8,
-  //     operationRemark: "导出费用数据"
-  //   }
-  //   edipao.exportLog(params);
-  // }
+  function exportLog () {
+    var params = {
+      operationModule: 18,
+      operationRemark: "导出订单数据"
+    }
+    edipao.exportLog(params);
+  }
 
 
   table.on('toolbar(costList3)', handleEvent);
