@@ -42,6 +42,7 @@
 .layui-tab .layui-tab-item .desc {
   padding-bottom: 10px ;
 }
+.layui-tab .layui-tab-item .save-btn,
 .layui-tab .layui-tab-item .choose-btn {
   margin-top: 10px;
 }

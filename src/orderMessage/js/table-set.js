@@ -54,6 +54,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     routeTableHeaderList = [
       {field: 'startAddress', title: '出发地'},
       {field: 'endAddress', title: '目的地'},
+      {field: 'transportOrderNum', title: '发运趟数'},
       {field: 'orderType', title: '适用类型'},
       {field: 'reportToAudit', title: '上报待审'},
       {field: 'lineSource', title: '线路规划'},

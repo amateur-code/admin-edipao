@@ -27,6 +27,7 @@ layui.config({
         this.cols = [
             {field: 'startAddress', title: '出发地', sort: false, hide: false, minWidth:200},
             {field: 'endAddress', title: '目的地', sort: false, hide: false, minWidth:200},
+            {field: 'transportOrderNum', title: '发运趟数', sort: false, hide: false, minWidth:100},
             {field: 'orderType', title: '适用类型', sort: false, hide: false, width:120, templet:function(d){
                 switch(d.orderType){
                     case 1:
@@ -190,8 +191,12 @@ layui.config({
                         type: 'input'
                     },
                     {
+                        field: 'transportOrderNum',
+                        type: 'numberslot'
+                    },
+                    {
                         field: 'orderType',
-                        type: 'radio',
+                        type: 'checkbox',
                         data: [
                             { "key":"1", "value":"单车单"},
                             { "key":"2", "value":"背车单"}
@@ -203,7 +208,7 @@ layui.config({
                     },
                     {
                         field: 'lineSource',
-                        type: 'radio',
+                        type: 'checkbox',
                         data: [
                             { "key":"1", "value":"订单轨迹"},
                             { "key":"2", "value":"导入轨迹"},
@@ -218,13 +223,16 @@ layui.config({
                     var where = {},
                         index = 0;
                     layui.each(filters, function(key, value){
-                        if(key != 'reportToAudit'){
+                        if(key == 'lineSource' || key == "orderType"){
                             where['searchFieldDTOList[' + index + '].fieldName'] = key;
-                            where['searchFieldDTOList[' + index + '].fieldValue'] = value;
-                        } else {
+                            where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+                        } else if(key == "reportToAudit" || key == "transportOrderNum") {
                             where['searchFieldDTOList[' + index + '].fieldName'] = key;
                             where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
                             where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+                        }else{
+                            where['searchFieldDTOList[' + index + '].fieldName'] = key;
+                            where['searchFieldDTOList[' + index + '].fieldValue'] = value;
                         }
                         index ++;
                     })

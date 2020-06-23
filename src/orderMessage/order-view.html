@@ -549,6 +549,26 @@
                         {{# } }}
                     </div>
                 </div>
+                <div class="layui-form-item layui-row">
+                    <div class="layui-inline layui-col-md4">
+                        <div class="layui-row">
+                            <span class="layui-form-span form_span">物料存放位置：</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.materielLoc}}</span>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md4">
+                        <div class="layui-row">
+                            <span class="layui-form-span form_span">停放位置：</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.parkingLot}}</span>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md4">
+                        <div class="layui-row">
+                            <span class="layui-form-span form_span">钥匙：</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.truckKeyPosition}}</span>
+                        </div>
+                    </div>
+                </div>
                 <!-- <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md4">
                         <div class="layui-row">
@@ -634,7 +654,7 @@
                 </div>
             </div>
         </div>
-        <div class="layui-form-item layui-row">
+        <div class="layui-form-item layui-row" style="margin-bottom: 30px;margin-top: 30px;">
             <div class="layui-col-md12">
                 <span class="layui-form-span form_span">收车图片：</span>
                 {{# if(!d.returnImages||d.returnImages.length==0){ }}

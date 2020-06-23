@@ -25,6 +25,23 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
         this.topLoadIndex = null;
         this.vias = [];
         this.isHighway = 0;
+        this.sourceList = {
+            "1": {
+                source: 1,
+                tab: false,
+                chosen: false,
+            },
+            "2": {
+                source: 2,
+                tab: false,
+                chosen: false,
+            },
+            "3": {
+                source: 3,
+                tab: true,
+                chosen: false,
+            }
+        }
     }
 
 
@@ -59,18 +76,20 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                 this.map.load();
                 this.trackHandler = new Careland.Track();
                 this.Driving = new Careland.DrivingRoute(this.map, {
-                    "map": this.map,
-                    "policy": CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS,
-                    "multi": 1,
-                    viaStyle: viaStyle,
-                    startStyle: startStyle,
-                    endStyle: endStyle,
-                    "autoDragging": true,
-                    onSearchComplete: function(obj){
-                        layer.close(_t.topLoadIndex);
-                        // if(firstUpload) return firstUpload = false;
-                        _t.lineSelectCallback(obj);
-                    }
+                  map: this.map,
+                  policy: CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS,
+                  multi: 1,
+                  viaStyle: viaStyle,
+                  startStyle: startStyle,
+                  endStyle: endStyle,
+                  autoDragging: true,
+                  onSearchComplete: function (obj) {
+                    layer.close(_t.topLoadIndex);
+                    _t.lineSelectCallback(obj);
+                  },
+                  onMarkersSet: function (data) {
+                    console.log(data);
+                  },
                 }); 
                 _t.layer = new Careland.Layer('point', 'layer');        //创建点图层
                 this.map.addLayer(_t.layer);
@@ -103,7 +122,6 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                     } catch (error) {}
                     _t.renderTabContent();
                     _t.renderDrivingRoute();
-
                     _t.bindLineEvents();
                 }
             }).fail(function () { 
@@ -112,15 +130,14 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
         },
         renderTabContent(){
             var _t = this;
-            var getTabConentTpl = tabConentTpl.innerHTML,
-                tabConent = document.getElementById('tabConent');
-            laytpl(getTabConentTpl).render(_t.lineDetail, function(html){
-                tabConent.innerHTML = html;
-
+            var getTabConentTpl = $("#tabConentTpl").html();
+            laytpl(getTabConentTpl).render(Object.assign({}, _t.lineDetail, {
+                sourceList: _t.sourceList
+            }), function(html){
+                $("#tabConent").html(html);
                 setTimeout(function(){
                     form.render('checkbox'); 
-                },1000)
-                
+                }, 1000);
             });
         },
         // 设置地图导航
@@ -130,6 +147,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
             var trackInfo = [];
             if(Array.isArray(_t.line)){
                 for(var point of _t.line){
+                    // trackInfo.push(Object.assign({}, Careland.DrawTool.GbPointToKldPoint(point.lng,point.lat), {utctime: 1586144485}));
                     trackInfo.push(Careland.DrawTool.GbPointToKldPoint(point.lng,point.lat));
                 }
             }
@@ -156,7 +174,6 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
         },
         // 路线选择回掉
         lineSelectCallback(obj){
-            console.log(obj)
             var _t = this, pointData =[];
             var plan = obj.getPlan(0);
             for(var i in plan.uidinfo){
@@ -166,6 +183,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                 }
             }
             _t.line = pointData;
+            return;
             _t.Driving.getDrivingRouteData(function(res){
                 var blob = new Blob([res], {
                     type: "application/octet-stream"
@@ -200,58 +218,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                 })
             });
         },
-        // 根据轨迹回放
-        paintLine: function(){
-            var _t = this;
-            //启用地图平移缩放控件(骨架)
-            var control = new Careland.Navigation();
-            control.anchor = CLDMAP_ANCHOR_TOP_RIGHT;					//设置位置为右上角
-            control.offset = new Careland.Size(10, 30);					//设置位置偏移
-            _t.map.addMapControl(control);
 
-            //启用比例尺
-            var scale = new Careland.Scale();
-            scale.anchor = CLDMAP_ANCHOR_BOTTOM_LEFT;					//设置位置为左下角
-            scale.offset = new Careland.Size(10, 5);					//设置位置偏移
-            _t.map.addMapControl(scale);
-            
-            var data = []; //整理之后的轨迹点
-            var speed = 30; //速度
-            let d = -1; //每100个切割一段轨迹 
-            var linestyles = [];
-            for(var i in _t.line){
-                if(i%100 == 0){//每100个切割一段轨迹，
-                    d++;
-                    data[d] = [];
-                    linestyles[linestyles.length] = new Careland.LineStyle({color:"rgb(17, 140, 255)",selectedColor:getColor(),size:6,selectedSize:6,opacity:100});
-                }
-                var l = data[d].length;
-                data[d][l] = {};
-                data[d][l].Text = {value:"111",textOffsetX:-100,textOffsetY:-40,fontSize:15,fontColor:'#e91e63',fontBold:true,textWidth:200,textAlign:'center'};
-                data[d][l].Point = new Careland.GbPoint( _t.line[i].lat,_t.line[i].lng);
-                data[d][l].Icon = {
-                    src: location.origin + "/images/truck.png",
-                    offsetY: -22,
-                    offsetX: -10
-                };
-            }
-            this.trackHandler.isShowPoint = false; 
-            // this.trackHandler.setIconType(CLDMAP_TRACK_ICON_TRUCK);
-            this.trackHandler.setDefaultStyles({trackLineStyles:linestyles});
-            this.trackHandler.init(data);
-            this.trackHandler.setSpeed(speed);
-            this.trackHandler.play();//开始
-            
-            function getColor(){
-                var c = ['#FF0000','#FAFAD2','#F08080','#EECFA1','#CD6090','#BDBDBD','#999999','#8B2252','#551A8B','#242424','#00FFFF','#EEEE00'];
-                rand = random(0, 12)
-                return c[rand]
-            }
-
-            function random(lower, upper) {
-                return Math.floor(Math.random() * (upper - lower)) + lower;
-            }
-        },
         // 获取司机上报数据
         // status 1上报待审2已采纳3取消采纳4已删除
         getDriverReportList: function(){
@@ -495,20 +462,13 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                 }
             })
         },
+        
         // 绑定tab事件
         bindLineEvents: function(){
             var _t = this;
-            element.on('tab(docDemoTabBrief)', function(data){
-                let source = this.getAttribute('lay-id');
-                if(source == 1){
-                     // _t.lineDetail.lineSource = 1;
-                    // _t.getOrderListByLineId()
-                    // _t.getOrderLineTrack('OR00001414')
-                }else if(source == 2){
-
-                }else if(source == 3){
-                    // _t.lineDetail.lineSource = 3;
-                }
+            element.on('tab(docDemoTabBrief)', function(){
+                let source = this.getAttribute('lay-id') + "";
+                _t.setTabSource(source);
             });
 
             form.on('switch(policy)', function(data){
@@ -537,7 +497,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                 _t.getOrderListByLineId()
             })
             $("#tabConent").on("click", ".choose-btn",function (e) {
-                var source = e.target.dataset.source * 1;
+                var source = e.target.dataset.source + "";
                 switch(source){
                     case 1:
                         if(_t.lineDetail.lineSource != 1){
@@ -551,6 +511,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                         _t.isHighway = _t.lineDetail.isHighway;
                         _t.lineDetail.lineSource = source;
                         _t.line = _t.lineDetail.trackContent;
+                        _t.setChosenSource(source);
                         _t.renderDrivingRoute();
                         _t.renderTabContent();
                         break;
@@ -560,6 +521,72 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                 if(!_t.line) return;
                 _t.paintLine();
             })
+        },
+        setChosenSource: function (source) {
+            source = source + "";
+            _t.sourceList["1"]["chosen"] = false;
+            _t.sourceList["2"]["chosen"] = false;
+            _t.sourceList["3"]["chosen"] = false;
+            _t.sourceList[source]["chosen"] = true;
+        },
+        setTabSource: function (source) {
+            source = source + "";
+            _t.sourceList["1"]["tab"] = false;
+            _t.sourceList["2"]["tab"] = false;
+            _t.sourceList["3"]["tab"] = false;
+            _t.sourceList[source]["tab"] = true;
+        },
+        // 根据轨迹回放
+        paintLine: function(){
+            var _t = this;
+            //启用地图平移缩放控件(骨架)
+            var control = new Careland.Navigation();
+            control.anchor = CLDMAP_ANCHOR_TOP_RIGHT;					//设置位置为右上角
+            control.offset = new Careland.Size(10, 30);					//设置位置偏移
+            _t.map.addMapControl(control);
+
+            //启用比例尺
+            var scale = new Careland.Scale();
+            scale.anchor = CLDMAP_ANCHOR_BOTTOM_LEFT;					//设置位置为左下角
+            scale.offset = new Careland.Size(10, 5);					//设置位置偏移
+            _t.map.addMapControl(scale);
+            
+            var data = []; //整理之后的轨迹点
+            var speed = 30; //速度
+            let d = -1; //每100个切割一段轨迹 
+            var linestyles = [];
+            for(var i in _t.line){
+                if(i%100 == 0){//每100个切割一段轨迹，
+                    d++;
+                    data[d] = [];
+                    linestyles[linestyles.length] = new Careland.LineStyle({color:"rgb(17, 140, 255)",selectedColor:getColor(),size:6,selectedSize:6,opacity:100});
+                }
+                var l = data[d].length;
+                data[d][l] = {};
+                data[d][l].Text = {value:"111",textOffsetX:-100,textOffsetY:-40,fontSize:15,fontColor:'#e91e63',fontBold:true,textWidth:200,textAlign:'center'};
+                data[d][l].Point = new Careland.GbPoint( _t.line[i].lat,_t.line[i].lng);
+                data[d][l].Icon = {
+                    src: location.origin + "/images/truck.png",
+                    offsetY: -22,
+                    offsetX: -10
+                };
+            }
+            this.trackHandler.isShowPoint = false; 
+            // this.trackHandler.setIconType(CLDMAP_TRACK_ICON_TRUCK);
+            this.trackHandler.setDefaultStyles({trackLineStyles:linestyles});
+            this.trackHandler.init(data);
+            this.trackHandler.setSpeed(speed);
+            this.trackHandler.play();//开始
+            
+            function getColor(){
+                var c = ['#FF0000','#FAFAD2','#F08080','#EECFA1','#CD6090','#BDBDBD','#999999','#8B2252','#551A8B','#242424','#00FFFF','#EEEE00'];
+                rand = random(0, 12)
+                return c[rand]
+            }
+
+            function random(lower, upper) {
+                return Math.floor(Math.random() * (upper - lower)) + lower;
+            }
         },
         // 绑定司机上报页面事件
         bindEvents: function(){
@@ -639,11 +666,6 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
                         }
                     },
                     success: function () {
-                        //凯立德地图API功能
-                        // var point = new Careland.Point(419364916, 143908009);
-                        // _t.reportMap = new Careland.Map('select-map', point, 15);
-                        // _t.reportMap.enableAutoResize();
-                        // _t.reportMap.load(); 
                         _t.regionMapView();
                     }
                 })
