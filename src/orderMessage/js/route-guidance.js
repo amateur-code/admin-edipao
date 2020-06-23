@@ -117,6 +117,7 @@ layui.config({
                 url: layui.edipao.API_HOST+'/admin/line/list',
                 title: '订单列表',
                 method: "get",
+                limits: [10, 20, 50, 100],
                 page: true,
                 request: {
                     pageName: 'pageNo',

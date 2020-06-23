@@ -93,12 +93,22 @@
 }
 .map-container{
   height: 620px;
-  #map{
+  #map,.map{
+    position: relative;
     width:100%;
     height:100%;
     overflow:hidden;
     margin:0;
     padding:0px;
+  }
+  .map-content{
+    position: absolute;
+  }
+  .map-show{
+    z-index: 5;
+  }
+  .map-hide{
+    z-index: 4;
   }
 }
 .report-form{
@@ -184,4 +194,7 @@
   width: 100%;
   height: 100%;
   position: relative;
+}
+.hide{
+  display: none !important;
 }

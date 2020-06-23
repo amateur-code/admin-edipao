@@ -1,5 +1,5 @@
 window.firstUpload = true;
-layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function () {
+layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function () {
     var $ = layui.jquery;
     var form = layui.form;
     var layer = layui.layer;
@@ -25,6 +25,9 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
         this.topLoadIndex = null;
         this.vias = [];
         this.isHighway = 0;
+        this.iframe1 = null;
+        this.iframe2 = null;
+        this.iframe3 = null;
         this.sourceList = {
             "1": {
                 source: 1,
@@ -48,57 +51,10 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
     _routePlan.prototype = {
         // 初始化
         init: function(){
-            var _t = this;
-            this.topLoadIndex = layer.load(1);
-            try{
-                var baseStyle = {
-                    width: 23,
-                    height: 29,
-                    offsetX: -13,
-                    offsetY: -34,
-                    textOffsetX: -5,
-                    textOffsetY: -30,
-                    fontColor: "#FFF",
-                  }
-                var viaStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
-                    src: location.origin + "/images/map_sign_pass.png",
-                }));
-                var startStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
-                    src: location.origin + "/images/map_sign_start.png",
-                }));
-                var endStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
-                    src: location.origin + "/images/map_sign_end.png",
-                }));
-                //凯立德地图API功能
-                var point = new Careland.Point(419364916, 143908009);    //创建坐标点
-                this.map = new Careland.Map('map', point, 12);             //实例化地图对象
-                this.map.enableAutoResize();                                 //启用自动适应容器尺寸变化
-                this.map.load();
-                this.trackHandler = new Careland.Track();
-                this.Driving = new Careland.DrivingRoute(this.map, {
-                  map: this.map,
-                  policy: CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS,
-                  multi: 1,
-                  viaStyle: viaStyle,
-                  startStyle: startStyle,
-                  endStyle: endStyle,
-                  autoDragging: true,
-                  onSearchComplete: function (obj) {
-                    layer.close(_t.topLoadIndex);
-                    _t.lineSelectCallback(obj);
-                  },
-                  onMarkersSet: function (data) {
-                    console.log(data);
-                  },
-                }); 
-                _t.layer = new Careland.Layer('point', 'layer');        //创建点图层
-                this.map.addLayer(_t.layer);
-            } catch (err){
-                console.log(err)
-            }
-
-            this.getDriverReportList();
-            this.getlineOrderData();
+           console.log(window.frames);
+           var _t = this;
+           _t.renderTabContent();
+           _t.bindLineEvents();
         },
         // 获取线路数据
         getlineOrderData(){
@@ -131,7 +87,7 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
         renderTabContent(){
             var _t = this;
             var getTabConentTpl = $("#tabConentTpl").html();
-            laytpl(getTabConentTpl).render(Object.assign({}, _t.lineDetail, {
+            laytpl(getTabConentTpl).render(Object.assign({}, {
                 sourceList: _t.sourceList
             }), function(html){
                 $("#tabConent").html(html);
@@ -777,7 +733,6 @@ layui.use(['jquery', 'layer', 'form', 'laytpl', 'laypage', 'laydate', 'element']
     
     var routePlan = new _routePlan();
     routePlan.init();
-
 });
 
 
