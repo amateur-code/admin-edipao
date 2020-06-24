@@ -1136,7 +1136,6 @@ layui.config({
             }else{
                 cb(checkStatus.data);
             }
-            
         },
         exportData: function exportExcel() {
             var _this = this;

@@ -47,42 +47,48 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
         }
     }
 
-
     _routePlan.prototype = {
         // 初始化
         init: function(){
-           console.log(window.frames);
-           var _t = this;
-           _t.renderTabContent();
-           _t.bindLineEvents();
-        },
-        // 获取线路数据
-        getlineOrderData(){
             var _t = this;
-            edipao.request({
-                type: 'GET',
-                url: '/admin/line/detail',
-                timeout: 60000,
-                data: $.extend({}, _t.request, {
-                    lineId: this.lineId
-                })
-            }).done(function(res) {
-                layer.close(_t.topLoadIndex);
-                if (res.code == 0) {
-                    _t.lineDetail = res.data
-                    try {
-                        if(_t.lineDetail.wayPointJson) _t.vias = JSON.parse(_t.lineDetail.wayPointJson);
-                        _t.lineDetail.trackContent = JSON.parse(_t.lineDetail.trackContent);
-                        _t.isHighway = _t.lineDetail.isHighway;
-                        _t.line = _t.lineDetail.trackContent;
-                    } catch (error) {}
-                    _t.renderTabContent();
-                    _t.renderDrivingRoute();
-                    _t.bindLineEvents();
+            _t.renderTabContent();
+            _t.bindLineEvents();
+            _t.bindFrameEvents();
+        },
+        bindFrameEvents(){
+            var _t = this;
+            this.iframe1 = $("#map1").attr("src", "./route-map.html?source=1");
+            this.iframe2 = $("#map2").attr("src", "./route-map.html?source=2");;
+            this.iframe3 = $("#map3").attr("src", "./route-map.html?source=3");;
+            $(window).on("message", function (e) {
+                var message = e.originalEvent.data;
+                switch(message.type){
+                    case "loaded":
+                        _t.iframeLoadData(message.source);
+                        break;
                 }
-            }).fail(function () { 
-                layer.close(_t.topLoadIndex);
-             });
+            });
+        },
+        iframeLoadData(source){
+            var _t = this;
+            switch(source * 1){
+                case 1:
+                    _t.postMessage(_t.iframe1[0].contentWindow, {
+
+                    });
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    _t.postMessage(_t.iframe3[0].contentWindow, {
+                        type: "getData",
+                        lineId: _t.lineId,
+                    });
+                    break;
+            }
+        },
+        postMessage(target, message){
+            target.postMessage(message);
         },
         renderTabContent(){
             var _t = this;
@@ -128,53 +134,6 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                 layer.close(_t.topLoadIndex);
             }
         },
-        // 路线选择回掉
-        lineSelectCallback(obj){
-            var _t = this, pointData =[];
-            var plan = obj.getPlan(0);
-            for(var i in plan.uidinfo){
-                for(var j in plan.uidinfo[i].shapepoint){
-                    let gbPoint = Careland.DrawTool.KldPointToGbPoint(plan.uidinfo[i].shapepoint[j].x,plan.uidinfo[i].shapepoint[j].y);
-                    pointData.push({lng:gbPoint.lng,lat:gbPoint.lat});
-                }
-            }
-            _t.line = pointData;
-            return;
-            _t.Driving.getDrivingRouteData(function(res){
-                var blob = new Blob([res], {
-                    type: "application/octet-stream"
-                });
-                let formData = new FormData()
-                formData.append('file', blob)
-                formData.append('loginStaffId',edipao.getLoginStaffId())
-                $.ajax({
-                    type: 'POST',
-                    url: edipao.API_HOST +  '/admin/lineTrack/upload/routeFile', 
-                    data: formData,
-                    processData : false,
-                    contentType : false,
-                }).done(function(res){
-                    if(res.code == 0){
-                        edipao.request({
-                            type: 'POST',
-                            url: '/admin/lineTrack/updateLineTrack',
-                            data: {
-                                lineId:  _t.lineId,
-                                lineSource:  _t.lineDetail.lineSource,
-                                trackUrl: res.data.url,
-                                trackContent: JSON.stringify(pointData),
-                                isHighway: _t.isHighway,
-                            }
-                        }).then(function(res){
-                            if(res.code == 0){
-                                _t.line = pointData;
-                            }
-                        })
-                    }
-                })
-            });
-        },
-
         // 获取司机上报数据
         // status 1上报待审2已采纳3取消采纳4已删除
         getDriverReportList: function(){
@@ -399,7 +358,11 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
             
         },
         getOrderLineTrack(orderNo){
-            var _t = this;
+            var _t = this, source = 1;
+            _t.postMessage(_t["iframe" + source][0].contentWindow, {
+                type: "orderLine",
+                orderNo: orderNo
+            });
             edipao.request({
                 type: 'GET',
                 url: '/admin/lineTrack/getOrderTrack',
@@ -418,43 +381,62 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                 }
             })
         },
-        
+        getTab(){
+            var tab = 0, _t = this;
+            Object.keys(this.sourceList).some(function (item) {
+                item = _t.sourceList[item];
+                tab = item.source;
+                return item.tab;
+            });
+            return tab;
+        },
+        getChosen(){
+            var chosen = 0, _t = this;
+            Object.keys(this.sourceList).some(function (item) {
+                item = _t.sourceList[item];
+                chosen = item.source;
+                return item.chosen;
+            });
+            return chosen;
+        },
         // 绑定tab事件
         bindLineEvents: function(){
             var _t = this;
             element.on('tab(docDemoTabBrief)', function(){
                 let source = this.getAttribute('lay-id') + "";
                 _t.setTabSource(source);
+                changeMap(source);
+                function changeMap(source) {
+                    $("#map" + source).removeClass("map-hide").addClass("map-show").siblings(".map-content").removeClass("map-show").addClass("map-hide");
+                }
             });
 
             form.on('switch(policy)', function(data){
                 if(data.elem.checked){
-                    console.log("走高速")
-                    _t.isHighway = 1;
-                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS);
-                    if(_t.lineDetail.isHighway == 1){
-                        _t.renderDrivingRoute();
-                    }else{
-                        _t.renderDrivingRoute(true);
-                    }
+                    _t.postMessage(_t.iframe3[0].contentWindow, {
+                        type: "policy",
+                        isHighway: 1,
+                    });
                 }else{
-                    console.log("不走高速")
-                    _t.isHighway = 0;
-                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS);
-                    if(_t.lineDetail.isHighway == 1){
-                        _t.renderDrivingRoute(true);
-                    }else{
-                        _t.renderDrivingRoute();
-                    }
+                    _t.postMessage(_t.iframe3[0].contentWindow, {
+                        type: "policy",
+                        isHighway: 0,
+                    });
                 }
-            });  
-
-            $('#tabConent').on('click','.order-choose',function(e){
-                _t.getOrderListByLineId()
-            })
+            });
+            
+            $('#tabConent').on('click','.rebuild-btn',function() {
+                var tab = _t.getTab();
+                _t.postMessage(_t["iframe" + tab][0].contentWindow, {
+                    type: "rebuild"
+                });
+            });
+            $('#tabConent').on('click','.order-choose',function() {
+                _t.getOrderListByLineId();
+            });
             $("#tabConent").on("click", ".choose-btn",function (e) {
                 var source = e.target.dataset.source + "";
-                switch(source){
+                switch(source * 1){
                     case 1:
                         if(_t.lineDetail.lineSource != 1){
                             layer.msg("请先选择订单");
@@ -464,21 +446,23 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                         case 2:
                             break;
                     case 3:
-                        _t.isHighway = _t.lineDetail.isHighway;
-                        _t.lineDetail.lineSource = source;
-                        _t.line = _t.lineDetail.trackContent;
+                        _t.postMessage(_t["iframe" + source][0].contentWindow, {
+                            type: "choose",
+                        });
                         _t.setChosenSource(source);
-                        _t.renderDrivingRoute();
                         _t.renderTabContent();
                         break;
                 }
             });
             $('#tabConent').on('click','.playLine',function(e){
-                if(!_t.line) return;
-                _t.paintLine();
+                var source = _t.getTab();
+                _t.postMessage(_t["iframe" + source][0].contentWindow, {
+                    type: "playLine"
+                });
             })
         },
         setChosenSource: function (source) {
+            var _t = this;
             source = source + "";
             _t.sourceList["1"]["chosen"] = false;
             _t.sourceList["2"]["chosen"] = false;
@@ -486,63 +470,12 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
             _t.sourceList[source]["chosen"] = true;
         },
         setTabSource: function (source) {
+            var _t = this;
             source = source + "";
             _t.sourceList["1"]["tab"] = false;
             _t.sourceList["2"]["tab"] = false;
             _t.sourceList["3"]["tab"] = false;
             _t.sourceList[source]["tab"] = true;
-        },
-        // 根据轨迹回放
-        paintLine: function(){
-            var _t = this;
-            //启用地图平移缩放控件(骨架)
-            var control = new Careland.Navigation();
-            control.anchor = CLDMAP_ANCHOR_TOP_RIGHT;					//设置位置为右上角
-            control.offset = new Careland.Size(10, 30);					//设置位置偏移
-            _t.map.addMapControl(control);
-
-            //启用比例尺
-            var scale = new Careland.Scale();
-            scale.anchor = CLDMAP_ANCHOR_BOTTOM_LEFT;					//设置位置为左下角
-            scale.offset = new Careland.Size(10, 5);					//设置位置偏移
-            _t.map.addMapControl(scale);
-            
-            var data = []; //整理之后的轨迹点
-            var speed = 30; //速度
-            let d = -1; //每100个切割一段轨迹 
-            var linestyles = [];
-            for(var i in _t.line){
-                if(i%100 == 0){//每100个切割一段轨迹，
-                    d++;
-                    data[d] = [];
-                    linestyles[linestyles.length] = new Careland.LineStyle({color:"rgb(17, 140, 255)",selectedColor:getColor(),size:6,selectedSize:6,opacity:100});
-                }
-                var l = data[d].length;
-                data[d][l] = {};
-                data[d][l].Text = {value:"111",textOffsetX:-100,textOffsetY:-40,fontSize:15,fontColor:'#e91e63',fontBold:true,textWidth:200,textAlign:'center'};
-                data[d][l].Point = new Careland.GbPoint( _t.line[i].lat,_t.line[i].lng);
-                data[d][l].Icon = {
-                    src: location.origin + "/images/truck.png",
-                    offsetY: -22,
-                    offsetX: -10
-                };
-            }
-            this.trackHandler.isShowPoint = false; 
-            // this.trackHandler.setIconType(CLDMAP_TRACK_ICON_TRUCK);
-            this.trackHandler.setDefaultStyles({trackLineStyles:linestyles});
-            this.trackHandler.init(data);
-            this.trackHandler.setSpeed(speed);
-            this.trackHandler.play();//开始
-            
-            function getColor(){
-                var c = ['#FF0000','#FAFAD2','#F08080','#EECFA1','#CD6090','#BDBDBD','#999999','#8B2252','#551A8B','#242424','#00FFFF','#EEEE00'];
-                rand = random(0, 12)
-                return c[rand]
-            }
-
-            function random(lower, upper) {
-                return Math.floor(Math.random() * (upper - lower)) + lower;
-            }
         },
         // 绑定司机上报页面事件
         bindEvents: function(){
