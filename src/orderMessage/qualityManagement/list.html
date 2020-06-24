@@ -262,7 +262,7 @@ layui.config({
           if (d.deviateWay === 0) {
             return '- -'
           } else {
-            return d.deviateWay + 'KM'
+            return (d.deviateWay * 1).toFixed(2) + 'KM'
           }
 
         }
@@ -800,7 +800,7 @@ layui.config({
         item.damageApprovalStatus = '延迟' + item.damageApprovalDelay + '小时' + dateConvert(item.damageApprovalTime)
       }
       if (item.deviateWay) {
-        item.deviateWay = item.deviateWay + 'KM'
+        item.deviateWay = (item.deviateWay * 1).toFixed(2) + 'KM'
       }
       if (item.location !== '' && item.locationTime !== 0) {
         item.location = item.location + dateConvert(item.locationTime)
