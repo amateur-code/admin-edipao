@@ -45,7 +45,6 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "fetchTruckTime", title: "提车时间" },
       { field: "startTruckTime", title: "发车时间" },
       { field: "returnAuditStatus", title: "回单审核" },
-      { field: "carDamageCount", title: "车损/报备" },
       { field: "dealerSignTime", title: "经销商签收时间" },
       { field: "dealerEval", title: "经销商评价" },
       { field: "certificateSignTime", title: "合格证签收时间" },

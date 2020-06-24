@@ -1,5 +1,5 @@
 function isNull(val) {
-  return (val == "" || val == null || val == undefined) && (val + "" != "0") && !Array.isArray(val);
+  return (String(val) == "" || val == null || val == undefined) && (val + "" != "0") && !Array.isArray(val);
 }
 layui.use(['form', 'jquery', 'laytpl'], function () {
   var laytpl = layui.laytpl;
@@ -12,7 +12,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     
   ]
   var truckKeys = [
-    "startCity", "endCity", "startProvince", "endProvince", "connectorName", "connectorPhone", "handlingStatus","tempLicenseBackImage", "fetchImages", "returnImages", "startImages"
+    "parkingLot","truckKeyPosition","parkingPlaceNumber","startCity", "endCity", "startProvince", "endProvince", "connectorName", "connectorPhone", "handlingStatus","tempLicenseBackImage", "fetchImages", "returnImages", "startImages"
   ]
   var orderKeys = [
     "followOperator", "followOperatorPhone", "deliveryOperator", "deliveryOperatorPhone", "dispatchOperatorPhone", "dispatchOperator", "dispatchMode"
@@ -50,7 +50,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             _this.getOrderFee().done(function (res1) {
               if(res.code == "0"){
                 _this.orderData = res.data;
-                _this.parseData(_this.orderData);
+                _this.parseOrderData(_this.orderData);
                 if(!_this.feeId){
                   _this.orderData.oil = _this.orderData.prePayOil || 0;
                   _this.orderData.amount =
@@ -151,9 +151,9 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
                 _this.orderData = res2.data;
                 _this.truckUpdateData = res3.data || {add:[],update:{},delete:[]};
 
-                _this.parseTruckData(_this.truckUpdateData);
-                _this.parseData(_this.orderData);
-                _this.parseData(_this.updateData, true);
+                _this.parseTruckUpdateData(_this.truckUpdateData);
+                _this.parseOrderData(_this.orderData);
+                _this.parseOrderData(_this.updateData, true);
                 if(res4.code == "0"){
                   _this.orderData.originFee = res4.data || {};
                   _this.orderData.subsidy = res4.data.subsidy || 0;
@@ -223,7 +223,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         }
       });
     },
-		parseTruckData: function (data) {
+		parseTruckUpdateData: function (data) {
 			Object.keys(data).forEach(function (key) {
         var item = data[key];
 				Object.keys(item).forEach(function (key2) {
@@ -262,9 +262,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
             break;
         }
       });
-      
 		},
-    parseData: function (data, update) {
+    parseOrderData: function (data, update) {
       Object.keys(data).forEach(function (key) {
         if(feeKeys.indexOf(key) < 0 && orderKeys.indexOf(key) < 0){
           if(isNull(data[key]) || data[key] == "undefined"){
@@ -326,6 +325,23 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
           break;
       }
       
+    },
+    parseTruckData: function (truck) {
+      Object.keys(truck).forEach(function (key) {
+        if(truckKeys.indexOf(key) < 0){
+          if(isNull(truck[key]) || truck[key] == "undefined"){
+            truck[key] = "- -";
+          }
+        }
+      });
+      if(truck.parkingLot){
+        truck.parkingLot = truck.parkingLot + truck.parkingPlaceNumber;
+      }else{
+        truck.parkingLot = "- -";
+      }
+      if(truck.truckKeyPosition){
+        truck.truckKeyPosition = truck.truckKeyPosition.substr(1, truck.truckKeyPosition.length - 1) + "号钥匙墙 (钥匙码：" + truck.truckKeyPosition + ")"
+      }
     },
     getTruckUpdate: function () {
       var _this = this;
@@ -482,13 +498,7 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
         }else{
           truck.updateData = {};
         }
-        Object.keys(truck).forEach(function (key) {
-          if(truckKeys.indexOf(key) < 0){
-            if(isNull(truck[key]) || truck[key] == "undefined"){
-              truck[key] = "- -";
-            }
-          }
-        });
+        _this.parseTruckData(truck);
         if(!truck.startCity && !truck.startProvince){
           truck.startCity = '- -';
           truck.startProvince = "";

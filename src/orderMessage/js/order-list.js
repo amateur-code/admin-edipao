@@ -64,6 +64,7 @@ function DataNull(data) {
         return data;
     }
 }
+
 var provinceList = [];
 var loadLayer = null;
 var paying = false;
@@ -1022,6 +1023,11 @@ layui.config({
             });
         },
         bindEvents: function(){
+            if(location.href.indexOf("test.edipao.cn") > -1){
+                $("#test_title_btn").unbind().on("click", function () {
+                    top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html");
+                });
+            }
             // $(window).unbind().on("message", function (e) {
             //     console.log(e)
             //     var origin = e.origin || e.originalEvent.origin;  //域
@@ -1062,11 +1068,6 @@ layui.config({
             $(".list_driver_name").unbind().on("click", function (e) {
                 var id = e.target.dataset.id;
                 xadmin.open('司机信息','../DriverManager/DriverArchives/info.html?id=' + id);
-            });
-            $(".damage_link").unbind().on("click", function (e) {
-                var id = e.target.dataset.id;
-                var pid = edipao.urlGet().perssionId;
-                top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html?orderNo=" + id + "&perssionId=" + pid, false, "focus");
             });
         },
         // getExportData: function (cb) {
@@ -1128,7 +1129,6 @@ layui.config({
             }else{
                 cb(checkStatus.data);
             }
-            
         },
         exportData: function exportExcel() {
             var _this = this;
@@ -1506,8 +1506,6 @@ layui.config({
                     });
                 } else if (layEvent === 'log') {//日志
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=4');
-                } else if(layEvent == 'line'){ //轨迹
-                    xadmin.open('轨迹', './order-line.html?orderNo=' + data.orderNo + "&orderId=" + data.id);
                 }
             });
         },
@@ -1857,7 +1855,6 @@ layui.config({
             }
             return status;
         }},
-        {field: 'carDamageCount', title: '车损/报备', sort: false,minWidth:150, templet: "#damageTpl"},
         {field: 'dealerSignTime', title: '经销商签收时间', sort: false,minWidth:150, templet: function (d) {
             return d.dealerSignTime || "- -";
         }},

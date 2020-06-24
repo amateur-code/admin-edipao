@@ -360,9 +360,8 @@ layui.define(['layer','element'], function(exports) {
      * @return {[type]} [description]
      */
 
-    Xadmin.prototype.add_tab = function(title, url, is_refresh, is_force) {
+    Xadmin.prototype.add_tab = function(title, url, is_refresh) {
         var id = encodeURIComponent(title).replace(/%/g,'a');
-        if(is_force) id = id + new Date().getTime();
         //重复点击
         for (var i = 0; i < $('.x-iframe').length; i++) {
             if ($('.x-iframe').eq(i).attr('tab-id') == id) {

@@ -47,10 +47,10 @@
 <body>
 <div class="x-nav">
         <span class="layui-breadcrumb">
-            <a>业务管理</a>
-            <a>
-                <cite>品质管理</cite>
-            </a>
+          <a>品质管理</a>
+          <a>
+              <cite>订单</cite>
+          </a>
         </span>
   <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
      onclick="location.reload()"
@@ -259,7 +259,7 @@ layui.config({
       },
       {
         field: 'deviateWay', title: '线路偏移', width: 200, align: 'center', templet: function (d) {
-          if (d.deviateWay === 0) {
+          if (d.deviateWay === 0 || !d.deviateWay) {
             return '- -'
           } else {
             return (d.deviateWay * 1).toFixed(2) + 'KM'

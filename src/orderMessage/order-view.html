@@ -535,6 +535,40 @@
                     </div>
                 </div>
                 IMAGESTR
+                <div class="layui-form-item layui-row" style="margin-bottom: 30px;">
+                    <div class="layui-inline layui-col-md12">
+                        <span class="layui-form-span form_span textarea_span">票据：</span>
+                        {{# if(d.sortingDTOList && d.sortingDTOList.length > 0){ }}
+                            <span class="layui-row layui-col-space20">
+                                {{# layui.each(d.sortingDTOList, function(index, item){ }}
+                                <span class="blue" style="margin-right: 20px;"><i class="layui-icon layui-icon-ok-circle" style="font-size: 12px; color: #3490E9;"></i>{{item.sortingBillName}}</span>
+                                {{# }); }}
+                            </span>
+                        {{# }else{ }}
+                            <span class="blue">- -</span>
+                        {{# } }}
+                    </div>
+                </div>
+                <div class="layui-form-item layui-row">
+                    <div class="layui-inline layui-col-md4">
+                        <div class="layui-row">
+                            <span class="layui-form-span form_span">物料存放位置：</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.materielLoc}}</span>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md4">
+                        <div class="layui-row">
+                            <span class="layui-form-span form_span">停放位置：</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.parkingLot}}</span>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md4">
+                        <div class="layui-row">
+                            <span class="layui-form-span form_span">钥匙：</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.truckKeyPosition}}</span>
+                        </div>
+                    </div>
+                </div>
                 <!-- <div class="layui-form-item layui-row">
                     <div class="layui-inline layui-col-md4">
                         <div class="layui-row">
@@ -620,7 +654,7 @@
                 </div>
             </div>
         </div>
-        <div class="layui-form-item layui-row">
+        <div class="layui-form-item layui-row" style="margin-bottom: 30px;margin-top: 30px;">
             <div class="layui-col-md12">
                 <span class="layui-form-span form_span">收车图片：</span>
                 {{# if(!d.returnImages||d.returnImages.length==0){ }}
