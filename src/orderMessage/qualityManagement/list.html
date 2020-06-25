@@ -47,10 +47,10 @@
 <body>
 <div class="x-nav">
         <span class="layui-breadcrumb">
-          <a>品质管理</a>
-          <a>
-              <cite>订单</cite>
-          </a>
+            <a>品质管理</a>
+            <a>
+                <cite>订单</cite>
+            </a>
         </span>
   <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
      onclick="location.reload()"
@@ -154,9 +154,11 @@ layui.config({
       {
         field: 'orderType', title: '订单类型', width: 200, templet: function (d) {
           if (d.orderType === 1) {
-            return '单车单' || '- -'
+            return '单车单'
+          } else if (d.orderType === 2) {
+            return '背车单'
           } else {
-            return '背车单' || '- -'
+            return '- -'
           }
         }
       },
@@ -203,6 +205,8 @@ layui.config({
             return '已完结'
           } else if (d.orderStatus === 6) {
             return '已取消'
+          } else if (d.orderStatus === 44) {
+            return '已收车未扫码'
           } else {
             return '- -'
           }
@@ -485,18 +489,19 @@ layui.config({
         } else if (el.field == 'orderType') {
           item.type = 'checkbox'
           item.data = [
-            { "key": "1", "value": "单车单" },
-            { "key": "2", "value": "背车单" }
+            { "key": 1, "value": "单车单" },
+            { "key": 2, "value": "背车单" }
           ]
         } else if (el.field == 'orderStatus') {
           item.type = 'checkbox'
           item.data = [
-            { "key": "1", "value": "待调度" },
-            { "key": "2", "value": "待发车" },
-            { "key": "3", "value": "运输中" },
-            { "key": "4", "value": "已收车" },
-            { "key": "5", "value": "已完结" },
-            { "key": "6", "value": "已取消" },
+            { "key": 1, "value": "待调度" },
+            { "key": 2, "value": "待发车" },
+            { "key": 3, "value": "运输中" },
+            {"key": 44, "value": "已收车未扫码"},
+            { "key": 4, "value": "已收车" },
+            { "key": 5, "value": "已完结" },
+            { "key": 6, "value": "已取消" },
           ]
         } else if (el.field == 'driverName') {
           item.type = "contract"
@@ -611,10 +616,12 @@ layui.config({
       } else if (item.driverName === '' && item.driverPhone === '') {
         item.driverName = '- -'
       }
-      if (item.orderType == 1) {
+      if (item.orderType === 1) {
         item.orderType = '单车单'
-      } else if (item.orderType == 2) {
+      } else if (item.orderType === 2) {
         item.orderType = '背车单'
+      } else {
+        item.orderType = '- -'
       }
       if (item.transportAssignTime) {
         item.transportAssignTime = dateConvert(item.transportAssignTime)
@@ -638,12 +645,9 @@ layui.config({
           item.orderStatus = '已完结'
         } else if (item.orderStatus === 6) {
           item.orderStatus = '已取消'
+        } else if (item.orderStatus === 44) {
+          item.orderStatus = '已收车未扫码'
         }
-      }
-      if (item.orderType === 1) {
-        item.orderType = '单车单'
-      } else {
-        item.orderType = '背车单'
       }
       if (item.createOrderStatus === 1 && item.createOrderTime === 0) {
         item.createOrderStatus = '正常'

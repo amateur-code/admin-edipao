@@ -475,20 +475,25 @@ layui.config({
       if (item.transportAssignTime) {
         item.transportAssignTime = dateConvert(item.transportAssignTime)
       }
-      if (item.waybillStatus) {
-        if (item.waybillStatus === 1) {
-          item.waybillStatus = '待调度'
-        } else if (item.waybillStatus === 2) {
-          item.waybillStatus = '待发车'
-        } else if (item.waybillStatus === 3) {
-          item.waybillStatus = '运输中'
-        } else if (item.waybillStatus === 4) {
-          item.waybillStatus = '已收车'
-        } else if (item.waybillStatus === 5) {
-          item.waybillStatus = '已完结'
-        } else if (item.waybillStatus === 6) {
-          item.waybillStatus = '已取消'
-        }
+      if (item.waybillStatus === 1) {
+        item.waybillStatus = '待调度'
+      } else if (item.waybillStatus === 2) {
+        item.waybillStatus = '待发车'
+      } else if (item.waybillStatus === 3) {
+        item.waybillStatus = '运输中'
+      } else if (item.waybillStatus === 4) {
+        item.waybillStatus = '已收车'
+      } else if (item.waybillStatus === 5) {
+        item.waybillStatus = '已完结'
+      } else if (item.waybillStatus === 6) {
+        item.waybillStatus = '已取消'
+      }
+      if (item.waybillType === 1) {
+        item.waybillType = '单车'
+      } else if (item.waybillType === 2) {
+        item.waybillType = '背车'
+      } else {
+        item.waybillType = '- -'
       }
       if (item.driverName !== '' && item.driverPhone !== '') {
         item.driverName = item.driverName + '-' + item.driverPhone
