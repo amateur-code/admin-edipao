@@ -484,9 +484,15 @@ layui.config({
     layui.each(tableCols, function (index, el) {
       if (el.field) {
         let item = { field: el.field };
-        if (el.field == "transportAssignTime" || el.field == "latestArriveTime" || el.field == "createOrderStatus" || el.field == "dispatchStatus" || el.field == "startStatus" || el.field == "outCityStatus" || el.field == "estimatedArriveTime" || el.field == "dealerReceiveStatus" || el.field == "dealerSignStatus" || el.field == "timeInvalidStatus" || el.field == "returnImgApprovalStatus" || el.field == "prePayStatus" || el.field == "arrivePayStatus" || el.field == "tailPayStatus" || el.field == "reportHandleStatus") {
+        if (el.field == "transportAssignTime" || el.field == "latestArriveTime" || el.field == "estimatedArriveTime") {
           item.type = 'timeslot'
-        }else if(el.field == "returnStatus"){
+        } else if (el.field == "createOrderStatus" || el.field == "dispatchStatus" ||
+          el.field == "startStatus" || el.field == "outCityStatus" ||
+          el.field == "returnStatus" || el.field == "dealerReceiveStatus" ||
+          el.field == "dealerSignStatus" || el.field == "damageApprovalStatus" ||
+          el.field == "timeInvalidStatus" || el.field == "returnImgApprovalStatus" ||
+          el.field == "prePayStatus" || el.field == "arrivePayStatus" ||
+          el.field == "tailPayStatus" || el.field == "reportHandleStatus") {
           item.type = 'checkbox-timeslot'
           item.data = [
             { "key": 1, "value": "正常" },
@@ -504,7 +510,7 @@ layui.config({
             { "key": 1, "value": "待调度" },
             { "key": 2, "value": "待发车" },
             { "key": 3, "value": "运输中" },
-            {"key": 44, "value": "已收车未扫码"},
+            { "key": 44, "value": "已收车未扫码" },
             { "key": 4, "value": "已收车" },
             { "key": 5, "value": "已完结" },
             { "key": 6, "value": "已取消" },
@@ -534,11 +540,17 @@ layui.config({
           if (key == 'deviateWay') {
             where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
             where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
-          }else if(key == "returnStatus"){
+          } else if (key == "createOrderStatus" || key == "dispatchStatus" ||
+            key == "startStatus" || key == "outCityStatus" ||
+            key == "returnStatus" || key == "dealerReceiveStatus" ||
+            key == "dealerSignStatus" || key == "damageApprovalStatus" ||
+            key == "timeInvalidStatus" || key == "returnImgApprovalStatus" ||
+            key == "prePayStatus" || key == "arrivePayStatus" ||
+            key == "tailPayStatus" || key == "reportHandleStatus") {
             console.log(value)
           } else if (key == 'orderType' || key == 'orderStatus') {
             where['searchFieldDTOList[' + index + '].fieldListValue'] = value.join(',');
-          } else if (key == "transportAssignTime" || key == "latestArriveTime" || key == "createOrderStatus" || key == "dispatchStatus" || key == "startStatus" || key == "outCityStatus" || key == "estimatedArriveTime" || key == "returnStatus" || key == "dealerReceiveStatus" || key == "dealerSignStatus" || key == "timeInvalidStatus" || key == "returnImgApprovalStatus" || key == "prePayStatus" || key == "arrivePayStatus" || key == "tailPayStatus" || key == "reportHandleStatus") {
+          } else if (key == "transportAssignTime" || key == "latestArriveTime" || key == "estimatedArriveTime") {
             // where['searchFieldDTOList[' + index + '].fieldName'] = key;
             value = value.split(" 至 ");
             where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];

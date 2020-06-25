@@ -372,10 +372,19 @@ layui.config({
             { "key": "5", "value": "已完结" },
             { "key": "6", "value": "已取消" }
           ]
-        } else if (el.field == "transportAssignTime" || el.field == "outCarportStatus" || el.field == "fetchStatus" || el.field == "fetchBillStatus" || el.field == "relayBillStatus" || el.field == "serviceNoteGetStatus" || el.field == "qualifiedStatus" || el.field == "tempLicenseStatus" || el.field == "materialPackageStatus") {
+        } else if (el.field == "transportAssignTime") {
           item.type = 'timeslot'
         } else if (el.field == 'driverName') {
           item.type = "contract"
+        } else if (el.field == "outCarportStatus" || el.field == "fetchStatus" ||
+          el.field == "fetchBillStatus" || el.field == "relayBillStatus" ||
+          el.field == "serviceNoteGetStatus" || el.field == "qualifiedStatus" ||
+          el.field == "tempLicenseStatus" || el.field == "materialPackageStatus") {
+          item.type = 'checkbox-timeslot'
+          item.data = [
+            { "key": 1, "value": "正常" },
+            { "key": 2, "value": "延迟" },
+          ]
         }
         if (el.field != "operation") {
           filtersHeader.push(item)
@@ -409,6 +418,10 @@ layui.config({
               where["searchFieldDTOList[" + index + "].fieldName"] = "driverPhone";
               where["searchFieldDTOList[" + index + "].fieldValue"] = value[1];
             }
+          } else if (key == "outCarportStatus" || key == "fetchStatus" ||
+            key == "fetchBillStatus" || key == "relayBillStatus" ||
+            key == "serviceNoteGetStatus" || key == "qualifiedStatus" ||
+            key == "tempLicenseStatus" || key == "materialPackageStatus") {
           } else {
             where['searchFieldDTOList[' + index + '].fieldValue'] = value;
           }
