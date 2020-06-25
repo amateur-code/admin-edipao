@@ -106,17 +106,11 @@ layui.config({
       {
         field: 'waybillStatus', title: '状态', width: 200, templet: function (d) {
           if (d.waybillStatus === 1) {
-            return '待调度'
+            return '待出库'
           } else if (d.waybillStatus === 2) {
-            return '待发车'
+            return '待提车'
           } else if (d.waybillStatus === 3) {
-            return '运输中'
-          } else if (d.waybillStatus === 4) {
-            return '已收车'
-          } else if (d.waybillStatus === 5) {
-            return '已完结'
-          } else if (d.waybillStatus === 6) {
-            return '已取消'
+            return '已提车'
           } else {
             return '- -'
           }
@@ -359,18 +353,16 @@ layui.config({
         if (el.field == 'waybillType') {
           item.type = 'checkbox'
           item.data = [
-            { "key": "1", "value": "单车" },
-            { "key": "2", "value": "背车" }
+            { "key": 1, "value": "单车" },
+            { "key": 2, "value": "背车" }
           ]
         } else if (el.field == 'waybillStatus') {
           item.type = 'checkbox'
           item.data = [
-            { "key": "1", "value": "待调度" },
-            { "key": "2", "value": "待发车" },
-            { "key": "3", "value": "运输中" },
-            { "key": "4", "value": "已收车" },
-            { "key": "5", "value": "已完结" },
-            { "key": "6", "value": "已取消" }
+            { "key": 1, "value": "待出库" },
+            { "key": 2, "value": "待提车" },
+            { "key": 3, "value": "已提车" },
+
           ]
         } else if (el.field == "transportAssignTime") {
           item.type = 'timeslot'
@@ -422,6 +414,16 @@ layui.config({
             key == "fetchBillStatus" || key == "relayBillStatus" ||
             key == "serviceNoteGetStatus" || key == "qualifiedStatus" ||
             key == "tempLicenseStatus" || key == "materialPackageStatus") {
+            if (value.checked) {
+              where['searchFieldDTOList[' + index + '].fieldListValue'] = value.checked.join(',');
+            }
+            if (value.checked && value.slot) index++;
+            if (value.slot) {
+              where["searchFieldDTOList[" + index + "].fieldName"] = key.split('Status')[0] + "Time";
+              value = value.slot.split(" 至 ");
+              where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
+              where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+            }
           } else {
             where['searchFieldDTOList[' + index + '].fieldValue'] = value;
           }
@@ -453,7 +455,7 @@ layui.config({
         xadmin.open('表格设置', './table-set.html', 600);
         break;
       case "exportLog":
-        xadmin.open('导出日志', '../../OperateLog/log.html?type=8&action=exportLog');
+        xadmin.open('导出日志', '../../OperateLog/log.html?type=19&action=exportLog');
         break;
       case "reset_search":
         edipao.resetSearch("costList1", function () {
@@ -489,17 +491,13 @@ layui.config({
         item.transportAssignTime = dateConvert(item.transportAssignTime)
       }
       if (item.waybillStatus === 1) {
-        item.waybillStatus = '待调度'
+        item.waybillStatus = '待出库'
       } else if (item.waybillStatus === 2) {
-        item.waybillStatus = '待发车'
+        item.waybillStatus = '待提车'
       } else if (item.waybillStatus === 3) {
-        item.waybillStatus = '运输中'
-      } else if (item.waybillStatus === 4) {
-        item.waybillStatus = '已收车'
-      } else if (item.waybillStatus === 5) {
-        item.waybillStatus = '已完结'
-      } else if (item.waybillStatus === 6) {
-        item.waybillStatus = '已取消'
+        item.waybillStatus = '已提车'
+      } else {
+        item.waybillStatus = '- -'
       }
       if (item.waybillType === 1) {
         item.waybillType = '单车'
