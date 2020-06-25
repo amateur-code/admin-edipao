@@ -80,7 +80,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 					filterIcon.removeClass("tableFilter-has")
 				}
 
-				//图标点击事件
+				//图标点击事件  点击放大镜
 				filterIcon.on("click", function(e) {
 					e.stopPropagation();
 					//得到过滤项的选项
@@ -385,13 +385,15 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 									checked.push(data.field[key]);
 								}
 							}
-							var time = data.field[filterName].split(" 至 ");
-							var startTime = time[0];
-							var endTime = time[1];
-							if(startTime.indexOf("00:00:00") > -1 && endTime.indexOf("00:00:00") > -1){
-								endTime = endTime.replace("00:00:00", "23:59:59");
+							if(data.field[filterName]){
+								var time = data.field[filterName].split(" 至 ");
+								var startTime = time[0];
+								var endTime = time[1];
+								if(startTime.indexOf("00:00:00") > -1 && endTime.indexOf("00:00:00") > -1){
+									endTime = endTime.replace("00:00:00", "23:59:59");
+								}
+								slot = startTime + " 至 " + endTime;
 							}
-							slot = startTime + " 至 " + endTime;
 							if(checked.length > 0 || slot.length > 0){
 								data.field[filterName] = {
 									checked: checked,
@@ -444,8 +446,8 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 							table.reload(elemId,{"where":new_where})
 						}
 						try {
-							console.log(initData)
 							initData[elemId] = tableFilter.cache[elemId];
+							console.log(JSON.stringify(initData))
 							sessionStorage.setItem("tableFilterData", JSON.stringify(initData));
 						} catch (error) {}
 						//写入回调函数
@@ -616,13 +618,15 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 			delete form_val[filterName];
 		}
 		if(filterType == "checkbox-timeslot"){
+			console.log(JSON.stringify(form_val))
 			form_val[filterName] && layui.each(form_val[filterName].checked, function(i, value){
 				form_val[filterName + "["+value+"]"] = true;
 			});
 			if(form_val && form_val[filterName] && form_val[filterName].slot){
 				form_val[filterName] = form_val[filterName].slot;
+			}else{
+				form_val[filterName] = "";
 			}
-			console.log()
 		}
 		return form_val;
 	}
