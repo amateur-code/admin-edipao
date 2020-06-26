@@ -368,7 +368,7 @@ layui.config({
             });
         },
         bindRejectTips: function () {
-            $(".icon_fee_tips").unbind().on("click", function (e) {
+            $(".icon_fee_tips").unbind().on("mouseover", function (e) {
                 var text = e.target.dataset.text;
                 layer.tips(text, $(this));
             });
@@ -1712,7 +1712,7 @@ layui.config({
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
-                var icon = '<i data-text="被驳回的原因" class="layui-icon layui-icon-about icon_fee_tips" style="font-size: 14px; color: #FF5722; margin-left: 10px"></i>';
+                var icon = '<i data-text=' + d.feeApprovalRejectReason + ' class="layui-icon layui-icon-about icon_fee_tips" style="font-size: 14px; color: #FF5722; margin-left: 10px"></i>';
                 var payStatus = "";
                 if (d.prePayApprovalBtn == 1 && (amount > 0 || d.prePayOil * 1 > 0) ) {
                     payStatus = verifyStr3.replace("{{}}", " - 申请支付");
@@ -1734,13 +1734,14 @@ layui.config({
                 if(dataPermission.canViewOrderCost != "Y"){
                     return "**** " + payStatus;
                 }
-                return d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus;
+                return (d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus) + (d.feeApprovalRejectReason ? icon : "");
         }},
         {field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 200, hide: false, templet: function (d) {
                 var amount = d.arrivePayAmount;
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
+                var icon = '<i data-text=' + d.feeApprovalRejectReason + ' class="layui-icon layui-icon-about icon_fee_tips" style="font-size: 14px; color: #FF5722; margin-left: 10px"></i>';
                 var payStatus = "";
                 if (d.arrivePayApprovalBtn == 1 ) {
                     if(amount > 0){
@@ -1766,13 +1767,14 @@ layui.config({
                 if(dataPermission.canViewOrderCost != "Y"){
                     return "**** " + payStatus;
                 }
-                return d.arrivePayAmount + "元" + payStatus;
+                return (d.arrivePayAmount + "元" + payStatus) + (d.feeApprovalRejectReason ? icon : "");
         }},
         {field: 'tailPayAmount', title: '尾款金额', sort: false,width: 200, hide: false, templet: function (d) {
                 var amount = d.tailPayAmount * 1;
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
+                var icon = '<i data-text=' + d.feeApprovalRejectReason + ' class="layui-icon layui-icon-about icon_fee_tips" style="font-size: 14px; color: #FF5722; margin-left: 10px"></i>';
                 var payStatus = "";
                 if (d.tailPayApprovalBtn == 1 && amount > 0) {
                     if(amount > 0){
@@ -1798,7 +1800,7 @@ layui.config({
                 if(dataPermission.canViewOrderCost != "Y"){
                     return "**** " + payStatus;
                 }
-                return d.tailPayAmount + "元" + payStatus;
+                return (d.tailPayAmount + "元" + payStatus) + (d.feeApprovalRejectReason ? icon : "");
         }},
         {field: "tailPayStatus", title: "尾款状态", sort: false, width: 100, hide: false, templet: function (d) {
             if(d.orderType == 2 && d.masterFlag == "否"){
