@@ -200,13 +200,13 @@ layui.config({
           } else if (d.orderStatus === 3) {
             return '运输中'
           } else if (d.orderStatus === 4) {
-            return '已收车'
+            if (d.dealerSignTime === 0) {
+              return '收车未扫码'
+            } else if (d.dealerSignTime !== 0) {
+              return '已收车'
+            }
           } else if (d.orderStatus === 5) {
             return '已完结'
-          } else if (d.orderStatus === 6) {
-            return '已取消'
-          } else if (d.orderStatus === 44) {
-            return '已收车未扫码'
           } else {
             return '- -'
           }
@@ -451,7 +451,6 @@ layui.config({
       },
       where: tableWhere,
       parseData: function (res) { //res 即为原始返回的数据
-        console.log(res)
         edipao.codeMiddleware(res);
         return {
           code: res.code, //解析接口状态
@@ -510,10 +509,9 @@ layui.config({
             { "key": 1, "value": "待调度" },
             { "key": 2, "value": "待发车" },
             { "key": 3, "value": "运输中" },
-            { "key": 44, "value": "已收车未扫码" },
+            { "key": 44, "value": "收车未扫码" },
             { "key": 4, "value": "已收车" },
             { "key": 5, "value": "已完结" },
-            { "key": 6, "value": "已取消" },
           ]
         } else if (el.field == 'driverName') {
           item.type = "contract"
@@ -552,9 +550,9 @@ layui.config({
             if (value.checked && value.slot) index++;
             if (value.slot) {
               where["searchFieldDTOList[" + index + "].fieldName"] = key.split('Status')[0] + "Time";
-                value = value.slot.split(" 至 ");
-                where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
-                where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+              value = value.slot.split(" 至 ");
+              where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
+              where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
             }
           } else if (key == "timeInvalidStatus") {
             if (value.checked) {
@@ -563,13 +561,13 @@ layui.config({
             if (value.checked && value.slot) index++;
             if (value.slot) {
               where["searchFieldDTOList[" + index + "].fieldName"] = "timeInvalid";
-                value = value.slot.split(" 至 ");
-                where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
-                where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+              value = value.slot.split(" 至 ");
+              where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
+              where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
             }
           } else if (key == 'orderType') {
             where['searchFieldDTOList[' + index + '].fieldListValue'] = value.join(',');
-          }else if(key == "orderStatus"){
+          } else if (key == "orderStatus") {
             var checkSign, checkFetch;
             checkFetch = value.indexOf("4") > -1;
             checkSign = value.indexOf("44") > -1;
@@ -577,22 +575,22 @@ layui.config({
               return item != "44";
             });
             value = value || [];
-            if((checkSign && checkFetch) || (!checkSign && !checkFetch)){
-              where['searchFieldDTOList['+ index +'].fieldName'] = key;
-              where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
-            }else if(checkSign && !checkFetch){
+            if ((checkSign && checkFetch) || (!checkSign && !checkFetch)) {
+              where['searchFieldDTOList[' + index + '].fieldName'] = key;
+              where['searchFieldDTOList[' + index + '].fieldListValue'] = value.join(',');
+            } else if (checkSign && !checkFetch) {
               value.push("4");
-              where['searchFieldDTOList['+ index +'].fieldName'] = key;
-              where['searchFieldDTOList['+ index++ +'].fieldListValue'] = value.join(',');
-              where['searchFieldDTOList['+ index +'].fieldName'] = "dealerSignTime";
-              where['searchFieldDTOList['+ index +'].fieldMinValue'] = "0";
-              where['searchFieldDTOList['+ index +'].fieldMaxValue'] = "1";
-            }else if(!checkSign && checkFetch){
-              where['searchFieldDTOList['+ index +'].fieldName'] = key;
-              where['searchFieldDTOList['+ index++ +'].fieldListValue'] = value.join(',');
-              where['searchFieldDTOList['+ index +'].fieldName'] = "dealerSignTime";
-              where['searchFieldDTOList['+ index +'].fieldMinValue'] = "1980-01-01 00:00:00";
-              where['searchFieldDTOList['+ index +'].fieldMaxValue'] = "2999-01-01 00:00:00";
+              where['searchFieldDTOList[' + index + '].fieldName'] = key;
+              where['searchFieldDTOList[' + index++ + '].fieldListValue'] = value.join(',');
+              where['searchFieldDTOList[' + index + '].fieldName'] = "dealerSignTime";
+              where['searchFieldDTOList[' + index + '].fieldMinValue'] = "0";
+              where['searchFieldDTOList[' + index + '].fieldMaxValue'] = "1";
+            } else if (!checkSign && checkFetch) {
+              where['searchFieldDTOList[' + index + '].fieldName'] = key;
+              where['searchFieldDTOList[' + index++ + '].fieldListValue'] = value.join(',');
+              where['searchFieldDTOList[' + index + '].fieldName'] = "dealerSignTime";
+              where['searchFieldDTOList[' + index + '].fieldMinValue'] = "1980-01-01 00:00:00";
+              where['searchFieldDTOList[' + index + '].fieldMaxValue'] = "2999-01-01 00:00:00";
             }
           } else if (key == "transportAssignTime" || key == "latestArriveTime" || key == "estimatedArriveTime") {
             // where['searchFieldDTOList[' + index + '].fieldName'] = key;
@@ -704,13 +702,13 @@ layui.config({
         } else if (item.orderStatus === 3) {
           item.orderStatus = '运输中'
         } else if (item.orderStatus === 4) {
-          item.orderStatus = '已收车'
+          if (item.dealerSignTime === 0) {
+            item.orderStatus = '收车未扫码'
+          } else if (item.dealerSignTime !== 0) {
+            item.orderStatus = '已收车'
+          }
         } else if (item.orderStatus === 5) {
           item.orderStatus = '已完结'
-        } else if (item.orderStatus === 6) {
-          item.orderStatus = '已取消'
-        } else if (item.orderStatus === 44) {
-          item.orderStatus = '已收车未扫码'
         }
       }
       if (item.createOrderStatus === 1 && item.createOrderTime === 0) {
