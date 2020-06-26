@@ -277,6 +277,9 @@
     </div>
     {{# } }}
 </script>
+<script type="text/html" id="damageTpl">
+    <a class="blue damage_link" data-status="{{d.orderStatus}}" data-id="{{d.orderNo}}" href="javascript:void(0);">{{d.carDamageCount || 0}}</a>
+</script>
 <script type="text/html" id="barDemo">
     {{# if(d.showBtn * 1 == 1){ }}
         {{# if(permissionList.indexOf('修改') > -1){ }}
@@ -296,6 +299,7 @@
             <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="cancel">取消</a>
             {{# } }}
         {{# } }}
+        <!-- <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="line">轨迹</a> -->
         <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="log">日志</a>
     {{# } }}
 </script>

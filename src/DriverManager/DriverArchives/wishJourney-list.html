@@ -72,6 +72,7 @@ layui.use(['table', 'layer'], function(table, layer) {
        table.render({
            elem: '#wishJourneyList',
            data:wishJourneyData,
+           limit: 50,
            cols: [
                [ //表头
                    { field: 'start', title: '始发地'},

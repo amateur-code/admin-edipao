@@ -64,7 +64,6 @@ function DataNull(data) {
         return data;
     }
 }
-
 var provinceList = [];
 var loadLayer = null;
 var paying = false;
@@ -155,6 +154,7 @@ layui.config({
         { field: 'dealerEval', type: 'input' },
         { field: 'certificateSignTime', type: 'timeslot' },
         { field: 'dealerRemark', type: 'input' },
+        { field: 'carDamageCount', type: 'numberslot' },
         // { field: 'operation', type: 'radio', data: operationData },
     ]
     initPermission();
@@ -265,7 +265,7 @@ layui.config({
                 if(key=='startProvince'||key=='endProvince'){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
-                }else if(key == "customerMileage" || key == "pricePerMeliage" || key == "income" || key == "driverMileage"){
+                }else if(key == "customerMileage" || key == "pricePerMeliage" || key == "income" || key == "driverMileage"||key=="carDamageCount"){
                     where["searchFieldDTOList[" + index + "].fieldName"] = key;
                     where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
                     where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
@@ -365,6 +365,12 @@ layui.config({
                     loginStaffId: user.staffId,
                     driverId: driverId
                 }
+            });
+        },
+        bindRejectTips: function () {
+            $(".icon_fee_tips").unbind().on("mouseover", function (e) {
+                var text = e.target.dataset.text;
+                layer.tips(text, $(this));
             });
         },
         bindUpload: function () {
@@ -1023,11 +1029,6 @@ layui.config({
             });
         },
         bindEvents: function(){
-            if(location.href.indexOf("test.edipao.cn") > -1){
-                $("#test_title_btn").unbind().on("click", function () {
-                    top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html");
-                });
-            }
             // $(window).unbind().on("message", function (e) {
             //     console.log(e)
             //     var origin = e.origin || e.originalEvent.origin;  //域
@@ -1068,6 +1069,12 @@ layui.config({
             $(".list_driver_name").unbind().on("click", function (e) {
                 var id = e.target.dataset.id;
                 xadmin.open('司机信息','../DriverManager/DriverArchives/info.html?id=' + id);
+            });
+            $(".damage_link").unbind().on("click", function (e) {
+                var id = e.target.dataset.id;
+                var orderStatus = e.target.dataset.status;
+                var pid = edipao.urlGet().perssionId;
+                top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html?orderStatus=" + orderStatus + "&orderNo=" + id + "&perssionId=" + pid, false, "focus");
             });
         },
         // getExportData: function (cb) {
@@ -1423,6 +1430,7 @@ layui.config({
                     method.resizeTable();
                     method.bindUpload();
                     method.bindVerify();
+                    method.bindRejectTips();
                     method.bindViewPic();
                     method.bindPicVerify();
                     method.bindPay();
@@ -1506,6 +1514,8 @@ layui.config({
                     });
                 } else if (layEvent === 'log') {//日志
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.id + '&type=4');
+                } else if(layEvent == 'line'){ //轨迹
+                    xadmin.open('轨迹', './order-line.html?orderNo=' + data.orderNo + "&orderId=" + data.id);
                 }
             });
         },
@@ -1702,6 +1712,7 @@ layui.config({
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='1' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='prePayAmount'>{{}}</a>";
+                var icon = '<i data-text=' + d.feeApprovalRejectReason + ' class="layui-icon layui-icon-about icon_fee_tips" style="font-size: 14px; color: #FF5722; margin-left: 10px"></i>';
                 var payStatus = "";
                 if (d.prePayApprovalBtn == 1 && (amount > 0 || d.prePayOil * 1 > 0) ) {
                     payStatus = verifyStr3.replace("{{}}", " - 申请支付");
@@ -1723,13 +1734,14 @@ layui.config({
                 if(dataPermission.canViewOrderCost != "Y"){
                     return "**** " + payStatus;
                 }
-                return d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus;
+                return (d.prePayAmount + "元" + "/" + d.prePayOil + "升" + payStatus) + (d.feeApprovalRejectReason ? icon : "");
         }},
         {field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 200, hide: false, templet: function (d) {
                 var amount = d.arrivePayAmount;
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='2' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='arrivePayAmount'>{{}}</a>";
+                var icon = '<i data-text=' + d.feeApprovalRejectReason + ' class="layui-icon layui-icon-about icon_fee_tips" style="font-size: 14px; color: #FF5722; margin-left: 10px"></i>';
                 var payStatus = "";
                 if (d.arrivePayApprovalBtn == 1 ) {
                     if(amount > 0){
@@ -1755,13 +1767,14 @@ layui.config({
                 if(dataPermission.canViewOrderCost != "Y"){
                     return "**** " + payStatus;
                 }
-                return d.arrivePayAmount + "元" + payStatus;
+                return (d.arrivePayAmount + "元" + payStatus) + (d.feeApprovalRejectReason ? icon : "");
         }},
         {field: 'tailPayAmount', title: '尾款金额', sort: false,width: 200, hide: false, templet: function (d) {
                 var amount = d.tailPayAmount * 1;
                 var verifyStr = "<a class='table_a pointer blue list_arrive_verify' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr2 = "<a class='table_a pointer blue list_arrive_pay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
                 var verifyStr3 = "<a class='table_a pointer blue list_arrive_prepay' data-type='3' data-orderId="+ d.id +" data-order="+ d.orderNo +" data-field='tailPayAmount'>{{}}</a>";
+                var icon = '<i data-text=' + d.feeApprovalRejectReason + ' class="layui-icon layui-icon-about icon_fee_tips" style="font-size: 14px; color: #FF5722; margin-left: 10px"></i>';
                 var payStatus = "";
                 if (d.tailPayApprovalBtn == 1 && amount > 0) {
                     if(amount > 0){
@@ -1787,7 +1800,7 @@ layui.config({
                 if(dataPermission.canViewOrderCost != "Y"){
                     return "**** " + payStatus;
                 }
-                return d.tailPayAmount + "元" + payStatus;
+                return (d.tailPayAmount + "元" + payStatus) + (d.feeApprovalRejectReason ? icon : "");
         }},
         {field: "tailPayStatus", title: "尾款状态", sort: false, width: 100, hide: false, templet: function (d) {
             if(d.orderType == 2 && d.masterFlag == "否"){
@@ -1855,6 +1868,7 @@ layui.config({
             }
             return status;
         }},
+        {field: 'carDamageCount', title: '车损/报备', sort: false,minWidth:150, templet: "#damageTpl"},
         {field: 'dealerSignTime', title: '经销商签收时间', sort: false,minWidth:150, templet: function (d) {
             return d.dealerSignTime || "- -";
         }},

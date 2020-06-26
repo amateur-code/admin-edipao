@@ -45,6 +45,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "fetchTruckTime", title: "提车时间" },
       { field: "startTruckTime", title: "发车时间" },
       { field: "returnAuditStatus", title: "回单审核" },
+      { field: "carDamageCount", title: "车损/报备" },
       { field: "dealerSignTime", title: "经销商签收时间" },
       { field: "dealerEval", title: "经销商评价" },
       { field: "certificateSignTime", title: "合格证签收时间" },
@@ -53,6 +54,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     routeTableHeaderList = [
       {field: 'startAddress', title: '出发地'},
       {field: 'endAddress', title: '目的地'},
+      {field: 'transportOrderNum', title: '发运趟数'},
       {field: 'orderType', title: '适用类型'},
       {field: 'reportToAudit', title: '上报待审'},
       {field: 'lineSource', title: '线路规划'},
