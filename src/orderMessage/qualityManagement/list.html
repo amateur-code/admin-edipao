@@ -200,9 +200,9 @@ layui.config({
           } else if (d.orderStatus === 3) {
             return '运输中'
           } else if (d.orderStatus === 4) {
-            if (d.dealerSignTime === 0) {
+            if (d.dealerReceiveTime === 0) {
               return '收车未扫码'
-            } else if (d.dealerSignTime !== 0) {
+            } else if (d.dealerReceiveTime !== 0) {
               return '已收车'
             }
           } else if (d.orderStatus === 5) {
@@ -582,13 +582,13 @@ layui.config({
               value.push("4");
               where['searchFieldDTOList[' + index + '].fieldName'] = key;
               where['searchFieldDTOList[' + index++ + '].fieldListValue'] = value.join(',');
-              where['searchFieldDTOList[' + index + '].fieldName'] = "dealerSignTime";
+              where['searchFieldDTOList[' + index + '].fieldName'] = "dealerReceiveTime";
               where['searchFieldDTOList[' + index + '].fieldMinValue'] = "0";
               where['searchFieldDTOList[' + index + '].fieldMaxValue'] = "1";
             } else if (!checkSign && checkFetch) {
               where['searchFieldDTOList[' + index + '].fieldName'] = key;
               where['searchFieldDTOList[' + index++ + '].fieldListValue'] = value.join(',');
-              where['searchFieldDTOList[' + index + '].fieldName'] = "dealerSignTime";
+              where['searchFieldDTOList[' + index + '].fieldName'] = "dealerReceiveTime";
               where['searchFieldDTOList[' + index + '].fieldMinValue'] = "1980-01-01 00:00:00";
               where['searchFieldDTOList[' + index + '].fieldMaxValue'] = "2999-01-01 00:00:00";
             }
@@ -702,9 +702,9 @@ layui.config({
         } else if (item.orderStatus === 3) {
           item.orderStatus = '运输中'
         } else if (item.orderStatus === 4) {
-          if (item.dealerSignTime === 0) {
+          if (item.dealerReceiveTime === 0) {
             item.orderStatus = '收车未扫码'
-          } else if (item.dealerSignTime !== 0) {
+          } else if (item.dealerReceiveTime !== 0) {
             item.orderStatus = '已收车'
           }
         } else if (item.orderStatus === 5) {
