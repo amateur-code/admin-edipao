@@ -48,12 +48,16 @@
                     </div> 
                     <!-- 司机上报 -->
                     <div class="driver-report">
-                        <div class="title">
-                            <span class="desc">司机上报</span>
-                            <span class="add-report" id="add-report">+添加上报</span>
+                        <div class="layui-tab layui-tab-brief" lay-filter="reportTabFilter">
+                            <ul class="layui-tab-title" style="border: none;">
+                              <li class="layui-this">位置信息</li>
+                              <li class="desc">上报信息<span class="add-report hide" id="add-report">+添加上报</span></li>
+                            </ul>
+                          </div> 
+                        <div class="report-list-container">
+                            <div class="report-list" id="report-list"></div>
+                            <div class="footer-laypage" id="footer-laypage"></div>
                         </div>
-                        <div class="report-list" id="report-list"></div>
-                        <div class="footer-laypage" id="footer-laypage"></div>
                     </div>
                 </div>
                 <div class="layui-col-md8 layui-col-sm8 layui-col-xs8 map-container">

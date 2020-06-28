@@ -75,6 +75,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                 case 1:
                     _t.postMessage(_t.iframe1[0].contentWindow, {
                         type: "getDefaultOrderRoute",
+                        lineId: _t.lineId,
                     });
                     break;
                 case 2:
@@ -360,7 +361,13 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                     $("#map" + source).removeClass("map-hide").addClass("map-show").siblings(".map-content").removeClass("map-show").addClass("map-hide");
                 }
             });
-
+            element.on('tab(reportTabFilter)', function (e) {
+                if(e.index == 1){
+                    $("#add-report").removeClass("hide");
+                }else{
+                    $("#add-report").addClass("hide");
+                }
+            });
             form.on('switch(policy)', function(data){
                 if(data.elem.checked){
                     _t.postMessage(_t.iframe3[0].contentWindow, {

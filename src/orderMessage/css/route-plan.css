@@ -59,12 +59,6 @@
   font-size: 14px;
   font-weight: 600;
 }
-.driver-report .title .add-report {
-  cursor: pointer;
-  font-size: 12px;
-  color: #118DFF;
-  text-decoration: underline;
-}
 .driver-report .report-list .item {
   padding: 10px;
   border-bottom: 1px solid #ccc;
@@ -192,4 +186,11 @@
 }
 .hide {
   display: none !important;
+}
+.layui-tab .layui-tab-title #add-report {
+  cursor: pointer;
+  font-size: 12px;
+  color: #118DFF;
+  text-decoration: underline;
+  margin-left: 10px;
 }

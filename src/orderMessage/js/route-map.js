@@ -15,6 +15,7 @@ layui.use(['layer'], function (layer) {
     this.selectedOrderNo = null;
     this.updatedLine = null;
     this.vias = [];
+    this.trackHandler = null;
   }
   Rm.prototype.init = function () {
     var _this = this;
@@ -45,17 +46,18 @@ layui.use(['layer'], function (layer) {
       this.map.load();
       this.trackHandler = new Careland.Track();
       this.Driving = new Careland.DrivingRoute(this.map, {
-        map: this.map,
-        multi: 1,
-        viaStyle: viaStyle,
-        startStyle: startStyle,
-        endStyle: endStyle,
-        autoDragging: true,
-        onSearchComplete: function (obj) {
+        "map": this.map,
+        "multi": 1,
+        "policy": CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
+        "viaStyle": viaStyle,
+        "startStyle": startStyle,
+        "endStyle": endStyle,
+        "autoDragging": true,
+        "onSearchComplete": function (obj) {
           layer.close(_this.topLoadIndex);
           _this.lineSelectCallback(obj);
         },
-        onMarkersSet: function (data) {  },
+        "onMarkersSet": function (data) {  },
       }); 
       this.layer = new Careland.Layer('point', 'layer');        //创建点图层
       this.map.addLayer(this.layer);
@@ -69,6 +71,7 @@ layui.use(['layer'], function (layer) {
     var _this = this;
     $(window).on("message", function (e) {
       var message = e.originalEvent.data;
+      console.log(`message: ${JSON.stringify(message)}`)
       switch(_this.source * 1){
         case 1:
           _this.handleEvent1(message);
@@ -86,6 +89,8 @@ layui.use(['layer'], function (layer) {
     var _this = this;
     switch(message.type){
       case "getDefaultOrderRoute":
+        // _this.lineId = message.lineId;
+        // _this.getlineOrderData()
         break;
       case "orderLine":
         _this.getOrderLineData(message);
@@ -125,8 +130,7 @@ layui.use(['layer'], function (layer) {
       
     }
   }
-  Rm.prototype.changePolicy = function (isHighway) {
-    var _this = this;
+  Rm.prototype.changePolicy = function (isHighway) {    var _this = this;
     _this.isHighway = isHighway;
     if(isHighway){
       console.log("走高速")
@@ -145,26 +149,6 @@ layui.use(['layer'], function (layer) {
         _this.renderDrivingRoute();
       }
     }
-  }
-  Rm.prototype.getOrderLineData = function (message) {
-    var _this = this;
-    edipao.request({
-      type: 'GET',
-      url: '/admin/lineTrack/getOrderTrack',
-      data: {
-        orderNo: message.orderNo,
-      }
-    }).then(function(res){
-      if(res.code == 0 && res.data && res.data.length > 0){
-        // _this.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS);
-        _this.selectedOrderNo = message.orderNo;
-        _this.line = res.data;
-        _this.renderDrivingRoute();
-      }else{
-        layer.msg("获取订单轨迹失败");
-        layer.close(_this.topLoadIndex);
-      }
-    });
   }
   Rm.prototype.chooseRoute = function () {
     _this.Driving.getDrivingRouteData(function(res){
@@ -226,6 +210,25 @@ layui.use(['layer'], function (layer) {
       layer.close(_this.topLoadIndex);
      });
   }
+  Rm.prototype.getOrderLineData = function (message) {
+    var _this = this;
+    edipao.request({
+      type: 'GET',
+      url: '/admin/lineTrack/getOrderTrack',
+      data: {
+        orderNo: message.orderNo,
+      }
+    }).then(function(res){
+      if(res.code == 0 && res.data && res.data.length > 0){
+        _this.selectedOrderNo = message.orderNo;
+        _this.line = res.data;
+        _this.renderDrivingRoute();
+      }else{
+        layer.msg("获取订单轨迹失败");
+        layer.close(_this.topLoadIndex);
+      }
+    });
+  }
   Rm.prototype.renderDrivingRoute = function (policy) {
     this.topLoadIndex = layer.load(1);
     var _this = this;         
@@ -253,6 +256,9 @@ layui.use(['layer'], function (layer) {
         return (new Careland.GbPoint(item.lat, item.lng));
       });
       if(vias.length > 0) options.via = vias;
+      // options = {"trackInfo":[{"x":420491399,"y":144699796},{"x":420491072,"y":144698518},{"x":420491399,"y":144699796},{"x":420480275,"y":144699482},{"x":420480275,"y":144699482},{"x":420491648,"y":144699961},{"x":420491399,"y":144699796},{"x":420491399,"y":144699796},{"x":420491478,"y":144699990},{"x":420491594,"y":144699990},{"x":420491316,"y":144699605},{"x":420491316,"y":144699605},{"x":420480275,"y":144699482},{"x":420491594,"y":144699990},{"x":420491072,"y":144698518},{"x":420491399,"y":144699796}]}
+      // console.log(JSON.stringify(options));
+      // console.log(start, end);
       _this.Driving.search(start, end, options);
       _this.map.setCenter(start);
     }else{
