@@ -128,3 +128,6 @@
 .inline-block {
   display: inline-block;
 }
+.redBorder {
+  border: 2px solid red !important;
+}

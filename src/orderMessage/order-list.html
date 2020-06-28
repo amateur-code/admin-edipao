@@ -110,7 +110,7 @@
                         <div style="margin-bottom:10px;margin-right: 10px;" class="layui-col-md3">
                             半身照
                             <span class="pointer boxZoomImg" src="{{d.driverBodyImg}}">
-                                <img width="100%" src="{{d.driverBodyImg}}">
+                                <img class="{{d.redBorder ? 'redBorder' : ''}}" width="100%" src="{{d.driverBodyImg}}">
                             </span>
                         </div>
                         {{#  if(d.idLicenceFrontImg){ }}

@@ -907,9 +907,9 @@ layui.config({
             $(".list_picture_verify").unbind().on("click", function (e) {
                 var orderId = e.target.dataset.orderid;
                 var driverId = e.target.dataset.driverid;
-                var key = e.target.dataset.key || "returnImages";
                 var type = e.target.dataset.type * 1;
                 var driverBodyImg = "", idLicenceFrontImg = "";
+                var redBorder = false;
                 $.when(method.getOrder(orderId), method.getDriver(driverId)).done(function (res, res2) {
                     res = res[0];
                     res2 = res2[0];
@@ -918,28 +918,23 @@ layui.config({
                     }
                     if(res.code == "0"){
                         res.data.truckDTOList.forEach(function (item) {
-                            if(!item[key]){
-                                item[key] = [];
-                            }else{
-                                item[key] = item[key].split(",");
-                            }
-                            if(key == "returnImages"){
-                                item.returnImages = item.returnImages.filter(function(img){
-                                    if(img.indexOf("driver_body") > -1){
-                                        driverBodyImg = img;
-                                        return false;
-                                    }else{
-                                        return true;
-                                    }
-                                });
-                            }
+                            item.returnImages = item.returnImages ? item.returnImages.split(",") : [];
+                            if(item.masterFlag == "是") redBorder = item.driverBodyImageRedBord;
+                            item.returnImages = item.returnImages.filter(function(img){
+                                if(img.indexOf("driver_body") > -1){
+                                    driverBodyImg = img;
+                                    return false;
+                                }
+                                return true;
+                            });
                         });
                         laytpl($("#pic_verify_tpl").html()).render({
                             list: res.data.truckDTOList, 
-                            key: key, 
+                            key: "returnImages", 
                             driverBodyImg: driverBodyImg,
                             idLicenceFrontImg: idLicenceFrontImg,
-                            action: "verify"
+                            action: "verify",
+                            redBorder: redBorder
                         }, function (html) {
                             var index = layer.open({
                                 type: 1,
@@ -989,28 +984,26 @@ layui.config({
             $(".list_picture_view").unbind().on("click", function (e) {
                 var orderId = e.target.dataset.orderid;
                 var driverBodyImg = "";
+                var redBorder = false;
                 method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
                         res.data.truckDTOList.forEach(function (item) {
-                            if(!item.returnImages){
-                                item.returnImages = [];
-                            }else{
-                                item.returnImages = item.returnImages.split(",");
-                            }
+                            item.returnImages = item.returnImages ? item.returnImages.split(",") : [];
+                            if(item.masterFlag == "是") redBorder = item.driverBodyImageRedBord;
                             item.returnImages = item.returnImages.filter(function(img){
                                 if(img.indexOf("driver_body") > -1){
                                     driverBodyImg = img;
                                     return false;
-                                }else{
-                                    return true;
                                 }
+                                return true;
                             });
                         });
                         laytpl($("#pic_verify_tpl").html()).render({
                             list: res.data.truckDTOList,
                             key: "returnImages",
                             driverBodyImg: driverBodyImg,
-                            action: "view"
+                            action: "view",
+                            redBorder: redBorder
                         }, function (html) {
                             layer.open({
                                 type: 1,
