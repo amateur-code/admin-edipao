@@ -5,17 +5,20 @@ layui.use(['layer'], function (layer) {
     this.currentLine = null;
     this.lineDetail = null;
     this.lineId = "";
+    this.orderNo = "";
     var qs = edipao.urlGet();
     this.source = qs.source * 1;
     this.map = null;
     this.line = [];
     this.topLoadIndex = null;
     this.isHighway = 0;
-    this.selectedOrderId = null;
+    this.selectedOrderNo = null;
+    this.updatedLine = null;
+    this.vias = [];
   }
   Rm.prototype.init = function () {
     var _this = this;
-    this.topLoadIndex = layer.load(1);
+    // this.topLoadIndex = layer.load(1);
     try{
       var baseStyle = {
         width: 23,
@@ -82,6 +85,8 @@ layui.use(['layer'], function (layer) {
   Rm.prototype.handleEvent1 = function (message) {
     var _this = this;
     switch(message.type){
+      case "getDefaultOrderRoute":
+        break;
       case "orderLine":
         _this.getOrderLineData(message);
         break;
@@ -91,14 +96,14 @@ layui.use(['layer'], function (layer) {
   Rm.prototype.handleEvent3 = function (message) {
     var _this = this;
     switch(message.type){
-      case "getData":
+      case "getData":  //获取路线
         _this.lineId = message.lineId;
         _this.getlineOrderData();
         break;
-      case "policy":
+      case "policy":  //更改高速配置
         _this.changePolicy(message.isHighway);
         break;
-      case "rebuild":
+      case "rebuild":  //重新规划
         if(_this.lineDetail.isHighway * 1 == 0){
           _this.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS);
         }else{
@@ -108,13 +113,13 @@ layui.use(['layer'], function (layer) {
         _this.line = _this.lineDetail.trackContent;
         _this.renderDrivingRoute();
         break;
-      case "choose":
+      case "choose":  //点击使用
         _this.lineDetail.trackContent = _this.line;
         _this.lineDetail.isHighway = _this.isHighway;
         _this.lineDetail.source = _this.source;
         _this.chooseRoute();
         break;
-      case "playLine":
+      case "playLine":  //播放轨迹
         _this.playLine();
         break;
       
@@ -141,8 +146,25 @@ layui.use(['layer'], function (layer) {
       }
     }
   }
-  Rm.prototype.getOrderLineData = function () {
-
+  Rm.prototype.getOrderLineData = function (message) {
+    var _this = this;
+    edipao.request({
+      type: 'GET',
+      url: '/admin/lineTrack/getOrderTrack',
+      data: {
+        orderNo: message.orderNo,
+      }
+    }).then(function(res){
+      if(res.code == 0 && res.data && res.data.length > 0){
+        // _this.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS);
+        _this.selectedOrderNo = message.orderNo;
+        _this.line = res.data;
+        _this.renderDrivingRoute();
+      }else{
+        layer.msg("获取订单轨迹失败");
+        layer.close(_this.topLoadIndex);
+      }
+    });
   }
   Rm.prototype.chooseRoute = function () {
     _this.Driving.getDrivingRouteData(function(res){
@@ -177,7 +199,7 @@ layui.use(['layer'], function (layer) {
               })
           }
       })
-  });
+    });
   }
   Rm.prototype.getlineOrderData = function () {
     var _this = this;
@@ -211,40 +233,51 @@ layui.use(['layer'], function (layer) {
     if(Array.isArray(_this.line)){
       for(var point of _this.line){
         // trackInfo.push(Object.assign({}, Careland.DrawTool.GbPointToKldPoint(point.lng,point.lat), {utctime: 1586144485}));
-        trackInfo.push(Careland.DrawTool.GbPointToKldPoint(point.lng,point.lat));
+        trackInfo.push(Careland.DrawTool.GbPointToKldPoint(point.lng, point.lat));
       }
     }
     var start = trackInfo[0];
     var end = trackInfo[trackInfo.length - 1];
+    var options = {
+      trackInfo: trackInfo,
+    }
     if(policy){
       var vias = _this.vias.map(function (item) {
         return (new Careland.GbPoint(item.lat, item.lng));
       });
-      _this.Driving.search(start, end, {trackInfo:[], via: vias});
+      options.trackInfo = [];
+      if(vias.length > 0) options.via = vias;
+      _this.Driving.search(start, end, options);
     }else if(trackInfo.length > 1){
       var vias = _this.vias.map(function (item) {
         return (new Careland.GbPoint(item.lat, item.lng));
       });
-      _this.Driving.search(start, end, {trackInfo: trackInfo, via: vias});
+      if(vias.length > 0) options.via = vias;
+      _this.Driving.search(start, end, options);
       _this.map.setCenter(start);
     }else{
       var vias = _this.vias.map(function (item) {
         return (new Careland.GbPoint(item.lat, item.lng));
       });
-      _this.Driving.search(_this.lineDetail.startAddress, _this.lineDetail.endAddress, {trackInfo:[], via: vias});
+      options.trackInfo = [];
+      if(vias.length > 0) options.via = vias;
+      _this.Driving.search(_this.lineDetail.startAddress, _this.lineDetail.endAddress, options);
       layer.close(_this.topLoadIndex);
     }
   }
   Rm.prototype.lineSelectCallback = function (obj){
+    console.log(obj)
     var _this = this, pointData =[];
     var plan = obj.getPlan(0);
-    for(var i in plan.uidinfo){
-      for(var j in plan.uidinfo[i].shapepoint){
-        let gbPoint = Careland.DrawTool.KldPointToGbPoint(plan.uidinfo[i].shapepoint[j].x,plan.uidinfo[i].shapepoint[j].y);
-        pointData.push({lng:gbPoint.lng,lat:gbPoint.lat});
+    if(plan){
+      for(var i in plan.uidinfo){
+        for(var j in plan.uidinfo[i].shapepoint){
+          let gbPoint = Careland.DrawTool.KldPointToGbPoint(plan.uidinfo[i].shapepoint[j].x,plan.uidinfo[i].shapepoint[j].y);
+          pointData.push({lng:gbPoint.lng,lat:gbPoint.lat});
+        }
       }
+      _this.updatedLine = pointData;
     }
-    _this.line = pointData;
   }
   Rm.prototype.postMessage = function (message) {
     var data = {

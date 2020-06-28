@@ -74,7 +74,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
             switch(source * 1){
                 case 1:
                     _t.postMessage(_t.iframe1[0].contentWindow, {
-
+                        type: "getDefaultOrderRoute",
                     });
                     break;
                 case 2:
@@ -101,38 +101,6 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                     form.render('checkbox'); 
                 }, 1000);
             });
-        },
-        // 设置地图导航
-        renderDrivingRoute(policy){
-            this.topLoadIndex = layer.load(1);
-            var _t = this;         
-            var trackInfo = [];
-            if(Array.isArray(_t.line)){
-                for(var point of _t.line){
-                    // trackInfo.push(Object.assign({}, Careland.DrawTool.GbPointToKldPoint(point.lng,point.lat), {utctime: 1586144485}));
-                    trackInfo.push(Careland.DrawTool.GbPointToKldPoint(point.lng,point.lat));
-                }
-            }
-            var start = trackInfo[0];
-            var end = trackInfo[trackInfo.length - 1];
-            if(policy){
-                var vias = _t.vias.map(function (item) {
-                    return (new Careland.GbPoint(item.lat, item.lng));
-                });
-                _t.Driving.search(start, end, {trackInfo:[], via: vias});
-            }else if(trackInfo.length > 1){
-                var vias = _t.vias.map(function (item) {
-                    return (new Careland.GbPoint(item.lat, item.lng));
-                });
-                _t.Driving.search(start, end, {trackInfo: trackInfo, via: vias});
-                _t.map.setCenter(start);
-            }else{
-                var vias = _t.vias.map(function (item) {
-                    return (new Careland.GbPoint(item.lat, item.lng));
-                });
-                _t.Driving.search(_t.lineDetail.startAddress, _t.lineDetail.endAddress, {trackInfo:[], via: vias});
-                layer.close(_t.topLoadIndex);
-            }
         },
         // 获取司机上报数据
         // status 1上报待审2已采纳3取消采纳4已删除
@@ -334,7 +302,6 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                 }
             }).then(function(res){
                 if(res.code == 0){
-                
                     var orderListTplStr = orderListTpl.innerHTML;
                     laytpl(orderListTplStr).render(res.data, function(html){
                         $("#select-order-dialog").html(html);
@@ -363,23 +330,6 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                 type: "orderLine",
                 orderNo: orderNo
             });
-            edipao.request({
-                type: 'GET',
-                url: '/admin/lineTrack/getOrderTrack',
-                data: {
-                    orderNo: orderNo,
-                }
-            }).then(function(res){
-                if(res.code == 0){
-                    _t.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS);
-                    _t.isHighway = 0;
-                    _t.lineDetail.orderNo = orderNo;
-                    _t.lineDetail.lineSource = 1;
-                    _t.line = res.data;
-                    _t.renderTabContent();
-                    _t.renderDrivingRoute();
-                }
-            })
         },
         getTab(){
             var tab = 0, _t = this;
