@@ -221,9 +221,9 @@ layui
       table.on("checkbox(damageList)", handleEvent);
       function handleEvent(obj) {
         var data = obj.data;
-        obj.event == "add" && permissionList.indexOf("新增车损报备") == -1 && (obj.event = "reject");
-        obj.event == "edit" && permissionList.indexOf("编辑车损报备") == -1 && (obj.event = "reject");
-        obj.event == "export" && permissionList.indexOf("导出车损报备") == -1 && (obj.event = "reject");
+        obj.event == "add" && permissionList.indexOf("车损报备-新增") == -1 && (obj.event = "reject");
+        obj.event == "edit" && permissionList.indexOf("车损报备-编辑") == -1 && (obj.event = "reject");
+        obj.event == "export" && permissionList.indexOf("车损报备-导出") == -1 && (obj.event = "reject");
 
         switch (obj.event) {
           case "reject":
