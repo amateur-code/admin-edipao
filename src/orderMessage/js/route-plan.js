@@ -1,13 +1,14 @@
 window.firstUpload = true;
-layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function () {
-    var $ = layui.jquery;
-    var form = layui.form;
-    var layer = layui.layer;
-    var laytpl = layui.laytpl;
-    var edipao = layui.edipao;
-    var laypage = layui.laypage
-    var laydate = layui.laydate
-    var element = layui.element
+layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'], function () {
+    var $ = layui.jquery,
+      form = layui.form,
+      layer = layui.layer,
+      laytpl = layui.laytpl,
+      edipao = layui.edipao,
+      laypage = layui.laypage,
+      laydate = layui.laydate,
+      element = layui.element,
+      table = layui.table;
 
     function _routePlan(){
         this.user = JSON.parse(sessionStorage.user);
@@ -28,6 +29,8 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
         this.iframe1 = null;
         this.iframe2 = null;
         this.iframe3 = null;
+        this.positionPageNo = 1;
+        this.positionPageSize = 5;
         this.sourceList = {
             "1": {
                 source: 1,
@@ -54,26 +57,30 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
             _t.renderTabContent();
             _t.bindLineEvents();
             _t.bindFrameEvents();
+            _t.getPositionList();
         },
         bindFrameEvents(){
             var _t = this;
-            this.iframe1 = $("#map1").attr("src", "./route-map.html?source=1");
-            this.iframe2 = $("#map2").attr("src", "./route-map.html?source=2");;
-            this.iframe3 = $("#map3").attr("src", "./route-map.html?source=3");;
+            this.iframe1 = $("#map1").attr("src", "./route-map.html?source=1")[0];
+            this.iframe2 = $("#map2").attr("src", "./route-map.html?source=2")[0];
+            this.iframe3 = $("#map3").attr("src", "./route-map.html?source=3")[0];
             $(window).on("message", function (e) {
                 var message = e.originalEvent.data;
                 switch(message.type){
                     case "loaded":
                         _t.iframeLoadData(message.source);
                         break;
+                    case "msg":
+                        _t.showMsg(message.options);
                 }
             });
         },
         iframeLoadData(source){
             var _t = this;
+            _t.getDriverReportList(source);
             switch(source * 1){
                 case 1:
-                    _t.postMessage(_t.iframe1[0].contentWindow, {
+                    _t.postMessage(_t.iframe1.contentWindow, {
                         type: "getDefaultOrderRoute",
                         lineId: _t.lineId,
                     });
@@ -81,7 +88,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                 case 2:
                     break;
                 case 3:
-                    _t.postMessage(_t.iframe3[0].contentWindow, {
+                    _t.postMessage(_t.iframe3.contentWindow, {
                         type: "getData",
                         lineId: _t.lineId,
                     });
@@ -103,9 +110,47 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                 }, 1000);
             });
         },
+        getPositionList: function () {
+            var _this = this;
+            table.render({
+                elem: '#positon-table',
+                id: "positon-table",
+                height: 'full',
+                autoSort: false,
+                url: edipao.API_HOST + '/admin/order/report/getReportByLine',
+                method: "get",
+                limit: 5,
+                page: true,
+                    where: Object.assign({lineId: this.lineId}, _this.request),
+                request: {
+                    pageName: 'page',
+                    limitName: 'pageSize'
+                },
+                parseData: function (res) {
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.message, //解析提示文本
+                        "count": res.data.count, //解析数据长度
+                        "data": res.data.reports //解析数据列表
+                    }
+                },
+                response: {
+                    countName: 'count',
+                    dataName: 'data'
+                },
+                cols: [[
+                    { field: "type", title: "时间", minWidth: 100, sort: false },
+                    { field: "status", title: "经纬度", minWidth: 100, sort: false },
+                    { field: "address", title: "地址", minWidth: 300, sort: false },
+                ]],
+                text: {
+                    none: "暂无数据"
+                },
+            });
+        },
         // 获取司机上报数据
         // status 1上报待审2已采纳3取消采纳4已删除
-        getDriverReportList: function(){
+        getDriverReportList: function (source) {
             var _t = this;
             edipao.request({
                 type: 'GET',
@@ -125,53 +170,13 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                     laytpl(getDriverReportTpl).render(res.data, function(html){
                         reportList.innerHTML = html;
                     });
-
                     _t.bindEvents();
-                    
-                    _t.layer.clear();
-                    var style = new Careland.PointStyle({
-                      width: 23,
-                      height: 29,
-                      offsetX: -13,
-                      offsetY: -34,
-                      textOffsetX: -5,
-                      textOffsetY: -30,
-                      fontColor: "#FFF",
-                      src: location.origin + "/images/map_sign_event.png",
+                    _t.postMessage(_t["iframe" + source * 1].contentWindow, {
+                        type: "reports",
+                        reports: res.data.reports
                     });
-                    //创建文本标注点
-                    for(var report of res.data.reports){
-                        var marker = new Careland.Marker('image');
-                        marker.setStyle(style); 
-                        var point = new Careland.GbPoint(report.lat,report.lng);
-                        marker.setPoint(point); 
-                        var text = '';
-                        if(report.type == 1){
-                            text = '限高：'+report.height+ '米';
-                        }else if(report.type == 2){
-                            text= '限行：'+report.startTime+' - '+report.endTime;
-                        }else if(report.type == 3){
-                            text= '收费：'+ report.price + '元';
-                        }else if(report.type == 4){
-                            text= '拆车：'+report.price+ '元';
-                        }                                         
-                        _t.layer.add(marker); 
-                        (function(marker,text,report,point){
-                            marker.addEventListener("click", function(){  
-                                var opts = {
-                                    point: point,
-                                    content: text + '<br/>' + report.address,
-                                    enableAutoPan: true
-                                };
-                                var mapInfoWin = new Careland.InfoWindow(opts);        
-                                _t.map.openInfoWindow(mapInfoWin, point);//通过核心类接口打开窗口
-                            });
-                        })(marker,text,report,point)
-                        
-                    }
-                                                               //将标注点添加到图层上
                 }
-            })
+            });
         },
         // 设置分页
         setLayPage: function(total){
@@ -327,7 +332,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
         },
         getOrderLineTrack(orderNo){
             var _t = this, source = 1;
-            _t.postMessage(_t["iframe" + source][0].contentWindow, {
+            _t.postMessage(_t["iframe" + source].contentWindow, {
                 type: "orderLine",
                 orderNo: orderNo
             });
@@ -364,18 +369,22 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
             element.on('tab(reportTabFilter)', function (e) {
                 if(e.index == 1){
                     $("#add-report").removeClass("hide");
+                    $("#positon-table-container").addClass("hide");
+                    $("#report-list-container").removeClass("hide");
                 }else{
+                    $("#report-list-container").addClass("hide");
+                    $("#positon-table-container").removeClass("hide");
                     $("#add-report").addClass("hide");
                 }
             });
             form.on('switch(policy)', function(data){
                 if(data.elem.checked){
-                    _t.postMessage(_t.iframe3[0].contentWindow, {
+                    _t.postMessage(_t.iframe3.contentWindow, {
                         type: "policy",
                         isHighway: 1,
                     });
                 }else{
-                    _t.postMessage(_t.iframe3[0].contentWindow, {
+                    _t.postMessage(_t.iframe3.contentWindow, {
                         type: "policy",
                         isHighway: 0,
                     });
@@ -384,12 +393,31 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
             
             $('#tabConent').on('click','.rebuild-btn',function() {
                 var tab = _t.getTab();
-                _t.postMessage(_t["iframe" + tab][0].contentWindow, {
+                _t.postMessage(_t["iframe" + tab].contentWindow, {
                     type: "rebuild"
                 });
             });
             $('#tabConent').on('click','.order-choose',function() {
                 _t.getOrderListByLineId();
+            });
+            $('#tabConent').on('click', '.save-btn', function (e) {
+                var source = e.target.dataset.source + "";
+                switch(source * 1){
+                    case 1:
+                        if(_t.lineDetail.lineSource != 1){
+                            layer.msg("请先选择订单");
+                            return;
+                        }
+                        break;
+                        case 2:
+                            break;
+                    case 3:
+                        _t.postMessage(_t["iframe" + source].contentWindow, {
+                            type: "save",
+                        });
+                        _t.renderTabContent();
+                        break;
+                }
             });
             $("#tabConent").on("click", ".choose-btn",function (e) {
                 var source = e.target.dataset.source + "";
@@ -403,7 +431,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                         case 2:
                             break;
                     case 3:
-                        _t.postMessage(_t["iframe" + source][0].contentWindow, {
+                        _t.postMessage(_t["iframe" + source].contentWindow, {
                             type: "choose",
                         });
                         _t.setChosenSource(source);
@@ -413,7 +441,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
             });
             $('#tabConent').on('click','.playLine',function(e){
                 var source = _t.getTab();
-                _t.postMessage(_t["iframe" + source][0].contentWindow, {
+                _t.postMessage(_t["iframe" + source].contentWindow, {
                     type: "playLine"
                 });
             })
@@ -617,8 +645,17 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element'], function
                     lng: edipao.kcodeToGb(data.kcode).lng,
                 }
             }
+        },
+        showMsg: function (options) {
+            console.log(options)
+            switch(options.type){
+                case "alert":
+                    layer.alert(options.content, {icon: options.icon || 1});
+                    break;
+                default:
+                    layer.msg(options.content);
+            }
         }
-
     }
     
     var routePlan = new _routePlan();

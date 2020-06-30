@@ -118,11 +118,17 @@ layui.use(['layer'], function (layer) {
         _this.line = _this.lineDetail.trackContent;
         _this.renderDrivingRoute();
         break;
+      case "save":
+        _this.saveRoute();
+        break;
       case "choose":  //点击使用
         _this.lineDetail.trackContent = _this.line;
         _this.lineDetail.isHighway = _this.isHighway;
         _this.lineDetail.source = _this.source;
         _this.chooseRoute();
+        break;
+      case "reports":
+        _this.renderReportPoints(message.reports);
         break;
       case "playLine":  //播放轨迹
         _this.playLine();
@@ -130,27 +136,24 @@ layui.use(['layer'], function (layer) {
       
     }
   }
-  Rm.prototype.changePolicy = function (isHighway) {    var _this = this;
+  Rm.prototype.changePolicy = function (isHighway) {
+    var _this = this;
     _this.isHighway = isHighway;
     if(isHighway){
       console.log("走高速")
       _this.Driving.setPolicy(CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS);
-      if(_this.lineDetail.isHighway == 1){
-        _this.renderDrivingRoute();
-      }else{
-        _this.renderDrivingRoute(true);
-      }
+      _this.renderDrivingRoute(true);
+      return;
     }else{
       console.log("不走高速")
       _this.Driving.setPolicy(CLDMAP_DRIVING_POLICY_NO_HIGHWAYS);
-      if(_this.lineDetail.isHighway == 1){
-        _this.renderDrivingRoute(true);
-      }else{
-        _this.renderDrivingRoute();
-      }
+      _this.renderDrivingRoute(true);
+      return;
     }
   }
-  Rm.prototype.chooseRoute = function () {
+  Rm.prototype.saveRoute = function () {
+    var _this = this;
+    var pointData = this.updatedLine;
     _this.Driving.getDrivingRouteData(function(res){
       var blob = new Blob([res], {
           type: "application/octet-stream"
@@ -178,9 +181,54 @@ layui.use(['layer'], function (layer) {
                   }
               }).then(function(res){
                   if(res.code == 0){
-                      _this.line = pointData;
+                    _this.line = pointData;
+                    _this.showMsg({
+                      type: "alert",
+                      content: "保存成功"
+                    });
                   }
-              })
+              });
+          }
+      });
+    });
+  }
+  Rm.prototype.chooseRoute = function () {
+    var _this = this;
+    var pointData = this.updatedLine;
+    _this.Driving.getDrivingRouteData(function(res){
+      var blob = new Blob([res], {
+          type: "application/octet-stream"
+      });
+      let formData = new FormData()
+      formData.append('file', blob)
+      formData.append('loginStaffId',edipao.getLoginStaffId())
+      $.ajax({
+          type: 'POST',
+          url: edipao.API_HOST +  '/admin/lineTrack/upload/routeFile', 
+          data: formData,
+          processData : false,
+          contentType : false,
+      }).done(function(res){
+          if(res.code == 0){
+              edipao.request({
+                  type: 'POST',
+                  url: '/admin/lineTrack/updateLineTrack',
+                  data: {
+                      lineId: _this.lineId,
+                      lineSource: _this.lineDetail.lineSource,
+                      trackUrl: res.data.url,
+                      trackContent: JSON.stringify(pointData),
+                      isHighway: _this.isHighway,
+                  }
+              }).then(function(res){
+                  if(res.code == 0){
+                      _this.line = pointData;
+                      _this.showMsg({
+                        type: "alert",
+                        content: "保存成功"
+                      });
+                  }
+              });
           }
       })
     });
@@ -272,7 +320,6 @@ layui.use(['layer'], function (layer) {
     }
   }
   Rm.prototype.lineSelectCallback = function (obj){
-    console.log(obj)
     var _this = this, pointData =[];
     var plan = obj.getPlan(0);
     if(plan){
@@ -283,12 +330,66 @@ layui.use(['layer'], function (layer) {
         }
       }
       _this.updatedLine = pointData;
+      console.log(_this.updatedLine.length)
+    }
+  }
+  Rm.prototype.renderReportPoints = function (reports) {
+    //将标注点添加到图层上
+    var _this = this;
+    _this.layer.clear();
+    var style = new Careland.PointStyle({
+      width: 23,
+      height: 29,
+      offsetX: -13,
+      offsetY: -34,
+      textOffsetX: -5,
+      textOffsetY: -30,
+      fontColor: "#FFF",
+      src: location.origin + "/images/map_sign_event.png",
+    });
+    //创建文本标注点
+    for(var report of reports){
+        var marker = new Careland.Marker('image');
+        marker.setStyle(style); 
+        var point = new Careland.GbPoint(report.lat,report.lng);
+        marker.setPoint(point); 
+        var text = '';
+        if(report.type == 1){
+            text = '限高：'+report.height+ '米';
+        }else if(report.type == 2){
+            text= '限行：'+report.startTime+' - '+report.endTime;
+        }else if(report.type == 3){
+            text= '收费：'+ report.price + '元';
+        }else if(report.type == 4){
+            text= '拆车：'+report.price+ '元';
+        }                                         
+        _this.layer.add(marker); 
+        (function(marker,text,report,point){
+            marker.addEventListener("click", function(){  
+                var opts = {
+                    point: point,
+                    content: text + '<br/>' + report.address,
+                    enableAutoPan: true
+                };
+                var mapInfoWin = new Careland.InfoWindow(opts);        
+                _this.map.openInfoWindow(mapInfoWin, point);//通过核心类接口打开窗口
+            });
+        })(marker,text,report,point)
+        
     }
   }
   Rm.prototype.postMessage = function (message) {
     var data = {
       source: this.source,
       type: message,
+    }
+    window.parent.postMessage(data);
+  }
+  Rm.prototype.showMsg = function (options) {
+    var data = {
+      source: this.source,
+      type: "msg",
+      options: options
     }
     window.parent.postMessage(data);
   }

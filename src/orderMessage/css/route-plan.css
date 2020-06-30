@@ -47,6 +47,10 @@
 .layui-tab .layui-tab-item .rebuild-btn {
   margin-top: 10px;
 }
+.driver-report #positon-table-container,
+.driver-report #report-list-container {
+  padding-right: 7.5px;
+}
 .driver-report .no-report {
   padding: 50px 0;
   text-align: center;

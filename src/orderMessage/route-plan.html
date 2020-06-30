@@ -54,9 +54,12 @@
                               <li class="desc">上报信息<span class="add-report hide" id="add-report">+添加上报</span></li>
                             </ul>
                           </div> 
-                        <div class="report-list-container">
+                        <div id="report-list-container" class="report-list-container hide">
                             <div class="report-list" id="report-list"></div>
                             <div class="footer-laypage" id="footer-laypage"></div>
+                        </div>
+                        <div id="positon-table-container" class="positon-table-container">
+                            <div id="positon-table"></div>
                         </div>
                     </div>
                 </div>
@@ -155,6 +158,7 @@
                 </div>
             </form>
             <button data-source="3" class="layui-btn layui-btn-primary rebuild-btn">重新规划</button>
+            <button data-source="3" class="layui-btn save-btn">保存</button>
             <button data-source="3" class="layui-btn choose-btn">使用该方式</button>
         {{# } }}
     </div>
