@@ -291,6 +291,7 @@ layui.use(['layer'], function (layer) {
     var end = trackInfo[trackInfo.length - 1];
     var options = {
       trackInfo: trackInfo,
+      tvt: "134217728"
     }
     if(policy){
       var vias = _this.vias.map(function (item) {
@@ -320,8 +321,10 @@ layui.use(['layer'], function (layer) {
   Rm.prototype.lineSelectCallback = function (obj){
     var _this = this, pointData =[];
     var status = _this.Driving.getStatus();
-    console.log(status)
-    console.log(obj)
+    if(status.errcode * 1 != 0){
+      layer.alert(status.errmsg, {icon: 2});
+      return;
+    }
     var plan = obj.getPlan(0);
     if(plan){
       for(var i in plan.uidinfo){
