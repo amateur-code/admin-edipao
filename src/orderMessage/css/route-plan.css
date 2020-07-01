@@ -44,7 +44,9 @@
 }
 .layui-tab .layui-tab-item .save-btn,
 .layui-tab .layui-tab-item .choose-btn,
-.layui-tab .layui-tab-item .rebuild-btn {
+.layui-tab .layui-tab-item .rebuild-btn,
+.layui-tab .layui-tab-item .playLine,
+.layui-tab .layui-tab-item .now_line {
   margin-top: 10px;
 }
 .driver-report #positon-table-container,

@@ -89,11 +89,34 @@ layui.use(['layer'], function (layer) {
     var _this = this;
     switch(message.type){
       case "getDefaultOrderRoute":
-        // _this.lineId = message.lineId;
-        // _this.getlineOrderData()
+        _this.lineId = message.lineId;
+        _this.getlineOrderData(1);
         break;
       case "orderLine":
         _this.getOrderLineData(message);
+        break;
+      case "save":
+        _this.saveRoute();
+        break;
+      case "choose":  //点击使用
+        _this.lineDetail.trackContent = _this.line;
+        _this.lineDetail.isHighway = _this.isHighway;
+        _this.lineDetail.source = _this.source;
+        _this.chooseRoute();
+        break;
+      case "playLine":  //播放轨迹
+        _this.playLine();
+        break;
+      case "loadDefaultRoute":
+        layer.close(_this.topLoadIndex);
+        _this.lineId = message.lineId;
+        _this.lineDetail = message.data;
+        try {
+          if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson);
+          _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
+          _this.line = _this.lineDetail.trackContent;
+        } catch (error) {}
+        _this.renderDrivingRoute();
         break;
     }
   }
@@ -103,7 +126,7 @@ layui.use(['layer'], function (layer) {
     switch(message.type){
       case "getData":  //获取路线
         _this.lineId = message.lineId;
-        _this.getlineOrderData();
+        _this.getlineOrderData(3);
         break;
       case "policy":  //更改高速配置
         _this.changePolicy(message.isHighway);
@@ -133,6 +156,19 @@ layui.use(['layer'], function (layer) {
       case "playLine":  //播放轨迹
         _this.playLine();
         break;
+      case "loadDefaultRoute":
+        layer.close(_this.topLoadIndex);
+        _this.lineId = message.lineId;
+        _this.lineDetail = message.data;
+        try {
+          if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson);
+          _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
+          _this.isHighway = _this.lineDetail.isHighway;
+          _this.postMessage("isHighway", {isHighway: _this.isHighway});
+          _this.line = _this.lineDetail.trackContent;
+        } catch (error) {}
+        _this.renderDrivingRoute();
+        break;
       
     }
   }
@@ -153,6 +189,7 @@ layui.use(['layer'], function (layer) {
   }
   Rm.prototype.saveRoute = function () {
     var _this = this;
+    _this.postMessage("showLoading");
     var pointData = this.updatedLine;
     _this.Driving.getDrivingRouteData(function(res){
       var blob = new Blob([res], {
@@ -180,67 +217,75 @@ layui.use(['layer'], function (layer) {
                       isHighway: _this.isHighway,
                   }
               }).then(function(res){
+                  _this.postMessage("hideLoading");
                   if(res.code == 0){
                     _this.line = pointData;
                     _this.showMsg({
                       type: "alert",
                       content: "保存成功"
                     });
+                  }else{
+                    _this.showMsg({
+                      type: "alert",
+                      content: res.message,
+                      icon: 2
+                    });
+                    _this.postMessage("hideLoading");
                   }
+              }).fail(function () {
+                _this.postMessage("hideLoading");
               });
+          }else{
+            _this.showMsg({
+              type: "alert",
+              content: res.message,
+              icon: 2
+            });
+            _this.postMessage("hideLoading");
           }
+      }).fail(function () { 
+        _this.postMessage("hideLoading");
       });
     });
   }
+
+  //点击使用该方式
   Rm.prototype.chooseRoute = function () {
     var _this = this;
-    var pointData = this.updatedLine;
-    _this.Driving.getDrivingRouteData(function(res){
-      var blob = new Blob([res], {
-          type: "application/octet-stream"
-      });
-      let formData = new FormData()
-      formData.append('file', blob)
-      formData.append('loginStaffId',edipao.getLoginStaffId())
-      $.ajax({
-          type: 'POST',
-          url: edipao.API_HOST +  '/admin/lineTrack/upload/routeFile', 
-          data: formData,
-          processData : false,
-          contentType : false,
-      }).done(function(res){
-          if(res.code == 0){
-              edipao.request({
-                  type: 'POST',
-                  url: '/admin/lineTrack/updateLineTrack',
-                  data: {
-                      lineId: _this.lineId,
-                      lineSource: _this.lineDetail.lineSource,
-                      trackUrl: res.data.url,
-                      trackContent: JSON.stringify(pointData),
-                      isHighway: _this.isHighway,
-                  }
-              }).then(function(res){
-                  if(res.code == 0){
-                      _this.line = pointData;
-                      _this.showMsg({
-                        type: "alert",
-                        content: "保存成功"
-                      });
-                  }
-              });
-          }
-      })
+    edipao.request({
+      url: "/admin/lineTrack/lineUse",
+      method: "POST",
+      data: {
+        lineId: _this.lineId,
+        lineSource: _this.source,
+      }
+    }).done(function (res) {
+      if(res.code == 0){
+        _this.postMessage("chosenSuccess");
+        _this.showMsg({
+          type: "alert",
+          content: "提交成功",
+        });
+      }else{
+        _this.showMsg({
+          type: "alert",
+          content: res.message,
+          icon: 2
+        });
+      }
     });
   }
-  Rm.prototype.getlineOrderData = function () {
+
+  //获取
+  Rm.prototype.getlineOrderData = function (source) {
     var _this = this;
     edipao.request({
       type: 'GET',
       url: '/admin/line/detail',
       timeout: 60000,
       data: $.extend({}, {
-          lineId: _this.lineId
+        lineId: _this.lineId,
+        lineSource: source
       }),
     }).done(function(res) {
       layer.close(_this.topLoadIndex);
@@ -249,7 +294,10 @@ layui.use(['layer'], function (layer) {
         try {
           if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson);
           _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
-          _this.isHighway = _this.lineDetail.isHighway;
+          if(source == 3){
+            _this.isHighway = _this.lineDetail.isHighway;
+            _this.postMessage("isHighway", {isHighway: _this.isHighway});
+          }
           _this.line = _this.lineDetail.trackContent;
         } catch (error) {}
         _this.renderDrivingRoute();
@@ -258,6 +306,8 @@ layui.use(['layer'], function (layer) {
       layer.close(_this.topLoadIndex);
      });
   }
+
+  //获取订单轨迹
   Rm.prototype.getOrderLineData = function (message) {
     var _this = this;
     edipao.request({
@@ -305,7 +355,6 @@ layui.use(['layer'], function (layer) {
         return (new Careland.GbPoint(item.lat, item.lng));
       });
       if(vias.length > 0) options.via = vias;
-      console.log(JSON.stringify(options))
       _this.Driving.search(start, end, options);
       _this.map.setCenter(start);
     }else{
@@ -334,6 +383,7 @@ layui.use(['layer'], function (layer) {
         }
       }
       _this.updatedLine = pointData;
+      _this.postMessage("orderLineSuccess");
     }
   }
   Rm.prototype.renderReportPoints = function (reports) {
@@ -381,11 +431,12 @@ layui.use(['layer'], function (layer) {
         
     }
   }
-  Rm.prototype.postMessage = function (message) {
+  Rm.prototype.postMessage = function (message, options) {
     var data = {
       source: this.source,
       type: message,
     }
+    if(options) data.data = options;
     window.parent.postMessage(data);
   }
   Rm.prototype.showMsg = function (options) {

@@ -24,6 +24,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
         this.reportMap = null;
         this.trackHandler = null;
         this.topLoadIndex = null;
+        this.messageLoadIndex = null;
         this.vias = [];
         this.isHighway = 0;
         this.iframe1 = null;
@@ -31,6 +32,9 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
         this.iframe3 = null;
         this.positionPageNo = 1;
         this.positionPageSize = 5;
+        this.orderLineSuccess = false;
+        this.chosenOrderNo = "";
+        this.lineDetail = null;
         this.sourceList = {
             "1": {
                 source: 1,
@@ -54,10 +58,32 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
         // 初始化
         init: function(){
             var _t = this;
-            _t.renderTabContent();
-            _t.bindLineEvents();
-            _t.bindFrameEvents();
-            _t.getPositionList();
+            this.getDefaultRouteData().done(function (res) {
+                if(res.code == 0){
+                    _t.lineDetail = res.data;
+                    _t.setTabSource(res.data.lineSource);
+                    // _t.setChosenSource(res.data.lineSource);
+                    _t.changeMap(res.data.lineSource);
+                    element.tabChange("docDemoTabBrief", res.data.lineSource);
+                    _t.renderTabContent();
+                    _t.bindLineEvents();
+                    _t.bindFrameEvents();
+                    _t.getPositionList();
+                }else{
+                    layer.msg(res.message, {icon: 2})
+                }
+            });
+        },
+        getDefaultRouteData: function () {
+            var _t = this;
+            return edipao.request({
+                url: "/admin/line/detail",
+                method: "GET",
+                data: {
+                    lineId: _t.lineId,
+                    lineSource: "",
+                }
+            });
         },
         bindFrameEvents(){
             var _t = this;
@@ -66,33 +92,72 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
             this.iframe3 = $("#map3").attr("src", "./route-map.html?source=3")[0];
             $(window).on("message", function (e) {
                 var message = e.originalEvent.data;
+                console.log("route-plan" + JSON.stringify(message));
                 switch(message.type){
                     case "loaded":
                         _t.iframeLoadData(message.source);
                         break;
+                    case "orderLineSuccess":
+                        _t.orderLineSuccess = true;
+                        break;
                     case "msg":
                         _t.showMsg(message.options);
+                        break;
+                    case "chosenSuccess":
+                        _t.setChosenSource(message.source);
+                        break;
+                    case "isHighway":
+                        _t.isHighway = message.data.isHighway;
+                        if(_t.isHighway == 1){
+                            $("#policy").attr("checked", "checked");
+                            form.render("checkbox");
+                        }
+                        break;
+                    case "showLoading":
+                        _t.showLoading();
+                        break;
+                    case "hideLoading":
+                        _t.hideLoading();
+                        break;
                 }
             });
         },
         iframeLoadData(source){
             var _t = this;
-            _t.getDriverReportList(source);
             switch(source * 1){
                 case 1:
-                    _t.postMessage(_t.iframe1.contentWindow, {
-                        type: "getDefaultOrderRoute",
-                        lineId: _t.lineId,
-                    });
+                    if(_t.lineDetail.lineSource * 1 == 1){
+                        _t.postMessage(_t.iframe1.contentWindow, {
+                            type: "loadDefaultRoute",
+                            data: _t.lineDetail,
+                            lineId: _t.lineId
+                        });
+                    }else{
+                        _t.postMessage(_t.iframe1.contentWindow, {
+                            type: "getDefaultOrderRoute",
+                            lineId: _t.lineId,
+                        });
+                    }
                     break;
                 case 2:
                     break;
                 case 3:
-                    _t.postMessage(_t.iframe3.contentWindow, {
-                        type: "getData",
-                        lineId: _t.lineId,
-                    });
+                    if(_t.lineDetail.lineSource * 1 == 3){
+                        _t.postMessage(_t.iframe3.contentWindow, {
+                            type: "loadDefaultRoute",
+                            data: _t.lineDetail,
+                            lineId: _t.lineId
+                        });
+                    }else{
+                        _t.postMessage(_t.iframe3.contentWindow, {
+                            type: "getData",
+                            lineId: _t.lineId,
+                        });
+                    }
                     break;
+            }
+            if(_t.getSource() == source){
+                _t.getDriverReportList(source);
             }
         },
         postMessage(target, message){
@@ -102,12 +167,11 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
             var _t = this;
             var getTabConentTpl = $("#tabConentTpl").html();
             laytpl(getTabConentTpl).render(Object.assign({}, {
-                sourceList: _t.sourceList
+                sourceList: _t.sourceList,
+                isHighway: _t.isHighway,
             }), function(html){
                 $("#tabConent").html(html);
-                setTimeout(function(){
-                    form.render('checkbox'); 
-                }, 1000);
+                form.render('checkbox'); 
             });
         },
         getPositionList: function () {
@@ -121,7 +185,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                 method: "get",
                 limit: 5,
                 page: true,
-                    where: Object.assign({lineId: this.lineId}, _this.request),
+                where: Object.assign({lineId: this.lineId, lineSource: _this.getSource()}, _this.request),
                 request: {
                     pageName: 'page',
                     limitName: 'pageSize'
@@ -158,7 +222,8 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                 data: $.extend({}, _t.request, {
                     page: _t.pageNumber,
                     pageSize: _t.pageSize,
-                    lineId: this.lineId
+                    lineId: this.lineId,
+                    lineSource: source
                 })
             }).done(function(res) {
                 if (res.code == 0) {
@@ -170,7 +235,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                     laytpl(getDriverReportTpl).render(res.data, function(html){
                         reportList.innerHTML = html;
                     });
-                    _t.bindEvents();
+                    _t.bindReportEvents();
                     _t.postMessage(_t["iframe" + source * 1].contentWindow, {
                         type: "reports",
                         reports: res.data.reports
@@ -189,7 +254,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                 jump: function(obj, first){
                     _t.pageNumber = obj.curr;
                     if(first) return;
-                    _t.getDriverReportList();
+                    _t.getDriverReportList(_t.getSource());
                 }
             });
         },
@@ -263,7 +328,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                 })
             }).done(function(res) {
                 if(res.code == 0){
-                    _t.getDriverReportList();
+                    _t.getDriverReportList(_t.getSource());
                 }
             })
         },
@@ -294,7 +359,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                     layer.msg(txt, {
                         time: 1500,
                     });
-                    _t.getDriverReportList();
+                    _t.getDriverReportList(_t.getSource());
                 }
             })
         },
@@ -312,9 +377,11 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                     laytpl(orderListTplStr).render(res.data, function(html){
                         $("#select-order-dialog").html(html);
                         $('.order-select').off('click').on('click', function(e){
-                            _t.getOrderLineTrack($(this).data('no'))
+                            var orderNo = $(this).data('no');
+                            _t.chosenOrderNo = orderNo
+                            _t.getOrderLineTrack(orderNo);
                             layer.close(layerIndex)
-                        })
+                        });
                     });
                     layerIndex = layer.open({
                         type: 1,
@@ -337,7 +404,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                 orderNo: orderNo
             });
         },
-        getTab(){
+        getSource(){
             var tab = 0, _t = this;
             Object.keys(this.sourceList).some(function (item) {
                 item = _t.sourceList[item];
@@ -361,10 +428,9 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
             element.on('tab(docDemoTabBrief)', function(){
                 let source = this.getAttribute('lay-id') + "";
                 _t.setTabSource(source);
-                changeMap(source);
-                function changeMap(source) {
-                    $("#map" + source).removeClass("map-hide").addClass("map-show").siblings(".map-content").removeClass("map-show").addClass("map-hide");
-                }
+                _t.getDriverReportList(source);
+                _t.changeMap(source);
+                
             });
             element.on('tab(reportTabFilter)', function (e) {
                 if(e.index == 1){
@@ -392,7 +458,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
             });
             
             $('#tabConent').on('click','.rebuild-btn',function() {
-                var tab = _t.getTab();
+                var tab = _t.getSource();
                 _t.postMessage(_t["iframe" + tab].contentWindow, {
                     type: "rebuild"
                 });
@@ -404,18 +470,20 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                 var source = e.target.dataset.source + "";
                 switch(source * 1){
                     case 1:
-                        if(_t.lineDetail.lineSource != 1){
+                        if(!_t.orderLineSuccess){
                             layer.msg("请先选择订单");
                             return;
                         }
+                        _t.postMessage(_t["iframe" + source].contentWindow, {
+                            type: "save",
+                        });
                         break;
-                        case 2:
+                    case 2:
                             break;
                     case 3:
                         _t.postMessage(_t["iframe" + source].contentWindow, {
                             type: "save",
                         });
-                        _t.renderTabContent();
                         break;
                 }
             });
@@ -423,28 +491,32 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                 var source = e.target.dataset.source + "";
                 switch(source * 1){
                     case 1:
-                        if(_t.lineDetail.lineSource != 1){
+                        if(!_t.orderLineSuccess){
                             layer.msg("请先选择订单");
                             return;
                         }
+                        _t.postMessage(_t["iframe" + source].contentWindow, {
+                            type: "choose",
+                        });
                         break;
-                        case 2:
-                            break;
+                    case 2:
+                        break;
                     case 3:
                         _t.postMessage(_t["iframe" + source].contentWindow, {
                             type: "choose",
                         });
-                        _t.setChosenSource(source);
-                        _t.renderTabContent();
                         break;
                 }
             });
             $('#tabConent').on('click','.playLine',function(e){
-                var source = _t.getTab();
+                var source = _t.getSource();
                 _t.postMessage(_t["iframe" + source].contentWindow, {
                     type: "playLine"
                 });
             })
+        },
+        changeMap: function (source) {
+            $("#map" + source).removeClass("map-hide").addClass("map-show").siblings(".map-content").removeClass("map-show").addClass("map-hide");
         },
         setChosenSource: function (source) {
             var _t = this;
@@ -453,6 +525,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
             _t.sourceList["2"]["chosen"] = false;
             _t.sourceList["3"]["chosen"] = false;
             _t.sourceList[source]["chosen"] = true;
+            _t.renderTabContent();
         },
         setTabSource: function (source) {
             var _t = this;
@@ -463,7 +536,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
             _t.sourceList[source]["tab"] = true;
         },
         // 绑定司机上报页面事件
-        bindEvents: function(){
+        bindReportEvents: function(){
             var _t = this;
             $('#add-report').off('click').on('click', function(){
                 layer.open({
@@ -503,9 +576,6 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
             $('.cancel-take-report').off('click').on('click', function(e){
                 _t.updateDriverReportStatus($(this).data('id'), 3);
             })
-
-            // $('#seach-location-input').
-
         },
         // 选择上报点地址
         selectReportAddress: function(){
@@ -645,6 +715,12 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                     lng: edipao.kcodeToGb(data.kcode).lng,
                 }
             }
+        },
+        showLoading: function () {
+            this.messageLoadIndex = layer.load(1);
+        },
+        hideLoading: function () {
+            layer.close(this.messageLoadIndex);
         },
         showMsg: function (options) {
             console.log(options)
