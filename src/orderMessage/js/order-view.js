@@ -341,6 +341,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       }
       if(truck.truckKeyPosition){
         truck.truckKeyPosition = truck.truckKeyPosition.substr(1, truck.truckKeyPosition.length - 1) + "号钥匙墙 (钥匙码：" + truck.truckKeyPosition + ")"
+      }else{
+        truck.truckKeyPosition = "- -";
       }
     },
     getTruckUpdate: function () {

@@ -55,6 +55,10 @@ var hegezhengData = [
     {key: "签收迟到", value: "签收迟到"},
     {key: "正常", value: "正常"},
 ]
+var transportModeData = [
+    {key: "国道", value: "国道"},
+    {key: "高速", value: "高速"},
+]
 var exportLoading = false;
 
 function DataNull(data) {
@@ -125,6 +129,7 @@ layui.config({
         { field: "endProvince", type: "province" },
         { field: 'endCity', type: 'provincecity' },
         { field: 'endAddress', type: 'input' },
+        { field: 'transportMode', type: 'checkbox', data: transportModeData },
         { field: 'transportAssignTime', type: 'timeslot' },
         { field: 'dispatchTime', type: 'timeslot' },
         { field: 'openOperator', type: 'contract' },
@@ -1623,6 +1628,9 @@ layui.config({
         }},
         {field: 'endAddress', title: '收车地址', sort: false, width: 300, templet: function(d){
             return d.endAddress ? d.endAddress : '- -';
+        }},
+        {field: 'transportMode', title: '运输方式', sort: false, width: 100, templet: function(d){
+            return d.transportMode ? d.transportMode : '- -';
         }},
         {field: 'transportAssignTime', title: '运输商指派时间', sort: false,width: 200, templet: function(d){
             return d.transportAssignTime ? d.transportAssignTime : '- -';

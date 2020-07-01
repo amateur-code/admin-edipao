@@ -20,6 +20,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "endProvince", title: "收车省" },
       { field: "endCity", title: "收车城市" },
       { field: "endAddress", title: "收车地址" },
+      { field: "transportMode", title: "运输方式" },
       { field: "transportAssignTime", title: "运输商指派时间" },
       { field: "dispatchTime", title: "调度时间" },
       { field: "openOperator", title: "开单员" },

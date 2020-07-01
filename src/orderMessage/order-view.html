@@ -85,9 +85,19 @@
                 </span>
             </div>
             <div class="layui-col-md4">
-                <span class="content_name">发车时间：</span>
-                <span id="" class="content_name blue">{{d.startTruckTime}}</span>
+                <span class="content_name">运输方式：</span>
+                <span id="" class="content_name blue">{{d.transportMode || '- -'}}</span>
             </div>
+        </div>
+        <div class="layui-row">
+            {{# if(d.updateData.transportMode){ }}
+            <div class="layui-col-md4 layui-col-md-offset8">
+                {{# if(d.updateData.transportMode){ }}
+                <span class="layui-form-span form_span red">待审：</span>
+                <span disabled type="text" autocomplete="off" class="blue">{{d.updateData.transportMode}}</span>
+                {{# } }}
+            </div>
+            {{# } }}
         </div>
         <div style="margin-top:20px" class="layui-row">
             <div class="layui-col-md4">
@@ -97,6 +107,10 @@
             <div class="layui-col-md4">
                 <span class="content_name">最后修改时间：</span>
                 <span id="" class="content_name blue">{{d.updateTime||'- -'}}</span>
+            </div>
+            <div class="layui-col-md4">
+                <span class="content_name">发车时间：</span>
+                <span id="" class="content_name blue">{{d.startTruckTime}}</span>
             </div>
         </div>
       </script>

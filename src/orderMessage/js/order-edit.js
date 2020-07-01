@@ -329,6 +329,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 
     laytpl($("#base_info_tpl").html()).render(data, function(html){
       $("#base_info").html(html);
+      form.val("base_info_form", {
+        transportMode: data.transportMode || "国道"
+      });
+      form.render("select");
     });
     laytpl($("#income_info_tpl").html()).render(data, function(html){
       $("#income_info").html(html);
@@ -1330,7 +1334,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       return;
     }
 
+    var baseInfoData = form.val("base_info_form");
+
     data.id = _this.orderId;
+    data.transportMode = baseInfoData.transportMode || "";
     data.loginStaffId = _this.user.staffId || "";
     data.orderNo = _this.orderNo || "";
     data.orderType = carsLength > 1 ? 2 : 1;
