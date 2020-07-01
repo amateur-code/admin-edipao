@@ -109,6 +109,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var _this = this;
     if(!_this.selectData){
       $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList()).done(function (res1, res2, res3, res4, res5) {
+        res3[0].data = res3[0].data || [];
+        res3[0].data.push({code: "直发经销商", name: "直发经销商"});
         $('.' + options.filter).find('.customerList').html(returnOptions(res1[0].data));
         // if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions2(res2[0].data));
         // $(options.selector).append(returnOptions2(res2[0].data));
