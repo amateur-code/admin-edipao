@@ -85,7 +85,9 @@ function dateConvert (dateParms) {
   //返回处理结果
   return r;
 }
-
+function isNull(val) {
+  return (String(val) == "" || val == null || val == undefined) && (val + "" != "0") && !Array.isArray(val);
+}
 layui.config({
   base: '../../lib/'
 }).extend({
@@ -213,7 +215,8 @@ layui.config({
       },
       {
         field: 'keyAddress', title: '钥匙', width: 200, align: 'center', templet: function (d) {
-          return d.keyAddress || '- -'
+          if(isNull(d.keyAddress)) return "- -"
+          return d.keyAddress.substr(1, d.keyAddress.length - 1) + "号钥匙墙 (钥匙码：" + d.keyAddress + ")"
         }
       },
       {
@@ -602,6 +605,11 @@ layui.config({
         item.materialPackageStatus = '延迟' + item.materialPackageDelay + '小时'
       } else if (item.materialPackageStatus === 2 && item.materialPackageDelay !== 0 && item.materialPackageTime !== 0) {
         item.materialPackageStatus = '延迟' + item.materialPackageDelay + '小时' + dateConvert(item.materialPackageTime)
+      }
+      if(isNull(item.keyAddress)){
+        item.keyAddress = "- -";
+      }else{
+        item.keyAddress = item.keyAddress.substr(1, item.keyAddress.length - 1) + "号钥匙墙 (钥匙码：" + item.keyAddress + ")"
       }
     })
     var data = [], list = [{}].concat(list);
