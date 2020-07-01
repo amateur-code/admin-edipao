@@ -331,7 +331,7 @@ layui.config({
                 }else if(key == "orderType" || key == "tailPayStatus" || key == "masterFlag"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
-                }else if(key == "returnAuditStatus" || key == "dispatchMode"){
+                }else if(key == "returnAuditStatus" || key == "dispatchMode" || key == "transportMode"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                 }else if(key == "carModel"){
