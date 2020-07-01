@@ -42,7 +42,7 @@ layui.use(['layer'], function (layer) {
       //凯立德地图API功能
       var point = new Careland.Point(419364916, 143908009);    //创建坐标点
       this.map = new Careland.Map('map', point, 12);             //实例化地图对象
-      this.map.enableAutoResize();                                 //启用自动适应容器尺寸变化
+      this.map.enableAutoResize();                               //启用自动适应容器尺寸变化
       this.map.load();
       this.trackHandler = new Careland.Track();
       this.Driving = new Careland.DrivingRoute(this.map, {
@@ -58,7 +58,7 @@ layui.use(['layer'], function (layer) {
           _this.lineSelectCallback(obj);
         },
         "onMarkersSet": function (data) {  },
-      }); 
+      });
       this.layer = new Careland.Layer('point', 'layer');        //创建点图层
       this.map.addLayer(this.layer);
       this.postMessage("loaded");
@@ -304,9 +304,7 @@ layui.use(['layer'], function (layer) {
         return (new Careland.GbPoint(item.lat, item.lng));
       });
       if(vias.length > 0) options.via = vias;
-      // options = {"trackInfo":[{"x":420491399,"y":144699796},{"x":420491072,"y":144698518},{"x":420491399,"y":144699796},{"x":420480275,"y":144699482},{"x":420480275,"y":144699482},{"x":420491648,"y":144699961},{"x":420491399,"y":144699796},{"x":420491399,"y":144699796},{"x":420491478,"y":144699990},{"x":420491594,"y":144699990},{"x":420491316,"y":144699605},{"x":420491316,"y":144699605},{"x":420480275,"y":144699482},{"x":420491594,"y":144699990},{"x":420491072,"y":144698518},{"x":420491399,"y":144699796}]}
-      // console.log(JSON.stringify(options));
-      // console.log(start, end);
+      console.log(JSON.stringify(options))
       _this.Driving.search(start, end, options);
       _this.map.setCenter(start);
     }else{
@@ -321,6 +319,9 @@ layui.use(['layer'], function (layer) {
   }
   Rm.prototype.lineSelectCallback = function (obj){
     var _this = this, pointData =[];
+    var status = _this.Driving.getStatus();
+    console.log(status)
+    console.log(obj)
     var plan = obj.getPlan(0);
     if(plan){
       for(var i in plan.uidinfo){
@@ -330,7 +331,6 @@ layui.use(['layer'], function (layer) {
         }
       }
       _this.updatedLine = pointData;
-      console.log(_this.updatedLine.length)
     }
   }
   Rm.prototype.renderReportPoints = function (reports) {
