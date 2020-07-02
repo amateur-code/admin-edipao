@@ -206,35 +206,38 @@ layui.use(['layer'], function (layer) {
           contentType : false,
       }).done(function(res){
           if(res.code == 0){
-              edipao.request({
-                  type: 'POST',
-                  url: '/admin/lineTrack/updateLineTrack',
-                  data: {
-                      lineId:  _this.lineId,
-                      lineSource:  _this.lineDetail.lineSource,
-                      trackUrl: res.data.url,
-                      trackContent: JSON.stringify(pointData),
-                      isHighway: _this.isHighway,
-                  }
-              }).then(function(res){
-                  _this.postMessage("hideLoading");
-                  if(res.code == 0){
-                    _this.line = pointData;
-                    _this.showMsg({
-                      type: "alert",
-                      content: "保存成功"
-                    });
-                  }else{
-                    _this.showMsg({
-                      type: "alert",
-                      content: res.message,
-                      icon: 2
-                    });
-                    _this.postMessage("hideLoading");
-                  }
-              }).fail(function () {
+            var params = {
+              lineId:  _this.lineId,
+              lineSource:  _this.lineDetail.lineSource,
+              trackUrl: res.data.url,
+              trackContent: JSON.stringify(pointData),
+            }
+            if(_this.source == 3){
+              params.isHighway = _this.isHighway;
+            }
+            edipao.request({
+                type: 'POST',
+                url: '/admin/lineTrack/updateLineTrack',
+                data: params
+            }).then(function(res){
                 _this.postMessage("hideLoading");
-              });
+                if(res.code == 0){
+                  _this.line = pointData;
+                  _this.showMsg({
+                    type: "alert",
+                    content: "保存成功"
+                  });
+                }else{
+                  _this.showMsg({
+                    type: "alert",
+                    content: res.message,
+                    icon: 2
+                  });
+                  _this.postMessage("hideLoading");
+                }
+            }).fail(function () {
+              _this.postMessage("hideLoading");
+            });
           }else{
             _this.showMsg({
               type: "alert",
