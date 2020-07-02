@@ -85,3 +85,12 @@
 .pointer {
   cursor: pointer;
 }
+.layui-icon-ok-circle {
+  font-size: 14px;
+}
+.layui-icon-ok-circle.blue {
+  color: #3490E9;
+}
+.layui-icon-ok-circle.grey {
+  color: #999999;
+}

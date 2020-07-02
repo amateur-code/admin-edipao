@@ -210,7 +210,7 @@ layui.config({
       },
       {
         field: 'parkAddress', title: '停放位置', width: 200, align: 'center', templet: function (d) {
-          return d.parkAddress || '- -'
+          return d.parkAddress + d.parkingPlaceNumber || '- -'
         }
       },
       {
@@ -610,6 +610,11 @@ layui.config({
         item.keyAddress = "- -";
       }else{
         item.keyAddress = item.keyAddress.substr(1, item.keyAddress.length - 1) + "号钥匙墙 (钥匙码：" + item.keyAddress + ")"
+      }
+      if(item.parkAddress){
+        item.parkAddress + item.parkingPlaceNumber;
+      }else{
+        item.parkAddress = "- -";
       }
     })
     var data = [], list = [{}].concat(list);

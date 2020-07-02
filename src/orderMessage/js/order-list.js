@@ -446,7 +446,7 @@ layui.config({
             var index = layer.open({
                 type: 1, 
                 content: html, //这里content是一个普通的String,
-                area: ["600px", "400px"],
+                area: ["600px", "500px"],
                 title: "上传",
                 btn: ["确定", "取消"],
                 yes: function () {
