@@ -555,7 +555,7 @@
                         {{# if(d.sortingDTOList && d.sortingDTOList.length > 0){ }}
                             <span class="layui-row layui-col-space20">
                                 {{# layui.each(d.sortingDTOList, function(index, item){ }}
-                                <span class="blue" style="margin-right: 20px;"><i class="layui-icon layui-icon-ok-circle {{item.sortingBillTime ? 'blue' : 'grey' }}"></i>{{item.sortingBillName}}</span>
+                                <span class="blue" style="margin-right: 20px;"><i class="blue layui-icon {{item.sortingBillTime ? 'layui-icon-ok-circle' : 'layui-icon-circle' }}"></i>{{item.sortingBillName}}</span>
                                 {{# }); }}
                             </span>
                         {{# }else{ }}
