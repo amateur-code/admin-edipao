@@ -58,11 +58,13 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
         // 初始化
         init: function(){
             var _t = this;
+            this.showLoading();
             var point = new Careland.Point(419364916, 143908009);
             this.map = new Careland.Map('select-map', point, 15);
             this.map.enableAutoResize();      
             this.map.load(); 
             this.getDefaultRouteData().done(function (res) {
+                _t.hideLoading();
                 if(res.code == 0){
                     _t.lineDetail = res.data;
                     _t.setTabSource(res.data.lineSource);
@@ -76,7 +78,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                 }else{
                     layer.msg(res.message, {icon: 2})
                 }
-            });
+            }).fail(function () { _t.hideLoading(); });
         },
         getDefaultRouteData: function () {
             var _t = this;

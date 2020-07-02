@@ -46,18 +46,23 @@ layui.use(['layer'], function (layer) {
       this.map.load();
       this.trackHandler = new Careland.Track();
       this.Driving = new Careland.DrivingRoute(this.map, {
-        "map": this.map,
-        "multi": 1,
-        "policy": CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
-        "viaStyle": viaStyle,
-        "startStyle": startStyle,
-        "endStyle": endStyle,
-        "autoDragging": true,
+        map: this.map,
+        multi: 1,
+        policy: CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
+        viaStyle: viaStyle,
+        startStyle: startStyle,
+        endStyle: endStyle,
+        autoDragging: true,
         "onSearchComplete": function (obj) {
           layer.close(_this.topLoadIndex);
           _this.lineSelectCallback(obj);
         },
-        "onMarkersSet": function (data) {  },
+        "onPolylinesSet": function (routes) {
+          layer.close(_this.topLoadIndex);
+          var route = routes[0].lines[0];
+          console.log(route)
+          route.canvas.addEventListener("click", function (e) { console.log(e) })
+        },
       });
       this.layer = new Careland.Layer('point', 'layer');        //创建点图层
       this.map.addLayer(this.layer);
