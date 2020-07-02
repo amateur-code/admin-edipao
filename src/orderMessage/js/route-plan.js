@@ -58,6 +58,10 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
         // 初始化
         init: function(){
             var _t = this;
+            var point = new Careland.Point(419364916, 143908009);
+            this.map = new Careland.Map('select-map', point, 15);
+            this.map.enableAutoResize();      
+            this.map.load(); 
             this.getDefaultRouteData().done(function (res) {
                 if(res.code == 0){
                     _t.lineDetail = res.data;
@@ -258,18 +262,17 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                 }
             });
         },
-        
         // 监听司机上报类型的选择 和表单提交
         bindDriverReportType(){
             var _t = this;
-            form.on('select(driverReportType)', function(data) {
+            form.on('select(driverReportType)', function(data){
                 _t.driverReportType =  data.value;
-                var getAddReportTpl = $("#addReportTpl").html(),
-                    addReportDetail = $("#add-report-detail");
+                var getAddReportTpl = addReportTpl.innerHTML,
+                    addReportDetail = document.getElementById('add-report-detail');
                 laytpl(getAddReportTpl).render({
                     type: data.value
                 }, function(html){
-                    addReportDetail.html(html);
+                    addReportDetail.innerHTML = html;
                     form.render('select');
 
                     _t.selectReportAddress();
@@ -578,6 +581,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
             })
         },
         // 选择上报点地址
+        // 选择上报点地址
         selectReportAddress: function(){
             var _t = this;
             $('#selectMapLocation').off('click').on('click', function(){
@@ -585,18 +589,12 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                     type: 1,
                     title: "选择位置",
                     area: ['900px', '600px'],
-                    content: $("#map"),
+                    content: $("#select-map-dialog"),
                     btn: ['取消', '确定'],
                     btnAlign: 'c',
                     zIndex:9991, //层优先级
                     cancel: function () {
                         _t.loc = {};
-                        _t.map.closeInfoWindow();
-                        _t.map.removeEventListener("click");
-                    },
-                    end: function () {
-                        _t.map.closeInfoWindow();
-                        _t.map.removeEventListener("click");
                     },
                     btn2: function(){
                         if(!$('#seachLocation').val()){
@@ -604,26 +602,23 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                             return false;
                         }
                         if(_t.loc){
-                            _t.map.closeInfoWindow();
-                            _t.map.removeEventListener("click");
                             $('#seach-location-input').val(_t.loc.name);
                         }
                     },
                     success: function () {
-                        _t.regionMapView();
+                        //凯立德地图API功能
+                        _t.regionMapView(_t.map);
                     }
                 })
             })
         },
         // 获取点击点的坐标数据
-        regionMapView(){
+        regionMapView(map){
             var _t = this;
-            var map = _t.map;
-
             var myGeo = new Careland.Geocoder();
-
             var layer = new Careland.Layer('point', 'layer');
             var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:location.origin+'/images/center.png',fontColor:'#000'});
+            
             layer.setStyle(style);
             map.addLayer(layer);
 
@@ -669,8 +664,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                                 e.event.defaultPrevented = true;
                                 layer.clear();
                                 myGeo.getLocation(e.point,function(data){
-                                    
-                                    _t.setViewData(mapInfoWin, marker, data)
+                                    _t.setViewData(mapInfoWin, marker, data);
                                 });
                             })
                         })
