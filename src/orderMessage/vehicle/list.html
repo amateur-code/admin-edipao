@@ -210,13 +210,18 @@ layui.config({
       },
       {
         field: 'parkAddress', title: '停放位置', width: 200, align: 'center', templet: function (d) {
-          return d.parkAddress + d.parkingPlaceNumber || '- -'
+          if(isNull(d.parkAddress)) return "- -"
+          var parkAddress = d.parkAddress;
+          if(d.parkingPlaceNumber){
+            parkAddress = parkAddress + d.parkingPlaceNumber + "号车位";
+          }
+          return parkAddress;
         }
       },
       {
         field: 'keyAddress', title: '钥匙', width: 200, align: 'center', templet: function (d) {
           if(isNull(d.keyAddress)) return "- -"
-          return d.keyAddress.substr(1, d.keyAddress.length - 1) + "号钥匙墙 (钥匙码：" + d.keyAddress + ")"
+          return "放在" + d.keyAddress.substr(1, d.keyAddress.length - 1) + "号位 (钥匙码：" + d.keyAddress + ")"
         }
       },
       {
@@ -609,10 +614,12 @@ layui.config({
       if(isNull(item.keyAddress)){
         item.keyAddress = "- -";
       }else{
-        item.keyAddress = item.keyAddress.substr(1, item.keyAddress.length - 1) + "号钥匙墙 (钥匙码：" + item.keyAddress + ")"
+        item.keyAddress = "放在" + item.keyAddress.substr(1, item.keyAddress.length - 1) + "号位 (钥匙码：" + item.keyAddress + ")"
       }
       if(item.parkAddress){
-        item.parkAddress + item.parkingPlaceNumber;
+        if(item.parkingPlaceNumber){
+          item.parkAddress = item.parkAddress + item.parkingPlaceNumber + "号车位";
+        }
       }else{
         item.parkAddress = "- -";
       }
