@@ -409,6 +409,7 @@ layui.config({
                                     uploadObjItem.returnImagesList[index] = item2;
                                 });
                             }
+                            uploadObjItem.sameBatchMixFlag = item.sameBatchMixFlag;
                             uploadObjItem.masterFlag = item.masterFlag == "是";
                             uploadData[item.id + ""] = uploadObjItem;
                         });
@@ -541,8 +542,11 @@ layui.config({
                 if(uploadData[id].masterFlag && uploadData[id]["returnImagesList"][2]){
                     halfBodyEmptyFlag = false;
                 }
-                uploadData[id]["returnImagesList"].forEach(function (img) {
-                    emptyFlag = !img;
+                uploadData[id]["returnImagesList"].some(function (img) {
+                    if(img){
+                        emptyFlag = false;
+                        return true;
+                    }
                 });
             });
             if(halfBodyEmptyFlag){
@@ -564,7 +568,7 @@ layui.config({
                         data: data
                     });
                 }
-                uploadObj = notNull(uploadObj);
+                // uploadObj = notNull(uploadObj);
                 if(uploadObj["returnImagesList"] && uploadObj["returnImagesList"].length > 0){
                     var data = {
                         loginStaffId: user.staffId,
@@ -576,6 +580,10 @@ layui.config({
                 }
             });
             $.when.apply($, promiseList).done(function (res1, res2) {
+                if(promiseList.length > 1){
+                    res1 = res1[0];
+                    res2 = res2[0];
+                }
                 if(promiseList.length > 0){
                     console.log(res1)
                     if(res1 && res1.code != 0){
