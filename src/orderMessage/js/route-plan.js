@@ -1,5 +1,5 @@
 window.firstUpload = true;
-layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'], function () {
+layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 'upload'], function () {
     var $ = layui.jquery,
       form = layui.form,
       layer = layui.layer,
@@ -8,6 +8,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
       laypage = layui.laypage,
       laydate = layui.laydate,
       element = layui.element,
+      upload = layui.upload,
       table = layui.table;
 
     function _routePlan(){
@@ -144,6 +145,16 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                     }
                     break;
                 case 2:
+                    if(_t.lineDetail.lineSource * 1 == 2){
+                        _t.postMessage(_t.iframe2.contentWindow, {
+                            type: "loadDefaultRoute",
+                            data: _t.lineDetail,
+                        });
+                    }else{
+                        _t.postMessage(_t.iframe2.contentWindow, {
+                            type: "getDefaultImportRoute",
+                        });
+                    }
                     break;
                 case 3:
                     if(_t.lineDetail.lineSource * 1 == 3){
@@ -173,7 +184,28 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                 isHighway: _t.isHighway,
             }), function(html){
                 $("#tabConent").html(html);
-                form.render('checkbox'); 
+                form.render('checkbox');
+                upload.render({
+                    elem: "#upload-btn",
+                    url: edipao.API_HOST + "/admin/lineTrack/importTrack",
+                    accept: 'file',
+                    field: 'file',
+                    data: {
+                        loginStaffId: edipao.getLoginStaffId(),
+                        lineId: _t.lineId,
+                    },
+                    done: function (res) {
+                        if(res.code == 0){
+                            console.log(res)
+                            _t.postMessage(_t.iframe2.contentWindow, {
+                                type: "loadImportData",
+                                source: 2
+                            });
+                        }else{
+                            layer.msg(res.message, {icon: 2});
+                        }
+                    }
+                });
             });
         },
         getPositionList: function () {
@@ -431,7 +463,6 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                 _t.setTabSource(source);
                 _t.getDriverReportList(source);
                 _t.changeMap(source);
-                
             });
             element.on('tab(reportTabFilter)', function (e) {
                 if(e.index == 1){

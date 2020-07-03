@@ -1,10 +1,11 @@
+var firstLoaded = false;
 layui.use(['layer'], function (layer) {
   var edipao = layui.edipao;
   function Rm() {
     this.id = "";
     this.currentLine = null;
     this.lineDetail = null;
-    this.orderNo = "";
+    this.chooseOrderNo = "";
     var qs = edipao.urlGet();
     this.source = qs.source * 1;
     this.map = null;
@@ -13,7 +14,7 @@ layui.use(['layer'], function (layer) {
     this.topLoadIndex = null;
     this.isHighway = 0;
     this.selectedOrderNo = null;
-    this.updatedLine = null;
+    this.updatedLine = [];
     this.vias = [];
     this.trackHandler = null;
     this.trimPoints = [];
@@ -55,8 +56,13 @@ layui.use(['layer'], function (layer) {
         endStyle: endStyle,
         autoDragging: true,
         "onSearchComplete": function (obj) {
-          layer.close(_this.topLoa·dIndex);
-          _this.lineSelectCallback(obj);
+          if(!firstLoaded){
+            firstLoaded = true;
+            _this.renderDrivingRoute("via");
+          }else{
+            layer.close(_this.topLoadIndex);
+            _this.lineSelectCallback(obj);
+          }
         },
         "onPolylinesSet": function (routes) {
           layer.close(_this.topLoadIndex);
@@ -69,7 +75,7 @@ layui.use(['layer'], function (layer) {
       this.map.addLayer(this.layer);
       this.postMessage("loaded");
     } catch (err){
-        console.log(err)
+        console.log(err);
     }
     this.bindEvents();
   }
@@ -99,18 +105,24 @@ layui.use(['layer'], function (layer) {
         break;
       case "orderLine":
         _this.getOrderLineData(message);
+        _this.chosenOrderNo = message.orderNo;
         break;
       case "save":
         _this.saveRoute();
         break;
       case "choose":  //点击使用
-        _this.lineDetail.trackContent = _this.line;
-        _this.lineDetail.isHighway = _this.isHighway;
+        _this.lineDetail.trackContent = _this.updatedLine;
         _this.lineDetail.source = _this.source;
         _this.chooseRoute();
         break;
       case "playLine":  //播放轨迹
         _this.playLine();
+        break;
+      case "rebuild":  //重新规划
+        _this.updatedLine = _this.lineDetail.trackContent;
+        firstLoaded = false;
+        _this.trimPoints = [];
+        _this.renderDrivingRoute();
         break;
       case "loadDefaultRoute":
         layer.close(_this.topLoadIndex);
@@ -118,7 +130,7 @@ layui.use(['layer'], function (layer) {
         try {
           if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson);
           _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
-          _this.line = _this.lineDetail.trackContent;
+          _this.updatedLine = _this.lineDetail.trackContent;
         } catch (error) {}
         try {
           if(_this.lineDetail.trimPoints){
@@ -133,7 +145,53 @@ layui.use(['layer'], function (layer) {
         break;
     }
   }
-  Rm.prototype.handleEvent2 = function (message) {  }
+  Rm.prototype.handleEvent2 = function (message) {
+    var _this = this;
+    switch(message.type){
+      case "loadImportData":
+        _this.getlineOrderData(2);
+        break;
+      case "getDefaultImportRoute":
+        _this.getlineOrderData(2);
+        break;
+      case "choose":  //点击使用
+        _this.lineDetail.trackContent = _this.updatedLine;
+        _this.lineDetail.isHighway = _this.isHighway;
+        _this.lineDetail.source = _this.source;
+        _this.chooseRoute();
+        break;
+      case "save":
+        _this.saveRoute();
+        break;
+      case "playLine":  //播放轨迹
+        _this.playLine();
+        break;
+      case "rebuild":  //重新规划
+        _this.updatedLine = _this.lineDetail.trackContent;
+        firstLoaded = false;
+        _this.trimPoints = [];
+        _this.renderDrivingRoute();
+        break;
+      case "loadDefaultRoute":
+        layer.close(_this.topLoadIndex);
+        _this.lineDetail = message.data;
+        try {
+          if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson);
+          _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
+          _this.updatedLine = _this.lineDetail.trackContent;
+        } catch (error) {}
+        try {
+          if(_this.lineDetail.trimPoints){
+            _this.lineDetail.trimPoints = JSON.parse(_this.lineDetail.trimPoints);
+          }else{
+            _this.lineDetail.trimPoints = [];
+          }
+        } catch (error) {
+          _this.lineDetail.trimPoints = [];
+        }
+        _this.renderDrivingRoute();
+    }
+  }
   Rm.prototype.handleEvent3 = function (message) {
     var _this = this;
     switch(message.type){
@@ -149,15 +207,17 @@ layui.use(['layer'], function (layer) {
         }else{
           _this.Driving.setPolicy(CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS);
         }
+        _this.trimPoints = [];
         _this.isHighway = _this.lineDetail.isHighway;
-        _this.line = _this.lineDetail.trackContent;
+        _this.updatedLine = _this.lineDetail.trackContent;
+        firstLoaded = false;
         _this.renderDrivingRoute();
         break;
       case "save":
         _this.saveRoute();
         break;
       case "choose":  //点击使用
-        _this.lineDetail.trackContent = _this.line;
+        _this.lineDetail.trackContent = _this.updatedLine;
         _this.lineDetail.isHighway = _this.isHighway;
         _this.lineDetail.source = _this.source;
         _this.chooseRoute();
@@ -176,7 +236,7 @@ layui.use(['layer'], function (layer) {
           _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
           _this.isHighway = _this.lineDetail.isHighway;
           _this.postMessage("isHighway", {isHighway: _this.isHighway});
-          _this.line = _this.lineDetail.trackContent;
+          _this.updatedLine = _this.lineDetail.trackContent;
         } catch (error) {}
         try {
           if(_this.lineDetail.trimPoints){
@@ -211,6 +271,10 @@ layui.use(['layer'], function (layer) {
     var _this = this;
     _this.postMessage("showLoading");
     var pointData = this.updatedLine;
+    if(!pointData || pointData.length == 0){
+      layer.msg("当前轨迹无效");
+      return;
+    }
     _this.Driving.getDrivingRouteData(function(res){
       var blob = new Blob([res], {
           type: "application/octet-stream"
@@ -233,9 +297,8 @@ layui.use(['layer'], function (layer) {
               trackContent: JSON.stringify(pointData),
               trimPoints: JSON.stringify(_this.trimPoints),
             }
-            if(_this.source == 3){
-              params.isHighway = _this.isHighway;
-            }
+            if(_this.source == 3) params.isHighway = _this.isHighway;
+            if(_this.source == 1 && _this.chosenOrderNo) params.orderNo = _this.chosenOrderNo;
             edipao.request({
                 type: 'POST',
                 url: '/admin/lineTrack/updateLineTrack',
@@ -243,7 +306,8 @@ layui.use(['layer'], function (layer) {
             }).then(function(res){
                 _this.postMessage("hideLoading");
                 if(res.code == 0){
-                  _this.line = pointData;
+                  _this.updatedLine = pointData;
+                  _this.chooseOrderNo = "";
                   _this.showMsg({
                     type: "alert",
                     content: "保存成功"
@@ -322,7 +386,7 @@ layui.use(['layer'], function (layer) {
             _this.isHighway = _this.lineDetail.isHighway;
             _this.postMessage("isHighway", {isHighway: _this.isHighway});
           }
-          _this.line = _this.lineDetail.trackContent;
+          _this.updatedLine = _this.lineDetail.trackContent;
         } catch (error) {
           _this.vias = [];
         }
@@ -355,7 +419,7 @@ layui.use(['layer'], function (layer) {
     }).then(function(res){
       if(res.code == 0 && res.data && res.data.length > 0){
         _this.selectedOrderNo = message.orderNo;
-        _this.line = res.data;
+        _this.updatedLine = res.data;
         _this.renderDrivingRoute();
       }else{
         layer.msg("获取订单轨迹失败");
@@ -367,8 +431,8 @@ layui.use(['layer'], function (layer) {
     this.topLoadIndex = layer.load(1);
     var _this = this;         
     var trackInfo = [];
-    if(Array.isArray(_this.line)){
-      for(var point of _this.line){
+    if(Array.isArray(_this.updatedLine)){
+      for(var point of _this.updatedLine){
         trackInfo.push(Careland.DrawTool.GbPointToKldPoint(point.lng, point.lat));
       }
     }
@@ -377,25 +441,25 @@ layui.use(['layer'], function (layer) {
     var options = {
       trackInfo: trackInfo,
     }
-    var vias = [];
-    vias = vias.concat(_this.vias);
-    vias = vias.concat(_this.lineDetail.trimPoints.map(function (item) {
-      return Careland.DrawTool.KldPointToGbPoint(item.x, item.y);
-    }));
-    vias = vias.map(function (item) {
-      return (new Careland.GbPoint(item.lat, item.lng));
-    });
-    if(policy){
+    if(policy == "via"){
+      var vias = [];
+      vias = vias.concat(_this.vias);
+      vias = vias.concat(_this.lineDetail.trimPoints.map(function (item) {
+        return Careland.DrawTool.KldPointToGbPoint(item.x, item.y);
+      }));
+      vias = vias.map(function (item) {
+        return (new Careland.GbPoint(item.lat, item.lng));
+      });
+      _this.Driving.search(start, end, {via: vias});
+    }else if(policy){
       options.trackInfo = [];
-      if(vias.length > 0) options.via = vias;
       _this.Driving.search(start, end, options);
     }else if(trackInfo.length > 1){
-      if(vias.length > 0) options.via = vias;
+      console.log(JSON.stringify(options))
       _this.Driving.search(start, end, options);
       _this.map.setCenter(start);
     }else{
       options.trackInfo = [];
-      if(vias.length > 0) options.via = vias;
       _this.Driving.search(_this.lineDetail.startAddress, _this.lineDetail.endAddress, options);
       layer.close(_this.topLoadIndex);
     }
@@ -483,7 +547,7 @@ layui.use(['layer'], function (layer) {
   }
   Rm.prototype.playLine = function () {
     var _this = this;
-    if(!_this.line) return;
+    if(!_this.updatedLine) return;
     //启用地图平移缩放控件(骨架)
     var control = new Careland.Navigation();
     control.anchor = CLDMAP_ANCHOR_TOP_RIGHT;					//设置位置为右上角
@@ -500,7 +564,7 @@ layui.use(['layer'], function (layer) {
     var speed = 30; //速度
     let d = -1; //每100个切割一段轨迹 
     var linestyles = [];
-    for(var i in _this.line){
+    for(var i in _this.updatedLine){
       if(i%100 == 0){//每100个切割一段轨迹，
         d++;
         data[d] = [];
@@ -508,7 +572,7 @@ layui.use(['layer'], function (layer) {
       }
       var l = data[d].length;
       data[d][l] = {};
-      data[d][l].Point = new Careland.GbPoint( _this.line[i].lat,_this.line[i].lng);
+      data[d][l].Point = new Careland.GbPoint( _this.updatedLine[i].lat,_this.updatedLine[i].lng);
       data[d][l].Icon = {
         src: location.origin + "/images/truck.png",
       offsetY: -22,

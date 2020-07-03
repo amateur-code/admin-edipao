@@ -136,7 +136,7 @@
             <div class="upload-handler">
                 <span class="label">轨迹数据：</span>
                 <span class="upload-name">请选择文件</span>
-                <button type="button" class="layui-btn layui-btn-lg upload-btn limit-choose">选择</button>
+                <button id="upload-btn" type="button" class="layui-btn layui-btn-lg upload-btn limit-choose">选择</button>
             </div>
             <button data-source="2" class="layui-btn save-btn">保存</button>
             <button data-source="2" class="layui-btn choose-btn limit-choose">使用该方式</button>
@@ -147,7 +147,7 @@
         {{# if(d.sourceList[3]['chosen']){ }}
             <div class="selected">
                 <button class="layui-btn layui-btn-disabled">正在使用该方式</button>
-                <button data-source="3" class="layui-btn layui-btn-normal playLine">播放轨迹</button>
+                <button data-source="3" class="layui-btn layui-btn-normal playLine" style="margin-top:0;">播放轨迹</button>
             </div>
         {{# } else { }}
             <form class="layui-form" layui-filter="source_form_3">
