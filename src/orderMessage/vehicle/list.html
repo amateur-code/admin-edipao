@@ -547,7 +547,7 @@ layui.config({
       }
       if (item.fetchBillStatus === 1 && item.fetchBillTime === 0) {
         item.fetchBillStatus = '正常'
-      } else if (item.fetchStatus === 1 && item.fetchBillTime !== 0) {
+      } else if (item.fetchBillStatus === 1 && item.fetchBillTime !== 0) {
         item.fetchBillStatus = '正常' + dateConvert(item.fetchBillTime)
       } else if (item.fetchBillStatus === 2 && item.fetchBillDelay === 0) {
         item.fetchBillStatus = '延迟'
@@ -591,7 +591,7 @@ layui.config({
       }
       if (item.tempLicenseStatus === 1 && item.tempLicenseTime === 0) {
         item.tempLicenseStatus = '正常'
-      } else if (item.qualifiedStatus === 1 && item.tempLicenseTime !== 0) {
+      } else if (item.tempLicenseStatus === 1 && item.tempLicenseTime !== 0) {
         item.tempLicenseStatus = '正常' + dateConvert(item.tempLicenseTime)
       } else if (item.tempLicenseStatus === 2 && item.tempLicenseDelay === 0) {
         item.tempLicenseStatus = '延迟'
