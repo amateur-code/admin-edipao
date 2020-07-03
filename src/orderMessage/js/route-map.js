@@ -4,11 +4,11 @@ layui.use(['layer'], function (layer) {
     this.id = "";
     this.currentLine = null;
     this.lineDetail = null;
-    this.lineId = "";
     this.orderNo = "";
     var qs = edipao.urlGet();
     this.source = qs.source * 1;
     this.map = null;
+    this.lineId = qs.lineId || "";
     this.line = [];
     this.topLoadIndex = null;
     this.isHighway = 0;
@@ -16,6 +16,7 @@ layui.use(['layer'], function (layer) {
     this.updatedLine = null;
     this.vias = [];
     this.trackHandler = null;
+    this.trimPoints = [];
   }
   Rm.prototype.init = function () {
     var _this = this;
@@ -54,7 +55,7 @@ layui.use(['layer'], function (layer) {
         endStyle: endStyle,
         autoDragging: true,
         "onSearchComplete": function (obj) {
-          layer.close(_this.topLoadIndex);
+          layer.close(_this.topLoa·dIndex);
           _this.lineSelectCallback(obj);
         },
         "onPolylinesSet": function (routes) {
@@ -94,7 +95,6 @@ layui.use(['layer'], function (layer) {
     var _this = this;
     switch(message.type){
       case "getDefaultOrderRoute":
-        _this.lineId = message.lineId;
         _this.getlineOrderData(1);
         break;
       case "orderLine":
@@ -114,13 +114,21 @@ layui.use(['layer'], function (layer) {
         break;
       case "loadDefaultRoute":
         layer.close(_this.topLoadIndex);
-        _this.lineId = message.lineId;
         _this.lineDetail = message.data;
         try {
           if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson);
           _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
           _this.line = _this.lineDetail.trackContent;
         } catch (error) {}
+        try {
+          if(_this.lineDetail.trimPoints){
+            _this.lineDetail.trimPoints = JSON.parse(_this.lineDetail.trimPoints);
+          }else{
+            _this.lineDetail.trimPoints = [];
+          }
+        } catch (error) {
+          _this.lineDetail.trimPoints = [];
+        }
         _this.renderDrivingRoute();
         break;
     }
@@ -130,7 +138,6 @@ layui.use(['layer'], function (layer) {
     var _this = this;
     switch(message.type){
       case "getData":  //获取路线
-        _this.lineId = message.lineId;
         _this.getlineOrderData(3);
         break;
       case "policy":  //更改高速配置
@@ -163,7 +170,6 @@ layui.use(['layer'], function (layer) {
         break;
       case "loadDefaultRoute":
         layer.close(_this.topLoadIndex);
-        _this.lineId = message.lineId;
         _this.lineDetail = message.data;
         try {
           if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson);
@@ -172,6 +178,15 @@ layui.use(['layer'], function (layer) {
           _this.postMessage("isHighway", {isHighway: _this.isHighway});
           _this.line = _this.lineDetail.trackContent;
         } catch (error) {}
+        try {
+          if(_this.lineDetail.trimPoints){
+            _this.lineDetail.trimPoints = JSON.parse(_this.lineDetail.trimPoints);
+          }else{
+            _this.lineDetail.trimPoints = [];
+          }
+        } catch (error) {
+          _this.lineDetail.trimPoints = [];
+        }
         _this.renderDrivingRoute();
         break;
       
@@ -205,7 +220,7 @@ layui.use(['layer'], function (layer) {
       formData.append('loginStaffId',edipao.getLoginStaffId())
       $.ajax({
           type: 'POST',
-          url: edipao.API_HOST +  '/admin/lineTrack/upload/routeFile', 
+          url: edipao.API_HOST + '/admin/lineTrack/upload/routeFile', 
           data: formData,
           processData : false,
           contentType : false,
@@ -216,6 +231,7 @@ layui.use(['layer'], function (layer) {
               lineSource:  _this.lineDetail.lineSource,
               trackUrl: res.data.url,
               trackContent: JSON.stringify(pointData),
+              trimPoints: JSON.stringify(_this.trimPoints),
             }
             if(_this.source == 3){
               params.isHighway = _this.isHighway;
@@ -298,16 +314,27 @@ layui.use(['layer'], function (layer) {
     }).done(function(res) {
       layer.close(_this.topLoadIndex);
       if (res.code == 0) {
-        _this.lineDetail = res.data
+        _this.lineDetail = res.data;
         try {
-          if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson);
-          _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
+          if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson || "[]");
+          _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent || "[]");
           if(source == 3){
             _this.isHighway = _this.lineDetail.isHighway;
             _this.postMessage("isHighway", {isHighway: _this.isHighway});
           }
           _this.line = _this.lineDetail.trackContent;
-        } catch (error) {}
+        } catch (error) {
+          _this.vias = [];
+        }
+        try {
+          if(_this.lineDetail.trimPoints){
+            _this.lineDetail.trimPoints = JSON.parse(_this.lineDetail.trimPoints);
+          }else{
+            _this.lineDetail.trimPoints = [];
+          }
+        } catch (error) {
+          _this.lineDetail.trimPoints = [];
+        }
         _this.renderDrivingRoute();
       }
     }).fail(function () { 
@@ -323,6 +350,7 @@ layui.use(['layer'], function (layer) {
       url: '/admin/lineTrack/getOrderTrack',
       data: {
         orderNo: message.orderNo,
+        lineId: _this.lineId,
       }
     }).then(function(res){
       if(res.code == 0 && res.data && res.data.length > 0){
@@ -341,7 +369,6 @@ layui.use(['layer'], function (layer) {
     var trackInfo = [];
     if(Array.isArray(_this.line)){
       for(var point of _this.line){
-        // trackInfo.push(Object.assign({}, Careland.DrawTool.GbPointToKldPoint(point.lng,point.lat), {utctime: 1586144485}));
         trackInfo.push(Careland.DrawTool.GbPointToKldPoint(point.lng, point.lat));
       }
     }
@@ -349,26 +376,24 @@ layui.use(['layer'], function (layer) {
     var end = trackInfo[trackInfo.length - 1];
     var options = {
       trackInfo: trackInfo,
-      tvt: "134217728"
     }
+    var vias = [];
+    vias = vias.concat(_this.vias);
+    vias = vias.concat(_this.lineDetail.trimPoints.map(function (item) {
+      return Careland.DrawTool.KldPointToGbPoint(item.x, item.y);
+    }));
+    vias = vias.map(function (item) {
+      return (new Careland.GbPoint(item.lat, item.lng));
+    });
     if(policy){
-      var vias = _this.vias.map(function (item) {
-        return (new Careland.GbPoint(item.lat, item.lng));
-      });
       options.trackInfo = [];
       if(vias.length > 0) options.via = vias;
       _this.Driving.search(start, end, options);
     }else if(trackInfo.length > 1){
-      var vias = _this.vias.map(function (item) {
-        return (new Careland.GbPoint(item.lat, item.lng));
-      });
       if(vias.length > 0) options.via = vias;
       _this.Driving.search(start, end, options);
       _this.map.setCenter(start);
     }else{
-      var vias = _this.vias.map(function (item) {
-        return (new Careland.GbPoint(item.lat, item.lng));
-      });
       options.trackInfo = [];
       if(vias.length > 0) options.via = vias;
       _this.Driving.search(_this.lineDetail.startAddress, _this.lineDetail.endAddress, options);
@@ -382,6 +407,7 @@ layui.use(['layer'], function (layer) {
       layer.alert(status.errmsg, {icon: 2});
       return;
     }
+    _this.trimPoints = obj.vias;
     var plan = obj.getPlan(0);
     if(plan){
       for(var i in plan.uidinfo){

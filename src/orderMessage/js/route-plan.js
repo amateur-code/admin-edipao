@@ -93,9 +93,9 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
         },
         bindFrameEvents(){
             var _t = this;
-            this.iframe1 = $("#map1").attr("src", "./route-map.html?source=1")[0];
-            this.iframe2 = $("#map2").attr("src", "./route-map.html?source=2")[0];
-            this.iframe3 = $("#map3").attr("src", "./route-map.html?source=3")[0];
+            this.iframe1 = $("#map1").attr("src", "./route-map.html?source=1&lineId=" + _t.lineId)[0];
+            this.iframe2 = $("#map2").attr("src", "./route-map.html?source=2&lineId=" + _t.lineId)[0];
+            this.iframe3 = $("#map3").attr("src", "./route-map.html?source=3&lineId=" + _t.lineId)[0];
             $(window).on("message", function (e) {
                 var message = e.originalEvent.data;
                 console.log("route-plan" + JSON.stringify(message));
@@ -136,12 +136,10 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                         _t.postMessage(_t.iframe1.contentWindow, {
                             type: "loadDefaultRoute",
                             data: _t.lineDetail,
-                            lineId: _t.lineId
                         });
                     }else{
                         _t.postMessage(_t.iframe1.contentWindow, {
                             type: "getDefaultOrderRoute",
-                            lineId: _t.lineId,
                         });
                     }
                     break;
@@ -152,12 +150,10 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table'],
                         _t.postMessage(_t.iframe3.contentWindow, {
                             type: "loadDefaultRoute",
                             data: _t.lineDetail,
-                            lineId: _t.lineId
                         });
                     }else{
                         _t.postMessage(_t.iframe3.contentWindow, {
                             type: "getData",
-                            lineId: _t.lineId,
                         });
                     }
                     break;
