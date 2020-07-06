@@ -55,20 +55,16 @@ layui.use(['layer'], function (layer) {
         startStyle: startStyle,
         endStyle: endStyle,
         autoDragging: true,
-        "onSearchComplete": function (obj) {
+        onSearchComplete: function (obj) {
           if(!firstLoaded){
             firstLoaded = true;
-            _this.renderDrivingRoute("via");
+            if(_this.trimPoints.length > 0 || _this.vias.length > 0){
+              _this.renderDrivingRoute("via");
+            }
           }else{
             layer.close(_this.topLoadIndex);
             _this.lineSelectCallback(obj);
           }
-        },
-        "onPolylinesSet": function (routes) {
-          layer.close(_this.topLoadIndex);
-          var route = routes[0].lines[0];
-          console.log(route)
-          route.canvas.addEventListener("click", function (e) { console.log(e) })
         },
       });
       this.layer = new Careland.Layer('point', 'layer');        //创建点图层
@@ -132,15 +128,7 @@ layui.use(['layer'], function (layer) {
           _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
           _this.updatedLine = _this.lineDetail.trackContent;
         } catch (error) {}
-        try {
-          if(_this.lineDetail.trimPoints){
-            _this.lineDetail.trimPoints = JSON.parse(_this.lineDetail.trimPoints);
-          }else{
-            _this.lineDetail.trimPoints = [];
-          }
-        } catch (error) {
-          _this.lineDetail.trimPoints = [];
-        }
+        _this.initTrimPoints();
         _this.renderDrivingRoute();
         break;
     }
@@ -180,15 +168,7 @@ layui.use(['layer'], function (layer) {
           _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
           _this.updatedLine = _this.lineDetail.trackContent;
         } catch (error) {}
-        try {
-          if(_this.lineDetail.trimPoints){
-            _this.lineDetail.trimPoints = JSON.parse(_this.lineDetail.trimPoints);
-          }else{
-            _this.lineDetail.trimPoints = [];
-          }
-        } catch (error) {
-          _this.lineDetail.trimPoints = [];
-        }
+        _this.initTrimPoints();
         _this.renderDrivingRoute();
     }
   }
@@ -238,15 +218,7 @@ layui.use(['layer'], function (layer) {
           _this.postMessage("isHighway", {isHighway: _this.isHighway});
           _this.updatedLine = _this.lineDetail.trackContent;
         } catch (error) {}
-        try {
-          if(_this.lineDetail.trimPoints){
-            _this.lineDetail.trimPoints = JSON.parse(_this.lineDetail.trimPoints);
-          }else{
-            _this.lineDetail.trimPoints = [];
-          }
-        } catch (error) {
-          _this.lineDetail.trimPoints = [];
-        }
+        _this.initTrimPoints();
         _this.renderDrivingRoute();
         break;
       
@@ -390,22 +362,26 @@ layui.use(['layer'], function (layer) {
         } catch (error) {
           _this.vias = [];
         }
-        try {
-          if(_this.lineDetail.trimPoints){
-            _this.lineDetail.trimPoints = JSON.parse(_this.lineDetail.trimPoints);
-          }else{
-            _this.lineDetail.trimPoints = [];
-          }
-        } catch (error) {
-          _this.lineDetail.trimPoints = [];
-        }
+        _this.initTrimPoints();
         _this.renderDrivingRoute();
       }
     }).fail(function () { 
       layer.close(_this.topLoadIndex);
      });
   }
-
+  Rm.prototype.initTrimPoints = function () {
+    var _this = this;
+    try {
+      if(_this.lineDetail.trimPoints){
+        _this.lineDetail.trimPoints = JSON.parse(_this.lineDetail.trimPoints);
+      }else{
+        _this.lineDetail.trimPoints = [];
+      }
+    } catch (error) {
+      _this.lineDetail.trimPoints = [];
+    }
+    _this.trimPoints = _this.lineDetail.trimPoints;
+  }
   //获取订单轨迹
   Rm.prototype.getOrderLineData = function (message) {
     var _this = this;
@@ -455,7 +431,6 @@ layui.use(['layer'], function (layer) {
       options.trackInfo = [];
       _this.Driving.search(start, end, options);
     }else if(trackInfo.length > 1){
-      console.log(JSON.stringify(options))
       _this.Driving.search(start, end, options);
       _this.map.setCenter(start);
     }else{

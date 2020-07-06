@@ -215,13 +215,13 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 id: "positon-table",
                 height: 'full',
                 autoSort: false,
-                url: edipao.API_HOST + '/admin/order/report/getReportByLine',
+                url: edipao.API_HOST + '/admin/lineTrack/getTrackContentList',
                 method: "get",
                 limit: 5,
                 page: true,
                 where: Object.assign({lineId: this.lineId, lineSource: _this.getSource()}, _this.request),
                 request: {
-                    pageName: 'page',
+                    pageName: 'pageNo',
                     limitName: 'pageSize'
                 },
                 parseData: function (res) {
