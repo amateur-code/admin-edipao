@@ -574,7 +574,10 @@ layui.config({
                         loginStaffId: user.staffId,
                         truckId: id,
                         type: 5,
-                        images: uploadObj["returnImagesList"].join(","),
+                        images: uploadObj["returnImagesList"].map(function (item) { 
+                            item = item ? item : "null";
+                            return item;
+                         }).join(","),
                     }
                     promiseList.push(getReq(data));
                 }
