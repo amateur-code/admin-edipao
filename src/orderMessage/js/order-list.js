@@ -58,6 +58,7 @@ var hegezhengData = [
 var transportModeData = [
     {key: "国道", value: "国道"},
     {key: "高速", value: "高速"},
+    {key: "部分高速", value: "部分高速"},
 ]
 var exportLoading = false;
 

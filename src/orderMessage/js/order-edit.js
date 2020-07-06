@@ -1339,7 +1339,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var baseInfoData = form.val("base_info_form");
 
     data.id = _this.orderId;
-    data.transportMode = baseInfoData.transportMode || "";
+    data.transportMode = baseInfoData.transportMode || "国道";
     data.loginStaffId = _this.user.staffId || "";
     data.orderNo = _this.orderNo || "";
     data.orderType = carsLength > 1 ? 2 : 1;
