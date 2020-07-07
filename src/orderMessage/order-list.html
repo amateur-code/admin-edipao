@@ -253,7 +253,7 @@
         <div class="layui-card-body">
             {{# console.log(d) }}
             {{# layui.each(d.uploadData.returnImagesList, function(index, item){ }}
-                {{# if((index < 2 || (index == 2 && d.uploadData.masterFlag)) && ((index == 0 && !d.uploadData.sameBatchMixFlag) || index != 0)){ }}
+                {{# if((index < 2 || (index == 2 && d.uploadData.masterFlag)) && ((index == 0 && d.uploadData.sameBatchMixFlag) || index != 0)){ }}
                     {{index != 2?'交车图片':''}}
                     {{index == 2?'半身照':''}}
                     <div class="layui-row upload_start_row">
