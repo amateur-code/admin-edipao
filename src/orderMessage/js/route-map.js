@@ -60,6 +60,9 @@ layui.use(['layer'], function (layer) {
             firstLoaded = true;
             if(_this.trimPoints.length > 0 || _this.vias.length > 0){
               _this.renderDrivingRoute("via");
+            }else{
+              layer.close(_this.topLoadIndex);
+              _this.lineSelectCallback(obj);
             }
           }else{
             layer.close(_this.topLoadIndex);

@@ -75,7 +75,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                     _t.renderTabContent();
                     _t.bindLineEvents();
                     _t.bindFrameEvents();
-                    _t.getPositionList();
+                    _t.getPositionList(res.data.lineSource);
                 }else{
                     layer.msg(res.message, {icon: 2})
                 }
@@ -208,7 +208,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 });
             });
         },
-        getPositionList: function () {
+        getPositionList: function (source) {
             var _this = this;
             table.render({
                 elem: '#positon-table',
@@ -219,17 +219,18 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 method: "get",
                 limit: 5,
                 page: true,
-                where: Object.assign({lineId: this.lineId, lineSource: _this.getSource()}, _this.request),
+                where: Object.assign({lineId: this.lineId, lineSource: source || _this.getSource()}, _this.request),
                 request: {
                     pageName: 'pageNo',
                     limitName: 'pageSize'
                 },
                 parseData: function (res) {
+                    if(!res.data) res.data = {};
                     return {
                         "code": res.code, //解析接口状态
                         "msg": res.message, //解析提示文本
-                        "count": res.data.count, //解析数据长度
-                        "data": res.data.reports //解析数据列表
+                        "count": res.data.totalSize || 0, //解析数据长度
+                        "data": res.data.dataList || [] //解析数据列表
                     }
                 },
                 response: {
@@ -237,9 +238,19 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                     dataName: 'data'
                 },
                 cols: [[
-                    { field: "type", title: "时间", minWidth: 100, sort: false },
-                    { field: "status", title: "经纬度", minWidth: 100, sort: false },
-                    { field: "address", title: "地址", minWidth: 300, sort: false },
+                    { field: "locTime", title: "时间", minWidth: 150, sort: false, templet: function (d) {
+                        if(d.locTime && d.locTime * 1 != 0){
+                            return d.locTime;
+                        }else{
+                            return "- -";
+                        }
+                    } },
+                    { field: "lat", title: "经纬度", minWidth: 180, sort: false, templet: function (d) {
+                        return d.lat + "，" + d.lng;
+                    } },
+                    { field: "address", title: "地址", minWidth: 170, sort: false, templet: function (d) {
+                        return d.address || "- -";
+                    } },
                 ]],
                 text: {
                     none: "暂无数据"
@@ -462,6 +473,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 let source = this.getAttribute('lay-id') + "";
                 _t.setTabSource(source);
                 _t.getDriverReportList(source);
+                _t.getPositionList(source);
                 _t.changeMap(source);
             });
             element.on('tab(reportTabFilter)', function (e) {
