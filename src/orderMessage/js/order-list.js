@@ -1521,10 +1521,10 @@ layui.config({
         },
         resizeTable:function () {
             var dur = 500;
-            var w = "390px";
-            var backw = "100px";
+            var w = "460px";  //总的
+            var backw = "100px"; //露出来的
             var r = "-1px";
-            var backr = "-290px";
+            var backr = "-360px";  //缩回去的
             $(".opeartion_icon").removeClass("layui-icon-next").addClass("layui-icon-prev");
             if(method.timer) clearTimeout(method.timer);
             method.timer = setTimeout(function () {
@@ -1887,7 +1887,7 @@ layui.config({
         showList.push(item.field);
     });
     var exportHead={};// 导出头部
-    var toolField = {title: '操作', field: "operation", toolbar: '#barDemo', align: 'left', fixed: 'right', width: 390};
+    var toolField = {title: '操作', field: "operation", toolbar: '#barDemo', align: 'left', fixed: 'right', width: 460};
 
     edipao.request({
         type: 'GET',

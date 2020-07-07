@@ -51,8 +51,10 @@ layui.use(['layer'], function (layer) {
       this.map = new Careland.Map('map', point, 12);             //实例化地图对象
       this.map.enableAutoResize();                               //启用自动适应容器尺寸变化
       this.map.load();
-      this.map.addEventListener("mapchange", function (e) {
-        console.log(e)
+      this.map.addEventListener("zoomend", function () {
+        if(_this.positionInfoWin){
+          _this.positionInfoWin.redraw();
+        }
       });
       this.trackHandler = new Careland.Track();
       this.Driving = new Careland.DrivingRoute(this.map, {
@@ -506,15 +508,15 @@ layui.use(['layer'], function (layer) {
     _this.positionMarker = new Careland.Marker("image");
     var point = new Careland.GbPoint(data.lat, data.lng);
     
-    positionMarker.setPoint(point);
+    _this.positionMarker.setPoint(point);
     _this.map.setCenter(point);
     _this.positionLayer.clear();
-    _this.positionLayer.add(marker);
-    positionInfoWin.setOffset(new Careland.Size(0, -22));
-    positionInfoWin.setContent("时间：" + data.locTime + '<br>' + '当前地址：' + data.address);
-    positionMarker.openInfoWindow(positionInfoWin);
-    positionMarker.addEventListener("click", function(){
-      positionMarker.openInfoWindow(positionInfoWin);  //通过核心类接口打开窗口
+    _this.positionLayer.add(_this.positionMarker);
+    _this.positionInfoWin.setOffset(new Careland.Size(0, -22));
+    _this.positionInfoWin.setContent("时间：" + data.locTime + '<br>' + '当前地址：' + data.address);
+    _this.positionMarker.openInfoWindow(_this.positionInfoWin);
+    _this.positionMarker.addEventListener("click", function(){
+      _this.positionMarker.openInfoWindow(_this.positionInfoWin);  //通过核心类接口打开窗口
     });
   }
   Rm.prototype.renderReportPoints = function (reports) {
