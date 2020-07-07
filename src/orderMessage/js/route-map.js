@@ -8,7 +8,6 @@ layui.use(['layer'], function (layer) {
     this.chooseOrderNo = "";
     var qs = edipao.urlGet();
     this.source = qs.source * 1;
-    this.map = null;
     this.lineId = qs.lineId || "";
     this.line = [];
     this.topLoadIndex = null;
@@ -16,8 +15,14 @@ layui.use(['layer'], function (layer) {
     this.selectedOrderNo = null;
     this.updatedLine = [];
     this.vias = [];
-    this.trackHandler = null;
     this.trimPoints = [];
+    this.trackHandler = null;
+    this.map = null;
+    this.layer = null;
+    this.positionLayer = null;
+    this.positionInfoWin = null;
+    this.positionMarker = null;
+    this.Driving = null;
   }
   Rm.prototype.init = function () {
     var _this = this;
@@ -46,6 +51,9 @@ layui.use(['layer'], function (layer) {
       this.map = new Careland.Map('map', point, 12);             //实例化地图对象
       this.map.enableAutoResize();                               //启用自动适应容器尺寸变化
       this.map.load();
+      this.map.addEventListener("mapchange", function (e) {
+        console.log(e)
+      });
       this.trackHandler = new Careland.Track();
       this.Driving = new Careland.DrivingRoute(this.map, {
         map: this.map,
@@ -70,11 +78,23 @@ layui.use(['layer'], function (layer) {
           }
         },
       });
-      this.layer = new Careland.Layer('point', 'layer');        //创建点图层
+      this.positionLayer = new Careland.Layer('point', 'layer');
+      this.positionLayer.setStyle(new Careland.PointStyle({
+        width: 23,
+        height: 29,
+        offsetX: -9,
+        offsetY: -32,
+        textOffsetX: -5,
+        textOffsetY: -30,
+        src: location.origin + "/images/center.png",
+        fontColor: "#000",
+      }));
+      this.map.addLayer(_this.positionLayer);
+      this.layer = new Careland.Layer('point', 'layer');        //地图覆盖物
       this.map.addLayer(this.layer);
       this.postMessage("loaded");
     } catch (err){
-        console.log(err);
+      console.log(err);
     }
     this.bindEvents();
   }
@@ -99,6 +119,9 @@ layui.use(['layer'], function (layer) {
   Rm.prototype.handleEvent1 = function (message) {
     var _this = this;
     switch(message.type){
+      case "positionPoint":
+        _this.renderPositionPoint(message.data);
+        break;
       case "getDefaultOrderRoute":
         _this.getlineOrderData(1);
         break;
@@ -139,6 +162,9 @@ layui.use(['layer'], function (layer) {
   Rm.prototype.handleEvent2 = function (message) {
     var _this = this;
     switch(message.type){
+      case "positionPoint":
+        _this.renderPositionPoint(message.data);
+        break;
       case "loadImportData":
         _this.getlineOrderData(2);
         break;
@@ -178,6 +204,9 @@ layui.use(['layer'], function (layer) {
   Rm.prototype.handleEvent3 = function (message) {
     var _this = this;
     switch(message.type){
+      case "positionPoint":
+        _this.renderPositionPoint(message.data);
+        break;
       case "getData":  //获取路线
         _this.getlineOrderData(3);
         break;
@@ -247,7 +276,12 @@ layui.use(['layer'], function (layer) {
     _this.postMessage("showLoading");
     var pointData = this.updatedLine;
     if(!pointData || pointData.length == 0){
-      layer.msg("当前轨迹无效");
+      _this.postMessage("hideLoading");
+      _this.showMsg({
+        type: "alert",
+        content: "当前轨迹无效",
+        icon: 2,
+      })
       return;
     }
     _this.Driving.getDrivingRouteData(function(res){
@@ -366,7 +400,11 @@ layui.use(['layer'], function (layer) {
           _this.vias = [];
         }
         _this.initTrimPoints();
-        _this.renderDrivingRoute();
+        if((_this.updatedLine && _this.updatedLine.length > 0) || _this.source == 3){
+          _this.renderDrivingRoute();
+        }else{
+          layer.close(_this.topLoadIndex);
+        }
       }
     }).fail(function () { 
       layer.close(_this.topLoadIndex);
@@ -437,9 +475,9 @@ layui.use(['layer'], function (layer) {
       _this.Driving.search(start, end, options);
       _this.map.setCenter(start);
     }else{
+      layer.close(_this.topLoadIndex);
       options.trackInfo = [];
       _this.Driving.search(_this.lineDetail.startAddress, _this.lineDetail.endAddress, options);
-      layer.close(_this.topLoadIndex);
     }
   }
   Rm.prototype.lineSelectCallback = function (obj){
@@ -461,6 +499,23 @@ layui.use(['layer'], function (layer) {
       _this.updatedLine = pointData;
       _this.postMessage("orderLineSuccess");
     }
+  }
+  Rm.prototype.renderPositionPoint = function (data) {
+    var _this = this;
+    _this.positionInfoWin = new Careland.InfoWindow();
+    _this.positionMarker = new Careland.Marker("image");
+    var point = new Careland.GbPoint(data.lat, data.lng);
+    
+    positionMarker.setPoint(point);
+    _this.map.setCenter(point);
+    _this.positionLayer.clear();
+    _this.positionLayer.add(marker);
+    positionInfoWin.setOffset(new Careland.Size(0, -22));
+    positionInfoWin.setContent("时间：" + data.locTime + '<br>' + '当前地址：' + data.address);
+    positionMarker.openInfoWindow(positionInfoWin);
+    positionMarker.addEventListener("click", function(){
+      positionMarker.openInfoWindow(positionInfoWin);  //通过核心类接口打开窗口
+    });
   }
   Rm.prototype.renderReportPoints = function (reports) {
     //将标注点添加到图层上

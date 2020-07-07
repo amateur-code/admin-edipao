@@ -62,8 +62,6 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
             this.showLoading();
             var point = new Careland.Point(419364916, 143908009);
             this.map = new Careland.Map('select-map', point, 15);
-            this.map.enableAutoResize();      
-            this.map.load(); 
             this.getDefaultRouteData().done(function (res) {
                 _t.hideLoading();
                 if(res.code == 0){
@@ -217,12 +215,14 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 autoSort: false,
                 url: edipao.API_HOST + '/admin/lineTrack/getTrackContentList',
                 method: "get",
-                limit: 5,
-                page: true,
+                page: {
+									limit: 5,
+									layout: ['prev', 'page', 'next', 'count', 'skip'],
+								},
                 where: Object.assign({lineId: this.lineId, lineSource: source || _this.getSource()}, _this.request),
                 request: {
                     pageName: 'pageNo',
-                    limitName: 'pageSize'
+										limitName: 'pageSize',
                 },
                 parseData: function (res) {
                     if(!res.data) res.data = {};
@@ -255,6 +255,9 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 text: {
                     none: "暂无数据"
                 },
+                done: function () {
+
+                }
             });
         },
         // 获取司机上报数据
@@ -500,6 +503,14 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                     });
                 }
             });
+
+            table.on('row(positon-table)', function(obj){
+							var source = _t.getSource();
+							_t.postMessage(_t["iframe" + source].contentWindow, {
+								type: "positionPoint",
+								data: obj.data
+							});
+            });
             
             $('#tabConent').on('click','.rebuild-btn',function() {
                 var tab = _t.getSource();
@@ -523,7 +534,10 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                         });
                         break;
                     case 2:
-                            break;
+                        _t.postMessage(_t["iframe" + source].contentWindow, {
+                            type: "save",
+                        });
+                        break;
                     case 3:
                         _t.postMessage(_t["iframe" + source].contentWindow, {
                             type: "save",
@@ -544,6 +558,9 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                         });
                         break;
                     case 2:
+                        _t.postMessage(_t["iframe" + source].contentWindow, {
+                            type: "choose",
+                        });
                         break;
                     case 3:
                         _t.postMessage(_t["iframe" + source].contentWindow, {
@@ -655,82 +672,89 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
         },
         // 获取点击点的坐标数据
         regionMapView(map){
-            var _t = this;
-            var myGeo = new Careland.Geocoder();
-            var layer = new Careland.Layer('point', 'layer');
-            var style = new Careland.PointStyle({offsetX:-11,offsetY:-30,textOffsetX:-5,textOffsetY:-30,src:location.origin+'/images/center.png',fontColor:'#000'});
-            
-            layer.setStyle(style);
-            map.addLayer(layer);
+					map.load();
+					map.enableAutoResize();
+					var _t = this;
+					var myGeo = new Careland.Geocoder();
+					var layer = new Careland.Layer("point", "layer");
+					var style = new Careland.PointStyle({
+						offsetX: -11,
+						offsetY: -30,
+						textOffsetX: -5,
+						textOffsetY: -30,
+						src: location.origin + "/images/center.png",
+						fontColor: "#000",
+					});
+					layer.setStyle(style);
+					map.addLayer(layer);
 
-            var mapInfoWin = new Careland.InfoWindow();
-            mapInfoWin.setOffset(new Careland.Size(0, -22));
+					var mapInfoWin = new Careland.InfoWindow();
+					mapInfoWin.setOffset(new Careland.Size(0, -22));
 
-            var ac = new Careland.Autocomplete({
-                input : "seachLocation",
-                location : map
-            });
-            ac.setLocation(map);
-            ac.setInputForm('seachLocation');
-            ac.addEventListener("onConfirm",function(e){
-                mapInfoWin.close();
-                $('#select-address').text(e.item.poi.name);
-                mapInfoWin.setContent('当前地址：' + e.item.poi.name);
-                mapInfoWin.redraw();
-                layer.clear();
-                //创建文本标注点
-                var marker = new Careland.Marker('image');
-                marker.setPoint(e.item.poi.point);
-                layer.add(marker);
-                marker.openInfoWindow(mapInfoWin);
-                _t.loc = {
-                    name: e.item.poi.name,
-                    address: e.item.poi.address,
-                    lat: e.item.poi.pointGb.lat,
-                    lng: e.item.poi.pointGb.lng,
-                }
-                map.centerAndZoom(e.item.poi.point, 15);
-            });
+					var ac = new Careland.Autocomplete({
+							input : "seachLocation",
+							location : map
+					});
+					ac.setLocation(map);
+					ac.setInputForm('seachLocation');
+					ac.addEventListener("onConfirm",function(e){
+							mapInfoWin.close();
+							$('#select-address').text(e.item.poi.name);
+							mapInfoWin.setContent('当前地址：' + e.item.poi.name);
+							mapInfoWin.redraw();
+							layer.clear();
+							//创建文本标注点
+							var marker = new Careland.Marker('image');
+							marker.setPoint(e.item.poi.point);
+							layer.add(marker);
+							marker.openInfoWindow(mapInfoWin);
+							_t.loc = {
+									name: e.item.poi.name,
+									address: e.item.poi.address,
+									lat: e.item.poi.pointGb.lat,
+									lng: e.item.poi.pointGb.lng,
+							}
+							map.centerAndZoom(e.item.poi.point, 15);
+					});
 
-            $('#regionMapPoint').off('click').on('click', function(){
-                var searchTxt = $('#seachLocation').val();
-                var poiSearch = new Careland.LocalSearch(map,{
-                    map: map,
-                    selectFirstResult:false,
-                    autoViewport:true,
-                    onMarkersSet: function(pois){
-                        layui.each(pois, function(v, k){
-                            var marker = k.marker;
-                            marker.addEventListener('click', function(e){
-                                e.event.defaultPrevented = true;
-                                layer.clear();
-                                myGeo.getLocation(e.point,function(data){
-                                    _t.setViewData(mapInfoWin, marker, data);
-                                });
-                            })
-                        })
-                    },
-                });
-                poiSearch.search(searchTxt);
-            })
+					$('#regionMapPoint').off('click').on('click', function(){
+							var searchTxt = $('#seachLocation').val();
+							var poiSearch = new Careland.LocalSearch(map,{
+									map: map,
+									selectFirstResult:false,
+									autoViewport:true,
+									onMarkersSet: function(pois){
+											layui.each(pois, function(v, k){
+													var marker = k.marker;
+													marker.addEventListener('click', function(e){
+															e.event.defaultPrevented = true;
+															layer.clear();
+															myGeo.getLocation(e.point,function(data){
+																	_t.setViewData(mapInfoWin, marker, data);
+															});
+													})
+											})
+									},
+							});
+							poiSearch.search(searchTxt);
+					})
 
-            	
-            map.addEventListener('click', function(point){
-                var point = point;
-                if(!point || typeof (point) != "object"){
-                    return;
-                }
-                myGeo.getLocation(point,function(data){
-                    layer.clear();
-                    //创建文本标注点
-                    var marker = new Careland.Marker('image');
-                    marker.setPoint(point);
-                    layer.add(marker);
-
-                    _t.setViewData(mapInfoWin, marker, data);
-                });
-                
-            });
+						
+					map.addEventListener('click', function(point){
+							var point = point;
+							if(!point || typeof (point) != "object"){
+									return;
+							}
+							myGeo.getLocation(point, function(data){
+								layer.clear();
+								//创建文本标注点
+								var marker = new Careland.Marker('image');
+								marker.setPoint(point);
+								layer.add(marker);
+								_t.setViewData(mapInfoWin, marker, data);
+							});
+							
+					});
 
         },
         // 设置视图显示和数据
