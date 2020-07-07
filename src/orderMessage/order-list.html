@@ -92,7 +92,7 @@
                         {{#  layui.each(item[d.key], function(index2, item2){ }}
                             {{# if(item2) { }}
                             <div style="margin-bottom:10px;margin-right: 10px;" class="layui-col-md3">
-                                <span class="pointer boxZoomImg" src="{{item2}}"><img width="100%" src="{{item2}}"></span>
+                                <span class="pointer boxZoomImg" src="{{item2 == 'null' ? '' : item2}}"><img width="100%" src="{{item2 == 'null' ? '' : item2}}"></span>
                             </div>
                             {{# } }}
                         {{#  }); }}
