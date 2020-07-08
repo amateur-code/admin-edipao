@@ -536,19 +536,32 @@ layui.config({
             var uploadData = JSON.parse(JSON.stringify(options.uploadData));
             var keys = Object.keys(uploadData),
               successFlag = true,
-              emptyFlag = true,
+              emptyFlag = false,
               halfBodyEmptyFlag = true,
               promiseList = [];
+              console.log(uploadData)
             keys.forEach(function (id) {
-                if(uploadData[id].masterFlag && uploadData[id]["returnImagesList"][2]){
+                var item = uploadData[id];
+                if(item.masterFlag && item["returnImagesList"][2]){
                     halfBodyEmptyFlag = false;
                 }
-                uploadData[id]["returnImagesList"].some(function (img) {
-                    if(img){
-                        emptyFlag = false;
-                        return true;
+                item["returnImagesList"].forEach(function (img, index) {
+                    if(index == 2) return;
+                    if(imgNull(img) && item.sameBatchMixFlag){
+                        emptyFlag = true;
+                        return;
                     }
+                    if(index == 0 && !item.sameBatchMixFlag){
+
+                    }else if(imgNull(img)){
+                        emptyFlag = true;
+                        return;
+                    }
+                    
                 });
+                function imgNull(val){
+                    return !val || (val + "" == "null");
+                }
             });
             if(halfBodyEmptyFlag){
                 layer.close(loadLayer);
@@ -557,7 +570,7 @@ layui.config({
             }
             if(emptyFlag){
                 layer.close(loadLayer);
-                layer.msg("请先上传图片",{icon: 2});
+                layer.msg("请按要求上传所有图片后再保存",{icon: 2});
                 return;
             }
             keys.forEach(function (id) {
