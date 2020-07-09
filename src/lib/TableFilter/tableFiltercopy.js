@@ -37,9 +37,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 			initData = {};
 		}
 		tableFilter.cache[elemId] = initData[elemId] || {};
-		if(tableFilter.cache[elemId] && Object.keys(tableFilter.cache[elemId]).length > 0){
-			opt.done(JSON.parse(JSON.stringify(tableFilter.cache[elemId])), true);
-		}
+		opt.done(JSON.parse(JSON.stringify(tableFilter.cache[elemId])), true);
 		//主运行
 		var main = function (){
 
@@ -82,7 +80,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 					filterIcon.removeClass("tableFilter-has")
 				}
 
-				//图标点击事件
+				//图标点击事件  点击放大镜
 				filterIcon.on("click", function(e) {
 					e.stopPropagation();
 					//得到过滤项的选项
@@ -116,6 +114,15 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 						}
 						filterBox.find('form').append('<input type="search" name="'+filterName+'-min" lay-verType="tips" placeholder="输入最小值" class="layui-input">');
 						filterBox.find('form').append('<input type="search" name="'+filterName+'-max" lay-verType="tips" placeholder="输入最大值" class="layui-input">');
+					}
+					if(filterType == "checkbox-timeslot"){
+						filterBox.find('form').append('<ul style="height:auto;"></ul>');
+						if(!filterUrl){
+							layui.each(filterData, function(i, item){
+								filterBox.find('ul').append('<li><input type="checkbox" name="'+filterName+'['+item.key+']" value="'+item.key+'" title="'+item.value+'" lay-skin="primary"></li>');
+							})
+						}
+						filterBox.find('form').append('<input type="text" id="'+filterName+'-timeslot" name="'+filterName+'" lay-verify="" lay-verType="tips" placeholder="请选择时间段" class="layui-input">');
 					}
 					if(filterType == "radio"){
 						filterBox.find('form').append('<ul class="radio"></ul>');
@@ -207,7 +214,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 					//加入DOM
 					$(parent).append(filterBox);
 					// 渲染时间选择
-					if(filterType == "timeslot"){
+					if(filterType == "timeslot" || filterType == "checkbox-timeslot"){
 						laydate.render({
 						    elem: filterBox.find('input[name='+filterName+']')[0],
 						    type: 'datetime',
@@ -259,7 +266,10 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 					searchInput.focus().select();
 
 					//处理异步filterData
-					
+					if(filterType == "checkbox-timeslot"){
+						console.log(JSON.stringify(tableFilter.toLayuiFrom2(initData[elemId], filterName, filterType)))
+						form.val("table-filter-form", tableFilter.toLayuiFrom2(initData[elemId], filterName, filterType) || tableFilter.toLayuiFrom(elemId, filterName, filterType));
+					}
 					if((filterType == 'checkbox' || filterType == 'radio' || filterType == "checkbox-numberslot") && filterUrl){
 						var filterBoxUl = filterBox.find('.layui-table-filter-box ul');
 						filterBoxUl.append('<div class="loading"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i></div>');
@@ -277,23 +287,23 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 					}
 
 					form.verify({
-			            numberslot: function(value) {
-			            	var min = filterBox.find('[name="'+filterName+'-min"]').val().trim(),
-			            		max = filterBox.find('[name="'+filterName+'-max"]').val().trim();
-			            	if(!min && !max) return '至少输入一个值';
-			            	if(value && isNaN(value)){
-         						return '必须输入数字';
-         					}
-			                if (min != '' && max != '' && (min - 0 > max - 0)) {
-			                    return '最小值不能大于最大值';
-			                }
-			            },
-			            contract: function(value) {
-			            	var name = filterBox.find('[name="'+filterName+'-name"]').val().trim(),
-			            		phone = filterBox.find('[name="'+filterName+'-phone"]').val().trim();
-			            	if(!name && !phone) return '至少输入姓名或手机号';
-			            },
-			        });
+						numberslot: function(value) {
+							var min = filterBox.find('[name="'+filterName+'-min"]').val().trim(),
+								max = filterBox.find('[name="'+filterName+'-max"]').val().trim();
+							if(!min && !max) return '至少输入一个值';
+							if(value && isNaN(value)){
+							return '必须输入数字';
+						}
+								if (min != '' && max != '' && (min - 0 > max - 0)) {
+										return '最小值不能大于最大值';
+								}
+						},
+						contract: function(value) {
+							var name = filterBox.find('[name="'+filterName+'-name"]').val().trim(),
+								phone = filterBox.find('[name="'+filterName+'-phone"]').val().trim();
+							if(!name && !phone) return '至少输入姓名或手机号';
+						},
+					});
 
 					//点击确认开始过滤
 					form.on('submit(tableFilter)', function(data){
@@ -366,6 +376,34 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 								return false;
 							}
 						}
+						if(filterType == "checkbox-timeslot"){
+							console.log(JSON.stringify(data.field))
+							var checked = [];
+							var slot = "";
+							for(var key in data.field){
+								if(key.indexOf(filterName + "[") > -1){
+									checked.push(data.field[key]);
+								}
+							}
+							if(data.field[filterName]){
+								var time = data.field[filterName].split(" 至 ");
+								var startTime = time[0];
+								var endTime = time[1];
+								if(startTime.indexOf("00:00:00") > -1 && endTime.indexOf("00:00:00") > -1){
+									endTime = endTime.replace("00:00:00", "23:59:59");
+								}
+								slot = startTime + " 至 " + endTime;
+							}
+							if(checked.length > 0 || slot.length > 0){
+								data.field[filterName] = {
+									checked: checked,
+									slot: slot,
+								};
+							}else{
+								layer.msg("请先选择过滤项！", {icon:2});
+								return false;
+							}
+						}
 						//过滤项写入缓存
 						console.log(data)
 						tableFilter.cache[elemId][filterName] = data.field[filterName];
@@ -408,8 +446,8 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 							table.reload(elemId,{"where":new_where})
 						}
 						try {
-							console.log(initData)
 							initData[elemId] = tableFilter.cache[elemId];
+							console.log(JSON.stringify(initData))
 							sessionStorage.setItem("tableFilterData", JSON.stringify(initData));
 						} catch (error) {}
 						//写入回调函数
@@ -579,6 +617,17 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 			}
 			delete form_val[filterName];
 		}
+		if(filterType == "checkbox-timeslot"){
+			console.log(JSON.stringify(form_val))
+			form_val[filterName] && layui.each(form_val[filterName].checked, function(i, value){
+				form_val[filterName + "["+value+"]"] = true;
+			});
+			if(form_val && form_val[filterName] && form_val[filterName].slot){
+				form_val[filterName] = form_val[filterName].slot;
+			}else{
+				form_val[filterName] = "";
+			}
+		}
 		return form_val;
 	}
 
@@ -617,6 +666,15 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 			if(form_val[filterName] && form_val[filterName].slot && form_val[filterName].slot.length == 2){
 				form_val[filterName + "-min"] = form_val[filterName].slot[0];
 				form_val[filterName + "-max"] = form_val[filterName].slot[1];
+			}
+			delete form_val[filterName];
+		}
+		if(filterType == "checkbox-timeslot"){
+			form_val[filterName] && layui.each(form_val[filterName].checked, function(i, value){
+				form_val[filterName + "["+value+"]"] = true;
+			});
+			if(form_val && form_val[filterName] && form_val[filterName].slot){
+				form_val[filterName] = form_val[filterName].slot;
 			}
 			delete form_val[filterName];
 		}

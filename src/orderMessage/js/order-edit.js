@@ -109,6 +109,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     var _this = this;
     if(!_this.selectData){
       $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList()).done(function (res1, res2, res3, res4, res5) {
+        res3[0].data = res3[0].data || [];
+        res3[0].data.push({code: "直发经销商", name: "直发经销商"});
         $('.' + options.filter).find('.customerList').html(returnOptions(res1[0].data));
         // if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions2(res2[0].data));
         // $(options.selector).append(returnOptions2(res2[0].data));
@@ -329,6 +331,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 
     laytpl($("#base_info_tpl").html()).render(data, function(html){
       $("#base_info").html(html);
+      form.val("base_info_form", {
+        transportMode: data.transportMode || "国道"
+      });
+      form.render("select");
     });
     laytpl($("#income_info_tpl").html()).render(data, function(html){
       $("#income_info").html(html);
@@ -1330,7 +1336,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       return;
     }
 
+    var baseInfoData = form.val("base_info_form");
+
     data.id = _this.orderId;
+    data.transportMode = baseInfoData.transportMode || "国道";
     data.loginStaffId = _this.user.staffId || "";
     data.orderNo = _this.orderNo || "";
     data.orderType = carsLength > 1 ? 2 : 1;

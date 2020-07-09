@@ -1,0 +1,574 @@
+<!doctype html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>E地跑运营平台</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <meta http-equiv="Expires" CONTENT="-1">
+    <meta http-equiv="Cache-Control" CONTENT="no-cache">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css">
+    <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../lib/layui/layui.js"></script>
+    <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+    <script src="./tips.js?VERSION"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+        // 是否开启刷新记忆tab功能
+        // var is_remember = false;
+    </script>
+    <style type="text/css">
+        .w40 {
+            width: 45px;
+        }
+
+        .bgc {
+            background-color: #ccc;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .cartype-add .layui-input-block {
+            margin-left: 0px;
+        }
+        .margin_top15 {
+            margin-top: 15px;
+        }
+        .w16 {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: bisque;
+            color: #fff !important;
+            vertical-align: baseline;
+            text-align: center;
+            line-height: 16px;
+            cursor: default;
+            margin-left: 5px;
+        }
+        .lay-xs{
+            height: 30px;
+            position: absolute;
+            right: 0;
+            top: 0;
+            line-height: 30px;
+            padding-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid cartype-add">
+    <form class="layui-form" lay-filter="editStaff">
+        <div class="layui-row" id="view"></div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+            </label>
+            <button class="layui-btn margin_top15" id="cancel">取消</button>
+            <button class="layui-btn margin_top15" lay-filter="update" lay-submit>
+                确定
+            </button>
+        </div>
+    </form>
+</div>
+<script id="feeInfo" type="text/html">
+    <div class="layui-card">
+        <div class="layui-card-header bold">提车组</div>
+        <div class="layui-card-body layui-row layui-col-space10">
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div id="outParkId">
+                        <span>出库时限</span>
+                        <span data-tip="tip1" class="w16">?</span>
+                    </div>
+                    <div class="layui-input-block">
+                        <input type="text" name="outPark" id="outPark" value="{{d.detail.outPark}}"
+                               lay-verify="required|outParkVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>短驳提车时限<span data-tip="tip2" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="shortBarge" value="{{d.detail.shortBarge}}"
+                               id="shortBarge" lay-verify="required|shortBargeVerify" onkeyup="clearNoNumOne(this)"
+                               placeholder="0.0" autocomplete="off" class="layui-input">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>提车单时限<span data-tip="tip3" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="fetchTruck" id="fetchTruck" lay-verify="required|fetchTruckVerify"
+                               placeholder="0.0" value="{{d.detail.fetchTruck}}" onkeyup="clearNoNumOne(this)"
+                               autocomplete="off" class="layui-input">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>交接单时限<span data-tip="tip4" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="returnTruck" id="returnTruck" onkeyup="clearNoNumOne(this)"
+                               lay-verify="required|returnTruckVerify" value="{{d.detail.returnTruck}}"
+                               placeholder="0.0" autocomplete="off" class="layui-input">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>服务手册时限<span data-tip="tip5" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="serviceNote" id="serviceNote" value="{{d.detail.serviceNote}}"
+                               lay-verify="required|serviceNoteVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>合格证时限<span data-tip="tip6" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="certificate" id="certificate" onkeyup="clearNoNumOne(this)"
+                               lay-verify="required|certificateVerify" value="{{d.detail.certificate}}"
+                               placeholder="0.0" autocomplete="off" class="layui-input">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>临牌时限<span data-tip="tip7" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="tempLicence" id="tempLicence"
+                               lay-verify="required|tempLicenceVerify" value="{{d.detail.tempLicence}}"
+                               placeholder="0.0" autocomplete="off" class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>物料装包时限<span data-tip="tip8" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="materialPackage" id="materialPackage" value="{{d.detail.materialPackage}}"
+                               lay-verify="required|materialPackageVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header bold">计划组</div>
+        <div class="layui-card-body layui-row layui-col-space10">
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>转单时限<span data-tip="tip9" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="createOrder" id="createOrder" value="{{d.detail.createOrder}}"
+                               lay-verify="required|createOrderVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>审核运费时限<span data-tip="tip10" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="approvalFreight" id="approvalFreight" value="{{d.detail.approvalFreight}}"
+                               lay-verify="required|approvalFreightVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>审核订单时限<span data-tip="tip11" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="approvalOrder" id="approvalOrder" value="{{d.detail.approvalOrder}}"
+                               lay-verify="required|approvalOrderVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>车损/报备审核时限<span data-tip="tip12" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="truckDamageReport" id="truckDamageReport" value="{{d.detail.truckDamageReport}}"
+                               lay-verify="required|truckDamageReportVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>回单审核时限<span data-tip="tip13" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="returnApproval" id="returnApproval" value="{{d.detail.returnApproval}}"
+                               lay-verify="required|returnApprovalVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>预付款支付时限<span data-tip="tip14" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="perPay" id="perPay" value="{{d.detail.perPay}}"
+                               lay-verify="required|perPayVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>到付款支付时限<span data-tip="tip15" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="arrivePay" id="arrivePay" value="{{d.detail.arrivePay}}"
+                               lay-verify="required|arrivePayVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>尾款支付时限<span data-tip="tip16" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="tailPay" id="tailPay" value="{{d.detail.tailPay}}"
+                               lay-verify="required|tailPayVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header bold">发运组</div>
+        <div class="layui-card-body layui-row layui-col-space10">
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>调度时限<span data-tip="tip17" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="dispatch" id="dispatch" value="{{d.detail.dispatch}}"
+                               lay-verify="required|dispatchVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>发车时限<span data-tip="tip18" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="startTruck" id="startTruck" value="{{d.detail.startTruck}}"
+                               lay-verify="required|startTruckVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>出城时限<span data-tip="tip19" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="outCity" id="outCity" value="{{d.detail.outCity}}"
+                               lay-verify="required|outCityVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>线路偏移<span data-tip="tip20" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="deviateWay" id="deviateWay" value="{{d.detail.deviateWay}}"
+                               lay-verify="required|deviateWayVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">KM</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>经销商扫码时限<span data-tip="tip21" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="dealerSign" id="dealerSign" value="{{d.detail.dealerSign}}"
+                               lay-verify="required|dealerSignVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>上报处理<span data-tip="tip22" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="reportDeal" id="reportDeal" value="{{d.detail.reportDeal}}"
+                               lay-verify="reportDealVerify" placeholder="0.0" autocomplete="off"
+                               class="layui-input" onkeyup="clearNoNumOne(this)">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-form-item">
+                    <div>司机资料审核<span data-tip="tip23" class="w16">?</span></div>
+                    <div class="layui-input-block">
+                        <input type="text" name="driverInfoApproval" onkeyup="clearNoNumOne(this)"
+                               id="driverInfoApproval"
+                               lay-verify="required|driverInfoApprovalVerify" placeholder="0.0" autocomplete="off"
+                               value="{{d.detail.driverInfoApproval}}" class="layui-input">
+                        <div class="lay-xs">小时</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--    <div class="layui-card">-->
+<!--        <div class="layui-card-header bold">IA业务提醒</div>-->
+<!--        <div class="layui-card-body">-->
+<!--            <div class="layui-fluid">-->
+<!--                <div class="layui-row">-->
+<!--                    <div class="layui-col-xs4">-->
+<!--                        调度成功：<span>{{}}</span>-->
+<!--                        <span>{司机姓名}师傅，恭喜你获取e地跑送往{目的城市}的单子，-->
+<!--              请及时到办事处领取出车资料，严格按照要求时间将车送往目的地，-->
+<!--              严禁拉挂带活，否则会导致罚款、没收保证金，详情可查看e地跑app。</span>-->
+<!--                    </div>-->
+<!--                    <div class="layui-col-xs4">-->
+<!--                        出城延迟：<span>{{}}</span>-->
+<!--                        <span>{司机姓名}师傅，按要求，你应在领取出车资料后{小时数}小时内开车离开长春市，-->
+<!--              e地跑检测到你尚未出城，为了避免罚款，请您尽快送达，请注意安全。</span>-->
+<!--                    </div>-->
+<!--                    <div class="layui-col-xs4">-->
+<!--                        迟到预警：<span>{{}}</span>-->
+<!--                        <span>{司机姓名}师傅，e地跑检测到你本次送往{目的城市}的单子按照目前的行驶情况，-->
+<!--              可能会迟到{小数}小时，为了避免罚款，请您合理安排驾驶时间及速度，请注意安全。</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="layui-row">-->
+<!--                    <div class="layui-col-xs4">-->
+<!--                        迟到：<span>{{}}</span>-->
+<!--                        <span>{司机姓名}师傅，e地跑检测到你本次送往{目的城市}的单子，-->
+<!--              已经迟到{小时数}小时，为了避免罚款，请您尽快送达，请注意安全。</span>-->
+<!--                    </div>-->
+<!--                    <div class="layui-col-xs4">-->
+<!--                        偏离线路：<span>{{}}</span>-->
+<!--                        <span>{司机姓名}师傅，e地跑检测到你本次送往{目的城市}的单子，严重偏离常规导航，-->
+<!--              请注意私自拉挂、带活将会直接冻结尾款结算，没收保证金，并永久解除与我司合作！</span>-->
+<!--                    </div>-->
+<!--                    <div class="layui-col-xs4">-->
+<!--                        交接单回收：<span>{{}}</span>-->
+<!--                        <span>{司机姓名}师傅，请及时到e地跑办事处交回收车商盖章的出货单及交接单(大票第五联，小票第二联），-->
+<!--              否则会影响你的运费尾款结算。</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <hr/>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+</script>
+<script type="text/javascript">
+    // 输入框只能输入数字并保留两位小数
+    function clearNoNumOne(obj) {
+        obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
+        obj.value = obj.value.replace(/^\./g, ""); //验证第一个字符是数字
+        obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+        obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d).*$/, '$1$2.$3');//只能输入两个小数
+        if (obj.value.indexOf(".") < 0 && obj.value != "") {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+            obj.value = parseFloat(obj.value);
+        }
+    }
+
+    layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element, laytpl) {
+        var xadmin = layui.xadmin,
+            edipao = layui.edipao;
+        // SupplierTypeConfig = {},
+            detail = {},
+            // check = {},
+            tableWhere = {
+                loginStaffId: edipao.getLoginStaffId()
+            };
+
+
+        // var left_tips_index = null;
+        // $('.left-nav #nav').on('mouseenter', '.left-nav-li', function (event) {
+        //     if ($('.left-nav').css('width') != '220px') {
+        //         var tips = $(this).attr('lay-tips');
+        //         left_tips_index = layer.tips(tips, $(this));
+        //     }
+        // })
+        //
+        // $('.left-nav #nav').on('mouseout', '.left-nav-li', function (event) {
+        //     layer.close(left_tips_index);
+        // })
+        // $('.layui-icon-help').on('click', function(){
+        //     alert(1)
+
+
+            // layer.tips("<span>车辆轨迹</span><span>关联人员</span>", this, {tips:[2, '#663ff'], time:3000});
+            // var that = this;
+            // layer.tips('hahahaha', that); //在元素的事件回调体中，follow直接赋予this即可
+        // });
+        //自定义验证规则
+        form.verify({
+            name: function (value) {
+                var i,
+                    code,
+                    str = value.length
+                for (i = 0; i < value.length; i++) {
+                    code = value.charCodeAt(i);
+                    if (code > 255) {
+                        str = str + 1
+                    } else {
+                        str = str
+                    }
+                }
+                if (str > 50) {
+                    return '费用名称不能超过50个字符';
+                }
+            },
+            remark: function (value) {
+                var i,
+                    code,
+                    str = value.length
+                for (i = 0; i < value.length; i++) {
+                    code = value.charCodeAt(i);
+                    if (code > 255) {
+                        str = str + 1
+                    } else {
+                        str = str
+                    }
+                }
+                if (str > 300) {
+                    return '费用名称不能超过300个字符';
+                }
+            },
+            numberOne: function (value) {
+                if (value.length > 0) {
+                    if (value >= 0) {
+                    } else if (value < 0) {
+                        return '输入值必须大于等于0';
+                    } else {
+                        return '输入有误，请重新输入';
+                    }
+                }
+            },
+            // 校验0-100保留两位小数
+            numberTwo: function (value) {
+                if (value.length > 0) {
+                    if (value >= 0 && value <= 100) {
+
+                    } else if (value > 100) {
+                        return '输入数值不能大于100';
+                    } else if (value < 0) {
+                        return '输入数值不能小于0';
+                    } else {
+                        return '输入格式有误,请输入0-100的数值';
+                    }
+                }
+            }
+        });
+        form.on('submit(update)', function (data) {
+            let Arr = new Array()
+            let map = data.field
+            for (var i in map) {
+                let obj = { code: '', value: '' }
+                obj.code = i
+                obj.value = map[i]
+                Arr.push(obj)
+            }
+            edipao.request({
+                type: 'POST',
+                url: '/admin/quality/setting/update',
+                data: {
+                    loginStaffId: tableWhere.loginStaffId,
+                    updateJson: JSON.stringify(Arr)
+                },
+            }).done(function (res) {
+                if (res.code == 0) {
+                    layer.alert("时效配置修改", {
+                        icon: 6,
+                        end: function () {
+                            xadmin.close();
+                            xadmin.father_reload();
+                        }
+                    });
+                } else {
+                    layer.msg(res.message)
+                }
+            });
+            return false;
+        });
+        edipao.request({
+            type: 'GET',
+            url: '/admin/quality/setting/list',
+            where: tableWhere,
+        }).then(function (res) {
+            if (res.code == 0) {
+                detail = res.data.resultMap;
+                if (detail) {
+                    // form.val("editStaff", res.data);
+                    render()
+                }
+            }
+        })
+        function render() {
+            laytpl(feeInfo.innerHTML).render({detail: detail}, function (html) {
+                document.getElementById('view').innerHTML = html;
+                bindEvents();
+                btn1();
+            })
+        }
+        function bindEvents(){
+            $(".w16").click(function(e) {
+                layer.tips(tipMap[e.target.dataset.tip], this, {
+                    tips: [1, "#000"]
+                });
+            });
+        }
+        function btn1() {
+            $('#cancel').click(function () {
+                var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                // layer.closeAll();
+                parent.layer.close(index);
+            })
+
+        }
+    })
+</script>
+</body>
+</html>

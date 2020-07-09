@@ -3,7 +3,7 @@ layui.config({
 }).extend({
     excel: 'layui_exts/excel.min',
     tableFilter: 'TableFilter/tableFiltercopy'
-}).use(['jquery', 'table','layer','excel', 'tableFilter', 'laytpl', 'laypage'], function () {
+}).use(['jquery', 'table','layer','excel','tableFilter', 'laytpl', 'laypage'], function () {
     var table = layui.table,
         $ = layui.jquery,
         layer = layui.layer,
@@ -18,22 +18,15 @@ layui.config({
     function _tableClass(){
         this.user = JSON.parse(sessionStorage.user);
         this.request = { loginStaffId: this.user.staffId };
-        this.pageNo = 1;
+        this.pageNo = 1,
         this.pageSize = 10;
         this.exportSize = 100000;
         this.exportHead = [];
-        this.showList = ['startWarehouse', 'startAddress', 'endPark', 'endAddress','orderType', 'reportToAudit','lineSource', 'updateTime'];
+        this.showList = ['startAddress', 'endAddress','orderType', 'reportToAudit','lineSource', 'updateTime'];
         // 接口
         this.cols = [
-            {field: 'startWarehouse', title: '出发仓库/网点名称', sort: false, hide: false, width:300, templet: function (d) {
-                return d.startWarehouse || "- -";
-            }},
-            {field: 'startAddress', title: '出发地', sort: false, hide: false, width:300},
-            {field: 'endPark', title: '目的仓库/网点名称', sort: false, hide: false, width:300, templet: function (d) {
-                return d.endPark || "- -";
-            }},
-            {field: 'endAddress', title: '目的地', sort: false, hide: false, width:300},
-            {field: 'transportOrderNum', title: '发运趟数', sort: false, hide: false, width:100},
+            {field: 'startAddress', title: '出发地', sort: false, hide: false, minWidth:200},
+            {field: 'endAddress', title: '目的地', sort: false, hide: false, minWidth:200},
             {field: 'orderType', title: '适用类型', sort: false, hide: false, width:120, templet:function(d){
                 switch(d.orderType){
                     case 1:
@@ -55,10 +48,13 @@ layui.config({
             }},
             {field: 'updateTime', title: '更新时间', sort: false, hide: false,width:200}
         ];
-        this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 100};
+        this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 200};
         this.tableFilterIns = null;
         this.tableIns = null;
-        this.where = Object.assign({},this.request);
+        this.where = Object.assign(this.request, {
+            pageNo: this.pageNo,
+            pageSize: this.pageSize
+        });
     }
 
     
@@ -123,8 +119,7 @@ layui.config({
                 url: layui.edipao.API_HOST+'/admin/line/list',
                 title: '订单列表',
                 method: "get",
-                limits: [10, 20, 50, 100],
-                page: true,
+                page: false,
                 request: {
                     pageName: 'pageNo',
                     limitName: 'pageSize'
@@ -147,6 +142,7 @@ layui.config({
                 },
                 done: function (res) {//表格渲染完成的回调
                     if(_t.pageNo == 1){
+                        _t.setLayPage(res.count);
                     }
                     if(reloadOption) {
                         _t.tableIns.reload(JSON.parse(JSON.stringify(reloadOption)));
@@ -164,24 +160,24 @@ layui.config({
             
         },
         // 设置分页
-        // setLayPage: function(total){
-        //     var _t = this;
-        //     laypage.render({
-        //         elem: 'footer-laypage',
-        //         count: total,
-        //         layout: ['count', 'prev', 'page', 'next'],
-        //         limit: _t.pageSize,
-        //         jump: function(obj, first){
-        //             _t.pageNo = obj.curr;
-        //             _t.where = Object.assign(_t.request, {
-        //                 pageNo: obj.curr,
-        //                 pageSize: _t.pageSize
-        //             });
-        //             if(first) return;
-        //             _t.tableRender();
-        //         }
-        //     });
-        // },
+        setLayPage: function(total){
+            var _t = this;
+            laypage.render({
+                elem: 'footer-laypage',
+                count: total,
+                layout: ['count', 'prev', 'page', 'next'],
+                limit: _t.pageSize,
+                jump: function(obj, first){
+                    _t.pageNo = obj.curr;
+                    _t.where = Object.assign(_t.request, {
+                        pageNo: obj.curr,
+                        pageSize: _t.pageSize
+                    });
+                    if(first) return;
+                    _t.tableRender();
+                }
+            });
+        },
         // 过滤
         filterData: function(){
             var _t = this;
@@ -190,15 +186,7 @@ layui.config({
                 'mode' : 'self',//过滤模式
                 'filters' : [
                     {
-                        field: 'startWarehouse',
-                        type: 'input'
-                    },
-                    {
                         field: 'startAddress',
-                        type: 'input'
-                    },
-                    {
-                        field: 'endPark',
                         type: 'input'
                     },
                     {
@@ -206,12 +194,8 @@ layui.config({
                         type: 'input'
                     },
                     {
-                        field: 'transportOrderNum',
-                        type: 'numberslot'
-                    },
-                    {
                         field: 'orderType',
-                        type: 'checkbox',
+                        type: 'radio',
                         data: [
                             { "key":"1", "value":"单车单"},
                             { "key":"2", "value":"背车单"}
@@ -223,7 +207,7 @@ layui.config({
                     },
                     {
                         field: 'lineSource',
-                        type: 'checkbox',
+                        type: 'radio',
                         data: [
                             { "key":"1", "value":"订单轨迹"},
                             { "key":"2", "value":"导入轨迹"},
@@ -238,16 +222,13 @@ layui.config({
                     var where = {},
                         index = 0;
                     layui.each(filters, function(key, value){
-                        if(key == 'lineSource' || key == "orderType"){
+                        if(key != 'reportToAudit'){
                             where['searchFieldDTOList[' + index + '].fieldName'] = key;
-                            where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
-                        } else if(key == "reportToAudit" || key == "transportOrderNum") {
+                            where['searchFieldDTOList[' + index + '].fieldValue'] = value;
+                        } else {
                             where['searchFieldDTOList[' + index + '].fieldName'] = key;
                             where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
                             where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
-                        }else{
-                            where['searchFieldDTOList[' + index + '].fieldName'] = key;
-                            where['searchFieldDTOList[' + index + '].fieldValue'] = value;
                         }
                         index ++;
                     })
@@ -256,10 +237,11 @@ layui.config({
                     if(reload){
                         reloadOption = { where: _t.where, page: { curr: 1 }};
                     }else{
-                        _t.tableIns.reload( { where: _t.where, page: { curr: 1 }});
+                        _t.tableIns.reload( { where: _t.where});
                     }
                 }
             })
+
 
         },
         // 导出
@@ -268,10 +250,7 @@ layui.config({
             edipao.request({
                 type: 'GET',
                 url: '/admin/line/list',
-                data: Object.assign({},_t.where,{
-                    pageNo: 1,
-                    pageSize: this.exportSize
-                })
+                data: _t.where
             }).done(function(res) {
                 if (res.code == 0) {
                     if(res.data){
@@ -327,7 +306,7 @@ layui.config({
                 var data = obj.data;
                 var layEvent = obj.event; 
                 if (layEvent === 'edit') { 
-                    xadmin.open('线路规划', './route-plan.html?lineId=' + data.lineId)
+                    xadmin.open('线路规划', './route-plan.html?guideLineId=' + data.guideLineId)
                 }
             });
             table.on('toolbar(routeList)', function (obj) {

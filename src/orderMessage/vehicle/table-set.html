@@ -1,0 +1,166 @@
+<!doctype html>
+<html class="x-admin-sm">
+
+<head>
+  <meta charset="UTF-8">
+  <title>E地跑运营平台</title>
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+  <meta http-equiv="Expires" CONTENT="-1">
+  <meta http-equiv="Cache-Control" CONTENT="no-cache">
+  <meta http-equiv="Pragma" CONTENT="no-cache">
+  <link rel="stylesheet" href="../../css/font.css">
+  <link rel="stylesheet" href="../../css/xadmin.css">
+  <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
+  <script type="text/javascript" src="../../js/jquery.min.js"></script>
+  <script type="text/javascript" src="../../lib/layui/layui.js"></script>
+  <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+  <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+  <!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  <script>
+  // 是否开启刷新记忆tab功能
+  // var is_remember = false;
+  </script>
+</head>
+
+<body>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-header">
+          车辆表格设置
+        </div>
+        <div class="layui-card-body">
+          <form class="layui-form layui-form-pane" lay-filter="editRole">
+            <table class="layui-table">
+              <colgroup>
+                <col width="88">
+                <col>
+              </colgroup>
+              <thead>
+              <tr>
+                <th>
+                  <input name="full" lay-skin="primary" type="checkbox" lay-filter="father">
+                </th>
+                <th>表格头名称</th>
+              </tr>
+              </thead>
+              <tbody id="itemList">
+              </tbody>
+            </table>
+          </form>
+        </div>
+        <div class="layui-card-header" style="text-align: center; padding: 30px 40px">
+          <button class="layui-btn layui-btn-lg" lay-filter="update" lay-submit>提交</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script id="itemListTpl" type="text/html">
+{{#  layui.each(d.list, function(index, item){ }}
+<tr>
+  <td>
+    <input name="{{item.field}}" lay-skin="primary" lay-filter="role" type="checkbox" value="{{item.field}}">
+  </td>
+  <td>{{ item.title }}</td>
+</tr>
+{{# }) }}
+</script>
+<script type="text/javascript">
+layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, form) {
+  var xadmin = layui.xadmin,
+    edipao = layui.edipao,
+    tableKey = 'vehicle-list';
+  tableHeaderList = [
+    { field: 'vinCode', title: 'vin码', width: 200 },
+    { field: 'waybillStatus', title: '状态', width: 200 },
+    { field: 'transportAssignTime', title: '运输商指派时间', width: 200, align: 'center' },
+    { field: 'outCarportStatus', title: '出库时间', width: 200, align: 'center' },
+    { field: 'fetchStatus', title: '提车', width: 200, align: 'center' },
+    { field: 'fetchBillStatus', title: '提车单', width: 200, align: 'center' },
+    { field: 'relayBillStatus', title: '交接单', width: 200, align: 'center' },
+    { field: 'serviceNoteGetStatus', title: '服务手册', width: 200, align: 'center' },
+    { field: 'qualifiedStatus', title: '合格证', width: 200, align: 'center' },
+    { field: 'tempLicenseStatus', title: '临牌', width: 200, align: 'center' },
+    { field: 'materialPackageStatus', title: '物料打包', width: 200, align: 'center' },
+    { field: 'driverName', title: '短驳司机', width: 200, align: 'center' },
+    { field: 'parkAddress', title: '停放位置', width: 200, align: 'center' },
+    { field: 'keyAddress', title: '钥匙', width: 200, align: 'center' },
+    { field: 'waybillType', title: '类型', width: 200, align: 'center' },
+    { field: 'relationVinCode', title: '关联vin码', width: 200, align: 'center' },
+    { field: 'relationOrderNo', title: '关联订单号', width: 200, align: 'center' }
+  ];
+  laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
+    document.getElementById('itemList').innerHTML = html;
+    form.render();
+  });
+  edipao.request({
+    type: 'GET',
+    url: '/admin/table/show-field/get',
+    data: {
+      tableName: tableKey
+    }
+  }).done(function(res) {
+    if (res.code == 0) {
+      if(!res.data){
+        $('#itemList').find('input').prop("checked", true);
+      }else{
+        var showList = [];
+        try{
+          showList = JSON.parse(res.data);
+        }catch(e){}
+        layui.each(showList, function(index, item){
+          $('input[name='+ item +']').prop("checked", true);
+        })
+      }
+      form.render();
+    }
+  })
+
+  form.on('checkbox(father)', function(data,e){
+    if(data.elem.checked){
+      $(data.elem).closest('.layui-form').find('input').prop("checked", true);
+      form.render();
+    }else{
+      $(data.elem).closest('.layui-form').find('input').prop("checked", false);
+      form.render();
+    }
+  });
+
+  form.on('submit(update)', function(data) {
+    let list = [];
+    $('#itemList').find('input').each(function(index, el) {
+      if($(this).prop('checked')) list.push($(this).val())
+
+    });
+
+    edipao.request({
+      url: '/admin/table/show-field/save',
+      data: {
+        tableName: tableKey,
+        showFieldJson: JSON.stringify(list)
+      }
+    }).then(function(res){
+      if(res.code == 0){
+        layer.alert("修改表格成功", { icon: 6 ,
+          end: function(){
+            xadmin.close();
+            xadmin.father_reload();
+          }
+        });
+      }
+    })
+    return false
+  });
+
+})
+</script>
+</body>
+
+</html>
