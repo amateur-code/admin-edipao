@@ -1,4 +1,5 @@
 window.firstUpload = true;
+console.log(window.innerHeight)
 layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 'upload'], function () {
     var $ = layui.jquery,
       form = layui.form,
@@ -108,6 +109,10 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                     case "msg":
                         _t.showMsg(message.options);
                         break;
+                    case "saveSuccess":
+                        _t.getPositionList(_t.getSource());
+                        _t.getDriverReportList(_t.getSource());
+                        break;
                     case "chosenSuccess":
                         _t.setChosenSource(message.source);
                         break;
@@ -172,7 +177,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
             }
         },
         postMessage(target, message){
-            target.postMessage(message);
+            target.postMessage(message, "*");
         },
         renderTabContent(){
             var _t = this;
@@ -194,11 +199,13 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                     },
                     done: function (res) {
                         if(res.code == 0){
-                            console.log(res)
+                            layer.msg("导入成功", {icon: 1});
                             _t.postMessage(_t.iframe2.contentWindow, {
                                 type: "loadImportData",
                                 source: 2
                             });
+                            _t.getPositionList(2);
+                            _t.getDriverReportList(2);
                         }else{
                             layer.msg(res.message, {icon: 2});
                         }
@@ -216,13 +223,13 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 url: edipao.API_HOST + '/admin/lineTrack/getTrackContentList',
                 method: "get",
                 page: {
-									limit: 5,
-									layout: ['prev', 'page', 'next', 'count', 'skip'],
-								},
+                    limit: 5,
+                    layout: ['prev', 'page', 'next', 'count', 'skip'],
+                },
                 where: Object.assign({lineId: this.lineId, lineSource: source || _this.getSource()}, _this.request),
                 request: {
                     pageName: 'pageNo',
-										limitName: 'pageSize',
+                    limitName: 'pageSize',
                 },
                 parseData: function (res) {
                     if(!res.data) res.data = {};
@@ -274,6 +281,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                     lineSource: source
                 })
             }).done(function(res) {
+                _t.bindReportEvents();
                 if (res.code == 0) {
                     if(_t.pageNumber == 1){
                         _t.setLayPage(res.data.count);
@@ -283,7 +291,6 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                     laytpl(getDriverReportTpl).render(res.data, function(html){
                         reportList.innerHTML = html;
                     });
-                    _t.bindReportEvents();
                     _t.postMessage(_t["iframe" + source * 1].contentWindow, {
                         type: "reports",
                         reports: res.data.reports
@@ -603,7 +610,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 layer.open({
                     type: 1,
                     title: "司机上报",
-                    area: ['450px', '530px'],
+                    area: ['450px', '430px'],
                     content: $("#driver-report-dialog"),
                     btn: ['取消', '确定'],
                     btnAlign: 'c',
@@ -618,6 +625,8 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                     shadeClose: true,
                     btn2: function(){
                         var formData = form.val('report-form');
+                        console.log(formData)
+                        if(!_t.judgeReportData(formData)) returnl
                         _t.submitDriverReport(formData);
                     },
                     success: function () {
@@ -638,6 +647,31 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 _t.updateDriverReportStatus($(this).data('id'), 3);
             })
         },
+        judgeReportData: function (data) {
+            if(!data.driverReportType) return error("请选择上报类型");
+            if(data.driverReportType == 1){
+                if(!data.time) return error("请选择限高时间");
+                if(!data.keyword) return error("请选择限高位置");
+                if(!data.height) return error("请选择限高高度");
+            }
+            if(data.driverReportType == 2){
+                if(!data.time) return error("请选择限行时间");
+                if(!data.keyword) return error("请选择限行位置");
+            }
+            if(data.driverReportType == 3){
+                if(!data.price) return error("请输入收费金额");
+                if(!data.keyword) return error("请选择收费位置");
+            }
+            if(data.driverReportType == 4){
+                if(!data.price) return error("请输入收费金额");
+                if(!data.keyword) return error("请选择拆车位置");
+            }
+            return true;
+            function error(msg) {
+                layer.msg(msg, {icon: 2});
+                return false;
+            }
+        },
         // 选择上报点地址
         // 选择上报点地址
         selectReportAddress: function(){
@@ -646,7 +680,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 layer.open({
                     type: 1,
                     title: "选择位置",
-                    area: ['900px', '600px'],
+                    area: ['500px', '400px'],
                     content: $("#select-map-dialog"),
                     btn: ['取消', '确定'],
                     btnAlign: 'c',
@@ -678,8 +712,8 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
 					var myGeo = new Careland.Geocoder();
 					var layer = new Careland.Layer("point", "layer");
 					var style = new Careland.PointStyle({
-						offsetX: -11,
-						offsetY: -30,
+						offsetX: -10,
+						offsetY: -40,
 						textOffsetX: -5,
 						textOffsetY: -30,
 						src: location.origin + "/images/center.png",
@@ -699,7 +733,6 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
 					ac.setInputForm('seachLocation');
 					ac.addEventListener("onConfirm",function(e){
 							mapInfoWin.close();
-							$('#select-address').text(e.item.poi.name);
 							mapInfoWin.setContent('当前地址：' + e.item.poi.name);
 							mapInfoWin.redraw();
 							layer.clear();
@@ -760,7 +793,6 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
         // 设置视图显示和数据
         setViewData: function(mapInfoWin, marker, data){
             $('#seachLocation').val(data.address);
-            $('#select-address').text(data.address);
             mapInfoWin.setContent('当前地址：' + data.address);
             mapInfoWin.redraw();
             marker.openInfoWindow(mapInfoWin);

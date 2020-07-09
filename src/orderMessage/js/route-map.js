@@ -319,6 +319,7 @@ layui.use(['layer'], function (layer) {
                 if(res.code == 0){
                   _this.updatedLine = pointData;
                   _this.chooseOrderNo = "";
+                  _this.postMessage("saveSuccess");
                   _this.showMsg({
                     type: "alert",
                     content: "保存成功"
@@ -560,8 +561,7 @@ layui.use(['layer'], function (layer) {
                 var mapInfoWin = new Careland.InfoWindow(opts);        
                 _this.map.openInfoWindow(mapInfoWin, point);//通过核心类接口打开窗口
             });
-        })(marker,text,report,point)
-        
+        })(marker,text,report,point);
     }
   }
   Rm.prototype.postMessage = function (message, options) {
@@ -570,7 +570,7 @@ layui.use(['layer'], function (layer) {
       type: message,
     }
     if(options) data.data = options;
-    window.parent.postMessage(data);
+    window.parent.postMessage(data, "*");
   }
   Rm.prototype.showMsg = function (options) {
     var data = {
@@ -578,7 +578,7 @@ layui.use(['layer'], function (layer) {
       type: "msg",
       options: options
     }
-    window.parent.postMessage(data);
+    window.parent.postMessage(data, "*");
   }
   Rm.prototype.playLine = function () {
     var _this = this;

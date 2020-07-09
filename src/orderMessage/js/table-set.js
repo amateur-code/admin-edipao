@@ -52,7 +52,9 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "dealerRemark", title: "经销商备注" },
     ];
     routeTableHeaderList = [
+      {field: 'startWarehouse', title: '出发仓库/网点名称'},
       {field: 'startAddress', title: '出发地'},
+      {field: 'endPark', title: '目的仓库/网点名称'},
       {field: 'endAddress', title: '目的地'},
       {field: 'transportOrderNum', title: '发运趟数'},
       {field: 'orderType', title: '适用类型'},

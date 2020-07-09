@@ -22,12 +22,18 @@ layui.config({
         this.pageSize = 10;
         this.exportSize = 100000;
         this.exportHead = [];
-        this.showList = ['startAddress', 'endAddress','orderType', 'reportToAudit','lineSource', 'updateTime'];
+        this.showList = ['startWarehouse', 'startAddress', 'endPark', 'endAddress','orderType', 'reportToAudit','lineSource', 'updateTime'];
         // 接口
         this.cols = [
-            {field: 'startAddress', title: '出发地', sort: false, hide: false, minWidth:200},
-            {field: 'endAddress', title: '目的地', sort: false, hide: false, minWidth:200},
-            {field: 'transportOrderNum', title: '发运趟数', sort: false, hide: false, minWidth:100},
+            {field: 'startWarehouse', title: '出发仓库/网点名称', sort: false, hide: false, width:300, templet: function (d) {
+                return d.startWarehouse || "- -";
+            }},
+            {field: 'startAddress', title: '出发地', sort: false, hide: false, width:300},
+            {field: 'endPark', title: '目的仓库/网点名称', sort: false, hide: false, width:300, templet: function (d) {
+                return d.endPark || "- -";
+            }},
+            {field: 'endAddress', title: '目的地', sort: false, hide: false, width:300},
+            {field: 'transportOrderNum', title: '发运趟数', sort: false, hide: false, width:100},
             {field: 'orderType', title: '适用类型', sort: false, hide: false, width:120, templet:function(d){
                 switch(d.orderType){
                     case 1:
@@ -49,7 +55,7 @@ layui.config({
             }},
             {field: 'updateTime', title: '更新时间', sort: false, hide: false,width:200}
         ];
-        this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 200};
+        this.toolField = {field: 'operation', title: '操作', toolbar: '#edit', align: 'center', fixed: 'right', width: 100};
         this.tableFilterIns = null;
         this.tableIns = null;
         this.where = Object.assign({},this.request);
@@ -184,7 +190,15 @@ layui.config({
                 'mode' : 'self',//过滤模式
                 'filters' : [
                     {
+                        field: 'startWarehouse',
+                        type: 'input'
+                    },
+                    {
                         field: 'startAddress',
+                        type: 'input'
+                    },
+                    {
+                        field: 'endPark',
                         type: 'input'
                     },
                     {
