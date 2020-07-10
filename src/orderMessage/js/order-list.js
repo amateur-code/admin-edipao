@@ -108,8 +108,8 @@ layui.config({
         returnImagesList: ['','','']
     }
     var returnImagesHolder = [
-        "/images/jiaojie.jpg",
-        "/images/jiaojie.jpg",
+        "/images/jiaojie1.jpeg",
+        "/images/jiaojie2.jpg",
         "/images/half-body.jpg",
     ];
     var filters = [
