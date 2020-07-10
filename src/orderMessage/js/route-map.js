@@ -60,6 +60,7 @@ layui.use(['layer'], function (layer) {
       this.Driving = new Careland.DrivingRoute(this.map, {
         map: this.map,
         multi: 1,
+        mul: 1,
         policy: CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
         viaStyle: viaStyle,
         startStyle: startStyle,
@@ -249,6 +250,9 @@ layui.use(['layer'], function (layer) {
           if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson);
           _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
           _this.isHighway = _this.lineDetail.isHighway;
+          if(_this.lineDetail.isHighway * 1 == 1){
+            _this.Driving.setPolicy(CLDMAP_DRIVING_POLICY_PRIORITY_HIGHWAYS);
+          }
           _this.postMessage("isHighway", {isHighway: _this.isHighway});
           _this.updatedLine = _this.lineDetail.trackContent;
         } catch (error) {}
