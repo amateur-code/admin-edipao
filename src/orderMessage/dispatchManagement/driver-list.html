@@ -16,7 +16,7 @@
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../../js/common.js?VERSION"></script>
-    <script type="text/javascript" src="js/rob-order-list.js?VERSION"></script>
+    <script type="text/javascript" src="./js/driver-list.js?VERSION"></script>
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
@@ -42,7 +42,7 @@
      <span class="layui-breadcrumb">
        <a>派单管理</a>
        <a>
-         <cite id="nav_cite">订单列表</cite>
+         <cite id="nav_cite"></cite>
        </a>
     </span>
     <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
@@ -61,30 +61,31 @@
     </div>
 </div>
 <script type="text/html" id="orderNoTpl">
-  <a data-id="{{d.id}}" data-orderno="{{d.orderNo}}" data-feeid="{{d.feeId}}" class="blue pointer href_order_no" href="javascript:;">{{d.orderNo}}</a>
-</script>
-<script type="text/html" id="driverNameTpl">
-  {{# if(d.driverName){ }}
-  <a data-id="{{d.driverId}}" class="blue pointer href_driver" href="javascript:;">{{d.driverName}}</a>
+  {{# if(d.orderNo){ }}
+    <a data-id="{{d.id}}" data-orderno="{{d.orderNo}}" data-feeid="{{d.feeId}}" class="blue pointer href_order_no" href="javascript:;">{{d.orderNo}}</a>
   {{# }else{ }}
-  - -
+    - -
   {{# } }}
 </script>
-<script type="text/html" id="robDriverTpl">
-  <a data-id="{{d.driverId}}" class="blue pointer href_rob_driver" href="javascript:;">{{d.driverNum || 10}}</a>
+<script type="text/html" id="robNumTpl">
+  <a data-id="{{d.id}}" data-orderno="{{d.orderNo}}" data-feeid="{{d.feeId}}" class="blue pointer href_rob_num" href="javascript:;">{{d.orderNo}}</a>
 </script>
-<script type="text/html" id="loginSumTpl">
-  <a data-id="{{d.driverId}}" class="blue pointer href_login_sum" href="javascript:;">{{d.driverPhone || 0}}</a>
+<script type="text/html" id="driverPhoneTpl">
+  {{# if(d.driverPhone){ }}
+    <a data-id="{{d.driverId}}" class="blue pointer href_driver_phone" href="javascript:;">{{d.driverPhone}}</a>
+  {{# }else{ }}
+    - -
+  {{# } }}
 </script>
 <script type="text/html" id="headerBtns">
-  <div class="layui-btn-container">
-    <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
-    {{# if(permissionList.indexOf('车损报备-导出') != -1){ }}
-    <button class="layui-btn  layui-btn-sm"  lay-event="export">导出</button>
-    {{# } }}
-    <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
-    <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
-  </div>
+    <div class="layui-btn-container">
+        <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
+        {{# if(permissionList.indexOf('车损报备-导出') != -1){ }}
+        <button class="layui-btn  layui-btn-sm"  lay-event="export">导出</button>
+        {{# } }}
+        <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
+        <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
+    </div>
 </script>
 </body>
 </html>

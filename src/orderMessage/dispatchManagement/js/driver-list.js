@@ -34,24 +34,39 @@ layui
     var where = {
       loginStaffId: edipao.getLoginStaffId(),
     };
-    var showList = [];
+    var showList = ["createTime", "type", "remark", "createUser", "status"];
     var exportHead = {}; // 导出头部
     var tableCols = [
       { checkbox: true },
-      { field: "createTime", title: "抢单开始时间", width: 150, templet: function (d) {
-        return d.startTime  || "- -";
+      { field: "createTime", title: "抢单时间", width: 150, templet: function (d) {
+          return d.createTime ? d.createTime : "- -";
       }},
-      { field: "type", title: "抢单结束时间", width: 200, templet: function (d) {
-        return d.endTime || "- -";
+      { field: "type", title: "司机姓名", width: 200, templet: function (d) {
+        return d.driverName || "- -";
       }},
-      { field: "remark", title: "订单池总数", width: 250, templet: "#ordersSumTpl"},
-      { field: "createUser", title: "参与抢单司机数", width: 150, templet: "#driverSumTpl"},
-      { field: "status", title: "中签订单数", width: 150, templet: "#winnerSumTpl"},
-      { field: "status", title: "登录APP司机数", width: 150, templet: "#loginSumTpl"},
-      { field: "status", title: "中签率", width: 150, templet: function (d) {
-          return d.status ? d.status : "- -";
+      { field: "type", title: "司机手机", width: 200, templet: "#driverPhoneTpl"},
+      { field: "remark", title: "司机身份证", width: 250, templet: function (d) {
+          return d.remark ? d.remark : "- -";
+      }},
+      { field: "createUser", title: "押金状态", width: 150, templet: function (d) {
+          return d.createUser ? d.createUser : "- -";
       }},
     ];
+    var tableColsJoin = [
+      { checkbox: true },
+      { field: "type", title: "司机姓名", width: 200, templet: function (d) {
+        return d.driverName || "- -";
+      }},
+      { field: "type", title: "司机手机", width: 200, templet: "#driverPhoneTpl"},
+      { field: "remark", title: "司机身份证", width: 250, templet: function (d) {
+          return d.remark ? d.remark : "- -";
+      }},
+      { field: "createUser", title: "押金状态", width: 150, templet: function (d) {
+          return d.createUser ? d.createUser : "- -";
+      }},
+      { field: "createUser", title: "抢单数", width: 150, templet: "#robNumTpl"},
+      { field: "createUser", title: "中签订单", width: 150, templet: "#orderNoTpl"},
+    ]
     function DataNull(data) {
       if (data == null || data == "") {
         return "- -";
@@ -61,7 +76,15 @@ layui
     }
     function List() {
       var qs = edipao.urlGet();
-      this.tableKey = "rob-list-table";
+      this.action = qs.action;
+      if(this.action == "join"){
+        $("#nav_cite").html("参与抢单司机");
+        this.tableKey = "join-rob-driver-list-table";
+        tableCols = tableColsJoin;
+      }else{
+        $("#nav_cite").html("抢单司机");
+        this.tableKey = "rob-driver-list-table";
+      }
       this.orderNo = qs.orderNo;
       this.orderStatus = qs.orderStatus;
       window.orderStatus = this.orderStatus;
@@ -163,29 +186,21 @@ layui
     };
     List.prototype.bindEvents = function () {
       var _this = this;
-      $(".href_order_sum").unbind().on("click", function (e) {
+      $(".href_driver_phone").unbind().on("click", function (e) {
         var id = e.target.dataset.id;
-        xadmin.open('订单池','./rob-order-list.html?action=all');
+        xadmin.open('司机信息','../../DriverManager/DriverArchives/info.html?id=' + id);
       });
-      $(".href_driver_sum").unbind().on("click", function (e) {
+      $(".href_rob_num").unbind().on("click", function (e) {
         var id = e.target.dataset.id;
-        xadmin.open('参与抢单司机', './driver-list.html?action=join');
+        xadmin.open('订单池','./rob-order-list.html?action=driver');
       });
-      $(".href_winner_sum").unbind().on("click", function (e) {
-        var id = e.target.dataset.id;
-        xadmin.open('中签订单','../../DriverManager/DriverArchives/info.html?id=' + id);
-      });
-      $(".href_login_sum").unbind().on("click", function (e) {
-        var id = e.target.dataset.id;
-        xadmin.open('登录司机','../../DriverManager/DriverArchives/info.html?id=' + id);
+      $(".href_order_no").unbind().on("click", function (e) {
+        var dataset = e.target.dataset;
+        var pid = 200;
+        xadmin.open('查看订单', '../order-view.html?orderNo=' + dataset.orderno + "&orderId=" + dataset.id + "&action=view" + "&feeId=" + dataset.feeid + "&perssionId=" + pid);
       });
     }
     List.prototype.bindTableEvents = function () {
-      // if(location.href.indexOf("test") > -1){
-      //   $("#nav_cite").on("click", function (e) {
-      //     top.xadmin.add_tab("demo", "customerManager/dotArchives/demo.html");
-      //   });
-      // }
       var _this = this;
       table.on("tool(damageList)", handleEvent);
       table.on("toolbar(damageList)", handleEvent);
@@ -331,7 +346,7 @@ layui
           {
             sheet1: exportData,
           },
-          "抢单数据.xlsx",
+          "司机签到数据.xlsx",
           "xlsx"
         );
         exportLog();
@@ -341,7 +356,7 @@ layui
         var params = {
           operationModule: 15,
           dataPk: _this.orderNo,
-          operationRemark: "导出抢单数据",
+          operationRemark: "导出司机签到数据",
         };
         edipao.exportLog(params);
       }

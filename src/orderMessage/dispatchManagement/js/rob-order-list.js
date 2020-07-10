@@ -193,6 +193,7 @@ layui.config({
       {field: 'tailPayAmount', title: '尾款金额', sort: false,width: 200, hide: false, templet: function (d) {
         return d.tailPayAmount + "元";
       }},
+      {field: 'tailPayAmount', title: '抢单司机', sort: false,width: 200, hide: false, templet: "#robDriverTpl"},
     ];
     function DataNull(data) {
       if (data == null || data == "") {
@@ -311,6 +312,9 @@ layui.config({
         var dataset = e.target.dataset;
         var pid = 200;
         xadmin.open('查看订单', '../order-view.html?orderNo=' + dataset.orderno + "&orderId=" + dataset.id + "&action=view" + "&feeId=" + dataset.feeid + "&perssionId=" + pid);
+      });
+      $(".href_rob_driver").unbind().on("click", function (e) {
+        xadmin.open('抢单司机', './driver-list.html?action=rob');
       });
     }
     List.prototype.bindTableEvents = function () {

@@ -123,6 +123,23 @@
     { field: 'status', title: '登录APP司机数'},
     { field: 'status', title: '中签率'},
   ]
+  var joinRobDriverTableHeaderList = [
+    { field: 'type', title: '司机姓名' },
+    { field: 'type', title: '司机手机' },
+    { field: 'remark', title: '司机身份证' },
+    { field: 'createUser', title: '押金状态' },
+    { field: 'createUser', title: '抢单数' },
+    { field: 'createUser', title: '中签订单' }
+  ]
+  var robDriverTableHeaderList = [
+    { field: 'createTime', title: '抢单时间' },
+    { field: 'type', title: '司机姓名' },
+    { field: 'type', title: '司机手机' },
+    { field: 'remark', title: '司机身份证' },
+    { field: 'createUser', title: '押金状态' }
+  ]
+  headers["rob-driver-list-table"] = robDriverTableHeaderList;
+  headers["join-rob-driver-list-table"] = joinRobDriverTableHeaderList;
   headers["rob-order-list-table"] = robOrderListTableHeaderList;
   headers["driver-sign-list-table"] = driverSignTableHeaderList;
   headers["rob-list-table"] = robListTableHeaderList;
