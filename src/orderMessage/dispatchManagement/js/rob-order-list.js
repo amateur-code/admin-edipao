@@ -75,6 +75,8 @@ layui.config({
       tableFilterIns,
       reloadOption = null;
     window.permissionList = edipao.getMyPermission();
+    var dataPermission = edipao.getDataPermission();
+    window.dataPermission = dataPermission;
     window.form = form;
     var where = {
       loginStaffId: edipao.getLoginStaffId(),
@@ -172,15 +174,7 @@ layui.config({
           });
           return result || "- -";
       }},
-      {field: 'driverName', title: '司机姓名', sort: false, minWidth: 130, templet: function (d) {
-          var driverName = "<a class='table_a pointer blue list_driver_name' data-id="+ d.driverId +">{{}}</a>";
-          if(d.driverName){
-              driverName = driverName.replace("{{}}", d.driverName);
-          }else{
-              driverName = "- -";
-          }
-          return driverName;
-      }},
+      {field: 'driverName', title: '司机姓名', sort: false, minWidth: 130, templet: "#driverNameTpl"},
       {field: 'driverPhone', title: '司机手机', sort: false,minWidth:120, templet: function (d) {
               return d.driverPhone || "- -";
       }},
@@ -263,8 +257,8 @@ layui.config({
       tableIns = table.render({
         elem: "#damageList",
         id: "damageList",
-        url: edipao.API_HOST + "/admin/order/damage/list",
-        method: "post",
+        url: edipao.API_HOST + "/admin/order/list",
+        method: "get",
         page: true,
         limits: [10, 20, 50, 100],
         where: where,
@@ -274,7 +268,6 @@ layui.config({
         },
         parseData: function (res) {
           edipao.codeMiddleware(res);
-          var data = [];
           orderDTOList = res.data.orderDTOList;
           orderDTOList.forEach(function(item){
               if(item.orderType == 2 && item.masterFlag == "否"){
@@ -282,19 +275,12 @@ layui.config({
               }else{
                   item.showBtn = 1;
               }
-              if(verifyFilter){
-                  if(item.orderApprovalBtn * 1 == 1){
-                      data.push(item);
-                  }
-              }else{
-                  data.push(item);
-              }
           });
           return {
               "code": res.code, //解析接口状态
               "msg": res.message, //解析提示文本
               "count": res.data.totalSize, //解析数据长度
-              "data": data //解析数据列表
+              "data": res.data.orderDTOList //解析数据列表
           }
         },
         toolbar: "#headerBtns",
@@ -324,7 +310,7 @@ layui.config({
       $(".href_order_no").unbind().on("click", function (e) {
         var dataset = e.target.dataset;
         var pid = 200;
-        xadmin.open('查看订单', './order-view.html?orderNo=' + dataset.orderno + "&orderId=" + dataset.id + "&action=view" + "&feeId=" + dataset.feeid + "&perssionId=" + pid);
+        xadmin.open('查看订单', '../order-view.html?orderNo=' + dataset.orderno + "&orderId=" + dataset.id + "&action=view" + "&feeId=" + dataset.feeid + "&perssionId=" + pid);
       });
     }
     List.prototype.bindTableEvents = function () {

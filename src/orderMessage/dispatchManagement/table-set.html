@@ -72,6 +72,7 @@
   var xadmin = layui.xadmin,
       edipao = layui.edipao,
       tableKey = edipao.urlGet().tableKey;
+  var headers = {};
   var driverSignTableHeaderList = [
     { field: 'createTime', title: '司机姓名'},
     { field: 'type', title: '司机手机'},
@@ -81,7 +82,28 @@
     { field: 'status', title: '长春基地排名'},
     { field: 'status', title: '总排名'},
   ];
-  var tableHeaderList = driverSignTableHeaderList;
+  var robOrderListTableHeaderList = [
+    { field: 'createTime', title: '业务单号'},
+    { field: 'type', title: '仓库单号'},
+    { field: 'remark', title: '司机身份证'},
+    { field: 'createUser', title: '押金状态'},
+    { field: 'status', title: '驾照类型'},
+    { field: 'status', title: '长春基地排名'},
+    { field: 'status', title: '总排名'},
+  ]
+  var robListTableHeaderList = [
+    { field: 'createTime', title: '抢单开始时间'},
+    { field: 'type', title: '抢单结束时间'},
+    { field: 'remark', title: '订单池总数'},
+    { field: 'createUser', title: '参与抢单司机数'},
+    { field: 'status', title: '中签订单数'},
+    { field: 'status', title: '登录APP司机数'},
+    { field: 'status', title: '中签率'},
+  ]
+  headers["rob-order-list-table"] = robOrderListTableHeaderList;
+  headers["driver-sign-list-table"] = driverSignTableHeaderList;
+  headers["rob-list-table"] = robListTableHeaderList;
+  var tableHeaderList = headers[tableKey];
   laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
       document.getElementById('itemList').innerHTML = html;
       form.render();
