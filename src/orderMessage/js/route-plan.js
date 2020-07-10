@@ -281,7 +281,6 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                     lineSource: source
                 })
             }).done(function(res) {
-                _t.bindReportEvents();
                 if (res.code == 0) {
                     if(_t.pageNumber == 1){
                         _t.setLayPage(res.data.count);
@@ -290,6 +289,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                     reportList = document.getElementById('report-list');
                     laytpl(getDriverReportTpl).render(res.data, function(html){
                         reportList.innerHTML = html;
+                        _t.bindReportEvents();
                     });
                     _t.postMessage(_t["iframe" + source * 1].contentWindow, {
                         type: "reports",

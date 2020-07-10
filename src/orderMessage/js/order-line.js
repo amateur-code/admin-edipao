@@ -294,7 +294,6 @@ layui.use(['jquery','layer'], function () {
             var polyline = new Careland.Polyline();
             polyline.setPoints(trackInfo);  
             polyline.setStyle(new Careland.LineStyle({color:'rgb(17, 140, 255)',size:5,opacity:100}));      
-            return;
             _t.addOrderLine.add(polyline); 
         },
 

@@ -5,47 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <script src="https://mapapi.careland.com.cn/api/?key=6012dcd6278a2d4db3840604&v=1.3"></script>
+  <script src="./js/line.js"></script>
 </head>
 <body>
   <div id="map" style="width: 800px;height:500px;"></div>
   <button id="button">下载</button>
   <script>
-    document.getElementById("button").addEventListener("click", function(){
-      route.getDrivingRouteData(function(res){
-        console.log(res)
-        var blob = new Blob([res], {
-          type: "application/octet-stream"
-        });
-        console.log(blob)
-        var objectURL = window.URL.createObjectURL(blob);
-        console.log(objectURL)
-        var link = document.createElement('a');
-        link.href = objectURL;
-        link.download = "route";
-        link.click();
-      });
-    });
-    var myGeo = new Careland.Geocoder();
-    var point = new Careland.GbPoint(411067452, 81446126); //创建坐标点
-    var map = new Careland.Map("map", point, 12);
-    map.enableAutoResize(); //启用自动适应容器尺寸变化
-    map.load();
-    var route = new Careland.DrivingRoute(map, {
-      map: map,
-      "autoDragging" : false,
-      "policy" : CLDMAP_DRIVING_POLICY_SYSTEM_DEFAULT,
-    });
-    var start = new Careland.GbPoint(39.95285575566585, 116.45549286816404); //北京
-    var end = new Careland.GbPoint(37.867207343660674, 112.65422333691404); //太原
-    route.setSearchCompleteCallback(function(res){
-      var DrivingRouteResult = route.getResults();
-      console.log(DrivingRouteResult.getViaPois())
-      var RoutePlan = DrivingRouteResult.getPlan(0);
-      var Route = RoutePlan.getRoute(0);
-
-      console.log(Route.getNumSteps())
-    });
-    route.search("叶青大厦", "澳洲康都");
+    var point = new Careland.Point(419364916, 143908009);    //创建坐标点
+    var map = new Careland.Map('map', point, 12); 
+    map.enableAutoResize();                                 //启用自动适应容器尺寸变化
+    map.load(); 
+    var points = [];
+    for(var i in line){
+      var point = Careland.DrawTool.GbPointToKldPoint(line[i].lng, line[i].lat);
+      points.push(new Careland.Point(point.x, point.y));
+    }
+    var layer = new Careland.Layer('polyline', 'layer');		           //创建折线图层
+    map.addLayer(layer);										           //将图层添加到地图上
+    var polyline = new Careland.Polyline();  							   //创建折线
+    polyline.setPoints(points);									//设置折线经过的点
+    polyline.setStyle(new Careland.LineStyle({color:'#000000',size:6,opacity:40}));		//设置折线的样式
+    layer.add(polyline);
   </script>
 </body>
 </html>
