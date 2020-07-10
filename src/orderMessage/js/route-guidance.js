@@ -28,11 +28,15 @@ layui.config({
             {field: 'startWarehouse', title: '出发仓库/网点名称', sort: false, hide: false, width:300, templet: function (d) {
                 return d.startWarehouse || "- -";
             }},
-            {field: 'startAddress', title: '出发地', sort: false, hide: false, width:300},
+            {field: 'startAddress', title: '出发地', sort: false, hide: false, width:300, templet: function (d) {
+                return d.startAddress || "- -";
+            }},
             {field: 'endPark', title: '目的仓库/网点名称', sort: false, hide: false, width:300, templet: function (d) {
                 return d.endPark || "- -";
             }},
-            {field: 'endAddress', title: '目的地', sort: false, hide: false, width:300},
+            {field: 'endAddress', title: '目的地', sort: false, hide: false, width:300, templet: function (d) {
+                return d.endAddress || "- -";
+            }},
             {field: 'transportOrderNum', title: '发运趟数', sort: false, hide: false, width:100},
             {field: 'orderType', title: '适用类型', sort: false, hide: false, width:120, templet:function(d){
                 switch(d.orderType){
@@ -40,6 +44,8 @@ layui.config({
                         return '单车单';
                     case 2:
                         return '背车单';
+                    default:
+                        return "- -";
                 }
             }},
             {field: 'reportToAudit', title: '上报待审', sort: false, hide: false, width:120},
@@ -51,6 +57,8 @@ layui.config({
                         return '导入轨迹';
                     case 3:
                         return '地图规划';
+                    default:
+                        return "- -";
                 }
             }},
             {field: 'updateTime', title: '更新时间', sort: false, hide: false,width:200}
