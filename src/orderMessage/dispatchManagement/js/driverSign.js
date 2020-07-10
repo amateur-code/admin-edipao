@@ -157,8 +157,6 @@ layui
           if (!res.data || res.data == null || res.data.length < 1) {
             $(".layui-table-header").css("overflow-x", "scroll");
           } else {
-            $(window).unbind("resize");
-            resizeTable();
             $(".layui-table-header").css("overflow", "hidden");
           }
           if(reloadOption) {
@@ -168,50 +166,6 @@ layui
           tableFilterIns && tableFilterIns.reload(); // 搜索
         },
       });
-      var resizeTime = null;
-      function resizeTable() {
-        var w = "100px";
-        var backw = "320px";
-        var backl = "-1px";
-        var l = "-215px";
-        var dur = 300;
-        $(".opeartion_icon").removeClass("layui-icon-next").addClass("layui-icon-prev");
-        if (resizeTime) clearTimeout(resizeTime);
-        resizeTime = setTimeout(function () {
-          $(".layui-table-main td[data-field=operation]")
-            .css("border-color", "#ffffff")
-            .css("background", "#ffffff")
-            .find(".layui-table-cell")
-            .css("width", w)
-            .html("");
-          $(".layui-table-box>.layui-table-header th[data-field=operation]")
-            .css("border", "none")
-            .css("color", "#f2f2f2");
-          var $fixed = $(".layui-table-fixed.layui-table-fixed-r");
-          $fixed.removeClass("layui-hide").find(".layui-table-body").css("height", "auto");
-          $fixed.find(".layui-table-header").css("overflow", "visible");
-          $fixed.find(".layui-table-filter").css("left", "60px");
-          $fixed.find("thead .layui-table-cell").css("position", "relative");
-          if (!$fixed.find(".opeartion_icon").length)
-            $fixed.find("thead .layui-table-cell").append("<i class='layui-icon opeartion_icon layui-icon-prev'></i>");
-          $fixed.animate({ right: l }, dur, function () {
-            $(".opeartion_icon")
-              .unbind()
-              .on("click", function (e) {
-                var $this = $(this);
-                if ($this.hasClass("layui-icon-prev")) {
-                  $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", backw);
-                  $this.removeClass("layui-icon-prev").addClass("layui-icon-next");
-                  $fixed.animate({ right: backl }, dur);
-                } else {
-                  $(".layui-table-main td[data-field=operation] .layui-table-cell").css("width", w);
-                  $this.removeClass("layui-icon-next").addClass("layui-icon-prev");
-                  $fixed.animate({ right: l }, dur);
-                }
-              });
-          });
-        }, dur);
-      }
     };
     List.prototype.bindEvents = function () {
       var _this = this;
@@ -221,11 +175,6 @@ layui
       });
     }
     List.prototype.bindTableEvents = function () {
-      // if(location.href.indexOf("test") > -1){
-      //   $("#nav_cite").on("click", function (e) {
-      //     top.xadmin.add_tab("demo", "customerManager/dotArchives/demo.html");
-      //   });
-      // }
       var _this = this;
       table.on("tool(damageList)", handleEvent);
       table.on("toolbar(damageList)", handleEvent);
@@ -240,43 +189,11 @@ layui
           case "reject":
             layer.alert("你没有访问权限", { icon: 2 });
             break;
-          case "add":
-            xadmin.open("新增车损/报备", "./add.html?action=add&orderNo=" + _this.orderNo);
-            break;
           case "export":
             _this.exportExcel();
             break;
           case "tableSet":
             xadmin.open("表格设置", "./table-set.html?tableKey=" + _this.tableKey, 600, 600);
-            break;
-          case "edit":
-            xadmin.open("修改车损/报备", "./add.html?action=edit&id=" + data.id + "&orderNo=" + _this.orderNo);
-            break;
-          case "verify":
-            xadmin.open("审核车损/报备", "./view.html?action=verify&id=" + data.id + "&orderNo=" + _this.orderNo);
-            break;
-          case "info":
-            xadmin.open("查看车损/报备", "./view.html?action=view&id=" + data.id + "&orderNo=" + _this.orderNo);
-            break;
-          case "del":
-            layer.confirm("确定删除吗？", { icon: 3, title: "提示" }, function (index) {
-              edipao
-                .request({
-                  url: "/admin/customer/truckNetwork/del",
-                  type: "POST",
-                  data: {
-                    id: data.id,
-                  },
-                })
-                .then(function (res) {
-                  if (res.code == 0) {
-                    layer.msg("删除成功");
-                    tableIns.reload( { where: where, page: { curr: 1 }} );
-                  } else {
-                    layer.msg(res.message);
-                  }
-                });
-            });
             break;
           case "log":
             xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&type=15");

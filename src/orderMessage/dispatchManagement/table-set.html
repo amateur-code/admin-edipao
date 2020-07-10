@@ -72,7 +72,7 @@
   var xadmin = layui.xadmin,
       edipao = layui.edipao,
       tableKey = edipao.urlGet().tableKey;
-  var dotTableHeaderList = [
+  var driverSignTableHeaderList = [
     { field: 'createTime', title: '司机姓名'},
     { field: 'type', title: '司机手机'},
     { field: 'remark', title: '司机身份证'},
@@ -81,7 +81,7 @@
     { field: 'status', title: '长春基地排名'},
     { field: 'status', title: '总排名'},
   ];
-  var tableHeaderList = dotTableHeaderList;
+  var tableHeaderList = driverSignTableHeaderList;
   laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
       document.getElementById('itemList').innerHTML = html;
       form.render();

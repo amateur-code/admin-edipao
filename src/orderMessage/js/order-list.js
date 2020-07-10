@@ -1439,7 +1439,7 @@ layui.config({
                         }else{
                             data.push(item);
                         }
-                        });
+                    });
                     return {
                         "code": res.code, //解析接口状态
                         "msg": res.message, //解析提示文本
