@@ -59,8 +59,6 @@ layui.use(['layer'], function (layer) {
       this.trackHandler = new Careland.Track();
       this.Driving = new Careland.DrivingRoute(this.map, {
         map: this.map,
-        multi: 1,
-        mul: 1,
         policy: CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
         viaStyle: viaStyle,
         startStyle: startStyle,
@@ -464,6 +462,7 @@ layui.use(['layer'], function (layer) {
     var end = trackInfo[trackInfo.length - 1];
     var options = {
       trackInfo: trackInfo,
+      mul: 0
     }
     if(policy == "via"){
       var vias = [];
