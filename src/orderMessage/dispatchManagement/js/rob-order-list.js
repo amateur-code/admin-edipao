@@ -70,7 +70,6 @@ layui.config({
       edipao = layui.edipao,
       excel = layui.excel,
       form = layui.form,
-      edipao = layui.edipao,
       tableIns,
       tableFilterIns,
       reloadOption = null;
