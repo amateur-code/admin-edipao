@@ -11,10 +11,39 @@
   <div id="map" style="width: 800px;height:500px;"></div>
   <button id="button">下载</button>
   <script>
+    var baseStyle = {
+      width: 23,
+      height: 29,
+      offsetX: -13,
+      offsetY: -34,
+      textOffsetX: -5,
+      textOffsetY: -30,
+      fontColor: "#FFF",
+    }
+    var viaStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
+      src: location.origin + "/images/map_sign_pass.png",
+    }));
+    var startStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
+      src: location.origin + "/images/map_sign_start.png",
+    }));
+    var endStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
+      src: location.origin + "/images/map_sign_end.png",
+    }));
     var point = new Careland.Point(419364916, 143908009);    //创建坐标点
     var map = new Careland.Map('map', point, 12); 
     map.enableAutoResize();                                 //启用自动适应容器尺寸变化
     map.load(); 
+    var Driving = new Careland.DrivingRoute(map, {
+      map: map,
+      policy: CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
+      viaStyle: viaStyle,
+      startStyle: startStyle,
+      endStyle: endStyle,
+      autoDragging: true,
+      onSearchComplete: function (obj) {
+        
+      },
+    });
     var points = [];
     for(var i in line){
       var point = Careland.DrawTool.GbPointToKldPoint(line[i].lng, line[i].lat);
@@ -26,6 +55,32 @@
     polyline.setPoints(points);									//设置折线经过的点
     polyline.setStyle(new Careland.LineStyle({color:'#000000',size:6,opacity:40}));		//设置折线的样式
     layer.add(polyline);
+    var trackInfo = [];
+    if(Array.isArray(line)){
+      for(var point of line){
+        trackInfo.push(Careland.DrawTool.GbPointToKldPoint(point.lng, point.lat));
+      }
+    }
+    var start = trackInfo[0];
+    var end = trackInfo[trackInfo.length - 1];
+    var options = {
+      trackInfo: trackInfo,
+      mul: 0
+    }
+    Driving.search(start, end, options);
+    document.getElementById("button").addEventListener("click", function(e){
+      Driving.getDrivingRouteData(function(res){
+        var blob = new Blob([res], {
+          type: "application/octet-stream"
+        });
+        var a = document.createElement("a")
+        a.href = URL.createObjectURL(blob)
+        a.download = "route"
+        a.click()
+        URL.revokeObjectURL(a.href)
+        a.remove();
+      });
+    });
   </script>
 </body>
 </html>

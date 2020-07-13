@@ -98,6 +98,8 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
             this.iframe3 = $("#map3").attr("src", "./route-map.html?source=3&lineId=" + _t.lineId)[0];
             $(window).on("message", function (e) {
                 var message = e.originalEvent.data;
+                var origin = e.originalEvent.origin;
+                if(origin.indexOf("edipao") == -1) return;
                 console.log("route-plan" + JSON.stringify(message));
                 switch(message.type){
                     case "loaded":
