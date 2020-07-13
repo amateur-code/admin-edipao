@@ -50,7 +50,7 @@
                 <div class="layui-form-item">
                   <div><span class="x-red">*</span>抢单开启时间</div>
                   <div class="layui-input-block">
-                    <input id="startTime0" readonly type="text" name="startTime0" lay-verify="nameVerify" placeholder="请选择开始时间" autocomplete="off" class="layui-input">
+                    <input id="startTime0" readonly type="text" name="startTime0" lay-verify="required" placeholder="请选择开始时间" autocomplete="off" class="layui-input">
                   </div>
                 </div>
               </div>
@@ -81,7 +81,8 @@
                 <div class="layui-form-item">
                   <div><span class="x-red">*</span>展示时长</div>
                   <div class="layui-input-block">
-                    <input readonly type="text" name="company" lay-verify="required" placeholder="请输入时长" autocomplete="off" class="layui-input">
+                    <input type="text" name="company" lay-verify="required" placeholder="请输入时长" autocomplete="off" class="layui-input">
+                    <span class="input_unit">分钟</span>
                   </div>
                 </div>
               </div>
@@ -89,7 +90,7 @@
           </div>
         </div>
         <div class="layui-form-item layui-text-align" style="text-align: center;">
-          <button class="layui-btn layui-btn-primary" lay-filter="cancel">
+          <button id="add_cancel" class="layui-btn layui-btn-primary" lay-filter="cancel">
               &emsp;取消&emsp;
           </button>
           <button class="layui-btn layui-bg-blue" lay-filter="submit" lay-submit>
@@ -101,7 +102,7 @@
   </div>
 </div>
 <script type="text/html" id="formTpl">
-  <div class="layui-row time_row layui-col-space10">
+  <div class="layui-row time_row layui-col-space10 time_row_{{d.index}}">
     <div class="layui-col-md4">
       <div class="layui-form-item">
         <div><span class="x-red">*</span>抢单开启时间</div>
@@ -123,10 +124,14 @@
         <div><span class="x-red">*</span>订单范围</div>
         <div class="layui-input-block">
           <input id="range{{d.index}}" readonly type="text" name="range{{d.index}}" lay-verify="required" placeholder="请选择订单范围时间" autocomplete="off" class="layui-input">
+          <div style="text-align: right;padding-top: 0;">
+            <span data-index="{{d.index}}" class="delete_btn">-移除</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  
 </script>
 </body>
 </html>
