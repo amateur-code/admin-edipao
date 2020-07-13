@@ -55,6 +55,11 @@ var hegezhengData = [
     {key: "签收迟到", value: "签收迟到"},
     {key: "正常", value: "正常"},
 ]
+var transportModeData = [
+    {key: "国道", value: "国道"},
+    {key: "高速", value: "高速"},
+    {key: "部分高速", value: "部分高速"},
+]
 var exportLoading = false;
 
 function DataNull(data) {
@@ -103,7 +108,7 @@ layui.config({
         returnImagesList: ['','','']
     }
     var returnImagesHolder = [
-        "/images/jiaojie.jpg",
+        "/images/jiaojie1.jpeg",
         "/images/jiaojie.jpg",
         "/images/half-body.jpg",
     ];
@@ -125,6 +130,7 @@ layui.config({
         { field: "endProvince", type: "province" },
         { field: 'endCity', type: 'provincecity' },
         { field: 'endAddress', type: 'input' },
+        { field: 'transportMode', type: 'checkbox', data: transportModeData },
         { field: 'transportAssignTime', type: 'timeslot' },
         { field: 'dispatchTime', type: 'timeslot' },
         { field: 'openOperator', type: 'contract' },
@@ -326,7 +332,7 @@ layui.config({
                 }else if(key == "orderType" || key == "tailPayStatus" || key == "masterFlag"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
-                }else if(key == "returnAuditStatus" || key == "dispatchMode"){
+                }else if(key == "returnAuditStatus" || key == "dispatchMode" || key == "transportMode"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                 }else if(key == "carModel"){
@@ -404,6 +410,7 @@ layui.config({
                                     uploadObjItem.returnImagesList[index] = item2;
                                 });
                             }
+                            uploadObjItem.sameBatchMixFlag = item.sameBatchMixFlag;
                             uploadObjItem.masterFlag = item.masterFlag == "是";
                             uploadData[item.id + ""] = uploadObjItem;
                         });
@@ -441,7 +448,7 @@ layui.config({
             var index = layer.open({
                 type: 1, 
                 content: html, //这里content是一个普通的String,
-                area: ["600px", "400px"],
+                area: ["600px", "500px"],
                 title: "上传",
                 btn: ["确定", "取消"],
                 yes: function () {
@@ -529,16 +536,33 @@ layui.config({
             var uploadData = JSON.parse(JSON.stringify(options.uploadData));
             var keys = Object.keys(uploadData),
               successFlag = true,
-              emptyFlag = true,
+              emptyFlag = false,
               halfBodyEmptyFlag = true,
               promiseList = [];
+              console.log(uploadData)
             keys.forEach(function (id) {
-                if(uploadData[id].masterFlag && uploadData[id]["returnImagesList"][2]){
+                var item = uploadData[id];
+                if(item.masterFlag && item["returnImagesList"][2]){
                     halfBodyEmptyFlag = false;
                 }
-                uploadData[id]["returnImagesList"].forEach(function (img) {
-                    emptyFlag = !img;
+                if(!item.masterFlag) item["returnImagesList"].length = 2;
+                item["returnImagesList"].forEach(function (img, index) {
+                    if(index == 2) return;
+                    if(imgNull(img) && item.sameBatchMixFlag){
+                        emptyFlag = true;
+                        return;
+                    }
+                    if(index == 0 && !item.sameBatchMixFlag){
+
+                    }else if(imgNull(img)){
+                        emptyFlag = true;
+                        return;
+                    }
+                    
                 });
+                function imgNull(val){
+                    return !val || (val + "" == "null");
+                }
             });
             if(halfBodyEmptyFlag){
                 layer.close(loadLayer);
@@ -547,7 +571,7 @@ layui.config({
             }
             if(emptyFlag){
                 layer.close(loadLayer);
-                layer.msg("请先上传图片",{icon: 2});
+                layer.msg("请按要求上传所有图片后再保存",{icon: 2});
                 return;
             }
             keys.forEach(function (id) {
@@ -559,18 +583,25 @@ layui.config({
                         data: data
                     });
                 }
-                uploadObj = notNull(uploadObj);
+                // uploadObj = notNull(uploadObj);
                 if(uploadObj["returnImagesList"] && uploadObj["returnImagesList"].length > 0){
                     var data = {
                         loginStaffId: user.staffId,
                         truckId: id,
                         type: 5,
-                        images: uploadObj["returnImagesList"].join(","),
+                        images: uploadObj["returnImagesList"].map(function (item) { 
+                            item = item ? item : "null";
+                            return item;
+                         }).join(","),
                     }
                     promiseList.push(getReq(data));
                 }
             });
             $.when.apply($, promiseList).done(function (res1, res2) {
+                if(promiseList.length > 1){
+                    res1 = res1[0];
+                    res2 = res2[0];
+                }
                 if(promiseList.length > 0){
                     console.log(res1)
                     if(res1 && res1.code != 0){
@@ -907,9 +938,9 @@ layui.config({
             $(".list_picture_verify").unbind().on("click", function (e) {
                 var orderId = e.target.dataset.orderid;
                 var driverId = e.target.dataset.driverid;
-                var key = e.target.dataset.key || "returnImages";
                 var type = e.target.dataset.type * 1;
                 var driverBodyImg = "", idLicenceFrontImg = "";
+                var redBorder = false;
                 $.when(method.getOrder(orderId), method.getDriver(driverId)).done(function (res, res2) {
                     res = res[0];
                     res2 = res2[0];
@@ -918,28 +949,23 @@ layui.config({
                     }
                     if(res.code == "0"){
                         res.data.truckDTOList.forEach(function (item) {
-                            if(!item[key]){
-                                item[key] = [];
-                            }else{
-                                item[key] = item[key].split(",");
-                            }
-                            if(key == "returnImages"){
-                                item.returnImages = item.returnImages.filter(function(img){
-                                    if(img.indexOf("driver_body") > -1){
-                                        driverBodyImg = img;
-                                        return false;
-                                    }else{
-                                        return true;
-                                    }
-                                });
-                            }
+                            item.returnImages = item.returnImages ? item.returnImages.split(",") : [];
+                            if(item.masterFlag == "是") redBorder = item.driverBodyImageRedBord;
+                            item.returnImages = item.returnImages.filter(function(img){
+                                if(img.indexOf("driver_body") > -1){
+                                    driverBodyImg = img;
+                                    return false;
+                                }
+                                return true;
+                            });
                         });
                         laytpl($("#pic_verify_tpl").html()).render({
                             list: res.data.truckDTOList, 
-                            key: key, 
+                            key: "returnImages", 
                             driverBodyImg: driverBodyImg,
                             idLicenceFrontImg: idLicenceFrontImg,
-                            action: "verify"
+                            action: "verify",
+                            redBorder: redBorder
                         }, function (html) {
                             var index = layer.open({
                                 type: 1,
@@ -989,28 +1015,26 @@ layui.config({
             $(".list_picture_view").unbind().on("click", function (e) {
                 var orderId = e.target.dataset.orderid;
                 var driverBodyImg = "";
+                var redBorder = false;
                 method.getOrder(orderId).done(function (res) {
                     if(res.code == "0"){
                         res.data.truckDTOList.forEach(function (item) {
-                            if(!item.returnImages){
-                                item.returnImages = [];
-                            }else{
-                                item.returnImages = item.returnImages.split(",");
-                            }
+                            item.returnImages = item.returnImages ? item.returnImages.split(",") : [];
+                            if(item.masterFlag == "是") redBorder = item.driverBodyImageRedBord;
                             item.returnImages = item.returnImages.filter(function(img){
                                 if(img.indexOf("driver_body") > -1){
                                     driverBodyImg = img;
                                     return false;
-                                }else{
-                                    return true;
                                 }
+                                return true;
                             });
                         });
                         laytpl($("#pic_verify_tpl").html()).render({
                             list: res.data.truckDTOList,
                             key: "returnImages",
                             driverBodyImg: driverBodyImg,
-                            action: "view"
+                            action: "view",
+                            redBorder: redBorder
                         }, function (html) {
                             layer.open({
                                 type: 1,
@@ -1521,10 +1545,10 @@ layui.config({
         },
         resizeTable:function () {
             var dur = 500;
-            var w = "460px";  //总的
-            var backw = "100px"; //露出来的
+            var w = "390px";
+            var backw = "100px";
             var r = "-1px";
-            var backr = "-360px";  //缩回去的
+            var backr = "-290px";
             $(".opeartion_icon").removeClass("layui-icon-next").addClass("layui-icon-prev");
             if(method.timer) clearTimeout(method.timer);
             method.timer = setTimeout(function () {
@@ -1630,6 +1654,9 @@ layui.config({
         }},
         {field: 'endAddress', title: '收车地址', sort: false, width: 300, templet: function(d){
             return d.endAddress ? d.endAddress : '- -';
+        }},
+        {field: 'transportMode', title: '运输方式', sort: false, width: 100, templet: function(d){
+            return d.transportMode ? d.transportMode : '- -';
         }},
         {field: 'transportAssignTime', title: '运输商指派时间', sort: false,width: 200, templet: function(d){
             return d.transportAssignTime ? d.transportAssignTime : '- -';
@@ -1887,7 +1914,7 @@ layui.config({
         showList.push(item.field);
     });
     var exportHead={};// 导出头部
-    var toolField = {title: '操作', field: "operation", toolbar: '#barDemo', align: 'left', fixed: 'right', width: 460};
+    var toolField = {title: '操作', field: "operation", toolbar: '#barDemo', align: 'left', fixed: 'right', width: 390};
 
     edipao.request({
         type: 'GET',

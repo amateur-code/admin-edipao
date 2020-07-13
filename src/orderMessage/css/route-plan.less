@@ -6,8 +6,8 @@
   }
   .layui-tab-item{
     padding: 20px 0;
-    .selected{
-      padding-top: 10px;
+    .slelected{
+      padding-top: 20px;
     }
     .upload-handler{
       font-size: 0;
@@ -41,21 +41,13 @@
     .desc{
       padding-bottom: 10px ;
     }
-    .save-btn,
-    .choose-btn,
-    .rebuild-btn,
-    .playLine,
-    .now_line{
+    .choose-btn{
       margin-top: 10px;
     }
   }
 }
 // 司机上报
 .driver-report{
-  #positon-table-container,
-  #report-list-container{
-    padding-right: 7.5px;
-  }
   .no-report{
     padding: 50px 0;
     text-align: center;
@@ -67,7 +59,11 @@
       font-size: 14px;
       font-weight: 600;
     }
-    
+    .add-report{
+      font-size: 12px;
+      color: #118DFF;
+      text-decoration: underline;
+    }
   }
   .report-list{
     .item{
@@ -95,25 +91,12 @@
 }
 .map-container{
   height: 620px;
-  #map,.map{
-    position: relative;
+  #map{
     width:100%;
     height:100%;
     overflow:hidden;
     margin:0;
     padding:0px;
-  }
-  .map-content{
-    position: absolute;
-    left: 0;
-    top: 0;
-    border: none;
-  }
-  .map-show{
-    z-index: 5;
-  }
-  .map-hide{
-    z-index: 4;
   }
 }
 .report-form{
@@ -192,28 +175,4 @@
     }
     
   }
-}
-
-.select-order-dialog{
-  display: none;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-.hide{
-  display: none !important;
-}
-.layui-tab{
-  .layui-tab-title{
-    #add-report{
-      cursor: pointer;
-      font-size: 12px;
-      color: #118DFF;
-      text-decoration: underline;
-      margin-left: 10px;
-    }
-  }
-}
-.pointer{
-  cursor: pointer;
 }
