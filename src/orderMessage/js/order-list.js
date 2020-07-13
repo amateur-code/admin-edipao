@@ -1101,34 +1101,6 @@ layui.config({
                 top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html?orderStatus=" + orderStatus + "&orderNo=" + id + "&perssionId=" + pid, false, "focus");
             });
         },
-        // getExportData: function (cb) {
-        //     var _this = this;
-        //     var checkStatus = table.checkStatus('orderList');
-        //     if(checkStatus.data.length < 1){
-        //         if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
-        //         layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
-        //         exportLoading = true;
-        //         var param = where;
-        //         param['pageNo']= 1;
-        //         param['pageSize'] = 99999;
-        //         edipao.request({
-        //             type: 'GET',
-        //             url: '/admin/order/list',
-        //             data: param,
-        //             timeout: 100000,
-        //         }).done(function (res) {
-        //             exportLoading = false;
-        //             res.data = res.data || {};
-        //             res.data.orderDTOList = res.data.orderDTOList || [];
-        //             cb(res.data.orderDTOList);
-        //         }).fail(function () {
-        //             exportLoading = false;
-        //         });
-        //     }else{
-        //         cb(checkStatus.data);
-        //     }
-            
-        // },
         getExportData: function (cb) {
             var _this = this;
             var checkStatus = table.checkStatus('orderList');
@@ -1162,7 +1134,6 @@ layui.config({
             }
         },
         exportData: function exportExcel() {
-            var _this = this;
             method.getExportData(function (data) {
                 var params = {
                     loginStaffId: user.staffId,
@@ -1181,7 +1152,6 @@ layui.config({
                         var masterFlag = item.masterFlag;
                         var prePayOil = item.prePayOil ? item.prePayOil : '';
                         var startApprovalBtn = item.startApprovalBtn;
-                        var returnApprovalBtn = item.returnApprovalBtn;
                         var openOperator = item.openOperator ? item.openOperator : '';
                         var openOperatorPhone = item.openOperatorPhone ? item.openOperatorPhone : '';
                         var deliveryOperator = item.deliveryOperator ? item.deliveryOperator : '';
@@ -1261,8 +1231,9 @@ layui.config({
                                     if(dataPermission.canViewOrderCost != "Y"){
                                         value = "****" + payStatus;
                                     }else{
-                                        value = item[i] + "元" + "/" + prePayOil + "升" + payStatus;
+                                        value = item[i] + "元" + payStatus;
                                     }
+                                    newObj.prePayOil = prePayOil + "升";
                                     break;
                                 case 'arrivePayAmount':
                                     var payStatus = "";
@@ -1935,6 +1906,7 @@ layui.config({
                     }else{
                         if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
                             exportHead[item.field] = item.title;
+                            if(item.field == "prePayAmount") exportHead.prePayOil = "预付款油升数";
                         }
                     }
                 })
@@ -1943,6 +1915,7 @@ layui.config({
                     if(item.field && showList.indexOf(item.field) != -1){
                         if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
                             exportHead[item.field] = item.title;
+                            if(item.field == "prePayAmount") exportHead.prePayOil = "预付款油升数";
                         }
                     }
                 })

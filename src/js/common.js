@@ -21,7 +21,6 @@ layui.define([], function(exports) {
     Common.prototype.exportData = function (options) {
         var _this = this;
         var promise = $.Deferred();
-        var fieldName = options.fieldName;
         var pageSize = options.pageSize;
         var pageNo = 1;
         var url = options.url;
@@ -29,7 +28,7 @@ layui.define([], function(exports) {
         var limit = options.limit;
         var params = options.params;
         var result = [];
-        var step = 200;
+        var step = options.step || 200;
         var checkFunction = options.checkFunction;
         get();
         function get() {
@@ -44,7 +43,7 @@ layui.define([], function(exports) {
                 data: params,
                 url: url,
                 timeout: 100000
-            }).done(function (res) {
+            }, true).done(function (res) {
                 if(res.code == 0){
                     if(checkFunction(res)){
                         pageNo++;
@@ -119,7 +118,7 @@ layui.define([], function(exports) {
         }
     }
 
-    Common.prototype.request = function(options) {
+    Common.prototype.request = function(options, hideAlert) {
         var that = this;
         options = $.extend({}, this.requestDefaultOption, options)
         options.url = this.API_HOST + options.url;
@@ -129,9 +128,9 @@ layui.define([], function(exports) {
         }
         return $.ajax(options)
             .done(function(res) {
-              that.codeMiddleware(res)
+              that.codeMiddleware(res, hideAlert);
             }).fail(function() {
-              layui.layer.msg('网络异常，请重试');
+              if(!hideAlert) layui.layer.msg('网络异常，请重试');
             });
     }
 
@@ -144,9 +143,9 @@ layui.define([], function(exports) {
         });
     }
 
-    Common.prototype.codeMiddleware = function(res){
+    Common.prototype.codeMiddleware = function(res, hideAlert){
       if(res.code == 0) return;
-      layui.layer.msg(res.message);
+      if(!hideAlert) layui.layer.msg(res.message);
       if(['4010'].indexOf(res.code) !== -1){
          this.tokenExpired()
       }

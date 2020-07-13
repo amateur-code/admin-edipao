@@ -1,4 +1,6 @@
 var provinceList;
+var exportLoading = false;
+
 layui
   .config({
     base: "../../lib/",
@@ -444,34 +446,44 @@ layui
         },
       });
     };
+    List.prototype.getExportData = function (cb) {
+      var _this = this;
+      var checkStatus = table.checkStatus('dotList');
+      if(checkStatus.data.length < 1){
+          if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
+          layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
+          exportLoading = true;
+          edipao.exportData({
+              params: where,
+              url: "/admin/customer/truckNetwork/list",
+              method: "GET",
+              pageSize: "pageSize",
+              limit: 99999,
+              step: 500,
+              checkFunction: function(res){
+                  return !(!res.data || !res.data["receiveTruckNetworkRespList"] || res.data["receiveTruckNetworkRespList"].length == 0);
+              }
+          }).done(function (res) {
+              var data = [];
+              exportLoading = false;
+              if(res.length > 0){
+                  res.forEach(function (item) {
+                      data = data.concat(item.receiveTruckNetworkRespList);
+                  });
+                  cb(data);
+              }else{
+                  exportLoading = false;
+              }
+          });
+      }else{
+          cb(checkStatus.data);
+      }
+    },
     List.prototype.exportExcel = function () {
       var _this = this;
-      var checkStatus = table.checkStatus("dotList");
-      if (checkStatus.data.length > 0) {
-        exportXlsx(checkStatus.data);
-        return;
-      }
-      var param = JSON.parse(JSON.stringify(where));
-      param["pageNo"] = 1;
-      param["pageSize"] = 9999;
-      edipao
-        .request({
-          type: "GET",
-          url: "/admin/customer/truckNetwork/list",
-          data: param,
-        })
-        .done(function (res) {
-          if (res.code == 0) {
-            if (res.data) {
-              res.data = res.data || {};
-              res.data.receiveTruckNetworkRespList = res.data.receiveTruckNetworkRespList || [];
-              var data = res.data.receiveTruckNetworkRespList;
-              exportXlsx(data);
-            }
-          }else{
-
-          }
-        });
+      _this.getExportData(function (data) {
+        exportXlsx(data);
+      });
       function exportXlsx(data) {
         var exportData = [];
         // 添加头部
