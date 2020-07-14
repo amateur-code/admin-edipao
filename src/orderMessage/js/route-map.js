@@ -79,7 +79,7 @@ layui.use(['layer'], function (layer) {
           }
         },
       });
-      this.positionLayer = new Careland.Layer('point', 'layer');
+      this.positionLayer = new Careland.Layer('point', 'layer1');
       this.positionLayer.setStyle(new Careland.PointStyle({
         width: 23,
         height: 29,
@@ -91,7 +91,7 @@ layui.use(['layer'], function (layer) {
         fontColor: "#000",
       }));
       this.map.addLayer(_this.positionLayer);
-      this.layer = new Careland.Layer('point', 'layer');        //地图覆盖物
+      this.layer = new Careland.Layer('point', 'layer2');        //地图覆盖物
       this.map.addLayer(this.layer);
       this.postMessage("loaded");
     } catch (err){
@@ -103,7 +103,9 @@ layui.use(['layer'], function (layer) {
     var _this = this;
     $(window).on("message", function (e) {
       var message = e.originalEvent.data;
-      console.log(`message: ${JSON.stringify(message)}`)
+      var origin = e.originalEvent.origin;
+      if(origin.indexOf("edipao") == -1) return;
+      console.log(`route-map: ${JSON.stringify(message)}`)
       switch(_this.source * 1){
         case 1:
           _this.handleEvent1(message);
@@ -289,6 +291,7 @@ layui.use(['layer'], function (layer) {
       return;
     }
     _this.Driving.getDrivingRouteData(function(res){
+      console.log(res)
       var blob = new Blob([res], {
           type: "application/octet-stream"
       });
@@ -541,7 +544,7 @@ layui.use(['layer'], function (layer) {
     for(var report of reports){
         var marker = new Careland.Marker('image');
         marker.setStyle(style); 
-        var point = new Careland.GbPoint(report.lat,report.lng);
+        var point = new Careland.GbPoint(report.lat, report.lng);
         marker.setPoint(point); 
         var text = '';
         if(report.type == 1){
