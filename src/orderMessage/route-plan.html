@@ -182,8 +182,10 @@
                     <span class="it-txt">限行：{{item.startTime}} - {{item.endTime}}</span>
                 {{# } else if(item.type == 3) { }}
                     <span class="it-txt">收费：{{item.price}}元</span>
-                {{# } else { }}
+                {{# } else if(item.type == 4) { }}
                     <span class="it-txt">拆车：{{item.price}}元</span>
+                {{# }else{ }}
+                    <span class="it-txt">加油站：{{item.price}}元</span>
                 {{# } }}
                 {{#  if(item.status != 4){ }}
                     <span class="it-del pointer" data-id="{{item.id}}">删除</span>

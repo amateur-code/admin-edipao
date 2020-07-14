@@ -552,6 +552,8 @@ layui.use(['layer'], function (layer) {
             text= '收费：'+ report.price + '元';
         }else if(report.type == 4){
             text= '拆车：'+report.price+ '元';
+        }else if(report.type == 4){
+          text= '加油站：'+report.price+ '元';
         }                                         
         _this.layer.add(marker); 
         (function(marker,text,report,point){
