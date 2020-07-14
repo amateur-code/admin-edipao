@@ -469,7 +469,8 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
 
   laydate.render({
     elem: '#effectiveTime',
-    type: 'datetime'
+    type: 'datetime',
+    trigger: 'click'
   });
   edipao.request({
     type: 'get',
@@ -483,40 +484,51 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
       if (resData[0].supplierType == "tempLicenseSupply") {
         laytpl(jgDom.innerHTML).render({ list: resData, check: '1' }, function (html) {
           document.getElementById('jgBody').innerHTML = html;
+          form.render();
         })
-        form.render();
       } else {
         laytpl(jgDom.innerHTML).render({ list: resData, check: '0' }, function (html) {
           document.getElementById('jgBody').innerHTML = html;
+          laydate.render({
+            elem: '#effectiveTime',
+            type: 'datetime',
+            trigger: 'click'
+          });
+          if (res.data[0].supplierType == "unloadCar") {
+            $(".unit_span").text("元 / 次");
+          } else if (res.data[0].supplierType == "oilSupply") {
+            $(".unit_span").text("元 / 升");
+          }
+          form.render();
         })
-        if (res.data[0].supplierType == "unloadCar") {
-          $(".unit_span").text("元 / 次");
-        } else if (res.data[0].supplierType == "oilSupply") {
-          $(".unit_span").text("元 / 升");
-        }
-        form.render();
       }
     }
   })
 
   form.on("select(supplierNo)", function (obj) {
+    
     var type = obj.elem.selectedOptions[0].dataset.type;
     // console.dir(obj.elem.selectedOptions[0])
     if (type == "tempLicenseSupply") {
       laytpl(jgDom.innerHTML).render({ list: resData, check: "1" }, function (html) {
         document.getElementById('jgBody').innerHTML = html;
-      })
-      form.render();
+        form.render();
+      });
     } else {
       laytpl(jgDom.innerHTML).render({ list: resData, check: "0" }, function (html) {
         document.getElementById('jgBody').innerHTML = html;
+        laydate.render({
+          elem: '#effectiveTime',
+          type: 'datetime',
+          trigger: 'click'
+        });
+        if (type == "unloadCar") {
+          $(".unit_span").text("元 / 次");
+        } else if (type == "oilSupply") {
+          $(".unit_span").text("元 / 升");
+        }
+        form.render();
       })
-      if (type == "unloadCar") {
-        $(".unit_span").text("元 / 次");
-      } else if (type == "oilSupply") {
-        $(".unit_span").text("元 / 升");
-      }
-      form.render();
     }
   });
 
