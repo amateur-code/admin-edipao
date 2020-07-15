@@ -184,7 +184,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
         renderTabContent(){
             var _t = this;
             var getTabConentTpl = $("#tabConentTpl").html();
-            laytpl(getTabConentTpl).render(Object.assign({}, {
+            laytpl(getTabConentTpl).render(Object.assign({orderNo: _t.chosenOrderNo}, {
                 sourceList: _t.sourceList,
                 isHighway: _t.isHighway,
             }), function(html){
@@ -293,7 +293,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                         reportList.innerHTML = html;
                         _t.bindReportEvents();
                     });
-                    _t.postMessage(_t["iframe" + source * 1].contentWindow, {
+                    _t.postMessage(_t["iframe" + source].contentWindow, {
                         type: "reports",
                         reports: res.data.reports
                     });
@@ -408,13 +408,11 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                         case 2:
                             txt = '已采纳';
                             break; 
-                        case 1:
-                            txt = '取消采纳';
+                        case 3:
+                            txt = '已取消采纳';
                             break;  
                     }
-                    layer.msg(txt, {
-                        time: 1500,
-                    });
+                    layer.alert(txt, {icon: 1});
                     _t.getDriverReportList(_t.getSource());
                 }
             })
@@ -434,7 +432,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                         $("#select-order-dialog").html(html);
                         $('.order-select').off('click').on('click', function(e){
                             var orderNo = $(this).data('no');
-                            _t.chosenOrderNo = orderNo
+                            _t.chosenOrderNo = orderNo;
                             _t.getOrderLineTrack(orderNo);
                             layer.close(layerIndex)
                         });
@@ -442,13 +440,13 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                     layerIndex = layer.open({
                         type: 1,
                         title: "选择订单",
-                        area: ['450px', '530px'],
+                        area: ['450px', '400px'],
                         content:$("#select-order-dialog"),
                         btn: ['关闭'],
                         btnAlign: 'c',
                         zIndex:9990, //层优先级
                         shadeClose: true,
-                    })
+                    });
                 }
             })
             
@@ -583,7 +581,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 _t.postMessage(_t["iframe" + source].contentWindow, {
                     type: "playLine"
                 });
-            })
+            });
         },
         changeMap: function (source) {
             $("#map" + source).removeClass("map-hide").addClass("map-show").siblings(".map-content").removeClass("map-show").addClass("map-hide");

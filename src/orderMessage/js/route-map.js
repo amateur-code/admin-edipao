@@ -149,6 +149,9 @@ layui.use(['layer'], function (layer) {
         _this.trimPoints = [];
         _this.renderDrivingRoute();
         break;
+      case "reports":
+        _this.renderReportPoints(message.reports);
+        break;
       case "loadDefaultRoute":
         layer.close(_this.topLoadIndex);
         _this.lineDetail = message.data;
@@ -179,6 +182,9 @@ layui.use(['layer'], function (layer) {
         _this.lineDetail.isHighway = _this.isHighway;
         _this.lineDetail.source = _this.source;
         _this.chooseRoute();
+        break;
+      case "reports":
+        _this.renderReportPoints(message.reports);
         break;
       case "save":
         _this.saveRoute();
