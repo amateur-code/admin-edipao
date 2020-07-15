@@ -1150,7 +1150,7 @@ layui.config({
                     for(var i in item){
                         var orderType = item.orderType;
                         var masterFlag = item.masterFlag;
-                        var prePayOil = item.prePayOil ? item.prePayOil : '';
+                        var prePayOil = item.prePayOil;
                         var startApprovalBtn = item.startApprovalBtn;
                         var openOperator = item.openOperator ? item.openOperator : '';
                         var openOperatorPhone = item.openOperatorPhone ? item.openOperatorPhone : '';
