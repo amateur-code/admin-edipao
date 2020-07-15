@@ -496,7 +496,9 @@ layui.use(['layer'], function (layer) {
       layer.alert(status.errmsg, {icon: 2});
       return;
     }
-    _this.trimPoints = obj.vias;
+    _this.trimPoints = obj.vias && obj.vias.map(function (item) {
+      return Careland.DrawTool.KldPointToGbPoint (item.x, item.y);
+    });
     var plan = obj.getPlan(0);
     if(plan){
       for(var i in plan.uidinfo){
@@ -557,7 +559,7 @@ layui.use(['layer'], function (layer) {
             text= '拆车：'+report.price+ '元';
         }else if(report.type == 5){
           text= '加油站：'+report.price+ '元';
-        }                                         
+        }
         _this.layer.add(marker); 
         (function(marker,text,report,point){
             marker.addEventListener("click", function(){  

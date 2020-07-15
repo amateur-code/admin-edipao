@@ -36,25 +36,26 @@ layui.use(['jquery','layer'], function () {
                 console.log(err)
             }
 
-            edipao.request({
-                url: "/admin/order/detail",
-                method: "GET",
-                data: {
-                  id: this.orderId
-                }
-            }).then(res=>{
+            this.getOrderDetail().then(res=>{
                 if(res.code == 0){
                     if(res.data.orderStatus == 3){
                         this.getCarCurrent();
                     }
                 }
-            })
-
+            });
             this.getOrderLineTrack();
             this.getOrderGuideTrack();
             this.bindEvents();
         },
-
+        getOrderDetail(){
+            return edipao.request({
+                url: "/admin/order/detail",
+                method: "GET",
+                data: {
+                  id: this.orderId
+                }
+            })
+        },
         getOrderGuideTrack(){
             var _t = this;
             edipao.request({
@@ -84,14 +85,14 @@ layui.use(['jquery','layer'], function () {
                 if (res.code == 0) {
                     _t.guideLine = JSON.parse(res.data.trackContent);
                     _t.guideDetail = res.data;
-                    _t.addGuideLine = new Careland.Layer('polyline', 'addGuideLine');  
+                    _t.addGuideLine = new Careland.Layer('polyline', 'addGuideLine');
                     _t.map.addLayer(_t.addGuideLine);
                     _t.showGuideLine();
-                    _t.getDriverReportList(lineId);
+                    _t.getDriverReportList(lineId, res.data.lineSource);
                 }
             })
         },
-        getDriverReportList(lineId){
+        getDriverReportList(lineId, lineSource){
             var _t = this;
             edipao.request({
                 type: 'GET',
@@ -99,15 +100,17 @@ layui.use(['jquery','layer'], function () {
                 data: {
                     page: 1,
                     pageSize: 5,
-                    lineId: lineId
+                    lineId: lineId,
+                    lineSource: lineSource,
                 }
             }).done(function(res) {
                 if (res.code == 0) {
                     if(_t.pageNumber == 1){
                         _t.setLayPage(res.data.count);
                     }
-
                     _t.layer.clear();
+                    var vias = [];
+                    var trimPoints = [];
                     var baseStyle = {
                       width: 23,
                       height: 29,
@@ -126,7 +129,30 @@ layui.use(['jquery','layer'], function () {
                     var endStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
                         src: location.origin + "/images/map_sign_end.png",
                     }));
+                    var viaStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
+                        src: location.origin + "/images/map_sign_pass.png",
+                    }));
                     //创建文本标注点
+                    try {
+                        vias = JSON.parse(_t.guideDetail.wayPointJson);
+                    } catch (error) {}
+                    try {
+                        trimPoints = JSON.parse(_t.guideDetail.trimPoints);
+                    } catch (error) {}
+                    vias.forEach(function (item) {
+                        res.data.reports.push({
+                            lat: item.lat,
+                            lng: item.lng,
+                            type: "via",
+                        });
+                    });
+                    trimPoints.forEach(function (item) {
+                        res.data.reports.push({
+                            lat: item.lat,
+                            lng: item.lng,
+                            type: "via",
+                        });
+                    });
                     res.data.reports.push({
                         lat: _t.guideLine[0].lat,
                         lng: _t.guideLine[0].lng,
@@ -139,22 +165,18 @@ layui.use(['jquery','layer'], function () {
                         address: _t.guideDetail.endAddress,
                         type: "end",
                     });
-                    // res.data.reports.push({
-                    //     lat: "40.010684166666664",
-                    //     lng: "116.46739555555556",
-                    //     address: _t.guideDetail.endAddress,
-                    //     type: "",
-                    // });
                     for(var report of res.data.reports){
                         var marker = new Careland.Marker('image');
                         if(report.type == "start"){
                             marker.setStyle(startStyle);
                         }else if(report.type == "end"){
                             marker.setStyle(endStyle);
+                        }else if(report.type == "via"){
+                            marker.setStyle(viaStyle);
                         }else{
                             marker.setStyle(style);
                         }
-                        var point = new Careland.GbPoint(report.lat,report.lng);
+                        var point = new Careland.GbPoint(report.lat, report.lng);
                         marker.setPoint(point); 
                         var text = '';
                         if(report.type == 1){
@@ -165,20 +187,22 @@ layui.use(['jquery','layer'], function () {
                             text= '收费：'+ report.price + '元';
                         }else if(report.type == 4){
                             text= '拆车：'+report.price+ '元';
+                        }else if(report.type == 5){
+                            text= '加油站：'+report.price+ '元';
                         }
                         _t.layer.add(marker);
-                        (function(marker,text,report,point){
+                        (function(marker, text, report, point){
+                            if(report.type == "via") return;
                             marker.addEventListener("click", function(){  
                                 var opts = {
                                     point: point,
                                     content: (text ? text + '</br>' : text) + report.address,
                                     enableAutoPan: true
                                 };
-                                var mapInfoWin = new Careland.InfoWindow(opts);        
+                                var mapInfoWin = new Careland.InfoWindow(opts);
                                 _t.map.openInfoWindow(mapInfoWin, point);//通过核心类接口打开窗口
                             });
-                        })(marker,text,report,point)
-                        
+                        })(marker, text, report, point);
                     }
                 }
             })
@@ -232,7 +256,6 @@ layui.use(['jquery','layer'], function () {
                 }
             })
         },
-
         bindEvents(){
             var _t = this;
             $('#speed').on('click','.speed',function(e){
