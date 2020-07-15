@@ -68,10 +68,6 @@ layui
       var qs = edipao.urlGet();
       this.tableKey = "driver-sign-list-table";
       this.orderNo = qs.orderNo;
-      this.orderStatus = qs.orderStatus;
-      window.orderStatus = this.orderStatus;
-      where["searchFieldDTOList[0].fieldName"] = "orderNo";
-      where["searchFieldDTOList[0].fieldValue"] = this.orderNo;
     }
     List.prototype.init = function () {
       var _this = this;
@@ -120,10 +116,10 @@ layui
     List.prototype.renderTable = function () {
       var _this = this;
       tableIns = table.render({
-        elem: "#damageList",
-        id: "damageList",
-        url: edipao.API_HOST + "/admin/order/damage/list",
-        method: "post",
+        elem: "#driverSignList",
+        id: "driverSignList",
+        url: edipao.API_HOST + "/admin/driver/info/sign/stat",
+        method: "get",
         page: true,
         limits: [10, 20, 50, 100],
         where: where,
@@ -135,8 +131,8 @@ layui
           edipao.codeMiddleware(res);
           var data = [];
           res.data = res.data || {};
-          res.data.ordeDamageEntityList = res.data.ordeDamageEntityList || [];
-          res.data.ordeDamageEntityList.forEach(function (item) {
+          res.data.driverSignDtoList = res.data.driverSignDtoList || [];
+          res.data.driverSignDtoList.forEach(function (item) {
             data.push(item);
           });
           if (res.code == 0) {
@@ -175,9 +171,9 @@ layui
     }
     List.prototype.bindTableEvents = function () {
       var _this = this;
-      table.on("tool(damageList)", handleEvent);
-      table.on("toolbar(damageList)", handleEvent);
-      table.on("checkbox(damageList)", handleEvent);
+      table.on("tool(driverSignList)", handleEvent);
+      table.on("toolbar(driverSignList)", handleEvent);
+      table.on("checkbox(driverSignList)", handleEvent);
       function handleEvent(obj) {
         var data = obj.data;
         obj.event == "add" && permissionList.indexOf("车损报备-新增") == -1 && (obj.event = "reject");
@@ -198,7 +194,7 @@ layui
             xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&type=15");
             break;
           case "reset_search":
-            edipao.resetSearch("damageList", function(){
+            edipao.resetSearch("driverSignList", function(){
                 location.reload();
             });
             break;
@@ -226,7 +222,7 @@ layui
         { field: "status", type: "checkbox", data: statusData },
       ];
       tableFilterIns = tableFilter.render({
-        elem: "#damageList", //table的选择器
+        elem: "#driverSignList", //table的选择器
         mode: "self", //过滤模式
         filters: filters, //过滤项配置
         done: function (filters, reload) {
@@ -235,8 +231,6 @@ layui
           var where = Object.assign({
             loginStaffId: edipao.getLoginStaffId(),
           }, where);
-          where["searchFieldDTOList[0].fieldName"] = "orderNo";
-          where["searchFieldDTOList[0].fieldValue"] = _this.orderNo;
           layui.each(filters, function (key, value) {
             if (key == "createTime") {
               where['searchFieldDTOList['+ index +'].fieldName'] = key;
@@ -271,7 +265,7 @@ layui
     };
     List.prototype.exportExcel = function () {
       var _this = this;
-      var checkStatus = table.checkStatus("damageList");
+      var checkStatus = table.checkStatus("driverSignList");
       if (checkStatus.data.length > 0) {
         exportXlsx(checkStatus.data);
         return;
@@ -289,8 +283,8 @@ layui
           if (res.code == 0) {
             if (res.data) {
               res.data = res.data || {};
-              res.data.ordeDamageEntityList = res.data.ordeDamageEntityList || [];
-              var data = res.data.ordeDamageEntityList;
+              res.data.driverSignDtoList = res.data.driverSignDtoList || [];
+              var data = res.data.driverSignDtoList;
               exportXlsx(data);
             }
           }else{

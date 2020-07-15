@@ -108,7 +108,7 @@ layui.config({
         returnImagesList: ['','','']
     }
     var returnImagesHolder = [
-        "/images/jiaojie.jpg",
+        "/images/jiaojie1.jpeg",
         "/images/jiaojie.jpg",
         "/images/half-body.jpg",
     ];
@@ -545,6 +545,7 @@ layui.config({
                 if(item.masterFlag && item["returnImagesList"][2]){
                     halfBodyEmptyFlag = false;
                 }
+                if(!item.masterFlag) item["returnImagesList"].length = 2;
                 item["returnImagesList"].forEach(function (img, index) {
                     if(index == 2) return;
                     if(imgNull(img) && item.sameBatchMixFlag){
@@ -1439,7 +1440,7 @@ layui.config({
                         }else{
                             data.push(item);
                         }
-                    });
+                        });
                     return {
                         "code": res.code, //解析接口状态
                         "msg": res.message, //解析提示文本
