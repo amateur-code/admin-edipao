@@ -70,7 +70,7 @@
 <script type="text/html" id="headerBtns">
     <div class="layui-btn-container">
         <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
-        {{# if(permissionList.indexOf('车损报备-导出') != -1){ }}
+        {{# if(permissionList.indexOf('车损报备-导出') == -1){ }}
         <button class="layui-btn  layui-btn-sm"  lay-event="export">导出</button>
         {{# } }}
         <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>

@@ -232,6 +232,20 @@ layui.define([], function(exports) {
       }
       return permissionList
     }
+    Common.prototype.getPermissionIdList = function() {
+      var pid = this.urlGet().perssionId,
+          user = layui.sessionData('user'),
+          permissionList = [];
+      if (user) {
+        layui.each(user.funcPermissionDTOList ,function(key,value){
+          if(value.pid == pid){
+            permissionList.push(value.resourceId)
+          }
+        })
+      }
+      return permissionList;
+    }
+
     Common.prototype.resetSearch = function (elemId, cb) {
         var initData;
 		try {

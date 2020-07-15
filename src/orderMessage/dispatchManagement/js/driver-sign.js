@@ -7,17 +7,9 @@ layui
     tableFilter: "TableFilter/tableFiltercopy",
   })
   .use(["jquery", "table", "layer", "excel", "tableFilter", "form"], function () {
-    var statusData = [
-      { key: "已通过", value: "已通过" },
-      { key: "待审核", value: "待审核" },
-      { key: "审核中", value: "审核中" },
-      { key: "已驳回", value: "已驳回" },
-    ];
-    var typeData = [
-      { key: "车损", value: "车损" },
-      { key: "报备", value: "报备" },
-      { key: "补油", value: "补油" },
-      { key: "中途拍照", value: "中途拍照" },
+    var depositStatusData = [
+      { key: "0", value: "未支付" },
+      { key: "1", value: "已支付" },
     ]
     var table = layui.table,
       layer = layui.layer,
@@ -28,37 +20,44 @@ layui
       tableIns,
       tableFilterIns,
       reloadOption = null;
-    window.permissionList = edipao.getMyPermission();
+    window.permissionList = edipao.getPermissionIdList();
     window.form = form;
     var where = {
       loginStaffId: edipao.getLoginStaffId(),
     };
-    var showList = ["createTime", "type", "remark", "createUser", "status"];
+    var showList = [];
     var exportHead = {}; // 导出头部
     var tableCols = [
       { checkbox: true },
-      { field: "createTime", title: "司机姓名", width: 150, templet: function (d) {
-          return d.createTime ? d.createTime : "- -";
+      { field: "driverName", title: "司机姓名", width: 150, templet: function (d) {
+        return d.driverName ? d.driverName : "- -";
       }},
-      { field: "type", title: "司机手机", width: 200, templet: "#driverPhoneTpl"},
-      { field: "remark", title: "司机身份证", width: 250, templet: function (d) {
-          return d.remark ? d.remark : "- -";
+      { field: "driverPhone", title: "司机手机", width: 200, templet: "#driverPhoneTpl"},
+      { field: "driverIdNum", title: "司机身份证", width: 250, templet: function (d) {
+        return d.driverIdNum ? d.driverIdNum : "- -";
       }},
-      { field: "createUser", title: "押金状态", width: 150, templet: function (d) {
-          return d.createUser ? d.createUser : "- -";
+      { field: "depositStatus", title: "押金状态", width: 150, templet: function (d) {
+        var status = "- -";
+        depositStatusData.some(function (item) {
+          if(item.key == d.depositStatus){
+            status = item.value;
+            return true;
+          }
+        });
+        return status;
       }},
-      { field: "status", title: "驾照类型", width: 150, templet: function (d) {
-          return d.status ? d.status : "- -";
+      { field: "driveLicenceType", title: "驾照类型", width: 150, templet: function (d) {
+        return d.driveLicenceType ? d.driveLicenceType : "- -";
       }},
-      { field: "status", title: "长春基地排名", width: 150, templet: function (d) {
-          return d.status ? d.status : "- -";
+      { field: "combCityNumber", title: "长春基地排名", width: 150, templet: function (d) {
+        return d.combCityNumber;
       }},
-      { field: "status", title: "总排名", width: 150, templet: function (d) {
-          return d.status ? d.status : "- -";
+      { field: "globalCityNumber", title: "总排名", width: 150, templet: function (d) {
+        return d.globalCityNumber;
       }},
     ];
     function DataNull(data) {
-      if (data == null || data == "") {
+      if (data == null || String(data) == "") {
         return "- -";
       } else {
         return data;
@@ -176,10 +175,7 @@ layui
       table.on("checkbox(driverSignList)", handleEvent);
       function handleEvent(obj) {
         var data = obj.data;
-        obj.event == "add" && permissionList.indexOf("车损报备-新增") == -1 && (obj.event = "reject");
-        obj.event == "edit" && permissionList.indexOf("车损报备-编辑") == -1 && (obj.event = "reject");
-        obj.event == "export" && permissionList.indexOf("车损报备-导出") == -1 && (obj.event = "reject");
-
+        // obj.event == "export" && permissionList.indexOf("车损报备-导出") == -1 && (obj.event = "reject");
         switch (obj.event) {
           case "reject":
             layer.alert("你没有访问权限", { icon: 2 });
@@ -215,11 +211,13 @@ layui
     List.prototype.setTableFilter = function () {
       var _this = this;
       var filters = [
-        { field: "createTime", type: "timeslot" },
-        { field: "type", type: "checkbox", data: typeData },
-        { field: "remark", type: "input" },
-        { field: "createUser", type: "contract" },
-        { field: "status", type: "checkbox", data: statusData },
+        { field: "driverName", type: "input" },
+        { field: "driverPhone", type: "input" },
+        { field: "driverIdNum", type: "input" },
+        { field: "depositStatus", type: "checkbox", data: depositStatusData },
+        { field: "driveLicenceType", type: "input" },
+        { field: "combCityNumber", type: "numberslot" },
+        { field: "globalCityNumber", type: "numberslot" },
       ];
       tableFilterIns = tableFilter.render({
         elem: "#driverSignList", //table的选择器
@@ -232,24 +230,14 @@ layui
             loginStaffId: edipao.getLoginStaffId(),
           }, where);
           layui.each(filters, function (key, value) {
-            if (key == "createTime") {
-              where['searchFieldDTOList['+ index +'].fieldName'] = key;
-              value = value.split(" 至 ");
-              where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
-              where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
-            }else if(key == "createUser"){
-              value = value.filter(function (item) {
-                return String(item) != "";
-              });
-              value.forEach(function(item, index2){
-                where['searchFieldDTOList['+ (index + index2 * 1) +'].fieldName'] = key;
-                where["searchFieldDTOList[" + (index + index2 * 1) + "].fieldValue"] = item;
-              });
-
-            }else if(key == "type" || key == "status"){
+            if (key == "combCityNumber" || key == "globalCityNumber") {
+              where["searchFieldDTOList[" + index + "].fieldName"] = key;
+              where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
+              where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+            }else if(key == "depositStatus"){
               where['searchFieldDTOList['+ index +'].fieldName'] = key;
               where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
-            } else {
+            }else {
               where["searchFieldDTOList[" + index + "].fieldName"] = key;
               where["searchFieldDTOList[" + index + "].fieldValue"] = value;
             }
@@ -275,8 +263,8 @@ layui
       param["pageSize"] = 9999;
       edipao
         .request({
-          type: "POST",
-          url: "/admin/order/damage/list",
+          type: "get",
+          url: "/admin/driver/info/sign/stat",
           data: param,
         })
         .done(function (res) {
@@ -296,13 +284,23 @@ layui
         // 添加头部
         exportData.push(exportHead);
         // 过滤处理数据
-        layui.each(data, function (k, v) {
+        layui.each(data, function (index, item) {
           var exportObj = {};
-          layui.each(v, function (index, item) {
-            if (index && showList.indexOf(index) != -1) {
-              switch (index) {
+          layui.each(item, function (key, value) {
+            if (key && showList.indexOf(key) != -1) {
+              switch (key) {
+                case "depositStatus":
+                  var result = "- -";
+                  depositStatusData.some(function (item2) {
+                    if(item2.key == value){
+                      result = item2.value;
+                      return true;
+                    }
+                  });
+                  exportObj[key] = result;
+                  break;
                 default:
-                  exportObj[index] = DataNull(item);
+                  exportObj[key] = DataNull(value);
               }
             }
           });
