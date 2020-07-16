@@ -132,6 +132,7 @@ layui.config({
         { field: 'endAddress', type: 'input' },
         { field: 'transportMode', type: 'checkbox', data: transportModeData },
         { field: 'transportAssignTime', type: 'timeslot' },
+        { field: 'cksj', type: 'timeslot' },
         { field: 'dispatchTime', type: 'timeslot' },
         { field: 'openOperator', type: 'contract' },
         { field: 'deliveryOperator', type: 'contract' },
@@ -324,7 +325,7 @@ layui.config({
                         where['searchFieldDTOList['+ index +'].fieldMinValue'] = "1980-01-01 00:00:00";
                         where['searchFieldDTOList['+ index +'].fieldMaxValue'] = "2999-01-01 00:00:00";
                     }
-                }else if(key == "dealerSignTime" || key == "certificateSignTime" || key=="arrivePayTime"||key=="prePayTime"||key=="tailPayTime"||key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
+                }else if(key == "cksj" || key == "dealerSignTime" || key == "certificateSignTime" || key=="arrivePayTime"||key=="prePayTime"||key=="tailPayTime"||key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     value = value.split(" 至 ");
                     where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
@@ -1631,6 +1632,9 @@ layui.config({
         }},
         {field: 'transportAssignTime', title: '运输商指派时间', sort: false,width: 200, templet: function(d){
             return d.transportAssignTime ? d.transportAssignTime : '- -';
+        }},
+        {field: 'cksj', title: '出库时间', sort: false,width: 200, templet: function(d){
+            return d.cksj ? d.cksj : '- -';
         }},
         {field: 'customerMileage', title: '收入里程', sort: false,width: 150, templet: function(d){
             return d.customerMileage ? (d.customerMileage + "km") : '- -';

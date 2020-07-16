@@ -22,6 +22,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "endAddress", title: "收车地址" },
       { field: "transportMode", title: "运输方式" },
       { field: "transportAssignTime", title: "运输商指派时间" },
+      { field: "cksj", title: "出库时间" },
       { field: "dispatchTime", title: "调度时间" },
       { field: "openOperator", title: "开单员" },
       { field: "deliveryOperator", title: "发运经理" },

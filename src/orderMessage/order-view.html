@@ -1052,7 +1052,15 @@
                             {{# if(d.feeUpdateData.tailPayBillType){ }}
                             <div class="check">
                                 <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.feeUpdateData.tailPayBillType}}</span>
+                                {{# if(d.feeUpdateData.tailPayBillType == 1){ }}
+                                <span class="">现结</span>
+                                {{# }else if(d.feeUpdateData.tailPayBillType == 2){ }}
+                                <span class="">月结</span>
+                                {{# }else if(d.feeUpdateData.tailPayBillType == 3){ }}
+                                <span class="">账期</span>
+                                {{# }else{ }}
+                                <span class="">- -</span>
+                                {{# } }}
                             </div>
                             {{# } }}
                         </div>
