@@ -1398,7 +1398,7 @@ layui.config({
                 , id: 'orderList'
                 , parseData: function (res) {
                     var data = [];
-                    orderDTOList = res.data.orderDTOList;
+                    orderDTOList = res.data.orderDTOList || [];
                     orderDTOList.forEach(function(item){
                         if(item.orderType == 2 && item.masterFlag == "否"){
                             item.showBtn = 0;
