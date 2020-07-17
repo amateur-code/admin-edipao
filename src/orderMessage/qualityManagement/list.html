@@ -42,6 +42,12 @@
       transform: translateY(-50%);
       left: 45px;
     }
+    .pointer{
+      cursor: pointer;
+    }
+    .blue{
+      color: #3490E9;
+    }
   </style>
 </head>
 <body>
@@ -128,6 +134,9 @@
 {{# } }}
 <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="log">日志</a>
 </script>
+<script id="orderNoTpl" type="text/html">
+  <a class="blue pointer href_order" data-order="{{d.orderNo}}" href="javascript:;">{{d.orderNo}}</a>
+</script>
 <script type="text/javascript">
 //定义时间转换函数
 function dateConvert (dateParms) {
@@ -150,7 +159,7 @@ layui.config({
     tableKey = 'qualityManagement-list',
     tableCols = [ //表头
       { checkbox: true },
-      { field: 'orderNo', title: '业务单号', width: 200 },
+      { field: 'orderNo', title: '业务单号', width: 200 , templet: "#orderNoTpl"},
       {
         field: 'orderType', title: '订单类型', width: 200, templet: function (d) {
           if (d.orderType === 1) {
@@ -182,7 +191,7 @@ layui.config({
           if (!d.driverName && !d.driverPhone) {
             return '- -'
           } else {
-            return d.driverName + '-' + d.driverPhone
+            return `<a class="blue pointer href_driver" data-id="${d.driverId}" href="javascript:;">${d.driverName + '-' + d.driverPhone}</a>`
           }
         }
       },
@@ -466,6 +475,7 @@ layui.config({
       done: function (res, curr, count) {
         $(window).unbind("resize");
         resizeTable();
+        bindEvents();
         if (res.data == null) {
           $('.layui-table-header').css('overflow-x', 'scroll')
         } else {
@@ -478,6 +488,18 @@ layui.config({
         tableFilterIns && tableFilterIns.reload() // 搜索
       }
     });
+
+    function bindEvents() {
+      $(".href_order").unbind().click(function (e) {
+        var orderNo = e.target.dataset.order;
+        var pid = 200;
+        xadmin.open('查看订单', '../order-view.html?orderNo=' + orderNo + "&action=view" + "&perssionId=" + pid);
+      });
+      $(".href_driver").unbind().click(function (e) {
+        var id = e.target.dataset.id;
+        xadmin.open('司机信息','../../DriverManager/DriverArchives/info.html?id=' + id);
+      });
+    }
 
     let filtersHeader = [];
     layui.each(tableCols, function (index, el) {
