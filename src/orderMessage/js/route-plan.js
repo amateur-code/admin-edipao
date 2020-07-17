@@ -112,8 +112,9 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                         _t.showMsg(message.options);
                         break;
                     case "saveSuccess":
-                        _t.getPositionList(_t.getSource());
-                        _t.getDriverReportList(_t.getSource());
+                        var source = _t.getSource();
+                        _t.getPositionList(source);
+                        _t.getDriverReportList(source);
                         break;
                     case "chosenSuccess":
                         _t.setChosenSource(message.source);
@@ -139,6 +140,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
             switch(source * 1){
                 case 1:
                     if(_t.lineDetail.lineSource * 1 == 1){
+                        _t.chosenOrderNo = _t.lineDetail.orderNo;
                         _t.postMessage(_t.iframe1.contentWindow, {
                             type: "loadDefaultRoute",
                             data: _t.lineDetail,
@@ -524,6 +526,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 _t.postMessage(_t["iframe" + tab].contentWindow, {
                     type: "rebuild"
                 });
+                _t.removeChosenSource();
             });
             $('#tabConent').on('click','.order-choose',function() {
                 _t.getOrderListByLineId();
@@ -585,6 +588,12 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
         },
         changeMap: function (source) {
             $("#map" + source).removeClass("map-hide").addClass("map-show").siblings(".map-content").removeClass("map-show").addClass("map-hide");
+        },
+        removeChosenSource:function(){
+            _t.sourceList["1"]["chosen"] = false;
+            _t.sourceList["2"]["chosen"] = false;
+            _t.sourceList["3"]["chosen"] = false;
+            _t.renderTabContent();
         },
         setChosenSource: function (source) {
             var _t = this;

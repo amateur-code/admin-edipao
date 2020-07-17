@@ -5,7 +5,7 @@ layui.use(['layer'], function (layer) {
     this.id = "";
     this.currentLine = null;
     this.lineDetail = null;
-    this.chooseOrderNo = "";
+    this.chosenOrderNo = "";
     var qs = edipao.urlGet();
     this.source = qs.source * 1;
     this.lineId = qs.lineId || "";
@@ -155,6 +155,7 @@ layui.use(['layer'], function (layer) {
       case "loadDefaultRoute":
         layer.close(_this.topLoadIndex);
         _this.lineDetail = message.data;
+        _this.chosenOrderNo = _this.lineDetail.orderNo;
         try {
           if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson);
           _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent);
@@ -297,13 +298,12 @@ layui.use(['layer'], function (layer) {
       return;
     }
     _this.Driving.getDrivingRouteData(function(res){
-      console.log(res)
       var blob = new Blob([res], {
           type: "application/octet-stream"
       });
-      let formData = new FormData()
-      formData.append('file', blob)
-      formData.append('loginStaffId',edipao.getLoginStaffId())
+      let formData = new FormData();
+      formData.append('file', blob);
+      formData.append('loginStaffId',edipao.getLoginStaffId());
       $.ajax({
           type: 'POST',
           url: edipao.API_HOST + '/admin/lineTrack/upload/routeFile', 
@@ -320,6 +320,7 @@ layui.use(['layer'], function (layer) {
               trimPoints: JSON.stringify(_this.trimPoints),
             }
             if(_this.source == 3) params.isHighway = _this.isHighway;
+            console.log(_this)
             if(_this.source == 1 && _this.chosenOrderNo) params.orderNo = _this.chosenOrderNo;
             edipao.request({
                 type: 'POST',
@@ -329,7 +330,6 @@ layui.use(['layer'], function (layer) {
                 _this.postMessage("hideLoading");
                 if(res.code == 0){
                   _this.updatedLine = pointData;
-                  _this.chooseOrderNo = "";
                   _this.postMessage("saveSuccess");
                   _this.showMsg({
                     type: "alert",
@@ -402,6 +402,7 @@ layui.use(['layer'], function (layer) {
       layer.close(_this.topLoadIndex);
       if (res.code == 0) {
         _this.lineDetail = res.data;
+        if(_this.lineDetail.orderNo) _this.chosenOrderNo = _this.lineDetail.orderNo;
         try {
           if(_this.lineDetail.wayPointJson) _this.vias = JSON.parse(_this.lineDetail.wayPointJson || "[]");
           _this.lineDetail.trackContent = JSON.parse(_this.lineDetail.trackContent || "[]");
@@ -477,11 +478,16 @@ layui.use(['layer'], function (layer) {
       var vias = [];
       vias = vias.concat(_this.vias);
       vias = vias.concat(_this.lineDetail.trimPoints.map(function (item) {
-        return Careland.DrawTool.KldPointToGbPoint(item.x, item.y);
+        if(item.x){
+          return Careland.DrawTool.KldPointToGbPoint(item.x, item.y);
+        }else{
+          return (new Careland.GbPoint(item.lat, item.lng));
+        }
       }));
       vias = vias.map(function (item) {
         return (new Careland.GbPoint(item.lat, item.lng));
       });
+      console.log(vias)
       _this.Driving.search(start, end, {via: vias});
     }else if(policy){
       options.trackInfo = [];
@@ -491,6 +497,7 @@ layui.use(['layer'], function (layer) {
       _this.map.setCenter(start);
     }else{
       layer.close(_this.topLoadIndex);
+      if(_this.source != 3) return;
       options.trackInfo = [];
       _this.Driving.search(_this.lineDetail.startAddress, _this.lineDetail.endAddress, options);
     }
@@ -509,7 +516,7 @@ layui.use(['layer'], function (layer) {
     if(plan){
       for(var i in plan.uidinfo){
         for(var j in plan.uidinfo[i].shapepoint){
-          let gbPoint = Careland.DrawTool.KldPointToGbPoint(plan.uidinfo[i].shapepoint[j].x,plan.uidinfo[i].shapepoint[j].y);
+          var gbPoint = Careland.DrawTool.KldPointToGbPoint(plan.uidinfo[i].shapepoint[j].x,plan.uidinfo[i].shapepoint[j].y);
           pointData.push({lng:gbPoint.lng,lat:gbPoint.lat});
         }
       }
