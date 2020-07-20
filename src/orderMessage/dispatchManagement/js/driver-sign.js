@@ -11,6 +11,7 @@ layui
       { key: "0", value: "未支付" },
       { key: "1", value: "已支付" },
     ]
+    var logKey = 20;
     var table = layui.table,
       layer = layui.layer,
       tableFilter = layui.tableFilter,
@@ -20,7 +21,8 @@ layui
       tableIns,
       tableFilterIns,
       reloadOption = null;
-    window.permissionList = edipao.getPermissionIdList();
+    var permissionList = edipao.getPermissionIdList();
+    window.permissionList = permissionList;
     window.form = form;
     var where = {
       loginStaffId: edipao.getLoginStaffId(),
@@ -175,7 +177,7 @@ layui
       table.on("checkbox(driverSignList)", handleEvent);
       function handleEvent(obj) {
         var data = obj.data;
-        // obj.event == "export" && permissionList.indexOf("车损报备-导出") == -1 && (obj.event = "reject");
+        obj.event == "export" && permissionList.indexOf(6011) == -1 && (obj.event = "reject");
         switch (obj.event) {
           case "reject":
             layer.alert("你没有访问权限", { icon: 2 });
@@ -195,7 +197,7 @@ layui
             });
             break;
           case "exportLog":
-            xadmin.open('导出日志', '../../OperateLog/log.html?type=15&action=exportLog&dataPk=' + _this.orderNo);
+            xadmin.open('导出日志', '../../OperateLog/log.html?type=' + logKey + '&action=exportLog');
             break;
         }
       }
@@ -319,8 +321,7 @@ layui
       // 导出日志
       function exportLog() {
         var params = {
-          operationModule: 15,
-          dataPk: _this.orderNo,
+          operationModule: logKey,
           operationRemark: "导出司机签到数据",
         };
         edipao.exportLog(params);
