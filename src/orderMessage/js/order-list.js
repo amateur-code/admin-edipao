@@ -1398,7 +1398,6 @@ layui.config({
                 }
                 , where: { loginStaffId: user.staffId }
                 , height: 'full'
-                , autoSort: true
                 , id: 'orderList'
                 , parseData: function (res) {
                     var data = [];

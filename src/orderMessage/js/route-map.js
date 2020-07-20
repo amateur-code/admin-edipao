@@ -67,7 +67,7 @@ layui.use(['layer'], function (layer) {
         onSearchComplete: function (obj) {
           if(!firstLoaded){
             firstLoaded = true;
-            if(_this.trimPoints.length > 0 || _this.vias.length > 0){
+            if((_this.trimPoints.length > 0 || _this.vias.length > 0)){
               _this.renderDrivingRoute("via");
             }else{
               layer.close(_this.topLoadIndex);
@@ -173,6 +173,7 @@ layui.use(['layer'], function (layer) {
         _this.renderPositionPoint(message.data);
         break;
       case "loadImportData":
+        _this.removeVias();
         _this.getlineOrderData(2);
         break;
       case "getDefaultImportRoute":
@@ -450,8 +451,8 @@ layui.use(['layer'], function (layer) {
       }
     }).then(function(res){
       if(res.code == 0 && res.data && res.data.length > 0){
-        _this.selectedOrderNo = message.orderNo;
         _this.updatedLine = res.data;
+        _this.removeVias();
         _this.renderDrivingRoute();
       }else{
         layer.msg("获取订单轨迹失败");
@@ -476,7 +477,7 @@ layui.use(['layer'], function (layer) {
     }
     if(policy == "via"){
       var vias = [];
-      vias = vias.concat(_this.vias);
+      if(_this.source == 3) vias = vias.concat(_this.vias);
       vias = vias.concat(_this.lineDetail.trimPoints.map(function (item) {
         if(item.x){
           return Careland.DrawTool.KldPointToGbPoint(item.x, item.y);
@@ -586,6 +587,10 @@ layui.use(['layer'], function (layer) {
             });
         })(marker,text,report,point);
     }
+  }
+  Rm.prototype.removeVias = function () {
+    this.trimPoints = [];
+    this.vias = [];
   }
   Rm.prototype.postMessage = function (message, options) {
     var data = {

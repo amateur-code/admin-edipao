@@ -2,7 +2,15 @@ layui.use(['jquery','layer'], function () {
     var $ = layui.jquery;
     var layer = layui.layer;
     var edipao = layui.edipao;
-
+    var baseStyle = {
+        width: 23,
+        height: 29,
+        offsetX: -13,
+        offsetY: -34,
+        textOffsetX: -5,
+        textOffsetY: -30,
+        fontColor: "#FFF",
+    }
     function OrderLine(){
         this.orderNo =  edipao.urlGet().orderNo;
         this.orderId = edipao.urlGet().orderId;
@@ -30,8 +38,10 @@ layui.use(['jquery','layer'], function () {
                     viaStyle: true
                 }); 
                 this.trackHandler = new Careland.Track();
-                this.layer = new Careland.Layer('point', 'layer');        //创建点图层
-                this.map.addLayer(_t.layer);
+                this.layer = new Careland.Layer('point', 'layer1');
+                this.map.addLayer(this.layer);
+                this.trackLayer = new Careland.Layer('point', 'layer2');
+                this.map.addLayer(this.trackLayer);
             } catch (err){
                 console.log(err)
             }
@@ -111,15 +121,7 @@ layui.use(['jquery','layer'], function () {
                     _t.layer.clear();
                     var vias = [];
                     var trimPoints = [];
-                    var baseStyle = {
-                      width: 23,
-                      height: 29,
-                      offsetX: -13,
-                      offsetY: -34,
-                      textOffsetX: -5,
-                      textOffsetY: -30,
-                      fontColor: "#FFF",
-                    }
+                    
                     var style = new Careland.PointStyle(Object.assign({}, baseStyle, {
                         src: location.origin + "/images/map_sign_event.png",
                     }));
@@ -234,8 +236,8 @@ layui.use(['jquery','layer'], function () {
                 if(res.code == 0){
                     if(res.data.length == 0) return layer.msg('订单暂无轨迹');
                    _t.line = res.data;
-                   _t.addOrderLine = new Careland.Layer('polyline', 'addOrderLine');  
-                    _t.map.addLayer(_t.addOrderLine );
+                   _t.addOrderLine = new Careland.Layer('polyline', 'addOrderLine');
+                   _t.map.addLayer(_t.addOrderLine);
                    _t.renderDrivingRoute();
                    _t.addTrackPoints()
                 }
@@ -243,16 +245,31 @@ layui.use(['jquery','layer'], function () {
         },
 
         getCarCurrent(){
-            var _t = this;
+            var _this = this;
             edipao.request({
                 type: 'POST',
                 url: '/admin/order/getCurLoc',
                 data: {
                     orderNo: this.orderNo,
                 }
-            }).then(res=>{
+            }).then(function(res){
                 if(res.code == 0 && res.data){
-                   
+                  var data = res.data;
+                  var marker = new Careland.Marker('image');
+                  var trackStyle = new Careland.PointStyle(Object.assign({}, baseStyle, {
+                    src: location.origin + "/images/truck.png",
+                  }));
+                  marker.setStyle(trackStyle);
+									var point = new Careland.GbPoint(data.currentLat, data.currentLng);
+										marker.setPoint(point); 
+										_this.trackLayer.add(marker);
+										marker.addEventListener("click", function(){
+										marker.openInfoWindow(new Careland.InfoWindow({
+											point: point,
+											content: "当前时间：<br/>" + data.locTime + "<br/>预计到达时间：<br/>" + data.estimatedArriveTime,
+											enableAutoPan: true
+										}), point); //通过核心类接口打开窗口
+									});
                 }
             })
         },
@@ -365,11 +382,13 @@ layui.use(['jquery','layer'], function () {
                 return Math.floor(Math.random() * (upper - lower)) + lower;
             }
             this.trackHandler.isShowPoint = false; 
-            // this.trackHandler.setIconType(CLDMAP_TRACK_ICON_TRUCK);
             this.trackHandler.clear();
             this.trackHandler.setDefaultStyles({trackLineStyles:linestyles});
             this.trackHandler.init(data);
             this.trackHandler.setSpeed(speed);
+            this.trackHandler.addEventListener("onTrackClick", function (e) {
+                console.log(e)
+            });
         },
     }
     
