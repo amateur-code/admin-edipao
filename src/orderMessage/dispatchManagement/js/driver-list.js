@@ -83,6 +83,7 @@ layui
       var qs = edipao.urlGet();
       this.action = qs.action;
       this.robKey = qs.robKey;
+      this.orderNo = qs.orderNo || "";
       var driverConfig = {
         join: {
           title: "参与抢单司机",
@@ -113,6 +114,10 @@ layui
       $("#nav_cite").html(driverConfig[this.action].title);
       where["searchFieldDTOList[0].fieldName"] = "activityBatchNo";
       where["searchFieldDTOList[0].fieldValue"] = this.robKey;
+      if(this.action == "orderJoin"){
+        where["searchFieldDTOList[1].fieldName"] = "orderNo";
+        where["searchFieldDTOList[1].fieldValue"] = this.orderNo;
+      }
     }
     List.prototype.init = function () {
       var _this = this;
@@ -281,6 +286,7 @@ layui
         done: function (filters, reload) {
           filters = $.extend({},filters);
           var index = 1;
+          if(_this.action == "orderJoin") index = 2;
           var where2 = Object.assign({
             loginStaffId: edipao.getLoginStaffId(),
           }, where);

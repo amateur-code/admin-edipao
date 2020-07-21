@@ -202,7 +202,7 @@ layui.config({
         if(!d.showBtn) return "";
         return d.tailPayAmount + "元";
       }},
-      {field: 'tailPayAmount', title: '抢单司机', sort: false,width: 200, hide: false, templet: "#robDriverTpl"},
+      {field: 'grabOrderDriverCount', title: '抢单司机', sort: false,width: 200, hide: false, templet: "#robDriverTpl"},
     ];
     function DataNull(data) {
       if (data == null || data == "") {
@@ -221,7 +221,7 @@ layui.config({
         },
         win: {
           url: "/admin/grab/statistics/winning-order/statistics-list",
-          dataKey: "orderPoolStatisticsList",
+          dataKey: "winningOrderStatisticsList",
           tableKey: "win-rob-order-list-table",
         }
       }
@@ -339,7 +339,8 @@ layui.config({
         xadmin.open('查看订单', '../order-view.html?orderNo=' + dataset.orderno + "&orderId=" + dataset.id + "&action=view" + "&feeId=" + dataset.feeid + "&perssionId=" + pid);
       });
       $(".href_rob_driver").unbind().on("click", function (e) {
-        xadmin.open('抢单司机', './driver-list.html?action=rob');
+        var orderNo = e.target.dataset.orderno;
+        xadmin.open('抢单司机', './driver-list.html?action=orderJoin&robKey=' + _this.robKey + "&orderNo=" + orderNo);
       });
     }
     List.prototype.bindTableEvents = function () {
@@ -413,7 +414,7 @@ layui.config({
         { field: 'prePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'arrivePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'tailPayAmount', type: 'checkbox-numberslot', data: feeData },
-        { field: 'tailPayStatus', type: 'checkbox', data: tailPayStatusData },
+        { field: 'grabOrderDriverCount', type: 'numberslot' },
       ]
       tableFilterIns = tableFilter.render({
         elem: "#" + _this.tableKey, //table的选择器
@@ -499,6 +500,10 @@ layui.config({
                       where2['searchFieldDTOList['+ index +'].fieldMinValue'] = "1980-01-01 00:00:00";
                       where2['searchFieldDTOList['+ index +'].fieldMaxValue'] = "2999-01-01 00:00:00";
                   }
+              }else if(key == "grabOrderDriverCount"){
+                where2['searchFieldDTOList['+ index +'].fieldName'] = "grabOrderDriverCount";
+                where2['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+                where2['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
               }else if(key == "dealerSignTime" || key == "certificateSignTime" || key=="arrivePayTime"||key=="prePayTime"||key=="tailPayTime"||key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
                   where2['searchFieldDTOList['+ index +'].fieldName'] = key;
                   value = value.split(" 至 ");

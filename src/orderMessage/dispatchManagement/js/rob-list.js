@@ -230,39 +230,29 @@ layui
         done: function (filters, reload) {
           filters = $.extend({},filters);
           var index = 1;
-          var where = Object.assign({
+          var where2 = Object.assign({
             loginStaffId: edipao.getLoginStaffId(),
           }, where);
-          where["searchFieldDTOList[0].fieldName"] = "orderNo";
-          where["searchFieldDTOList[0].fieldValue"] = _this.orderNo;
           layui.each(filters, function (key, value) {
-            if (key == "createTime") {
-              where['searchFieldDTOList['+ index +'].fieldName'] = key;
+            if (key == "grabEndTime" || key == "grabStartTime") {
+              where2['searchFieldDTOList['+ index +'].fieldName'] = key;
               value = value.split(" 至 ");
-              where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
-              where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
-            }else if(key == "createUser"){
-              value = value.filter(function (item) {
-                return String(item) != "";
-              });
-              value.forEach(function(item, index2){
-                where['searchFieldDTOList['+ (index + index2 * 1) +'].fieldName'] = key;
-                where["searchFieldDTOList[" + (index + index2 * 1) + "].fieldValue"] = item;
-              });
-
-            }else if(key == "type" || key == "status"){
-              where['searchFieldDTOList['+ index +'].fieldName'] = key;
-              where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
-            } else {
-              where["searchFieldDTOList[" + index + "].fieldName"] = key;
-              where["searchFieldDTOList[" + index + "].fieldValue"] = value;
+              where2['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+              where2['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+            }else if(key == "loginDriverCount" || key == "winningOrderCount" || key == "winningRate" || key == "grabOrderPoolCount" || key == "grabOrderDriverCount"){
+              where2["searchFieldDTOList[" + index + "].fieldName"] = key;
+              where2['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
+              where2['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+            }else {
+              where2["searchFieldDTOList[" + index + "].fieldName"] = key;
+              where2["searchFieldDTOList[" + index + "].fieldValue"] = value;
             }
             index++;
           });
           if(reload){
-            reloadOption = { where: where, page: { curr: 1 }};
+            reloadOption = { where: where2, page: { curr: 1 }};
           }else{
-            tableIns.reload( { where: where, page: { curr: 1 }});
+            tableIns.reload( { where: where2, page: { curr: 1 }});
           }
         },
       });
