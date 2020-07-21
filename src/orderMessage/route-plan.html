@@ -109,10 +109,11 @@
     <div class="layui-tab-item {{d.sourceList[1]['tab'] ? 'layui-show' : ''}}">
         {{# if(d.sourceList[1]['chosen']){ }}
             <div class="desc">轨迹数据来源订单{{d.orderNo}}</div>
-            <div class="selected">
-                <button class="layui-btn layui-btn-disabled now_line">正在使用该方式</button>
+            <div class="layui-btn-group">
                 <button data-source="1" class="layui-btn layui-btn-normal playLine">播放轨迹</button>
                 <button data-source="1" class="layui-btn layui-btn-primary rebuild-btn">重新规划</button>
+                <button data-source="1" class="layui-btn save-btn">保存</button>
+                <button data-source="1" {{d.sourceList[1]['chosen'] ? 'disabled' : ''}} class="layui-btn choose-btn {{d.sourceList[1]['chosen'] ? 'layui-btn-disabled' : ''}}">使用该方式</button>
             </div>
         {{# } else { }}
             <div class="upload-handler">
@@ -120,47 +121,42 @@
                 <span class="upload-name">请选择订单号</span>
                 <button type="button" class="layui-btn layui-btn-lg upload-btn order-choose">选择</button>
             </div>
-            <button data-source="1" class="layui-btn save-btn">保存</button>
-            <button data-source="1" class="layui-btn choose-btn">使用该方式</button>
+            <div class="layui-btn-group">
+                <button data-source="1" class="layui-btn layui-btn-normal playLine">播放轨迹</button>
+                <button data-source="1" class="layui-btn layui-btn-primary rebuild-btn">重新规划</button>
+                <button data-source="1" class="layui-btn save-btn">保存</button>
+                <button data-source="1" {{d.sourceList[1]['chosen'] ? 'disabled' : ''}} class="layui-btn choose-btn {{d.sourceList[1]['chosen'] ? 'layui-btn-disabled' : ''}}">使用该方式</button>
+            </div>
         {{# } }}
     </div>
     <div class="layui-tab-item {{d.sourceList[2]['tab'] ? 'layui-show' : ''}}">
-        {{# if(d.sourceList[2]['chosen']){ }}
-            <div class="desc">数据来源于导入经纬度数据，下载数据</div>
-            <div class="selected">
-                <button class="layui-btn layui-btn-disabled now_line">正在使用该方式</button>
-                <button data-source="2" class="layui-btn layui-btn-normal playLine">播放轨迹</button>
-                <button data-source="2" class="layui-btn layui-btn-primary rebuild-btn">重新规划</button>
-            </div>
-        {{# } else { }}
-            <div class="upload-handler">
-                <span class="label">轨迹数据：</span>
-                <span class="upload-name">请选择文件</span>
-                <button id="upload-btn" type="button" class="layui-btn layui-btn-lg upload-btn limit-choose">选择</button>
-            </div>
+        <div class="upload-handler">
+            <span class="label">轨迹数据：</span>
+            <span class="upload-name">请选择文件</span>
+            <button id="upload-btn" type="button" class="layui-btn layui-btn-lg upload-btn limit-choose">选择</button>
+        </div>
+        <div class="layui-btn-group">
+            <button data-source="2" class="layui-btn layui-btn-normal playLine">播放轨迹</button>
+            <button data-source="2" class="layui-btn layui-btn-primary rebuild-btn">重新规划</button>
             <button data-source="2" class="layui-btn save-btn">保存</button>
-            <button data-source="2" class="layui-btn choose-btn limit-choose">使用该方式</button>
-        {{# } }}
+            <button data-source="2" {{d.sourceList[2]['chosen'] ? 'disabled' : ''}} class="layui-btn choose-btn limit-choose {{d.sourceList[2]['chosen'] ? 'layui-btn-disabled' : ''}}">使用该方式</button>
+        </div>
     </div>
     <div class="layui-tab-item {{d.sourceList[3]['tab'] ? 'layui-show' : ''}}">
         <div class="desc">由地图自动生成一条规划线路</div>
-        {{# if(d.sourceList[3]['chosen']){ }}
-            <div class="selected">
-                <button class="layui-btn layui-btn-disabled">正在使用该方式</button>
-                <button data-source="3" class="layui-btn layui-btn-normal playLine" style="margin-top:0;">播放轨迹</button>
-            </div>
-        {{# } else { }}
-            <form class="layui-form" layui-filter="source_form_3">
-                <div class="layui-inline">
-                    <div class="layui-input-inline">
-                        <input id="policy" type="checkbox" name="policy" lay-skin="switch" lay-text="高速优先|不走高速" lay-filter="policy"/>
-                    </div>
+        <form class="layui-form" layui-filter="source_form_3">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input id="policy" type="checkbox" name="policy" lay-skin="switch" lay-text="高速优先|不走高速" lay-filter="policy"/>
                 </div>
-            </form>
+            </div>
+        </form>
+        <div class="layui-btn-group">
+            <button data-source="3" class="layui-btn layui-btn-normal playLine">播放轨迹</button>
             <button data-source="3" class="layui-btn layui-btn-primary rebuild-btn">重新规划</button>
             <button data-source="3" class="layui-btn save-btn">保存</button>
-            <button data-source="3" class="layui-btn choose-btn">使用该方式</button>
-        {{# } }}
+            <button data-source="3" {{d.sourceList[3]['chosen'] ? 'disabled' : ''}} class="layui-btn choose-btn {{d.sourceList[3]['chosen'] ? 'layui-btn-disabled' : ''}}">使用该方式</button>
+        </div>
     </div>
 </script>
 <!-- 编辑按钮模板 -->

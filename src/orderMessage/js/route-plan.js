@@ -68,7 +68,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 if(res.code == 0){
                     _t.lineDetail = res.data;
                     _t.setTabSource(res.data.lineSource);
-                    // _t.setChosenSource(res.data.lineSource);
+                    _t.setChosenSource(res.data.lineSource);
                     _t.changeMap(res.data.lineSource);
                     element.tabChange("docDemoTabBrief", res.data.lineSource);
                     _t.renderTabContent();
