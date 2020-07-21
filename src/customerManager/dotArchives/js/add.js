@@ -239,7 +239,7 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table'], function(){
       if(e.target.value.length > max) e.target.value = e.target.value.slice(0, max);
     });
     $("#add_fee").unbind().on("click", function (e) {
-      laytpl($("#fee_template").html()).render({index: $(".fee_row").length, feeTpls: _this.feeTpls, startParks: _this.startParks}, function (html) {
+      laytpl($("#fee_template").html()).render({index: new Date().getTime(), feeTpls: _this.feeTpls, startParks: _this.startParks}, function (html) {
         $("#fee_container").append(html);
         form.render("select");
         $(".view_fee").unbind().on("click", _this.handleViewFee);

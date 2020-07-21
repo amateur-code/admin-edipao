@@ -8,17 +8,9 @@ layui
   })
   .use(["jquery", "table", "layer", "excel", "tableFilter", "form"], function () {
     var statusData = [
-      { key: "已通过", value: "已通过" },
-      { key: "待审核", value: "待审核" },
-      { key: "审核中", value: "审核中" },
-      { key: "已驳回", value: "已驳回" },
+      { key: 0, value: "未支付" },
+      { key: 1, value: "已支付" },
     ];
-    var typeData = [
-      { key: "车损", value: "车损" },
-      { key: "报备", value: "报备" },
-      { key: "补油", value: "补油" },
-      { key: "中途拍照", value: "中途拍照" },
-    ]
     var table = layui.table,
       layer = layui.layer,
       tableFilter = layui.tableFilter,
@@ -33,38 +25,52 @@ layui
     var where = {
       loginStaffId: edipao.getLoginStaffId(),
     };
-    var showList = ["createTime", "type", "remark", "createUser", "status"];
+    var showList = [];
     var exportHead = {}; // 导出头部
     var tableCols = [
       { checkbox: true },
       { field: "createTime", title: "抢单时间", width: 150, templet: function (d) {
           return d.createTime ? d.createTime : "- -";
       }},
-      { field: "type", title: "司机姓名", width: 200, templet: function (d) {
-        return d.driverName || "- -";
+      { field: "name", title: "司机姓名", width: 200, templet: function (d) {
+        return d.name || "- -";
       }},
-      { field: "type", title: "司机手机", width: 200, templet: "#driverPhoneTpl"},
-      { field: "remark", title: "司机身份证", width: 250, templet: function (d) {
-          return d.remark ? d.remark : "- -";
+      { field: "phone", title: "司机手机", width: 200, templet: "#driverPhoneTpl"},
+      { field: "idNum", title: "司机身份证", width: 250, templet: function (d) {
+          return d.idNum ? d.idNum : "- -";
       }},
-      { field: "createUser", title: "押金状态", width: 150, templet: function (d) {
-          return d.createUser ? d.createUser : "- -";
+      { field: "depositStatus", title: "押金状态", width: 150, templet: function (d) {
+        var status = "- -";
+        statusData.some(function(item){
+          if(item.key== d.depositStatus) {
+            status = item.value;
+            return true;
+          }
+        })
+        return status;
       }},
     ];
     var tableColsJoin = [
       { checkbox: true },
-      { field: "type", title: "司机姓名", width: 200, templet: function (d) {
-        return d.driverName || "- -";
+      { field: "name", title: "司机姓名", width: 150, templet: function (d) {
+        return d.name || "- -";
       }},
-      { field: "type", title: "司机手机", width: 200, templet: "#driverPhoneTpl"},
-      { field: "remark", title: "司机身份证", width: 250, templet: function (d) {
-          return d.remark ? d.remark : "- -";
+      { field: "phone", title: "司机手机", width: 150, templet: "#driverPhoneTpl"},
+      { field: "idNum", title: "司机身份证", width: 200, templet: function (d) {
+          return d.idNum ? d.idNum : "- -";
       }},
-      { field: "createUser", title: "押金状态", width: 150, templet: function (d) {
-          return d.createUser ? d.createUser : "- -";
+      { field: "depositStatus", title: "押金状态", width: 150, templet: function (d) {
+        var status = "- -";
+        statusData.some(function(item){
+          if(item.key== d.depositStatus) {
+            status = item.value;
+            return true;
+          }
+        })
+        return status;
       }},
-      { field: "createUser", title: "抢单数", width: 150, templet: "#robNumTpl"},
-      { field: "createUser", title: "中签订单", width: 150, templet: "#orderNoTpl"},
+      { field: "grabOrderCount", title: "抢单数", width: 150, templet: "#robNumTpl"},
+      { field: "winningOrderNo", title: "中签订单", width: 150, templet: "#orderNoTpl"},
     ]
     function DataNull(data) {
       if (data == null || data == "") {
@@ -76,19 +82,37 @@ layui
     function List() {
       var qs = edipao.urlGet();
       this.action = qs.action;
-      if(this.action == "join"){
-        $("#nav_cite").html("参与抢单司机");
-        this.tableKey = "join-rob-driver-list-table";
-        tableCols = tableColsJoin;
-      }else{
-        $("#nav_cite").html("抢单司机");
-        this.tableKey = "rob-driver-list-table";
+      this.robKey = qs.robKey;
+      var driverConfig = {
+        join: {
+          title: "参与抢单司机",
+          tableKey: "join-rob-driver-list-table",
+          tableCols: tableColsJoin,
+          url: "/admin/grab/statistics/grab-driver/statistics-list",
+          dataKey: "grabDriverStatisticsList"
+        },
+        login: {
+          title: "登录司机",
+          tableKey: "login-rob-driver-list-table",
+          tableCols: tableColsJoin,
+          url: "/admin/grab/statistics/login-driver/statistics-list",
+          dataKey: "loginDriverStatisticsList",
+        },
+        orderJoin: {
+          title: "参与抢单司机",
+          tableKey: "order-join-rob-driver-list-table",
+          tableCols: tableCols,
+          url: "/admin/grab/statistics/grab-activity/order/driver-list",
+        }
       }
-      this.orderNo = qs.orderNo;
-      this.orderStatus = qs.orderStatus;
-      window.orderStatus = this.orderStatus;
-      where["searchFieldDTOList[0].fieldName"] = "orderNo";
-      where["searchFieldDTOList[0].fieldValue"] = this.orderNo;
+      tableCols = driverConfig[this.action].tableCols;
+      this.dataKey = driverConfig[this.action].dataKey;
+      this.tableKey = driverConfig[this.action].tableKey;
+      this.url = driverConfig[this.action].url;
+      $("#doc-content").html(`<table id="${this.tableKey}" lay-filter="${this.tableKey}"></table>`);
+      $("#nav_cite").html(driverConfig[this.action].title);
+      where["searchFieldDTOList[0].fieldName"] = "activityBatchNo";
+      where["searchFieldDTOList[0].fieldValue"] = this.robKey;
     }
     List.prototype.init = function () {
       var _this = this;
@@ -97,7 +121,7 @@ layui
       _this.bindTableEvents();
       edipao
         .request({
-          type: "GET",
+          method: "GET",
           url: "/admin/table/show-field/get",
           data: {
             tableName: _this.tableKey,
@@ -137,10 +161,10 @@ layui
     List.prototype.renderTable = function () {
       var _this = this;
       tableIns = table.render({
-        elem: "#damageList",
-        id: "damageList",
-        url: edipao.API_HOST + "/admin/order/damage/list",
-        method: "post",
+        elem: "#"+_this.tableKey,
+        id: _this.tableKey,
+        url: edipao.API_HOST + this.url,
+        method: "get",
         page: true,
         limits: [10, 20, 50, 100],
         where: where,
@@ -152,8 +176,8 @@ layui
           edipao.codeMiddleware(res);
           var data = [];
           res.data = res.data || {};
-          res.data.ordeDamageEntityList = res.data.ordeDamageEntityList || [];
-          res.data.ordeDamageEntityList.forEach(function (item) {
+          res.data[_this.dataKey] = res.data[_this.dataKey] || [];
+          res.data[_this.dataKey].forEach(function (item) {
             data.push(item);
           });
           if (res.code == 0) {
@@ -196,19 +220,17 @@ layui
       $(".href_order_no").unbind().on("click", function (e) {
         var dataset = e.target.dataset;
         var pid = 200;
-        xadmin.open('查看订单', '../order-view.html?orderNo=' + dataset.orderno + "&orderId=" + dataset.id + "&action=view" + "&feeId=" + dataset.feeid + "&perssionId=" + pid);
+        xadmin.open('查看订单', '../order-view.html?orderNo=' + dataset.orderno + "&action=view&perssionId=" + pid);
       });
     }
     List.prototype.bindTableEvents = function () {
       var _this = this;
-      table.on("tool(damageList)", handleEvent);
-      table.on("toolbar(damageList)", handleEvent);
-      table.on("checkbox(damageList)", handleEvent);
+      table.on("tool("+_this.tableKey+")", handleEvent);
+      table.on("toolbar("+_this.tableKey+")", handleEvent);
+      table.on("checkbox("+_this.tableKey+")", handleEvent);
       function handleEvent(obj) {
         var data = obj.data;
-        obj.event == "add" && permissionList.indexOf("车损报备-新增") == -1 && (obj.event = "reject");
-        obj.event == "edit" && permissionList.indexOf("车损报备-编辑") == -1 && (obj.event = "reject");
-        obj.event == "export" && permissionList.indexOf("车损报备-导出") == -1 && (obj.event = "reject");
+        obj.event == "export" && permissionList.indexOf(6031) == -1 && (obj.event = "reject");
 
         switch (obj.event) {
           case "reject":
@@ -221,15 +243,15 @@ layui
             xadmin.open("表格设置", "./table-set.html?tableKey=" + _this.tableKey, 600, 600);
             break;
           case "log":
-            xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&type=15");
+            xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&phone=15");
             break;
           case "reset_search":
-            edipao.resetSearch("damageList", function(){
+            edipao.resetSearch(_this.tableKey, function(){
                 location.reload();
             });
             break;
           case "exportLog":
-            xadmin.open('导出日志', '../../OperateLog/log.html?type=15&action=exportLog&dataPk=' + _this.orderNo);
+            xadmin.open('导出日志', '../../OperateLog/log.html?phone=15&action=exportLog&dataPk=' + _this.orderNo);
             break;
         }
       }
@@ -245,59 +267,54 @@ layui
     List.prototype.setTableFilter = function () {
       var _this = this;
       var filters = [
-        { field: "createTime", type: "timeslot" },
-        { field: "type", type: "checkbox", data: typeData },
-        { field: "remark", type: "input" },
-        { field: "createUser", type: "contract" },
-        { field: "status", type: "checkbox", data: statusData },
+        { field: "name", type: "input" },
+        { field: "phone", type: "input" },
+        { field: "idNum", type: "input" },
+        { field: "depositStatus", type: "checkbox", data: statusData },
+        { field: "grabOrderCount", type: "numberslot" },
+        { field: "winningOrderNo", type: "input" },
       ];
       tableFilterIns = tableFilter.render({
-        elem: "#damageList", //table的选择器
+        elem: "#" + _this.tableKey, //table的选择器
         mode: "self", //过滤模式
         filters: filters, //过滤项配置
         done: function (filters, reload) {
           filters = $.extend({},filters);
           var index = 1;
-          var where = Object.assign({
+          var where2 = Object.assign({
             loginStaffId: edipao.getLoginStaffId(),
           }, where);
-          where["searchFieldDTOList[0].fieldName"] = "orderNo";
-          where["searchFieldDTOList[0].fieldValue"] = _this.orderNo;
           layui.each(filters, function (key, value) {
             if (key == "createTime") {
-              where['searchFieldDTOList['+ index +'].fieldName'] = key;
+              where2['searchFieldDTOList['+ index +'].fieldName'] = key;
               value = value.split(" 至 ");
-              where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
-              where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
-            }else if(key == "createUser"){
-              value = value.filter(function (item) {
-                return String(item) != "";
-              });
-              value.forEach(function(item, index2){
-                where['searchFieldDTOList['+ (index + index2 * 1) +'].fieldName'] = key;
-                where["searchFieldDTOList[" + (index + index2 * 1) + "].fieldValue"] = item;
-              });
-
-            }else if(key == "type" || key == "status"){
-              where['searchFieldDTOList['+ index +'].fieldName'] = key;
-              where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+              where2['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+              where2['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+            }else if(key == "depositStatus"){
+              where2['searchFieldDTOList['+ index +'].fieldName'] = key;
+              where2['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+            }else if(key == 'grabOrderCount'){
+              // 驾龄、押金
+              where2['searchFieldDTOList['+ index +'].fieldName'] = key;
+              where2['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+              where2['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
             } else {
-              where["searchFieldDTOList[" + index + "].fieldName"] = key;
-              where["searchFieldDTOList[" + index + "].fieldValue"] = value;
+              where2["searchFieldDTOList[" + index + "].fieldName"] = key;
+              where2["searchFieldDTOList[" + index + "].fieldValue"] = value;
             }
             index++;
           });
           if(reload){
-            reloadOption = { where: where, page: { curr: 1 }};
+            reloadOption = { where: where2, page: { curr: 1 }};
           }else{
-            tableIns.reload( { where: where, page: { curr: 1 }});
+            tableIns.reload( { where: where2, page: { curr: 1 }});
           }
         },
       });
     };
     List.prototype.exportExcel = function () {
       var _this = this;
-      var checkStatus = table.checkStatus("damageList");
+      var checkStatus = table.checkStatus(_this.tableKey);
       if (checkStatus.data.length > 0) {
         exportXlsx(checkStatus.data);
         return;
@@ -307,16 +324,16 @@ layui
       param["pageSize"] = 9999;
       edipao
         .request({
-          type: "POST",
-          url: "/admin/order/damage/list",
+          phone: "POST",
+          url: _this.url,
           data: param,
         })
         .done(function (res) {
           if (res.code == 0) {
             if (res.data) {
               res.data = res.data || {};
-              res.data.ordeDamageEntityList = res.data.ordeDamageEntityList || [];
-              var data = res.data.ordeDamageEntityList;
+              res.data[_this.dataKey] = res.data[_this.dataKey] || [];
+              var data = res.data[_this.dataKey];
               exportXlsx(data);
             }
           }else{
@@ -345,7 +362,7 @@ layui
           {
             sheet1: exportData,
           },
-          "司机签到数据.xlsx",
+          "司机数据.xlsx",
           "xlsx"
         );
         exportLog();
@@ -355,7 +372,7 @@ layui
         var params = {
           operationModule: 15,
           dataPk: _this.orderNo,
-          operationRemark: "导出司机签到数据",
+          operationRemark: "导出司机数据",
         };
         edipao.exportLog(params);
       }

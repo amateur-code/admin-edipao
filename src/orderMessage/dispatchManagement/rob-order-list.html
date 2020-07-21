@@ -16,6 +16,7 @@
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+    <script src="../../js/xcity.js?VERSION"></script>
     <script type="text/javascript" src="js/rob-order-list.js?VERSION"></script>
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -53,28 +54,27 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <div class="layui-card">
-                <div class="layui-card-body" id="doc-content">
-                    <table id="damageList" lay-filter="damageList"></table>
-                </div>
+                <div class="layui-card-body" id="doc-content"></div>
             </div>
         </div>
     </div>
 </div>
 <script type="text/html" id="orderNoTpl">
-  <a data-id="{{d.id}}" data-orderno="{{d.orderNo}}" data-feeid="{{d.feeId}}" class="blue pointer href_order_no" href="javascript:;">{{d.orderNo}}</a>
+  {{# if(d.showBtn){ }}
+  <a data-id="{{d.id}}" data-orderno="{{d.orderNo}}" class="blue pointer href_order_no" href="javascript:;">{{d.orderNo}}</a>
+  {{# } }}
 </script>
 <script type="text/html" id="driverNameTpl">
   {{# if(d.driverName){ }}
-  <a data-id="{{d.driverId}}" class="blue pointer href_driver" href="javascript:;">{{d.driverName}}</a>
+  <a data-id="{{d.driverId}}" class="blue pointer href_driver" href="javascript:;">{{d.driverName + '(' + d.driverPhone + ')'}}</a>
   {{# }else{ }}
   - -
   {{# } }}
 </script>
 <script type="text/html" id="robDriverTpl">
-  <a data-id="{{d.driverId}}" class="blue pointer href_rob_driver" href="javascript:;">{{d.driverNum || 10}}</a>
-</script>
-<script type="text/html" id="loginSumTpl">
-  <a data-id="{{d.driverId}}" class="blue pointer href_login_sum" href="javascript:;">{{d.driverPhone || 0}}</a>
+  {{# if(d.showBtn){ }}
+  <a data-orderno="{{d.orderNo}}" class="blue pointer href_rob_driver" href="javascript:;">{{d.grabOrderDriverCount}}</a>
+  {{# } }}
 </script>
 <script type="text/html" id="headerBtns">
   <div class="layui-btn-container">

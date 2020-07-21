@@ -44,34 +44,7 @@
             抢单时间
             <span id="add_btn" class="blue pointer" style="font-size: 13px;">+添加</span>
           </div>
-          <div class="layui-card-body layui-row layui-col-space10" id="time_container">
-            <div class="layui-row time_row layui-col-space10">
-              <div class="layui-col-md4">
-                <div class="layui-form-item">
-                  <div><span class="x-red">*</span>抢单开启时间</div>
-                  <div class="layui-input-block">
-                    <input id="startTime0" readonly type="text" name="startTime0" lay-verify="required" placeholder="请选择开始时间" autocomplete="off" class="layui-input">
-                  </div>
-                </div>
-              </div>
-              <div class="layui-col-md4">
-                <div class="layui-form-item">
-                  <div><span class="x-red">*</span>抢单结束时间</div>
-                  <div class="layui-input-block">
-                    <input id="endTime0" readonly type="text" name="endTime0" lay-verify="required" placeholder="请选择结束时间" autocomplete="off" class="layui-input">
-                  </div>
-                </div>
-              </div>
-              <div class="layui-col-md4">
-                <div class="layui-form-item">
-                  <div><span class="x-red">*</span>订单范围</div>
-                  <div class="layui-input-block">
-                    <input id="range0" readonly type="text" name="range0" lay-verify="required" placeholder="请选择订单范围时间" autocomplete="off" class="layui-input">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div class="layui-card-body layui-row layui-col-space10" id="time_container"></div>
         </div>
         <div id="fee_container" class="layui-card layui-form" >
           <div class="layui-card-header">抢单结果</div>
@@ -81,7 +54,7 @@
                 <div class="layui-form-item">
                   <div><span class="x-red">*</span>展示时长</div>
                   <div class="layui-input-block">
-                    <input type="text" name="company" lay-verify="required" placeholder="请输入时长" autocomplete="off" class="layui-input">
+                    <input id="grabOrderTimeDuration" type="text" name="grabOrderTimeDuration" lay-verify="required" placeholder="请输入时长" autocomplete="off" class="layui-input">
                     <span class="input_unit">分钟</span>
                   </div>
                 </div>
@@ -102,12 +75,13 @@
   </div>
 </div>
 <script type="text/html" id="formTpl">
-  <div class="layui-row time_row layui-col-space10 time_row_{{d.index}}">
+  {{# layui.each(d.timeList, function(index, item){ }}
+  <div class="layui-row time_row layui-col-space10 time_row_{{index}}">
     <div class="layui-col-md4">
       <div class="layui-form-item">
         <div><span class="x-red">*</span>抢单开启时间</div>
         <div class="layui-input-block">
-          <input id="startTime{{d.index}}" readonly type="text" name="startTime{{d.index}}" lay-verify="required" placeholder="请选择开始时间" autocomplete="off" class="layui-input">
+          <input id="startTime{{index}}" readonly type="text" value="{{item.startTime}}" name="startTime{{index}}" lay-verify="required" placeholder="请选择开始时间" autocomplete="off" class="layui-input">
         </div>
       </div>
     </div>
@@ -115,7 +89,7 @@
       <div class="layui-form-item">
         <div><span class="x-red">*</span>抢单结束时间</div>
         <div class="layui-input-block">
-          <input id="endTime{{d.index}}" readonly type="text" name="endTime{{d.index}}" lay-verify="required" placeholder="请选择结束时间" autocomplete="off" class="layui-input">
+          <input id="endTime{{index}}" readonly type="text" value="{{item.endTime}}" name="endTime{{index}}" lay-verify="required" placeholder="请选择结束时间" autocomplete="off" class="layui-input">
         </div>
       </div>
     </div>
@@ -123,15 +97,17 @@
       <div class="layui-form-item">
         <div><span class="x-red">*</span>订单范围</div>
         <div class="layui-input-block">
-          <input id="range{{d.index}}" readonly type="text" name="range{{d.index}}" lay-verify="required" placeholder="请选择订单范围时间" autocomplete="off" class="layui-input">
+          <input id="deadlineTime{{index}}" readonly type="text" value="{{item.deadlineTime}}" name="deadlineTime{{index}}" lay-verify="required" placeholder="请选择订单范围时间" autocomplete="off" class="layui-input">
+          {{# if(index != 0){ }}
           <div style="text-align: right;padding-top: 0;">
-            <span data-index="{{d.index}}" class="delete_btn">-移除</span>
+            <span data-index="{{index}}" class="delete_btn">-移除</span>
           </div>
+          {{# } }}
         </div>
       </div>
     </div>
   </div>
-  
+  {{# }); }}
 </script>
 </body>
 </html>

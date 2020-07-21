@@ -54,28 +54,28 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-body" id="doc-content">
-                    <table id="damageList" lay-filter="damageList"></table>
+                    <table id="robList" lay-filter="robList"></table>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script type="text/html" id="ordersSumTpl">
-    <a data-id="{{d.driverId}}" class="blue pointer href_order_sum" href="javascript:;">{{d.driverPhone || 0}}</a>
+    <a data-key="{{d.activityBatchNo}}" class="blue pointer href_order_sum" href="javascript:;">{{d.grabOrderPoolCount}}</a>
 </script>
 <script type="text/html" id="driverSumTpl">
-    <a data-id="{{d.driverId}}" class="blue pointer href_driver_sum" href="javascript:;">{{d.driverPhone || 0}}</a>
+    <a data-key="{{d.activityBatchNo}}" class="blue pointer href_driver_sum" href="javascript:;">{{d.grabOrderDriverCount}}</a>
 </script>
 <script type="text/html" id="winnerSumTpl">
-    <a data-id="{{d.driverId}}" class="blue pointer href_winner_sum" href="javascript:;">{{d.driverPhone || 0}}</a>
+    <a data-key="{{d.activityBatchNo}}" class="blue pointer href_winner_sum" href="javascript:;">{{d.winningOrderCount}}</a>
 </script>
 <script type="text/html" id="loginSumTpl">
-    <a data-id="{{d.driverId}}" class="blue pointer href_login_sum" href="javascript:;">{{d.driverPhone || 0}}</a>
+    <a data-key="{{d.activityBatchNo}}" class="blue pointer href_login_sum" href="javascript:;">{{d.loginDriverCount}}</a>
 </script>
 <script type="text/html" id="headerBtns">
     <div class="layui-btn-container">
         <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
-        {{# if(permissionList.indexOf('车损报备-导出') != -1){ }}
+        {{# if(permissionList.indexOf(6021) != -1){ }}
         <button class="layui-btn  layui-btn-sm"  lay-event="export">导出</button>
         {{# } }}
         <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>

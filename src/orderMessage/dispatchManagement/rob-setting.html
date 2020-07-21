@@ -38,37 +38,7 @@
 <div class="layui-fluid dot-add">
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md12">
-      <form class="layui-form" lay-filter="main_form">
-        <div class="layui-card layui-form">
-          <div class="layui-card-header">抢单时间</div>
-          <div class="layui-card-body layui-row layui-col-space10" id="time_container">
-            <div class="layui-row time_row">
-              <div class="layui-col-md4">
-                <span>抢单开启时间：</span>
-                <span class="blue">17:00</span>
-              </div>
-              <div class="layui-col-md4">
-                <span>抢单结束时间：</span>
-                <span class="blue">17:00</span>
-              </div>
-              <div class="layui-col-md4">
-                <span>订单范围：之前</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="fee_container" class="layui-card layui-form" >
-          <div class="layui-card-header">抢单结果</div>
-          <div class="layui-card-body layui-row layui-col-space10" id="result_container">
-            <div class="layui-row time_row" style="border: none;">
-              <div class="layui-col-md4">
-                <span>展示时长：</span>
-                <span class="blue">17:00</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
+      <form id="main_container" class="layui-form" lay-filter="main_form"></form>
     </div>
   </div>
 </div>
@@ -77,5 +47,38 @@
     &emsp;修改&emsp;
 </button>
 </div>
+<script id="infoTpl" type="text/html">
+  <div class="layui-card layui-form">
+    <div class="layui-card-header">抢单时间</div>
+    <div class="layui-card-body layui-row layui-col-space10" id="time_container">
+      {{# layui.each(d.grabTimeConfigInfo, function(index, item){ }}
+      <div class="layui-row time_row">
+        <div class="layui-col-md4">
+          <span>抢单开启时间：</span>
+          <span class="blue">{{item.startTime}}</span>
+        </div>
+        <div class="layui-col-md4">
+          <span>抢单结束时间：</span>
+          <span class="blue">{{item.endTime}}</span>
+        </div>
+        <div class="layui-col-md4">
+          <span class="blue">订单范围：{{item.deadlineTime}}之前</span>
+        </div>
+      </div>
+      {{# }); }}
+    </div>
+  </div>
+  <div id="fee_container" class="layui-card layui-form" >
+    <div class="layui-card-header">抢单结果</div>
+    <div class="layui-card-body layui-row layui-col-space10" id="result_container">
+      <div class="layui-row time_row" style="border: none;">
+        <div class="layui-col-md4">
+          <span>展示时长：</span>
+          <span id="duration" class="blue">{{d.grabOrderTimeDuration}}分钟</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
 </body>
 </html>

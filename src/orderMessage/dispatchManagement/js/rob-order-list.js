@@ -95,22 +95,23 @@ layui.config({
           return d.tempLicense ? d.tempLicense : '- -';
       }},
       {field: 'orderType', title: '订单类型', sort: false,minWidth:100, templet: function (d) {
-          var value = '- -';
-          orderTypeData.some(function (status) {
-              if(status.key == d.orderType){
-                  value = status.value;
-                  return true;
-              }
-          });
-          return value;
+        if(!d.showBtn) return "";
+        var value = '- -';
+        orderTypeData.some(function (status) {
+            if(status.key == d.orderType){
+                value = status.value;
+                return true;
+            }
+        });
+        return value;
       }},
       {field: 'customerFullName', title: '客户全称', sort: false, width: 120, templet: function(d){
           return d.customerFullName ? d.customerFullName : '- -';
       }},
-      {field: 'startWarehouse', title: '发车仓库', sort: false, width: 400, templet: function(d){
+      {field: 'startWarehouse', title: '发车仓库', sort: false, width: 200, templet: function(d){
           return d.startWarehouse ? d.startWarehouse : '- -';
       }},
-      {field: 'startPark', title: '发车停车场', sort: false, width: 400, templet: function(d){
+      {field: 'startPark', title: '发车停车场', sort: false, width: 200, templet: function(d){
           return d.startPark ? d.startPark : '- -';
       }},
       {field: 'startProvince', title: '发车省', sort: false,minWidth:100, templet: function(d){
@@ -119,10 +120,10 @@ layui.config({
       {field: 'startCity', title: '发车城市', sort: false,minWidth:100, templet: function(d){
           return d.startCity ? d.startCity : '- -';
       }},
-      {field: 'startAddress', title: '发车地址', sort: false, width: 400, templet: function(d){
+      {field: 'startAddress', title: '发车地址', sort: false, width: 300, templet: function(d){
           return d.startAddress ? d.startAddress : '- -';
       }},
-      {field: 'endPark', title: '收车网点', sort: false, width: 400, templet: function(d){
+      {field: 'endPark', title: '收车网点', sort: false, width: 300, templet: function(d){
           return d.endPark ? d.endPark : '- -';
       }},
       {field: 'endProvince', title: '收车省', sort: false,minWidth:100, templet: function(d){
@@ -135,35 +136,42 @@ layui.config({
           return d.endAddress ? d.endAddress : '- -';
       }},
       {field: 'transportMode', title: '运输方式', sort: false, width: 100, templet: function(d){
-          return d.transportMode ? d.transportMode : '- -';
+        if(!d.showBtn) return "";
+        return d.transportMode ? d.transportMode : '- -';
       }},
       {field: 'transportAssignTime', title: '运输商指派时间', sort: false,width: 200, templet: function(d){
           return d.transportAssignTime ? d.transportAssignTime : '- -';
       }},
       {field: 'income', title: '收入金额', sort: false,width: 150, templet: function(d){
-          if(dataPermission.canViewOrderCost != "Y") return "****";
-          return d.income ? (d.income + "元") : '- -';
+        if(!d.showBtn) return "";
+        if(dataPermission.canViewOrderCost != "Y") return "****";
+        return d.income ? (d.income + "元") : '- -';
       }},
       {field: 'dispatchTime', title: '调度时间', sort: false, width: 200, templet: function(d){
-          return d.dispatchTime ? d.dispatchTime : '- -';
+        if(!d.showBtn) return "";
+        return d.dispatchTime ? d.dispatchTime : '- -';
       }},
       {field: 'openOperator', title: '开单员', sort: false, width: 180, templet: function(d){
-          d.openOperator = d.openOperator || "";
-          d.openOperatorPhone = d.openOperatorPhone || "";
-          return (d.openOperator || d.openOperatorPhone) ? d.openOperator + d.openOperatorPhone : '- -';
+        if(!d.showBtn) return "";
+        d.openOperator = d.openOperator || "";
+        d.openOperatorPhone = d.openOperatorPhone || "";
+        return (d.openOperator || d.openOperatorPhone) ? d.openOperator + d.openOperatorPhone : '- -';
       }},
       {field: 'deliveryOperator', title: '发运经理', sort: false, minWidth:180, templet: function(d){
-          d.deliveryOperator = d.deliveryOperator || "";
-          d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
-          return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
+        if(!d.showBtn) return "";
+        d.deliveryOperator = d.deliveryOperator || "";
+        d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
+        return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
       }},
       {field: 'dispatchOperator', title: '调度员', sort: false, minWidth:180, templet: function(d){
-          if(d.dispatchMode == 2) return "系统调度";
-          d.dispatchOperator = d.dispatchOperator || "";
-          d.dispatchOperatorPhone = d.dispatchOperatorPhone || "";
-          return (d.dispatchOperator || d.dispatchOperatorPhone) ? d.dispatchOperator + d.dispatchOperatorPhone : '- -';
+        if(!d.showBtn) return "";
+        if(d.dispatchMode == 2) return "系统调度";
+        d.dispatchOperator = d.dispatchOperator || "";
+        d.dispatchOperatorPhone = d.dispatchOperatorPhone || "";
+        return (d.dispatchOperator || d.dispatchOperatorPhone) ? d.dispatchOperator + d.dispatchOperatorPhone : '- -';
       }},
       {field: 'dispatchMode', title: '调度方式', sort: false, minWidth: 145, templet: function(d){
+        if(!d.showBtn) return "";
           var result = "";
           dispatchModeData.some(function(item){
               if(item.key == d.dispatchMode){
@@ -173,23 +181,25 @@ layui.config({
           });
           return result || "- -";
       }},
-      {field: 'driverName', title: '司机姓名', sort: false, minWidth: 130, templet: "#driverNameTpl"},
-      {field: 'driverPhone', title: '司机手机', sort: false,minWidth:120, templet: function (d) {
-              return d.driverPhone || "- -";
-      }},
-      {field: 'driverIdCard', title: '司机身份证', sort: false,width: 160, hide: false, templet: function(d){
+      {field: 'driverName', title: '司机信息', sort: false, minWidth: 150, templet: "#driverNameTpl"},
+      {field: 'driverIdCard', title: '司机身份证', sort: false,width: 150, hide: false, templet: function(d){
+        if(!d.showBtn) return "";
           return d.driverIdCard ? d.driverIdCard : '- -';
       }},
       {field: 'prePayAmount', title: '预付款金额', sort: false,width: 200, hide: false, templet: function (d) {
+        if(!d.showBtn) return "";
         return d.prePayAmount + "元";
       }},
       {field: 'prePayAmount', title: '油升数', sort: false,width: 200, hide: false, templet: function (d) {
+        if(!d.showBtn) return "";
         return d.prePayOil + "升";
       }},
       {field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 200, hide: false, templet: function (d) {
+        if(!d.showBtn) return "";
         return d.arrivePayAmount + "元";
       }},
       {field: 'tailPayAmount', title: '尾款金额', sort: false,width: 200, hide: false, templet: function (d) {
+        if(!d.showBtn) return "";
         return d.tailPayAmount + "元";
       }},
       {field: 'tailPayAmount', title: '抢单司机', sort: false,width: 200, hide: false, templet: "#robDriverTpl"},
@@ -203,17 +213,33 @@ layui.config({
     }
     function List() {
       var qs = edipao.urlGet();
-      this.tableKey = "rob-order-list-table";
-      this.orderNo = qs.orderNo;
-      this.orderStatus = qs.orderStatus;
-      window.orderStatus = this.orderStatus;
-      where["searchFieldDTOList[0].fieldName"] = "orderNo";
-      where["searchFieldDTOList[0].fieldValue"] = this.orderNo;
+      var config = {
+        all: {
+          url: "/admin/grab/statistics/order-pool/statistics-list",
+          dataKey: "orderPoolStatisticsList",
+          tableKey: "all-rob-order-list-table",
+        },
+        win: {
+          url: "/admin/grab/statistics/winning-order/statistics-list",
+          dataKey: "orderPoolStatisticsList",
+          tableKey: "win-rob-order-list-table",
+        }
+      }
+      this.action = qs.action;
+      this.robKey = qs.robKey;
+      this.url = config[this.action].url;
+      this.dataKey = config[this.action].dataKey;
+      this.tableKey = config[this.action].tableKey;
+      $("#doc-content").html(`<table id="${this.tableKey}" lay-filter="${this.tableKey}"></table>`);
+      where["searchFieldDTOList[0].fieldName"] = "activityBatchNo";
+      where["searchFieldDTOList[0].fieldValue"] = this.robKey;
     }
     List.prototype.init = function () {
       var _this = this;
-      // _this.renderTable();
-      _this.setTableFilter();
+      edipao.getCitys(function (data) {
+        window.provinceList = data;
+        _this.setTableFilter();
+      });
       _this.bindTableEvents();
       edipao.request({
         type: "GET",
@@ -255,9 +281,9 @@ layui.config({
     List.prototype.renderTable = function () {
       var _this = this;
       tableIns = table.render({
-        elem: "#damageList",
-        id: "damageList",
-        url: edipao.API_HOST + "/admin/order/list",
+        elem: "#" + _this.tableKey,
+        id: _this.tableKey,
+        url: edipao.API_HOST + _this.url,
         method: "get",
         page: true,
         limits: [10, 20, 50, 100],
@@ -268,7 +294,7 @@ layui.config({
         },
         parseData: function (res) {
           edipao.codeMiddleware(res);
-          orderDTOList = res.data.orderDTOList;
+          var orderDTOList = res.data[_this.dataKey] || [];
           orderDTOList.forEach(function(item){
               if(item.orderType == 2 && item.masterFlag == "否"){
                   item.showBtn = 0;
@@ -280,7 +306,7 @@ layui.config({
               "code": res.code, //解析接口状态
               "msg": res.message, //解析提示文本
               "count": res.data.totalSize, //解析数据长度
-              "data": res.data.orderDTOList //解析数据列表
+              "data": orderDTOList //解析数据列表
           }
         },
         toolbar: "#headerBtns",
@@ -318,9 +344,9 @@ layui.config({
     }
     List.prototype.bindTableEvents = function () {
       var _this = this;
-      table.on("tool(damageList)", handleEvent);
-      table.on("toolbar(damageList)", handleEvent);
-      table.on("checkbox(damageList)", handleEvent);
+      table.on("tool("+_this.tableKey+")", handleEvent);
+      table.on("toolbar("+_this.tableKey+")", handleEvent);
+      table.on("checkbox("+_this.tableKey+")", handleEvent);
       function handleEvent(obj) {
         var data = obj.data;
         switch (obj.event) {
@@ -337,7 +363,7 @@ layui.config({
             xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&type=15");
             break;
           case "reset_search":
-            edipao.resetSearch("damageList", function(){
+            edipao.resetSearch(_this.tableKey, function(){
                 location.reload();
             });
             break;
@@ -390,52 +416,120 @@ layui.config({
         { field: 'tailPayStatus', type: 'checkbox', data: tailPayStatusData },
       ]
       tableFilterIns = tableFilter.render({
-        elem: "#damageList", //table的选择器
+        elem: "#" + _this.tableKey, //table的选择器
         mode: "self", //过滤模式
         filters: filters, //过滤项配置
-        done: function (filters, reload) {
-          filters = $.extend({},filters);
+        'done': function(filters, reload){
+          filters = $.extend({}, filters);
           var index = 1;
-          var where = Object.assign({
-            loginStaffId: edipao.getLoginStaffId(),
-          }, where);
-          where["searchFieldDTOList[0].fieldName"] = "orderNo";
-          where["searchFieldDTOList[0].fieldValue"] = _this.orderNo;
-          layui.each(filters, function (key, value) {
-            if (key == "createTime") {
-              where['searchFieldDTOList['+ index +'].fieldName'] = key;
-              value = value.split(" 至 ");
-              where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
-              where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
-            }else if(key == "createUser"){
-              value = value.filter(function (item) {
-                return String(item) != "";
-              });
-              value.forEach(function(item, index2){
-                where['searchFieldDTOList['+ (index + index2 * 1) +'].fieldName'] = key;
-                where["searchFieldDTOList[" + (index + index2 * 1) + "].fieldValue"] = item;
-              });
-
-            }else if(key == "type" || key == "status"){
-              where['searchFieldDTOList['+ index +'].fieldName'] = key;
-              where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
-            } else {
-              where["searchFieldDTOList[" + index + "].fieldName"] = key;
-              where["searchFieldDTOList[" + index + "].fieldValue"] = value;
-            }
-            index++;
+          var where2 = Object.assign({loginStaffId: edipao.getLoginStaffId()}, JSON.parse(JSON.stringify(where)));
+          if(filters.openOperator){
+              filters.openOperatorPhone =  filters.openOperator[1];
+              filters.openOperator =  filters.openOperator[0];
+          }
+          if(filters.deliveryOperator){
+              filters.deliveryOperatorPhone =  filters.deliveryOperator[1];
+              filters.deliveryOperator =  filters.deliveryOperator[0];
+          }
+          if(filters.dispatchOperator){
+              filters.dispatchOperatorPhone =  filters.dispatchOperator[1];
+              filters.dispatchOperator =  filters.dispatchOperator[0];
+          }
+          if(!filters.operation) {
+              verifyFilter = false;
+          }else{
+              // verifyFilter = true;
+              // where["pageSize"] = 60;
+          }
+          delete filters.operation;
+          layui.each(filters,function(key, value){
+              if(key=='startProvince'||key=='endProvince'){
+                  where2['searchFieldDTOList['+ index +'].fieldName'] = key;
+                  where2['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
+              }else if(key == "customerMileage" || key == "pricePerMeliage" || key == "income" || key == "driverMileage"||key=="carDamageCount"){
+                  where2["searchFieldDTOList[" + index + "].fieldName"] = key;
+                  where2['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
+                  where2['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+              }else if(key=='startCity'||key=='endCity'){ 
+                  if(value.city == "全部") value.city = "";
+                  if(key == "startCity"){
+                      where2['searchFieldDTOList['+ index +'].fieldName'] = "startProvince";
+                      where2['searchFieldDTOList['+ index++ +'].fieldValue'] = value.province;
+                      where2['searchFieldDTOList['+ index +'].fieldName'] = "startCity";
+                      where2['searchFieldDTOList['+ index +'].fieldValue'] = value.city;
+                  }else if(key=='endCity'){
+                      where2['searchFieldDTOList['+ index +'].fieldName'] = "endProvince";
+                      where2['searchFieldDTOList['+ index++ +'].fieldValue'] = value.province;
+                      where2['searchFieldDTOList['+ index +'].fieldName'] = "endCity";
+                      where2['searchFieldDTOList['+ index +'].fieldValue'] = value.city;
+                  }
+              }else if(key == 'prePayAmount'||key == 'arrivePayAmount'||key == "tailPayAmount"){
+                  if(value.slot.length > 0){
+                      where2['searchFieldDTOList['+ index +'].fieldName'] = key;
+                      where2['searchFieldDTOList['+ index +'].fieldMinValue'] = value.slot[0];
+                      where2['searchFieldDTOList['+ index +'].fieldMaxValue'] = value.slot[1];
+                      if(value.checked.length > 0) index++;
+                  }
+                  if(value.checked.length > 0){
+                      where2['searchFieldDTOList['+ index +'].fieldName'] = key.replace("Amount", "Status");
+                      where2['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
+                  }
+              }else if(key == "orderStatus"){
+                  var checkSign, checkFetch;
+                  checkFetch = value.indexOf("4") > -1;
+                  checkSign = value.indexOf("44") > -1;
+                  value = value.filter(function (item) {
+                      return item != "44";
+                  });
+                  value = value || [];
+                  if((checkSign && checkFetch) || (!checkSign && !checkFetch)){
+                      where2['searchFieldDTOList['+ index +'].fieldName'] = key;
+                      where2['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+                  }else if(checkSign && !checkFetch){
+                      value.push("4");
+                      where2['searchFieldDTOList['+ index +'].fieldName'] = key;
+                      where2['searchFieldDTOList['+ index++ +'].fieldListValue'] = value.join(',');
+                      where2['searchFieldDTOList['+ index +'].fieldName'] = "dealerSignTime";
+                      where2['searchFieldDTOList['+ index +'].fieldMinValue'] = "0";
+                      where2['searchFieldDTOList['+ index +'].fieldMaxValue'] = "1";
+                  }else if(!checkSign && checkFetch){
+                      where2['searchFieldDTOList['+ index +'].fieldName'] = key;
+                      where2['searchFieldDTOList['+ index++ +'].fieldListValue'] = value.join(',');
+                      where2['searchFieldDTOList['+ index +'].fieldName'] = "dealerSignTime";
+                      where2['searchFieldDTOList['+ index +'].fieldMinValue'] = "1980-01-01 00:00:00";
+                      where2['searchFieldDTOList['+ index +'].fieldMaxValue'] = "2999-01-01 00:00:00";
+                  }
+              }else if(key == "dealerSignTime" || key == "certificateSignTime" || key=="arrivePayTime"||key=="prePayTime"||key=="tailPayTime"||key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
+                  where2['searchFieldDTOList['+ index +'].fieldName'] = key;
+                  value = value.split(" 至 ");
+                  where2['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
+                  where2['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+              }else if(key == "orderType" || key == "tailPayStatus" || key == "masterFlag"){
+                  where2['searchFieldDTOList['+ index +'].fieldName'] = key;
+                  where2['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+              }else if(key == "returnAuditStatus" || key == "dispatchMode" || key == "transportMode"){
+                  where2['searchFieldDTOList['+ index +'].fieldName'] = key;
+                  where2['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
+              }else if(key == "carModel"){
+                  where2['searchFieldDTOList['+ index +'].fieldName'] = "feeItemJson";
+                  where2['searchFieldDTOList['+ index +'].fieldValue'] = value;
+              }else{
+                  where2['searchFieldDTOList['+ index +'].fieldName'] = key;
+                  where2['searchFieldDTOList['+ index +'].fieldValue'] = value;
+              }
+              index++;
           });
           if(reload){
-            reloadOption = { where: where, page: { curr: 1 }};
+            reloadOption = { where: where2, page: { curr: 1 }};
           }else{
-            tableIns.reload( { where: where, page: { curr: 1 }});
+            tableIns.reload( { where: where2, page: { curr: 1 }});
           }
-        },
+        }
       });
     };
     List.prototype.exportExcel = function () {
       var _this = this;
-      var checkStatus = table.checkStatus("damageList");
+      var checkStatus = table.checkStatus(_this.tableKey);
       if (checkStatus.data.length > 0) {
         exportXlsx(checkStatus.data);
         return;
@@ -446,15 +540,15 @@ layui.config({
       edipao
         .request({
           type: "POST",
-          url: "/admin/order/damage/list",
+          url: _this.url,
           data: param,
         })
         .done(function (res) {
           if (res.code == 0) {
             if (res.data) {
               res.data = res.data || {};
-              res.data.ordeDamageEntityList = res.data.ordeDamageEntityList || [];
-              var data = res.data.ordeDamageEntityList;
+              res.data[_this.dataKey] = res.data[_this.dataKey] || [];
+              var data = res.data[_this.dataKey];
               exportXlsx(data);
             }
           }else{
