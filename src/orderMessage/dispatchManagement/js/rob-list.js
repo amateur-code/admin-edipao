@@ -32,10 +32,10 @@ layui
       { field: "grabEndTime", title: "抢单结束时间", width: 150, templet: function (d) {
         return d.grabEndTime || "- -";
       }},
-      { field: "grabOrderPoolCount", title: "订单池总数", width: 150, templet: "#ordersSumTpl"},
-      { field: "grabOrderDriverCount", title: "参与抢单司机数", width: 150, templet: "#driverSumTpl"},
-      { field: "winningOrderCount", title: "中签订单数", width: 150, templet: "#winnerSumTpl"},
-      { field: "loginDriverCount", title: "登录APP司机数", width: 150, templet: "#loginSumTpl"},
+      { field: "grabOrderPoolCount", title: "订单池总数",  templet: "#ordersSumTpl"},
+      { field: "grabOrderDriverCount", title: "参与抢单司机数",  templet: "#driverSumTpl"},
+      { field: "winningOrderCount", title: "中签订单数",  templet: "#winnerSumTpl"},
+      { field: "loginDriverCount", title: "登录APP司机数",  templet: "#loginSumTpl"},
       { field: "winningRate", title: "中签率", width: 150, templet: function (d) {
           return d.winningRate;
       }},
@@ -49,9 +49,12 @@ layui
     }
     function List() {
       var qs = edipao.urlGet();
+      this.perssionId = qs.perssionId;
       this.tableKey = "rob-list-table";
       this.orderNo = qs.orderNo;
       this.orderStatus = qs.orderStatus;
+      this.logKey = 20;
+      $("#doc-content").html(`<table id="${this.tableKey}" lay-filter="${this.tableKey}"></table>`);
       window.orderStatus = this.orderStatus;
     }
     List.prototype.init = function () {
@@ -101,8 +104,8 @@ layui
     List.prototype.renderTable = function () {
       var _this = this;
       tableIns = table.render({
-        elem: "#robList",
-        id: "robList",
+        elem: "#" + _this.tableKey,
+        id: _this.tableKey,
         url: edipao.API_HOST + "/admin/grab/statistics/grab-activity/statistics-list",
         method: "get",
         page: true,
@@ -151,19 +154,19 @@ layui
       var _this = this;
       $(".href_order_sum").unbind().on("click", function (e) {
         var key = e.target.dataset.key;
-        xadmin.open('订单池','./rob-order-list.html?action=all&robKey=' + key);
+        xadmin.open('订单池','./rob-order-list.html?action=all&robKey=' + key + '&perssionId=' + _this.perssionId);
       });
       $(".href_driver_sum").unbind().on("click", function (e) {
         var key = e.target.dataset.key;
-        xadmin.open('参与抢单司机', './driver-list.html?action=join&robKey=' + key);
+        xadmin.open('参与抢单司机', './driver-list.html?action=join&robKey=' + key + '&perssionId=' + _this.perssionId);
       });
       $(".href_winner_sum").unbind().on("click", function (e) {
         var key = e.target.dataset.key;
-        xadmin.open('中签订单','./rob-order-list.html?action=win&robKey=' + key);
+        xadmin.open('中签订单','./rob-order-list.html?action=win&robKey=' + key + '&perssionId=' + _this.perssionId);
       });
       $(".href_login_sum").unbind().on("click", function (e) {
         var key = e.target.dataset.key;
-        xadmin.open('登录司机','./driver-list.html?action=login&robKey=' + key);
+        xadmin.open('登录司机','./driver-list.html?action=login&robKey=' + key + '&perssionId=' + _this.perssionId);
       });
     }
     List.prototype.bindTableEvents = function () {
@@ -173,13 +176,11 @@ layui
       //   });
       // }
       var _this = this;
-      table.on("tool(robList)", handleEvent);
-      table.on("toolbar(robList)", handleEvent);
-      table.on("checkbox(robList)", handleEvent);
+      table.on("tool("+_this.tableKey+")", handleEvent);
+      table.on("toolbar("+_this.tableKey+")", handleEvent);
+      table.on("checkbox("+_this.tableKey+")", handleEvent);
       function handleEvent(obj) {
-        var data = obj.data;
         obj.event == "export" && permissionList.indexOf(6021) == -1 && (obj.event = "reject");
-
         switch (obj.event) {
           case "reject":
             layer.alert("你没有访问权限", { icon: 2 });
@@ -190,25 +191,19 @@ layui
           case "tableSet":
             xadmin.open("表格设置", "./table-set.html?tableKey=" + _this.tableKey, 600, 600);
             break;
-          case "log":
-            xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&type=15");
-            break;
           case "reset_search":
-            edipao.resetSearch("robList", function(){
+            edipao.resetSearch(_this.tableKey, function(){
                 location.reload();
             });
             break;
           case "exportLog":
-            xadmin.open('导出日志', '../../OperateLog/log.html?type=15&action=exportLog&dataPk=' + _this.orderNo);
+            xadmin.open('导出日志', '../../OperateLog/log.html?type=' + _this.logKey + '&action=exportLog');
             break;
         }
       }
     };
     List.prototype.initPermission = function () {
-      if (permissionList.indexOf("订单录入") < 0) {
-        $("#import_order").remove();
-      }
-      if (permissionList.indexOf("导出") < 0) {
+      if (permissionList.indexOf(6021) < 0) {
         $("#export_data").remove();
       }
     };
@@ -224,7 +219,7 @@ layui
         { field: "grabOrderDriverCount", type: "numberslot" },
       ];
       tableFilterIns = tableFilter.render({
-        elem: "#robList", //table的选择器
+        elem: "#" + _this.tableKey, //table的选择器
         mode: "self", //过滤模式
         filters: filters, //过滤项配置
         done: function (filters, reload) {
@@ -326,7 +321,7 @@ layui
       // 导出日志
       function exportLog() {
         var params = {
-          operationModule: 15,
+          operationModule: _this.logKey,
           dataPk: _this.orderNo,
           operationRemark: "导出抢单数据",
         };

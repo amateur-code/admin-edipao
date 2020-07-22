@@ -202,7 +202,6 @@ layui.config({
         if(!d.showBtn) return "";
         return d.tailPayAmount + "元";
       }},
-      {field: 'grabOrderDriverCount', title: '抢单司机', sort: false,width: 200, hide: false, templet: "#robDriverTpl"},
     ];
     function DataNull(data) {
       if (data == null || data == "") {
@@ -218,21 +217,36 @@ layui.config({
           url: "/admin/grab/statistics/order-pool/statistics-list",
           dataKey: "orderPoolStatisticsList",
           tableKey: "all-rob-order-list-table",
+          logKey: 22,
         },
         win: {
           url: "/admin/grab/statistics/winning-order/statistics-list",
           dataKey: "winningOrderStatisticsList",
           tableKey: "win-rob-order-list-table",
+          logKey: 22,
+        },
+        rob: {
+          url: "/admin/grab/statistics/grab-activity/driver/order-list",
+          dataKey: "grabActivityDriverOrderList",
+          tableKey: "driver-rob-order-list-table",
+          logKey: 22,
         }
       }
       this.action = qs.action;
       this.robKey = qs.robKey;
       this.url = config[this.action].url;
+      this.logKey = config[this.action].logKey;
       this.dataKey = config[this.action].dataKey;
       this.tableKey = config[this.action].tableKey;
       $("#doc-content").html(`<table id="${this.tableKey}" lay-filter="${this.tableKey}"></table>`);
       where["searchFieldDTOList[0].fieldName"] = "activityBatchNo";
       where["searchFieldDTOList[0].fieldValue"] = this.robKey;
+      if(this.action == "rob"){
+        where["searchFieldDTOList[1].fieldName"] = "driverId";
+        where["searchFieldDTOList[1].fieldValue"] = qs.driverId;
+      }else{
+        tableCols.push({field: 'grabOrderDriverCount', title: '抢单司机', sort: false,width: 200, hide: false, templet: "#robDriverTpl"});
+      }
     }
     List.prototype.init = function () {
       var _this = this;
@@ -331,12 +345,12 @@ layui.config({
       var _this = this;
       $(".href_driver").unbind().on("click", function (e) {
         var id = e.target.dataset.id;
-        xadmin.open('司机信息','../../DriverManager/DriverArchives/info.html?id=' + id);
+        top.xadmin.open('司机信息','/DriverManager/DriverArchives/info.html?id=' + id);
       });
       $(".href_order_no").unbind().on("click", function (e) {
         var dataset = e.target.dataset;
         var pid = 200;
-        xadmin.open('查看订单', '../order-view.html?orderNo=' + dataset.orderno + "&orderId=" + dataset.id + "&action=view" + "&feeId=" + dataset.feeid + "&perssionId=" + pid);
+        top.xadmin.open('查看订单', '/orderMessage/order-view.html?orderNo=' + dataset.orderno + "&orderId=" + dataset.id + "&action=view" + "&feeId=" + dataset.feeid + "&perssionId=" + pid);
       });
       $(".href_rob_driver").unbind().on("click", function (e) {
         var orderNo = e.target.dataset.orderno;
@@ -349,7 +363,7 @@ layui.config({
       table.on("toolbar("+_this.tableKey+")", handleEvent);
       table.on("checkbox("+_this.tableKey+")", handleEvent);
       function handleEvent(obj) {
-        var data = obj.data;
+        obj.event == "export" && permissionList.indexOf(6021) == -1 && (obj.event = "reject");
         switch (obj.event) {
           case "reject":
             layer.alert("你没有访问权限", { icon: 2 });
@@ -360,25 +374,19 @@ layui.config({
           case "tableSet":
             xadmin.open("表格设置", "./table-set.html?tableKey=" + _this.tableKey, 600, 600);
             break;
-          case "log":
-            xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&type=15");
-            break;
           case "reset_search":
             edipao.resetSearch(_this.tableKey, function(){
                 location.reload();
             });
             break;
           case "exportLog":
-            xadmin.open('导出日志', '../../OperateLog/log.html?type=15&action=exportLog&dataPk=' + _this.orderNo);
+            xadmin.open('导出日志', '../../OperateLog/log.html?type=' + _this.logKey + '&action=exportLog');
             break;
         }
       }
     };
     List.prototype.initPermission = function () {
-      if (permissionList.indexOf("订单录入") < 0) {
-        $("#import_order").remove();
-      }
-      if (permissionList.indexOf("导出") < 0) {
+      if (permissionList.indexOf(6021) < 0) {
         $("#export_data").remove();
       }
     };
@@ -423,6 +431,7 @@ layui.config({
         'done': function(filters, reload){
           filters = $.extend({}, filters);
           var index = 1;
+          if(_this.action == "rob") index = 2;
           var where2 = Object.assign({loginStaffId: edipao.getLoginStaffId()}, JSON.parse(JSON.stringify(where)));
           if(filters.openOperator){
               filters.openOperatorPhone =  filters.openOperator[1];
@@ -590,7 +599,7 @@ layui.config({
       // 导出日志
       function exportLog() {
         var params = {
-          operationModule: 15,
+          operationModule: _this.logKey,
           dataPk: _this.orderNo,
           operationRemark: "导出司机签到数据",
         };

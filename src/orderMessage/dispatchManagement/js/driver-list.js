@@ -20,7 +20,7 @@ layui
       tableIns,
       tableFilterIns,
       reloadOption = null;
-    window.permissionList = edipao.getMyPermission();
+    window.permissionList = edipao.getPermissionIdList();
     window.form = form;
     var where = {
       loginStaffId: edipao.getLoginStaffId(),
@@ -29,8 +29,8 @@ layui
     var exportHead = {}; // 导出头部
     var tableCols = [
       { checkbox: true },
-      { field: "createTime", title: "抢单时间", width: 150, templet: function (d) {
-          return d.createTime ? d.createTime : "- -";
+      { field: "grabTime", title: "抢单时间", width: 150, templet: function (d) {
+          return d.grabTime ? d.grabTime : "- -";
       }},
       { field: "name", title: "司机姓名", width: 200, templet: function (d) {
         return d.name || "- -";
@@ -86,11 +86,12 @@ layui
       this.orderNo = qs.orderNo || "";
       var driverConfig = {
         join: {
-          title: "参与抢单司机",
+          title: "参与抢单司机",  //活动维度
           tableKey: "join-rob-driver-list-table",
           tableCols: tableColsJoin,
           url: "/admin/grab/statistics/grab-driver/statistics-list",
-          dataKey: "grabDriverStatisticsList"
+          dataKey: "grabDriverStatisticsList",
+          logKey: 21,
         },
         login: {
           title: "登录司机",
@@ -98,15 +99,19 @@ layui
           tableCols: tableColsJoin,
           url: "/admin/grab/statistics/login-driver/statistics-list",
           dataKey: "loginDriverStatisticsList",
+          logKey: 21,
         },
         orderJoin: {
-          title: "参与抢单司机",
+          title: "参与抢单司机",  //订单维度
           tableKey: "order-join-rob-driver-list-table",
           tableCols: tableCols,
           url: "/admin/grab/statistics/grab-activity/order/driver-list",
+          dataKey: "grabActivityOrderDriverList",
+          logKey: 21,
         }
       }
       tableCols = driverConfig[this.action].tableCols;
+      this.logKey = driverConfig[this.action].logKey;
       this.dataKey = driverConfig[this.action].dataKey;
       this.tableKey = driverConfig[this.action].tableKey;
       this.url = driverConfig[this.action].url;
@@ -220,7 +225,7 @@ layui
       });
       $(".href_rob_num").unbind().on("click", function (e) {
         var id = e.target.dataset.id;
-        xadmin.open('订单池','./rob-order-list.html?action=driver');
+        xadmin.open('订单池','./rob-order-list.html?action=rob&robKey=' + _this.robKey + "&driverId=" + id);
       });
       $(".href_order_no").unbind().on("click", function (e) {
         var dataset = e.target.dataset;
@@ -234,9 +239,7 @@ layui
       table.on("toolbar("+_this.tableKey+")", handleEvent);
       table.on("checkbox("+_this.tableKey+")", handleEvent);
       function handleEvent(obj) {
-        var data = obj.data;
-        obj.event == "export" && permissionList.indexOf(6031) == -1 && (obj.event = "reject");
-
+        obj.event == "export" && permissionList.indexOf(6021) == -1 && (obj.event = "reject");
         switch (obj.event) {
           case "reject":
             layer.alert("你没有访问权限", { icon: 2 });
@@ -247,32 +250,26 @@ layui
           case "tableSet":
             xadmin.open("表格设置", "./table-set.html?tableKey=" + _this.tableKey, 600, 600);
             break;
-          case "log":
-            xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&phone=15");
-            break;
           case "reset_search":
             edipao.resetSearch(_this.tableKey, function(){
                 location.reload();
             });
             break;
           case "exportLog":
-            xadmin.open('导出日志', '../../OperateLog/log.html?phone=15&action=exportLog&dataPk=' + _this.orderNo);
+            xadmin.open('导出日志', '../../OperateLog/log.html?type=' + _this.logKey + '&action=exportLog');
             break;
         }
       }
     };
     List.prototype.initPermission = function () {
-      if (permissionList.indexOf("订单录入") < 0) {
-        $("#import_order").remove();
-      }
-      if (permissionList.indexOf("导出") < 0) {
+      if (permissionList.indexOf(6021) < 0) {
         $("#export_data").remove();
       }
     };
     List.prototype.setTableFilter = function () {
       var _this = this;
       var filters = [
-        { field: "name", type: "input" },
+        { field: "grabTime", type: "timeslot" },
         { field: "phone", type: "input" },
         { field: "idNum", type: "input" },
         { field: "depositStatus", type: "checkbox", data: statusData },
@@ -291,7 +288,7 @@ layui
             loginStaffId: edipao.getLoginStaffId(),
           }, where);
           layui.each(filters, function (key, value) {
-            if (key == "createTime") {
+            if (key == "grabTime") {
               where2['searchFieldDTOList['+ index +'].fieldName'] = key;
               value = value.split(" 至 ");
               where2['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
@@ -376,7 +373,7 @@ layui
       // 导出日志
       function exportLog() {
         var params = {
-          operationModule: 15,
+          operationModule: _this.logKey,
           dataPk: _this.orderNo,
           operationRemark: "导出司机数据",
         };

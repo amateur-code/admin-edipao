@@ -11,7 +11,7 @@ layui
       { key: "0", value: "未支付" },
       { key: "1", value: "已支付" },
     ]
-    var logKey = 20;
+    var logKey = 23;
     var table = layui.table,
       layer = layui.layer,
       tableFilter = layui.tableFilter,
@@ -52,10 +52,10 @@ layui
         return d.driveLicenceType ? d.driveLicenceType : "- -";
       }},
       { field: "combCityNumber", title: "长春基地排名", width: 150, templet: function (d) {
-        return d.combCityNumber;
+        return d.combCityNumber || "- -";
       }},
       { field: "globalCityNumber", title: "总排名", width: 150, templet: function (d) {
-        return d.globalCityNumber;
+        return d.globalCityNumber || "- -";
       }},
     ];
     function DataNull(data) {
@@ -66,9 +66,8 @@ layui
       }
     }
     function List() {
-      var qs = edipao.urlGet();
       this.tableKey = "driver-sign-list-table";
-      this.orderNo = qs.orderNo;
+      $("#doc-content").html(`<table id="${this.tableKey}" lay-filter="${this.tableKey}"></table>`);
     }
     List.prototype.init = function () {
       var _this = this;
@@ -117,8 +116,8 @@ layui
     List.prototype.renderTable = function () {
       var _this = this;
       tableIns = table.render({
-        elem: "#driverSignList",
-        id: "driverSignList",
+        elem: "#" + _this.tableKey,
+        id: _this.tableKey,
         url: edipao.API_HOST + "/admin/driver/info/sign/stat",
         method: "get",
         page: true,
@@ -172,11 +171,10 @@ layui
     }
     List.prototype.bindTableEvents = function () {
       var _this = this;
-      table.on("tool(driverSignList)", handleEvent);
-      table.on("toolbar(driverSignList)", handleEvent);
-      table.on("checkbox(driverSignList)", handleEvent);
+      table.on("tool("+this.tableKey+")", handleEvent);
+      table.on("toolbar("+this.tableKey+")", handleEvent);
+      table.on("checkbox("+this.tableKey+")", handleEvent);
       function handleEvent(obj) {
-        var data = obj.data;
         obj.event == "export" && permissionList.indexOf(6011) == -1 && (obj.event = "reject");
         switch (obj.event) {
           case "reject":
@@ -188,25 +186,19 @@ layui
           case "tableSet":
             xadmin.open("表格设置", "./table-set.html?tableKey=" + _this.tableKey, 600, 600);
             break;
-          case "log":
-            xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&type=15");
-            break;
           case "reset_search":
-            edipao.resetSearch("driverSignList", function(){
+            edipao.resetSearch(_this.tableKey, function(){
                 location.reload();
             });
             break;
           case "exportLog":
-            xadmin.open('导出日志', '../../OperateLog/log.html?type=' + logKey + '&action=exportLog');
+            xadmin.open('导出日志', '../../OperateLog/log.html?type=' + _this.logKey + '&action=exportLog');
             break;
         }
       }
     };
     List.prototype.initPermission = function () {
-      if (permissionList.indexOf("订单录入") < 0) {
-        $("#import_order").remove();
-      }
-      if (permissionList.indexOf("导出") < 0) {
+      if (permissionList.indexOf(6011) < 0) {
         $("#export_data").remove();
       }
     };
@@ -222,7 +214,7 @@ layui
         { field: "globalCityNumber", type: "numberslot" },
       ];
       tableFilterIns = tableFilter.render({
-        elem: "#driverSignList", //table的选择器
+        elem: "#" + _this.tableKey, //table的选择器
         mode: "self", //过滤模式
         filters: filters, //过滤项配置
         done: function (filters, reload) {
@@ -255,7 +247,7 @@ layui
     };
     List.prototype.exportExcel = function () {
       var _this = this;
-      var checkStatus = table.checkStatus("driverSignList");
+      var checkStatus = table.checkStatus(_this.tableKey);
       if (checkStatus.data.length > 0) {
         exportXlsx(checkStatus.data);
         return;
