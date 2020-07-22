@@ -25,7 +25,7 @@ layui
     var showList = [];
     var exportHead = {}; // 导出头部
     var tableCols = [
-      { checkbox: true },
+      { checkbox: true, fixed: 'left' },
       { field: "grabStartTime", title: "抢单开始时间", width: 150, templet: function (d) {
         return d.grabStartTime  || "- -";
       }},

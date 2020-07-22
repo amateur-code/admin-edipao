@@ -30,7 +30,7 @@ layui
     var showList = [];
     var exportHead = {}; // 导出头部
     var tableCols = [
-      { checkbox: true },
+      { checkbox: true, fixed: 'left' },
       { field: "driverName", title: "司机姓名", width: 150, templet: function (d) {
         return d.driverName ? d.driverName : "- -";
       }},

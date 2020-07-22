@@ -28,7 +28,7 @@ layui
     var showList = [];
     var exportHead = {}; // 导出头部
     var tableCols = [
-      { checkbox: true },
+      { checkbox: true, fixed: true, },
       { field: "grabTime", title: "抢单时间", width: 150, templet: function (d) {
           return d.grabTime ? d.grabTime : "- -";
       }},
@@ -51,7 +51,7 @@ layui
       }},
     ];
     var tableColsJoin = [
-      { checkbox: true },
+      { checkbox: true, fixed: 'left' },
       { field: "name", title: "司机姓名", width: 150, templet: function (d) {
         return d.name || "- -";
       }},
@@ -230,7 +230,7 @@ layui
       $(".href_order_no").unbind().on("click", function (e) {
         var dataset = e.target.dataset;
         var pid = 200;
-        xadmin.open('查看订单', '../order-view.html?orderNo=' + dataset.orderno + "&action=view&perssionId=" + pid);
+        top.xadmin.open('查看订单', '/orderMessage/order-view.html?orderNo=' + dataset.orderno + "&action=view&perssionId=" + pid);
       });
     }
     List.prototype.bindTableEvents = function () {
@@ -327,7 +327,7 @@ layui
       param["pageSize"] = 9999;
       edipao
         .request({
-          phone: "POST",
+          phone: "GET",
           url: _this.url,
           data: param,
         })

@@ -73,7 +73,7 @@ layui.config({
       tableIns,
       tableFilterIns,
       reloadOption = null;
-    window.permissionList = edipao.getMyPermission();
+    window.permissionList = edipao.getPermissionIdList();
     var dataPermission = edipao.getDataPermission();
     window.dataPermission = dataPermission;
     window.form = form;
@@ -553,7 +553,7 @@ layui.config({
       param["pageSize"] = 9999;
       edipao
         .request({
-          type: "POST",
+          type: "get",
           url: _this.url,
           data: param,
         })
