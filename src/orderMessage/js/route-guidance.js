@@ -270,13 +270,17 @@ layui.config({
             })
 
         },
-        // 导出
-        exportData(){
+        getExportData(cb){
             var _t = this;
+            var checkStatus = table.checkStatus("routeList");
+            if (checkStatus.data.length > 0) {
+                cb(checkStatus.data);
+                return;
+            }
             edipao.request({
                 type: 'GET',
                 url: '/admin/line/list',
-                data: Object.assign({},_t.where,{
+                data: Object.assign({}, _t.where, {
                     pageNo: 1,
                     pageSize: this.exportSize
                 })
@@ -284,48 +288,58 @@ layui.config({
                 if (res.code == 0) {
                     if(res.data){
                         var data = res.data.dataList;
-                        var exportData = [];
-                        // 添加头部
-                        exportData.push(_t.exportHead);
-                        layui.each(data, function(index, item){
-                            var newObj = {};
-                            for(var i in item){
-                                if(_t.showList.indexOf(i) > -1){
-                                    var value = item[i];
-                                    switch(i){
-                                        case 'orderType':
-                                            value = value == 1 ? '单车单' : '背车单';
-                                            break
-                                        case 'lineSource':
-                                            switch(item[i]){
-                                                case 1:
-                                                    value = '订单轨迹';
-                                                    break;
-                                                case 2:
-                                                    value = '导入轨迹';
-                                                    break;
-                                                case 3:
-                                                    value = '地图规划';
-                                                    break;
-                                            }
-                                            break;
-                                        default:
-                                            value = item[i]
-                                            break;
-                                    }
-                                    newObj[i] = value;
-                                }
-                            }
-                            exportData.push(newObj);
-                        })
-
-                        // 导出
-                        excel.exportExcel({
-                            sheet1: exportData
-                        }, '线路指引.xlsx', 'xlsx');
+                        cb(data);
                     }
                 }
-            })
+            });
+        },
+        // 导出
+        exportData(){
+            var _t = this;
+            _t.getExportData(function (data) {
+                var exportData = [];
+                // 添加头部
+                exportData.push(_t.exportHead);
+                layui.each(data, function(index, item){
+                    var newObj = {};
+                    for(var i in item){
+                        if(_t.showList.indexOf(i) > -1){
+                            var value = item[i];
+                            switch(i){
+                                case 'orderType':
+                                    value = value == 1 ? '单车单' : '背车单';
+                                    break
+                                case 'lineSource':
+                                    switch(item[i]){
+                                        case 1:
+                                            value = '订单轨迹';
+                                            break;
+                                        case 2:
+                                            value = '导入轨迹';
+                                            break;
+                                        case 3:
+                                            value = '地图规划';
+                                            break;
+                                    }
+                                    break;
+                                default:
+                                    value = item[i]
+                                    break;
+                            }
+                            newObj[i] = value;
+                        }
+                    }
+                    exportData.push(newObj);
+                })
+                edipao.exportLog({
+                    operationModule: 24,
+                    operationRemark: "导出线路指引",
+                });
+                // 导出
+                excel.exportExcel({
+                    sheet1: exportData
+                }, '线路指引.xlsx', 'xlsx');
+            });
         },
         // 绑定工具栏事件
         bindToolEvent: function(){
@@ -333,15 +347,19 @@ layui.config({
             //监听行工具事件
             table.on('tool(routeList)', function (obj) {
                 var data = obj.data;
-                var layEvent = obj.event; 
-                if (layEvent === 'edit') { 
+                obj.event == "edit" && permissionList.indexOf("修改") == -1 && (obj.event = "reject");
+                if (obj.event === 'edit') { 
                     xadmin.open('线路规划', './route-plan.html?lineId=' + data.lineId)
+                }else if(obj.event === 'reject'){
+                    layer.alert("你没有访问权限", { icon: 2 });
                 }
             });
             table.on('toolbar(routeList)', function (obj) {
-                var data = obj.data;
-                var layEvent = obj.event;
+                obj.event == "edit" && permissionList.indexOf("导出") == -1 && (obj.event = "reject");
                 switch(obj.event){
+                    case "reject":
+                        layer.alert("你没有访问权限", { icon: 2 });
+                        break;
                     case "export":
                         _t.exportData();
                         break;
@@ -349,6 +367,9 @@ layui.config({
                         edipao.resetSearch("routeList", function(){
                             location.reload();
                         });
+                        break;
+                    case "exportLog":
+                        xadmin.open('导出日志', '../../OperateLog/log.html?type=24&action=exportLog');
                         break;
                 }
             });
