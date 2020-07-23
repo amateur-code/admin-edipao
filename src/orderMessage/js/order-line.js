@@ -23,7 +23,7 @@ layui.use(['jquery','layer'], function () {
     OrderLine.prototype = {
         // 初始化
         init: function(){
-            var _t = this;
+            var _this = this;
             try{
                 //凯立德地图API功能
                 var point = new Careland.Point(419364916, 143908009);    //创建坐标点

@@ -67,6 +67,7 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 _t.hideLoading();
                 if(res.code == 0){
                     _t.lineDetail = res.data;
+                    _t.chosenOrderNo = _t.lineDetail.orderNo;
                     _t.setTabSource(res.data.lineSource);
                     _t.setChosenSource(res.data.lineSource);
                     _t.changeMap(res.data.lineSource);
@@ -102,6 +103,9 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 if(origin.indexOf("edipao") == -1) return;
                 console.log("route-plan" + JSON.stringify(message));
                 switch(message.type){
+                    case "playEnd":
+                        _t.handlePlayEnd(message.source);
+                        break;
                     case "loaded":
                         _t.iframeLoadData(message.source);
                         break;
@@ -580,10 +584,18 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
                 }
             });
             $('#tabConent').on('click','.playLine',function(e){
-                var source = _t.getSource();
-                _t.postMessage(_t["iframe" + source].contentWindow, {
-                    type: "playLine"
-                });
+                var source = _t.getSource(), $this = $(this);
+                if($this.hasClass("play")){
+                    $this.removeClass("play").addClass("stop").text("停止播放");
+                    _t.postMessage(_t["iframe" + source].contentWindow, {
+                        type: "playLine"
+                    });
+                }else{
+                    $this.removeClass("stop").addClass("play").text("播放轨迹");
+                    _t.postMessage(_t["iframe" + source].contentWindow, {
+                        type: "stopPlayLine"
+                    });
+                }
             });
         },
         changeMap: function (source) {
@@ -655,6 +667,9 @@ layui.use(['layer', 'form', 'laytpl', 'laypage', 'laydate', 'element', 'table', 
             $('.cancel-take-report').off('click').on('click', function(e){
                 _t.updateDriverReportStatus($(this).data('id'), 3);
             })
+        },
+        handlePlayEnd: function (source) {
+            $("#tabContent" + source).find(".playLine").removeClass("stop").addClass("play").text("播放轨迹");
         },
         judgeReportData: function (data) {
             if(!data.driverReportType) return error("请选择上报类型");

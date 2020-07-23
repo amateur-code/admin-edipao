@@ -57,6 +57,9 @@ layui.use(['layer'], function (layer) {
         }
       });
       this.trackHandler = new Careland.Track();
+      this.trackHandler.addEventListener("onPlayEnd", function () {
+        _this.postMessage("playEnd");
+      });
       this.Driving = new Careland.DrivingRoute(this.map, {
         map: this.map,
         policy: CLDMAP_DRIVING_POLICY_NO_HIGHWAYS,
@@ -67,7 +70,7 @@ layui.use(['layer'], function (layer) {
         onSearchComplete: function (obj) {
           if(!firstLoaded){
             firstLoaded = true;
-            if((_this.trimPoints.length > 0 || _this.vias.length > 0)){
+            if((_this.trimPoints.length > 0 || _this.vias.length > 0)){  //途径点需要额外添加
               _this.renderDrivingRoute("via");
             }else{
               layer.close(_this.topLoadIndex);
@@ -122,6 +125,9 @@ layui.use(['layer'], function (layer) {
   Rm.prototype.handleEvent1 = function (message) {
     var _this = this;
     switch(message.type){
+      case "stopPlayLine":
+        _this.trackHandler.stop();
+        break;
       case "positionPoint":
         _this.renderPositionPoint(message.data);
         break;
@@ -169,6 +175,9 @@ layui.use(['layer'], function (layer) {
   Rm.prototype.handleEvent2 = function (message) {
     var _this = this;
     switch(message.type){
+      case "stopPlayLine":
+        _this.trackHandler.stop();
+        break;
       case "positionPoint":
         _this.renderPositionPoint(message.data);
         break;
@@ -215,6 +224,9 @@ layui.use(['layer'], function (layer) {
   Rm.prototype.handleEvent3 = function (message) {
     var _this = this;
     switch(message.type){
+      case "stopPlayLine":
+        _this.trackHandler.stop();
+        break;
       case "positionPoint":
         _this.renderPositionPoint(message.data);
         break;
