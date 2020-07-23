@@ -192,7 +192,7 @@ layui
             });
             break;
           case "exportLog":
-            xadmin.open('导出日志', '../../OperateLog/log.html?type=' + _this.logKey + '&action=exportLog');
+            xadmin.open('导出日志', '../../OperateLog/log.html?type=' + logKey + '&action=exportLog');
             break;
         }
       }
