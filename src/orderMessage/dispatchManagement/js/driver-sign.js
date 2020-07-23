@@ -68,6 +68,8 @@ layui
     function List() {
       this.tableKey = "driver-sign-list-table";
       $("#doc-content").html(`<table id="${this.tableKey}" lay-filter="${this.tableKey}"></table>`);
+      this.dataKey = "driverSignDtoList";
+      this.url = "/admin/driver/info/sign/stat";
     }
     List.prototype.init = function () {
       var _this = this;
@@ -245,34 +247,44 @@ layui
         },
       });
     };
-    List.prototype.exportExcel = function () {
+    var exportLoading = false;
+    List.prototype.getExportData = function (cb) {
       var _this = this;
       var checkStatus = table.checkStatus(_this.tableKey);
-      if (checkStatus.data.length > 0) {
-        exportXlsx(checkStatus.data);
-        return;
+      if(checkStatus.data.length < 1){
+          if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
+          layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
+          exportLoading = true;
+          edipao.exportData({
+              params: where,
+              url: _this.url,
+              method: "GET",
+              pageSize: "pageSize",
+              limit: 99999,
+              checkFunction: function(res){
+                  return !(!res.data || !res.data[_this.dataKey] || res.data[_this.dataKey].length == 0);
+              }
+          }).done(function (res) {
+              var data = [];
+              exportLoading = false;
+              if(res.length > 0){
+                  res.forEach(function (item) {
+                      data = data.concat(item[_this.dataKey]);
+                  });
+                  cb(data);
+              }else{
+                  exportLoading = false;
+              }
+          });
+      }else{
+          cb(checkStatus.data);
       }
-      var param = JSON.parse(JSON.stringify(where));
-      param["pageNo"] = 1;
-      param["pageSize"] = 9999;
-      edipao
-        .request({
-          type: "get",
-          url: "/admin/driver/info/sign/stat",
-          data: param,
-        })
-        .done(function (res) {
-          if (res.code == 0) {
-            if (res.data) {
-              res.data = res.data || {};
-              res.data.driverSignDtoList = res.data.driverSignDtoList || [];
-              var data = res.data.driverSignDtoList;
-              exportXlsx(data);
-            }
-          }else{
-
-          }
-        });
+    }
+    List.prototype.exportExcel = function () {
+      var _this = this;
+      _this.getExportData(function (data) {
+        exportXlsx(data);
+      });
       function exportXlsx(data) {
         var exportData = [];
         // 添加头部
@@ -305,7 +317,7 @@ layui
           {
             sheet1: exportData,
           },
-          "司机签到数据.xlsx",
+          "导出司机签到数据.xlsx",
           "xlsx"
         );
         exportLog();

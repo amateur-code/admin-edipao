@@ -89,7 +89,7 @@ layui
               });
             } else {
               layui.each(tableCols, function (index, item) {
-                if (item.field && showList.indexOf(item.field) != -1) {
+                if (item.field) {
                   if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
                     exportHead[item.field] = item.title;
                   }
@@ -313,7 +313,7 @@ layui
           {
             sheet1: exportData,
           },
-          "抢单数据.xlsx",
+          "导出抢单数据.xlsx",
           "xlsx"
         );
         exportLog();

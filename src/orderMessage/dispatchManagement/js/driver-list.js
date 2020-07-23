@@ -92,6 +92,7 @@ layui
           url: "/admin/grab/statistics/grab-driver/statistics-list",
           dataKey: "grabDriverStatisticsList",
           logKey: 21,
+          logRemark: "导出参与抢单司机",
         },
         login: {
           title: "登录司机",
@@ -100,6 +101,7 @@ layui
           url: "/admin/grab/statistics/login-driver/statistics-list",
           dataKey: "loginDriverStatisticsList",
           logKey: 21,
+          logRemark: "导出登录APP司机",
         },
         orderJoin: {
           title: "参与抢单司机",  //订单维度
@@ -108,12 +110,14 @@ layui
           url: "/admin/grab/statistics/grab-activity/order/driver-list",
           dataKey: "grabActivityOrderDriverList",
           logKey: 21,
+          logRemark: "导出参与抢单司机",
         }
       }
       tableCols = driverConfig[this.action].tableCols;
       this.logKey = driverConfig[this.action].logKey;
       this.dataKey = driverConfig[this.action].dataKey;
       this.tableKey = driverConfig[this.action].tableKey;
+      this.logRemark = driverConfig[this.action].logRemark;
       this.url = driverConfig[this.action].url;
       $("#doc-content").html(`<table id="${this.tableKey}" lay-filter="${this.tableKey}"></table>`);
       $("#nav_cite").html(driverConfig[this.action].title);
@@ -156,7 +160,7 @@ layui
               });
             } else {
               layui.each(tableCols, function (index, item) {
-                if (item.field && showList.indexOf(item.field) != -1) {
+                if (item.field) {
                   if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
                     exportHead[item.field] = item.title;
                   }
@@ -315,34 +319,44 @@ layui
         },
       });
     };
-    List.prototype.exportExcel = function () {
+    var exportLoading = false;
+    List.prototype.getExportData = function (cb) {
       var _this = this;
       var checkStatus = table.checkStatus(_this.tableKey);
-      if (checkStatus.data.length > 0) {
-        exportXlsx(checkStatus.data);
-        return;
+      if(checkStatus.data.length < 1){
+          if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
+          layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
+          exportLoading = true;
+          edipao.exportData({
+              params: where,
+              url: _this.url,
+              method: "GET",
+              pageSize: "pageSize",
+              limit: 99999,
+              checkFunction: function(res){
+                  return !(!res.data || !res.data[_this.dataKey] || res.data[_this.dataKey].length == 0);
+              }
+          }).done(function (res) {
+              var data = [];
+              exportLoading = false;
+              if(res.length > 0){
+                  res.forEach(function (item) {
+                      data = data.concat(item[_this.dataKey]);
+                  });
+                  cb(data);
+              }else{
+                  exportLoading = false;
+              }
+          });
+      }else{
+          cb(checkStatus.data);
       }
-      var param = JSON.parse(JSON.stringify(where));
-      param["pageNo"] = 1;
-      param["pageSize"] = 9999;
-      edipao
-        .request({
-          phone: "GET",
-          url: _this.url,
-          data: param,
-        })
-        .done(function (res) {
-          if (res.code == 0) {
-            if (res.data) {
-              res.data = res.data || {};
-              res.data[_this.dataKey] = res.data[_this.dataKey] || [];
-              var data = res.data[_this.dataKey];
-              exportXlsx(data);
-            }
-          }else{
-
-          }
-        });
+    }
+    List.prototype.exportExcel = function () {
+      var _this = this;
+      _this.getExportData(function (data) {
+        exportXlsx(data);
+      });
       function exportXlsx(data) {
         var exportData = [];
         // 添加头部
@@ -365,7 +379,7 @@ layui
           {
             sheet1: exportData,
           },
-          "司机数据.xlsx",
+          _this.logRemark + ".xlsx",
           "xlsx"
         );
         exportLog();
@@ -375,7 +389,7 @@ layui
         var params = {
           operationModule: _this.logKey,
           dataPk: _this.orderNo,
-          operationRemark: "导出司机数据",
+          operationRemark: _this.logRemark,
         };
         edipao.exportLog(params);
       }
