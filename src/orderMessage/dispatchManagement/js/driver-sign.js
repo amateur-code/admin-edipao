@@ -102,8 +102,10 @@ layui
                 }
               });
             } else {
+              showList = [];
               layui.each(tableCols, function (index, item) {
-                if (item.field && showList.indexOf(item.field) != -1) {
+                if (item.field) {
+                  showList.push(item.field);
                   if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
                     exportHead[item.field] = item.title;
                   }

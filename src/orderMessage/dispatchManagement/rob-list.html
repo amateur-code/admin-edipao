@@ -61,16 +61,32 @@
     </div>
 </div>
 <script type="text/html" id="ordersSumTpl">
+    {{# if(d.grabOrderPoolCount * 1 > 0){ }}
     <a data-key="{{d.activityBatchNo}}" class="blue pointer href_order_sum" href="javascript:;">{{d.grabOrderPoolCount}}</a>
+    {{# }else{ }}
+    {{d.grabOrderPoolCount}}
+    {{# } }}
 </script>
 <script type="text/html" id="driverSumTpl">
+    {{# if(d.grabOrderDriverCount * 1 > 0){ }}
     <a data-key="{{d.activityBatchNo}}" class="blue pointer href_driver_sum" href="javascript:;">{{d.grabOrderDriverCount}}</a>
+    {{# }else{ }}
+    {{d.grabOrderDriverCount}}
+    {{# } }}
 </script>
 <script type="text/html" id="winnerSumTpl">
+    {{# if(d.winningOrderCount * 1 > 0){ }}
     <a data-key="{{d.activityBatchNo}}" class="blue pointer href_winner_sum" href="javascript:;">{{d.winningOrderCount}}</a>
+    {{# }else{ }}
+    {{d.winningOrderCount}}
+    {{# } }}
 </script>
 <script type="text/html" id="loginSumTpl">
+    {{# if(d.loginDriverCount * 1 > 0){ }}
     <a data-key="{{d.activityBatchNo}}" class="blue pointer href_login_sum" href="javascript:;">{{d.loginDriverCount}}</a>
+    {{# }else{ }}
+    {{d.loginDriverCount}}
+    {{# } }}
 </script>
 <script type="text/html" id="headerBtns">
     <div class="layui-btn-container">
