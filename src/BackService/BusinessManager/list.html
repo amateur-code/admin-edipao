@@ -72,7 +72,8 @@
 </div>
 <script type="text/html" id="headerBtns">
 <div class="layui-btn-container">
-  <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
+  <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索
+  </button>
   {{# if(permissionList.indexOf('新增') != -1){ }}
   <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
   {{# } }}
@@ -111,43 +112,43 @@ layui.config({
 }).use(['table', 'layer', 'excel', 'tableFilter'], function (table, layer, excel, tableFilter) {
   var reloadOption = null;
   var xadmin = layui.xadmin,
-    edipao = layui.edipao,
-    SupplierTypeConfig = {},
-    tableKey = 'BackService-BusinessManager-list',
-    tableCols = [ //表头
-      { checkbox: true },
-      { field: 'supplierName', title: '供应商名称', width: 200 },
-      { field: 'loginPhone', title: '登录手机号', width: 200 },
-      {
-        field: 'contractName', title: '联系人', width: 200, templet: function (d) {
-          var str = d.contractName + '(' + d.contractPhone + ')'
-          return str == "()" ? '- -' : str
-        }
+      edipao = layui.edipao,
+      SupplierTypeConfig = {},
+      tableKey = 'BackService-BusinessManager-list',
+      tableCols = [ //表头
+        { checkbox: true },
+        { field: 'supplierName', title: '供应商名称', width: 200 },
+        { field: 'loginPhone', title: '登录手机号', width: 200 },
+        {
+          field: 'contractName', title: '联系人', width: 200, templet: function (d) {
+            var str = d.contractName + '(' + d.contractPhone + ')'
+            return str == "()" ? '- -' : str
+          }
+        },
+        {
+          field: 'supplierType', title: '类型', width: 200, templet: function (d) {
+            return SupplierTypeConfig[d.supplierType]
+          }
+        },
+        { field: 'productCount', title: '合作产品/网点', width: 200, templet: '#productList' },
+        {
+          field: 'status', title: '状态', width: 100, templet: function (d) {
+            return d.statusDesc
+          }
+        },
+        {
+          field: 'remark', title: '备注', width: 200, templet: function (d) {
+            return d.remark || '- -'
+          }
+        },
+        { title: '操作', field: "operation", toolbar: '#rowBtns', width: 400, fixed: 'right' }
+      ],
+      tableIns,
+      tableFilterIns,
+      tableWhere = {
+        loginStaffId: edipao.getLoginStaffId()
       },
-      {
-        field: 'supplierType', title: '类型', width: 200, templet: function (d) {
-          return SupplierTypeConfig[d.supplierType]
-        }
-      },
-      { field: 'productCount', title: '合作产品/网点', width: 200, templet: '#productList' },
-      {
-        field: 'status', title: '状态', width: 100, templet: function (d) {
-          return d.statusDesc
-        }
-      },
-      {
-        field: 'remark', title: '备注', width: 200, templet: function (d) {
-          return d.remark || '- -'
-        }
-      },
-      { title: '操作', field: "operation", toolbar: '#rowBtns', width: 400, fixed: 'right' }
-    ],
-    tableIns,
-    tableFilterIns,
-    tableWhere = {
-      loginStaffId: edipao.getLoginStaffId()
-    },
-    permissionList = edipao.getMyPermission();
+      permissionList = edipao.getMyPermission();
   window.permissionList = permissionList;
   var params = edipao.urlGet();
   edipao.request({
@@ -258,7 +259,7 @@ layui.config({
         } else {
           $('.layui-table-header').css('overflow', 'hidden')
         }
-        if(reloadOption) {
+        if (reloadOption) {
           tableIns.reload(JSON.parse(JSON.stringify(reloadOption)));
           reloadOption = false;
         }
@@ -304,9 +305,9 @@ layui.config({
           filters.contractName = filters.contractName[0];
         }
         var index = 0,
-          where = {
-            loginStaffId: edipao.getLoginStaffId()
-          };
+            where = {
+              loginStaffId: edipao.getLoginStaffId()
+            };
         layui.each(filters, function (key, value) {
           if (!value) return;
           where['searchFieldDTOList[' + index + '].fieldName'] = key;
@@ -323,10 +324,10 @@ layui.config({
           index++;
         })
         tableWhere = where;
-        if(reload){
-          reloadOption = { where: where, page: { curr: 1 }};
-        }else{
-            tableIns.reload({where: where, page: { curr: 1 }});
+        if (reload) {
+          reloadOption = { where: where, page: { curr: 1 } };
+        } else {
+          tableIns.reload({ where: where, page: { curr: 1 } });
         }
       }
     })
@@ -378,10 +379,14 @@ layui.config({
         xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.supplierNo + '&type=1');
         break;
       case 'trade-record':
-        if (data.supplierType != 'tempLicenseSupply') {
-          xadmin.open('交易记录', '../trade-record.html?key=supplierNo&id=' + data.supplierNo + '&perssionId=' + params.perssionId)
-        } else {
-          xadmin.open('交易记录', '../trade-record-lp.html?key=supplierNo&id=' + data.supplierNo + '&perssionId=' + params.perssionId)
+        if (data.supplierType == 'oilSupply') {
+          xadmin.open('交易记录', '../trade-record.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
+        } else if (data.supplierType == 'tempLicenseSupply') {
+          xadmin.open('交易记录', '../trade-record-lp.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
+        } else if (data.supplierType == 'loadCar' || data.supplierType == 'unloadCar') {
+          xadmin.open('交易记录', '../trade-record-bc.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
+        } else if (data.supplierType == 'stopSupply') {
+          xadmin.open('交易记录', '../trade-record-tc.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
         }
         break;
       case 'add':
@@ -394,8 +399,8 @@ layui.config({
         xadmin.open('表格设置', './table-set.html', 600)
         break;
       case "reset_search":
-        edipao.resetSearch("BusinessList", function(){
-            location.reload();
+        edipao.resetSearch("BusinessList", function () {
+          location.reload();
         });
         break;
       case "exportLog":

@@ -70,7 +70,7 @@
     <script type="text/html" id="headerBtns">
         <div class="layui-btn-container">
         <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
-        {{# if(permissionList.indexOf('新增') != -1){ }}    
+        {{# if(permissionList.indexOf('新增') != -1){ }}
         <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
         {{# } }}
         {{# if(permissionList.indexOf('导出') != -1){ }}
@@ -174,7 +174,7 @@
                         })
                     }
                     renderTable();
-                } 
+                }
             })
         }
         var resizeTime = null;
@@ -286,12 +286,12 @@
                         filters.contractPhone =  filters.contractPeople[1];
                         delete filters.contractPeople
                     }
-                    var index = 0,  
+                    var index = 0,
                         where = {
                             loginStaffId: edipao.getLoginStaffId()
                         };
                     layui.each(filters,function(key, value){
-                        if(!value) return; 
+                        if(!value) return;
                         where['searchFieldDTOList['+ index +'].fieldName'] = key;
                         if(key == 'supplierType' || key == 'status'){
                             where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
@@ -360,10 +360,14 @@
                     xadmin.open('操作日志', '../../OperateLog/log.html?id=' + data.productNo + '&type=2');
                     break;
                 case 'trade-record':
-                    if(data.supplierType !='tempLicenseSupply'){
+                    if (data.supplierType == 'oilSupply') {
                         xadmin.open('交易记录', '../trade-record.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
-                    }else {
+                    } else if (data.supplierType == 'tempLicenseSupply') {
                         xadmin.open('交易记录', '../trade-record-lp.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
+                    } else if (data.supplierType == 'loadCar' || data.supplierType == 'unloadCar') {
+                        xadmin.open('交易记录', '../trade-record-bc.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
+                    } else if (data.supplierType == 'stopSupply') {
+                        xadmin.open('交易记录', '../trade-record-tc.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
                     }
                     break;
                 case 'add':
@@ -386,7 +390,7 @@
             };
         }
 
-        
+
 
         function exportData() {
             var checkStatus = table.checkStatus('ProductList');
@@ -414,7 +418,7 @@
                 layui.each(tableCols, function(index, item) {
                     if(item.field && item.hide != true){
                         if(index2 == 0){
-                            dataItem[item.field] = item.title; 
+                            dataItem[item.field] = item.title;
                         }else if(item.field == 'unitPrice'){
                             var after = ''
                             after += item2.supplierType == 'oilSupply'? '元/升':''
@@ -425,8 +429,8 @@
                         }else{
                             dataItem[item.field] = item2[item.field] || '- -'
                         }
-                        
-                    } 
+
+                    }
                 })
                 data.push(dataItem)
             })

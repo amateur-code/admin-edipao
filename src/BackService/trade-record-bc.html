@@ -1,0 +1,306 @@
+<!doctype html>
+<html class="x-admin-sm">
+
+<head>
+  <meta charset="UTF-8">
+  <title>E地跑运营平台</title>
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+  <meta http-equiv="Expires" CONTENT="-1">
+  <meta http-equiv="Cache-Control" CONTENT="no-cache">
+  <meta http-equiv="Pragma" CONTENT="no-cache">
+  <link rel="stylesheet" href="../css/font.css">
+  <link rel="stylesheet" href="../css/xadmin.css">
+  <link rel="stylesheet" href="../lib/TableFilter/tableFilter.css?VERSION">
+
+  <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
+  <script type="text/javascript" src="../js/jquery.min.js"></script>
+  <script type="text/javascript" src="../lib/layui/layui.js"></script>
+  <script type="text/javascript" src="../js/common.js?VERSION"></script>
+  <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+  <!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  <script>
+  // 是否开启刷新记忆tab功能
+  // var is_remember = false;
+  </script>
+  <style type="text/css">
+    .layui-table-tool-temp {
+      padding-right: 0;
+    }
+
+    .layui-btn-container {
+      text-align: right;
+    }
+  </style>
+</head>
+
+<body>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <table id="list" lay-filter="list"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/html" id="headerBtns">
+<div class="layui-btn-container">
+  {{# if(permissionList.indexOf('交易记录导出') != -1){ }}
+  <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
+  {{# } }}
+  <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
+  <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
+</div>
+</script>
+
+<script type="text/javascript">
+layui.config({
+  base: '../lib/'
+}).extend({
+  excel: 'layui_exts/excel.min',
+  tableFilter: 'TableFilter/tableFilter'
+}).use(['table', 'layer', 'excel', 'tableFilter'], function (table, layer, excel, tableFilter) {
+  var xadmin = layui.xadmin,
+      edipao = layui.edipao,
+      tableCols = [ //表头
+        { checkbox: true },
+        { field: 'tradeNo', title: '交易流水号', width: 200 },
+        {
+          field: 'upVinCode', title: 'vin码', width: 200, templet: function (d) {
+            return '<p style="line-height: 14px">' + d.upVinCode + '</p><p style="line-height: 14px">' + d.downVinCode + '</p>'
+          }
+        },
+        { field: 'orderNo', title: '关联业务单号', width: 200 },
+        { field: 'downTempLicense', title: '临牌', width: 200 },
+        { field: 'downLoadTime', title: '背车时间', width: 200 },
+        {
+          field: 'unitPrice', title: '价格', minWidth: 100, templet: function (d) {
+            var unit = "元/次";
+            return d.unitPrice + unit;
+          }
+        },
+        {
+          field: 'totalPrice', title: '总费用', minWidth: 100, templet: function (d) {
+            var unit = "元";
+            return d.unitPrice + unit;
+          }
+        },
+        { field: 'productName', title: '产品/网点', width: 200 },
+        { field: 'detailAddress', title: '地址', width: 200 },
+      ],
+      tableIns,
+      tableFilterIns,
+      permissionList = edipao.getMyPermission();
+  window.permissionList = permissionList;
+  var params = edipao.urlGet();
+  var key = params.key;
+  var logKey = key == "productNo" ? 17 : 16;
+  var tableKey = 'BackService-' + params.key + '-trade-record';
+  var tableWhere = {
+    [params.key]: params.id,
+    loginStaffId: edipao.getLoginStaffId()
+  }
+  getTableHeader();
+
+  function getTableHeader () {
+    edipao.request({
+      type: 'GET',
+      url: '/admin/table/show-field/get',
+      data: {
+        tableName: tableKey
+      }
+    }).done(function (res) {
+      if (res.code == 0) {
+        if (res.data) {
+          var showList = [];
+          try {
+            showList = JSON.parse(res.data);
+          } catch (e) {
+          }
+          layui.each(tableCols, function (index, item) {
+            if (item.field && showList.indexOf(item.field) == -1) {
+              item.hide = true;
+            }
+          })
+        }
+        renderTable();
+      }
+    })
+  }
+
+  function renderTable () {
+    tableIns = table.render({
+      elem: '#list',
+      method: 'POST',
+      url: edipao.API_HOST + '/admin/loadCar-record/list',
+      request: {
+        pageName: 'pageNo',
+        limitName: 'pageSize'
+      },
+      where: tableWhere,
+      parseData: function (res) { //res 即为原始返回的数据
+        layui.each(res.data.supplierRespList, function (index, el) {
+          el.supplierTypeName = SupplierTypeConfig[el.supplierType]
+        });
+        return {
+          code: res.code, //解析接口状态
+          msg: res.message, //解析提示文本
+          count: res.data.totalSize, //解析数据长度
+          data: res.data.loadCarTradeRecordEntityList == null ? [] : res.data.loadCarTradeRecordEntityList //解析数据列表
+        };
+      },
+      page: true,
+      cols: [tableCols],
+      toolbar: '#headerBtns',
+      defaultToolbar: [],
+      done: function (res, curr, count) {
+        if (!res.data || res.data.length == 0) {
+          $('.layui-table-header').css('overflow-x', 'scroll')
+        } else {
+          $('.layui-table-header').css('overflow', 'hidden')
+        }
+        tableFilterIns && tableFilterIns.reload()
+      }
+    });
+    var filtersHeader = [];
+    layui.each(tableCols, function (index, el) {
+      if (el.field) {
+        var item = { field: el.field };
+        if (['downLoadTime'].indexOf(el.field) !== -1) {
+          item.type = 'timeslot';
+        } else if (['totalPrice', 'unitPrice'].indexOf(el.field) !== -1) {
+          item.type = 'numberslot'
+        }
+        filtersHeader.push(item)
+      }
+    });
+
+    tableFilterIns = tableFilter.render({
+      'elem': '#list',//table的选择器
+      'mode': 'self',//过滤模式
+      'filters': filtersHeader,//过滤项配置
+      'done': function (filters) {
+        var index = 0,
+            where = {
+              [params.key]: params.id,
+              loginStaffId: edipao.getLoginStaffId()
+            };
+        layui.each(filters, function (key, value) {
+          where['searchFieldDTOList[' + index + '].fieldName'] = key;
+          if (['totalPrice', 'unitPrice'].indexOf(key) !== -1) {
+            where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
+            where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
+          } else if (['downLoadTime'].indexOf(key) !== -1) { // 背车时间
+            var timeslot = value.split('至');
+            where['searchFieldDTOList[' + index + '].fieldMinValue'] = timeslot[0];
+            where['searchFieldDTOList[' + index + '].fieldMaxValue'] = timeslot[1];
+          } else {
+            where['searchFieldDTOList[' + index + '].fieldValue'] = value;
+          }
+          index++;
+        })
+        tableWhere = where;
+        tableIns.reload({ where: where, page: { curr: 1 } });
+      }
+    })
+  }
+
+  function handleEvent (obj) {
+    obj.event == 'export' && permissionList.indexOf('交易记录导出') == -1 && (obj.event = 'reject');
+    switch (obj.event) {
+      case 'reject':
+        layer.alert('你没有访问权限', { icon: 2 });
+        break;
+      case 'export':
+        exportData()
+        break;
+      case 'exportLog':
+        xadmin.open('导出日志', '../OperateLog/log.html?type=' + logKey + '&action=exportLog');
+        break;
+      case 'tableSet':
+        xadmin.open('表格设置', './table-set-bc.html?tableKey=' + tableKey, 600)
+        break;
+    }
+  }
+
+  function exportData () {
+    var checkStatus = table.checkStatus('list');
+    if (checkStatus.data.length > 0) {
+      exportXlsx(checkStatus.data)
+      return;
+    }
+
+    tableWhere.pageNo = 1;
+    tableWhere.pageSize = 10000;
+    edipao.request({
+      type: 'POST',
+      url: '/admin/loadCar-record/list',
+      data: tableWhere
+    }).then(function (res) {
+      if (res.code == 0) {
+        exportXlsx(res.data.loadCarTradeRecordEntityList == null ? [] : res.data.loadCarTradeRecordEntityList);
+        return;
+        var data = [],
+            list = res.data.loadCarTradeRecordEntityList == null ? [] : res.data.loadCarTradeRecordEntityList;
+        list = [{}].concat(list);
+        layui.each(list, function (index2, item2) {
+          var dataItem = {};
+          layui.each(tableCols, function (index, item) {
+            if (item.field && item.hide != true) {
+              if (index2 == 0) {
+                dataItem[item.field] = item.title;
+              } else if (item.field == "tradeStatus") {
+                dataItem[item.field] = item2["tradeStatusDesc"];
+              } else {
+                dataItem[item.field] = item2[item.field] || '- -';
+              }
+            }
+          })
+          data.push(dataItem)
+        })
+        excel.exportExcel({ sheet1: data }, '交易记录.xlsx', 'xlsx');
+      }
+    })
+  }
+
+  function exportXlsx (list) {
+    var data = [], list = [{}].concat(list);
+    layui.each(list, function (index2, item2) {
+      var dataItem = {};
+      layui.each(tableCols, function (index, item) {
+        if (item.field && item.hide != true) {
+          if (index2 == 0) {
+            dataItem[item.field] = item.title;
+          } else if (item.field == "tradeStatus") {
+            dataItem[item.field] = item2["tradeStatusDesc"];
+          } else {
+            dataItem[item.field] = item2[item.field] || '- -'
+          }
+        }
+      })
+      data.push(dataItem)
+    })
+    excel.exportExcel({ sheet1: data }, '交易记录.xlsx', 'xlsx');
+    var params = {
+      operationModule: logKey,
+      operationRemark: key == "productNo" ? "导出后服产品交易记录" : "导出供应商档案交易记录"
+    }
+    edipao.exportLog(params);
+  }
+
+  table.on('toolbar(list)', handleEvent);
+  table.on('checkbox(staffList)', handleEvent);
+
+})
+</script>
+</body>
+
+</html>
