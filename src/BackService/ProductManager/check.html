@@ -281,26 +281,28 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
     }
   }).then(function (res) {
     if (res.code == 0) {
-      res.data.priceExtJson = JSON.parse(res.data.priceExtJson)
-      res.data.priceExtJson.forEach(item => {
-        item.effectiveStartTime = item.effectiveStartTime.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6")
-        // 背车单位
-        if (item.multiPriceUnit == '0') {
-          item.multiPriceUnit = '元/自然日'
-        } else if(item.multiPriceUnit =='1'){
-          item.multiPriceUnit ='元/小时'
-        } else if(item.multiPriceUnit =='3'){
-          item.multiPriceUnit ='元/辆车'
-        }
-        // 单车价格单位
-        if (item.singlePriceUnit =='0') {
-          item.singlePriceUnit ='元/自然日'
-        } else if(item.singlePriceUnit =='1'){
-          item.singlePriceUnit ='元/小时'
-        } else if(item.singlePriceUnit =='3'){
-          item.singlePriceUnit ='元/辆车'
-        }
-      })
+      if(res.data.priceExtJson){
+        res.data.priceExtJson = JSON.parse(res.data.priceExtJson)
+        res.data.priceExtJson.forEach(item => {
+          item.effectiveStartTime = item.effectiveStartTime.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6")
+          // 背车单位
+          if (item.multiPriceUnit == '0') {
+            item.multiPriceUnit = '元/自然日'
+          } else if(item.multiPriceUnit =='1'){
+            item.multiPriceUnit ='元/小时'
+          } else if(item.multiPriceUnit =='3'){
+            item.multiPriceUnit ='元/辆车'
+          }
+          // 单车价格单位
+          if (item.singlePriceUnit =='0') {
+            item.singlePriceUnit ='元/自然日'
+          } else if(item.singlePriceUnit =='1'){
+            item.singlePriceUnit ='元/小时'
+          } else if(item.singlePriceUnit =='3'){
+            item.singlePriceUnit ='元/辆车'
+          }
+        })
+      }
       detail = res.data;
       if (detail.needApproval) {
         waitCheck();

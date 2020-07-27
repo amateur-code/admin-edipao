@@ -896,12 +896,14 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
         productNo: params.id
       }
     }).then(function (res) {
-      res.data.priceExtJson = JSON.parse(res.data.priceExtJson)
-      res.data.priceExtJson.forEach(item => {
-        item.effectiveStartTime = item.effectiveStartTime.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6")
-      })
+      if(res.data.priceExtJson){
+        res.data.priceExtJson = JSON.parse(res.data.priceExtJson)
+        res.data.priceExtJson.forEach(item => {
+          item.effectiveStartTime = item.effectiveStartTime.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6")
+        })
+      }
       resData = res.data
-      // resDataPriceExtJson = res.data.priceExtJson
+      console.log(res.data)
       if (res.code == 0) {
         detailAddress = {
           address: res.data.detailAddress,
@@ -1051,25 +1053,15 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
     singlePriceUnit.forEach((item, index) => {
       sumData.forEach((val, ind) => {
         if (index === ind) {
-          val.singlePriceUnit = item.value
+          val.singlePriceUnit = item.value.toString()
         }
       })
     })
     sumData.forEach(item => {
       if (item.modelName === '通用车型') {
         item.commonFlag = 'Y'
-        // item.singlePriceUnit = ''
-        // item.singlePrice = '0'
-        // item.singleUpLimitPrice = '0'
-        // item.multiPriceUnit = '元'
-        // item.multiUpLimitPrice = '0'
       } else {
         item.commonFlag = 'N'
-        // item.singlePriceUnit = ''
-        // item.singlePrice = '0'
-        // item.singleUpLimitPrice = '0'
-        // item.multiPriceUnit = '元'
-        // item.multiUpLimitPrice = '0'
       }
       if (item.singlePriceUnit && item.singlePriceUnit != '') {
 
@@ -1097,7 +1089,6 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
         item.multiUpLimitPrice = '0'
       }
     })
-    console.log(params.id)
     data.field.lng = detailAddress.lng;
     data.field.lat = detailAddress.lat;
     data.field.priceExtJson = JSON.stringify(sumData);
