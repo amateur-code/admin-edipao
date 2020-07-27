@@ -89,16 +89,16 @@
                 <span id="" class="content_name blue">{{d.transportMode || '- -'}}</span>
             </div>
         </div>
+        {{# if(d.updateData.transportMode){ }}
         <div class="layui-row">
-            {{# if(d.updateData.transportMode){ }}
             <div class="layui-col-md4 layui-col-md-offset8">
                 {{# if(d.updateData.transportMode){ }}
                 <span class="layui-form-span form_span red">待审：</span>
                 <span disabled type="text" autocomplete="off" class="blue">{{d.updateData.transportMode}}</span>
                 {{# } }}
             </div>
-            {{# } }}
         </div>
+        {{# } }}
         <div style="margin-top:20px" class="layui-row">
             <div class="layui-col-md4">
                 <span class="content_name">创建时间：</span>
@@ -113,6 +113,24 @@
                 <span id="" class="content_name blue">{{d.startTruckTime}}</span>
             </div>
         </div>
+        {{# if(d.orderType == 2){ }}
+        <div style="margin-top:20px" class="layui-row">
+            <div class="layui-col-md4">
+                <span class="content_name">背车网点：</span>
+                <span id="" class="content_name blue">{{d.loadCarNetwork || '- -'}}</span>
+            </div>
+        </div>
+        <div class="layui-row">
+            {{# if(d.updateData.loadCarNetwork){ }}
+            <div class="layui-col-md4">
+                {{# if(d.updateData.loadCarNetwork){ }}
+                <span class="layui-form-span form_span red">待审：</span>
+                <span disabled type="text" autocomplete="off" class="blue">{{d.updateData.loadCarNetwork}}</span>
+                {{# } }}
+            </div>
+            {{# } }}
+        </div>
+        {{# } }}
       </script>
       <script id="income_info_tpl" type="text/html">
         <div class="layui-row form_item_container">
@@ -1052,7 +1070,15 @@
                             {{# if(d.feeUpdateData.tailPayBillType){ }}
                             <div class="check">
                                 <span class="x-red layui-form-span form_span">待审：</span>
-                                <span class="">{{d.feeUpdateData.tailPayBillType}}</span>
+                                {{# if(d.feeUpdateData.tailPayBillType == 1){ }}
+                                <span class="">现结</span>
+                                {{# }else if(d.feeUpdateData.tailPayBillType == 2){ }}
+                                <span class="">月结</span>
+                                {{# }else if(d.feeUpdateData.tailPayBillType == 3){ }}
+                                <span class="">账期</span>
+                                {{# }else{ }}
+                                <span class="">- -</span>
+                                {{# } }}
                             </div>
                             {{# } }}
                         </div>

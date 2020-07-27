@@ -42,6 +42,12 @@
       transform: translateY(-50%);
       left: 45px;
     }
+    .pointer{
+      cursor: pointer;
+    }
+    .blue{
+      color: #3490E9;
+    }
   </style>
 </head>
 <body>
@@ -76,6 +82,21 @@
   <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
 </div>
 </script>
+<script id="orderNoTpl" type="text/html">
+  {{# if(d.relationOrderNo){ }}
+  <a class="blue pointer href_order" data-order="{{d.relationOrderNo}}" href="javascript:;">{{d.relationOrderNo}}</a>
+  {{# }else{ }}
+  - -
+  {{# } }}
+</script>
+<script id="driverTpl" type="text/html">
+  {{# if(d.driverId){ }}
+  <a class="blue pointer href_order" data-order="{{d.relationOrderNo}}" href="javascript:;">{{d.relationOrderNo}}</a>
+  {{# }else{ }}
+  - -
+  {{# } }}
+</script>
+
 <script type="text/javascript">
 //定义时间转换函数
 function dateConvert (dateParms) {
@@ -197,15 +218,18 @@ layui.config({
       },
       {
         field: 'driverName', title: '短驳司机', width: 200, align: 'center', templet: function (d) {
+          var res = "";
           if (d.driverName && d.driverPhone) {
-            return d.driverName + '-' + d.driverPhone
+            res = d.driverName + '-' + d.driverPhone
           } else if (d.driverName === '' && d.driverPhone) {
-            return d.driverPhone
+            res = d.driverPhone
           } else if (d.driverName && d.driverPhone === '') {
-            return d.driverName
+            res = d.driverName
           } else if (d.driverName === '' && d.driverPhone === '') {
             return '- -'
           }
+          var str = `<a class="blue pointer href_driver" data-id="${d.driverId}" href="javascript:;">${res}</a>`
+          return str;
         }
       },
       {
@@ -241,9 +265,7 @@ layui.config({
         }
       },
       {
-        field: 'relationOrderNo', title: '关联订单号', width: 200, align: 'center', templet: function (d) {
-          return d.relationOrderNo || '- -'
-        }
+        field: 'relationOrderNo', title: '关联订单号', width: 200, align: 'center', templet: "#orderNoTpl"
       }
     ],
     tableIns,
@@ -340,6 +362,7 @@ layui.config({
       defaultToolbar: [],
       done: function (res, curr, count) {
         $(window).unbind("resize");
+        bindEvents();
         resizeTable();
         if (res.data == null) {
           $('.layui-table-header').css('overflow-x', 'scroll')
@@ -353,6 +376,18 @@ layui.config({
         tableFilterIns && tableFilterIns.reload() // 搜索
       }
     });
+
+    function bindEvents() {
+      $(".href_order").unbind().click(function (e) {
+        var orderNo = e.target.dataset.order;
+        var pid = 200;
+        xadmin.open('查看订单', '../order-view.html?orderNo=' + orderNo + "&action=view" + "&perssionId=" + pid);
+      });
+      $(".href_driver").unbind().click(function (e) {
+        var id = e.target.dataset.id;
+        xadmin.open('司机信息','../../DriverManager/DriverArchives/info.html?id=' + id);
+      });
+    }
 
     let filtersHeader = [];
     layui.each(tableCols, function (index, el) {

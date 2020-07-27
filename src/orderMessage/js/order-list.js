@@ -109,7 +109,7 @@ layui.config({
     }
     var returnImagesHolder = [
         "/images/jiaojie1.jpeg",
-        "/images/jiaojie2.jpg",
+        "/images/jiaojie.jpg",
         "/images/half-body.jpg",
     ];
     var filters = [
@@ -132,6 +132,7 @@ layui.config({
         { field: 'endAddress', type: 'input' },
         { field: 'transportMode', type: 'checkbox', data: transportModeData },
         { field: 'transportAssignTime', type: 'timeslot' },
+        { field: 'cksj', type: 'timeslot' },
         { field: 'dispatchTime', type: 'timeslot' },
         { field: 'openOperator', type: 'contract' },
         { field: 'deliveryOperator', type: 'contract' },
@@ -324,7 +325,7 @@ layui.config({
                         where['searchFieldDTOList['+ index +'].fieldMinValue'] = "1980-01-01 00:00:00";
                         where['searchFieldDTOList['+ index +'].fieldMaxValue'] = "2999-01-01 00:00:00";
                     }
-                }else if(key == "dealerSignTime" || key == "certificateSignTime" || key=="arrivePayTime"||key=="prePayTime"||key=="tailPayTime"||key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
+                }else if(key == "cksj" || key == "dealerSignTime" || key == "certificateSignTime" || key=="arrivePayTime"||key=="prePayTime"||key=="tailPayTime"||key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     value = value.split(" 至 ");
                     where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
@@ -1101,34 +1102,6 @@ layui.config({
                 top.xadmin.add_tab("车损/报备", "orderMessage/vehicleDamage/list.html?orderStatus=" + orderStatus + "&orderNo=" + id + "&perssionId=" + pid, false, "focus");
             });
         },
-        // getExportData: function (cb) {
-        //     var _this = this;
-        //     var checkStatus = table.checkStatus('orderList');
-        //     if(checkStatus.data.length < 1){
-        //         if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
-        //         layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
-        //         exportLoading = true;
-        //         var param = where;
-        //         param['pageNo']= 1;
-        //         param['pageSize'] = 99999;
-        //         edipao.request({
-        //             type: 'GET',
-        //             url: '/admin/order/list',
-        //             data: param,
-        //             timeout: 100000,
-        //         }).done(function (res) {
-        //             exportLoading = false;
-        //             res.data = res.data || {};
-        //             res.data.orderDTOList = res.data.orderDTOList || [];
-        //             cb(res.data.orderDTOList);
-        //         }).fail(function () {
-        //             exportLoading = false;
-        //         });
-        //     }else{
-        //         cb(checkStatus.data);
-        //     }
-            
-        // },
         getExportData: function (cb) {
             var _this = this;
             var checkStatus = table.checkStatus('orderList');
@@ -1162,7 +1135,6 @@ layui.config({
             }
         },
         exportData: function exportExcel() {
-            var _this = this;
             method.getExportData(function (data) {
                 var params = {
                     loginStaffId: user.staffId,
@@ -1179,9 +1151,8 @@ layui.config({
                     for(var i in item){
                         var orderType = item.orderType;
                         var masterFlag = item.masterFlag;
-                        var prePayOil = item.prePayOil ? item.prePayOil : '';
+                        var prePayOil = item.prePayOil;
                         var startApprovalBtn = item.startApprovalBtn;
-                        var returnApprovalBtn = item.returnApprovalBtn;
                         var openOperator = item.openOperator ? item.openOperator : '';
                         var openOperatorPhone = item.openOperatorPhone ? item.openOperatorPhone : '';
                         var deliveryOperator = item.deliveryOperator ? item.deliveryOperator : '';
@@ -1261,8 +1232,9 @@ layui.config({
                                     if(dataPermission.canViewOrderCost != "Y"){
                                         value = "****" + payStatus;
                                     }else{
-                                        value = item[i] + "元" + "/" + prePayOil + "升" + payStatus;
+                                        value = item[i] + "元" + payStatus;
                                     }
+                                    newObj.prePayOil = prePayOil + "升";
                                     break;
                                 case 'arrivePayAmount':
                                     var payStatus = "";
@@ -1426,7 +1398,7 @@ layui.config({
                 , id: 'orderList'
                 , parseData: function (res) {
                     var data = [];
-                    orderDTOList = res.data.orderDTOList;
+                    orderDTOList = res.data.orderDTOList || [];
                     orderDTOList.forEach(function(item){
                         if(item.orderType == 2 && item.masterFlag == "否"){
                             item.showBtn = 0;
@@ -1660,6 +1632,9 @@ layui.config({
         }},
         {field: 'transportAssignTime', title: '运输商指派时间', sort: false,width: 200, templet: function(d){
             return d.transportAssignTime ? d.transportAssignTime : '- -';
+        }},
+        {field: 'cksj', title: '出库时间', sort: false,width: 200, templet: function(d){
+            return d.cksj ? d.cksj : '- -';
         }},
         {field: 'customerMileage', title: '收入里程', sort: false,width: 150, templet: function(d){
             return d.customerMileage ? (d.customerMileage + "km") : '- -';
@@ -1935,6 +1910,7 @@ layui.config({
                     }else{
                         if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
                             exportHead[item.field] = item.title;
+                            if(item.field == "prePayAmount") exportHead.prePayOil = "预付款油升数";
                         }
                     }
                 })
@@ -1943,6 +1919,7 @@ layui.config({
                     if(item.field && showList.indexOf(item.field) != -1){
                         if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
                             exportHead[item.field] = item.title;
+                            if(item.field == "prePayAmount") exportHead.prePayOil = "预付款油升数";
                         }
                     }
                 })

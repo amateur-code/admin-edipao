@@ -60,12 +60,12 @@
             <form class="layui-form" lay-filter="base_info_form">
                 <div class="layui-row">
                     <div class="layui-col-md4">
-                        <span class="content_name">业务单号：</span>
-                        <span id="" class="content_name blue">{{d.orderNo}}</span>
+                        <label class="layui-form-label text_left form_label" style="width: auto;">业务单号：</label>
+                        <label class="layui-form-label text_left form_label blue" style="width: auto;">{{d.orderNo}}</label>
                     </div>
                     <div class="layui-col-md4">
-                        <span class="content_name">订单类型：</span>
-                        <span class="content_name blue">
+                        <label class="layui-form-label text_left form_label" style="width: auto;">订单类型：</label>
+                        <label class="layui-form-label text_left form_label content_name blue">
                             {{#  
                                 var fn = function(type){
                                     if(type == 1){
@@ -78,10 +78,10 @@
                                 }; 
                             }}
                               {{fn(d.orderType)}}
-                        </span>
+                        </label>
                     </div>
                     <div class="layui-col-md4">
-                        <label class="layui-form-label text_left form_label">运输方式：</label>
+                        <label class="layui-form-label text_left form_label" style="width: auto;">运输方式：</label>
                         <div class="layui-input-inline">
                             <select name="transportMode" lay-search>
                                 <option value="国道">国道</option>
@@ -90,6 +90,19 @@
                             </select>  
                         </div>
                     </div>
+                    {{# if(d.orderType == 2){ }}
+                    <div class="layui-col-md4">
+                        <label class="layui-form-label text_left form_label" style="width: auto;"><span class="red">*</span>背车网点：</label>
+                        <div class="layui-input-inline">
+                            <select name="loadCarNetwork" lay-search>
+                                <option disabled value="" selected>请选择</option>
+                                {{# layui.each(d.loadCarNetworkList, function(index, item){ }}
+                                <option value="{{item.name}}">{{item.name}}</option>
+                                {{# }); }}
+                            </select>
+                        </div>
+                    </div>
+                    {{# } }}
                 </div>
             </form>
         </script>
