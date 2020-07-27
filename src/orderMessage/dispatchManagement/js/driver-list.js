@@ -254,7 +254,7 @@ layui
             _this.exportExcel();
             break;
           case "tableSet":
-            xadmin.open("表格设置", "./table-set.html?tableKey=" + _this.tableKey, 600, 600);
+            xadmin.open("表格设置", "./table-set.html?tableKey=" + _this.tableKey, 600, 400);
             break;
           case "reset_search":
             edipao.resetSearch(_this.tableKey, function(){
