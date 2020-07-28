@@ -10,6 +10,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "orderStatus", title: "状态" },
       { field: "orderType", title: "订单类型" },
       { field: "masterFlag", title: "上下车" },
+      { field: "loadCarNetwork", title: "背车网点" },
       { field: "customerFullName", title: "客户全称" },
       { field: "startWarehouse", title: "发车仓库" },
       { field: "startPark", title: "发车停车场" },

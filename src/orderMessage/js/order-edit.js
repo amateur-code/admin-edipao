@@ -348,7 +348,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     laytpl($("#base_info_tpl").html()).render(data, function(html){
       $("#base_info").html(html);
       form.val("base_info_form", {
-        transportMode: data.transportMode || "国道"
+        transportMode: data.transportMode || "国道",
+        loadCarNetwork: data.loadCarNetwork || "",
       });
       form.render("select");
     });

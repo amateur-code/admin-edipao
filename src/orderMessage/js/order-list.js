@@ -1584,6 +1584,9 @@ layui.config({
                     }
                 }
         }},
+        {field: 'loadCarNetwork', title: '背车网点', sort: false,minWidth:105, templet: function(d){
+            return d.loadCarNetwork ? d.loadCarNetwork : '- -';
+        }},
         {field: 'orderStatus', title: '订单状态', sort: false,minWidth:100, templet: function (d) {
             var value = '- -';
             orderStatusData.some(function (status) {
