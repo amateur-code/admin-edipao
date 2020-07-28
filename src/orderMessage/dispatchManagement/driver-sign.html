@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>派单管理</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Expires" CONTENT="-1">
+    <meta http-equiv="Cache-Control" CONTENT="no-cache">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css?VERSION">
+    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
+    <link rel="stylesheet" href="./css/common.css">
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+    <script type="text/javascript" src="js/driver-sign.js?VERSION"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .layui-table-tool-temp{
+          padding-right: 0;
+        }
+        .layui-btn-container{
+          text-align: right;
+        }
+        .opeartion_icon{
+          cursor: pointer;
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          left: 45px;
+        }
+    </style>
+</head>
+<body>
+<div class="x-nav">
+     <span class="layui-breadcrumb">
+       <a>派单管理</a>
+       <a>
+         <cite id="nav_cite">司机签到列表</cite>
+       </a>
+    </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+    </a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body" id="doc-content">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="driverPhoneTpl">
+  {{# if(d.driverPhone){ }}
+    <a data-id="{{d.driverId}}" class="blue pointer href_driver_phone" href="javascript:;">{{d.driverPhone}}</a>
+  {{# }else{ }}
+    - -
+  {{# } }}
+</script>
+<script type="text/html" id="headerBtns">
+    <div class="layui-btn-container">
+        <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
+        {{# if(permissionList.indexOf(6011) > -1){ }}
+        <button class="layui-btn  layui-btn-sm"  lay-event="export">导出</button>
+        {{# } }}
+        <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
+        <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
+    </div>
+</script>
+</body>
+</html>

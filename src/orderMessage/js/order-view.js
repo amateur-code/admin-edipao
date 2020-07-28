@@ -341,6 +341,8 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
       }
       if(truck.truckKeyPosition){
         truck.truckKeyPosition = truck.truckKeyPosition.substr(1, truck.truckKeyPosition.length - 1) + "号钥匙墙 (钥匙码：" + truck.truckKeyPosition + ")"
+      }else{
+        truck.truckKeyPosition = "- -";
       }
     },
     getTruckUpdate: function () {
@@ -555,13 +557,18 @@ layui.use(['form', 'jquery', 'laytpl'], function () {
     getOrder: function () {
       //获取订单详情
       var _this = this;
+      var params = {
+        loginStaffId: _this.user.staffId,
+      }
+      if(_this.orderId) {
+        params.id = _this.orderId;
+      }else{
+        params.orderNo = _this.orderNo;
+      }
       return edipao.request({
         url: "/admin/order/detail",
         method: "GET",
-        data: {
-          loginStaffId: _this.user.staffId,
-          id: _this.orderId
-        }
+        data: params
       });
     }
   });

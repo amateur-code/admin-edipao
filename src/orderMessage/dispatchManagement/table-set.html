@@ -1,0 +1,252 @@
+<!doctype html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>E地跑运营平台</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Expires" CONTENT="-1">
+    <meta http-equiv="Cache-Control" CONTENT="no-cache">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css?VERSION">
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../lib/layui/layui.js"></script>
+    <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        表格设置
+                    </div>
+                    <div class="layui-card-body">
+						<form class="layui-form layui-form-pane" lay-filter="editRole">
+                        <table class="layui-table">
+                        	<colgroup>
+							    <col width="88">
+							    <col>
+							 </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input name="full" lay-skin="primary" type="checkbox" lay-filter="father">
+                                    </th>
+                                    <th>表格头名称</th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemList">
+                            </tbody>
+                        </table>
+                    	</form>
+                    </div>
+                    <div class="layui-card-header" style="text-align: center; padding: 30px 40px">
+	                    <button class="layui-btn layui-btn-lg" lay-filter="update" lay-submit>提交</button>
+	                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script id="itemListTpl" type="text/html">
+        {{#  layui.each(d.list, function(index, item){ }}
+        <tr>
+	      <td>
+	      	<input name="{{item.field}}" lay-skin="primary" lay-filter="role" type="checkbox" value="{{item.field}}">
+	      </td>
+	      <td>{{ item.title }}</td>
+	    </tr>
+	    {{# }) }}
+  </script>
+  <script>
+    layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, form) {
+  var xadmin = layui.xadmin,
+      edipao = layui.edipao,
+      tableKey = edipao.urlGet().tableKey;
+  var headers = {};
+  var driverSignTableHeaderList = [
+    { field: 'driverName', title: '司机姓名'},
+    { field: 'driverPhone', title: '司机手机'},
+    { field: 'driverIdNum', title: '司机身份证'},
+    { field: 'depositStatus', title: '押金状态'},
+    { field: 'driveLicenceType', title: '驾照类型'},
+    { field: 'combCityNumber', title: '长春基地排名'},
+    { field: 'globalCityNumber', title: '总排名'},
+  ];
+  var robOrderListTableHeaderList = [
+    { field: 'orderNo', title: '业务单号' },
+    { field: 'warehouseNo', title: '仓库单号' },
+    { field: 'vinCode', title: 'VIN码' },
+    { field: 'tempLicense', title: '临牌号' },
+    { field: 'orderType', title: '订单类型' },
+    { field: 'customerFullName', title: '客户全称' },
+    { field: 'startWarehouse', title: '发车仓库' },
+    { field: 'startPark', title: '发车停车场' },
+    { field: 'startProvince', title: '发车省' },
+    { field: 'startCity', title: '发车城市' },
+    { field: 'startAddress', title: '发车地址' },
+    { field: 'endPark', title: '收车网点' },
+    { field: 'endProvince', title: '收车省' },
+    { field: 'endCity', title: '收车城市' },
+    { field: 'endAddress', title: '收车地址' },
+    { field: 'transportMode', title: '运输方式' },
+    { field: 'transportAssignTime', title: '运输商指派时间' },
+    { field: 'income', title: '收入金额' },
+    { field: 'dispatchTime', title: '调度时间' },
+    { field: 'openOperator', title: '开单员' },
+    { field: 'deliveryOperator', title: '发运经理' },
+    { field: 'dispatchOperator', title: '调度员' },
+    { field: 'dispatchMode', title: '调度方式' },
+    { field: 'driverName', title: '司机姓名' },
+    { field: 'driverPhone', title: '司机手机' },
+    { field: 'driverIdCard', title: '司机身份证' },
+    { field: 'prePayAmount', title: '预付款金额' },
+    { field: 'prePayAmount', title: '油升数' },
+    { field: 'arrivePayAmount', title: '到付款金额' },
+    { field: 'tailPayAmount', title: '尾款金额' },
+    { field: 'grabOrderDriverCount', title: '抢单司机' },
+  ]
+  var driverRobOrderListTableHeaderList = [
+    { field: 'orderNo', title: '业务单号' },
+    { field: 'warehouseNo', title: '仓库单号' },
+    { field: 'vinCode', title: 'VIN码' },
+    { field: 'tempLicense', title: '临牌号' },
+    { field: 'orderType', title: '订单类型' },
+    { field: 'customerFullName', title: '客户全称' },
+    { field: 'startWarehouse', title: '发车仓库' },
+    { field: 'startPark', title: '发车停车场' },
+    { field: 'startProvince', title: '发车省' },
+    { field: 'startCity', title: '发车城市' },
+    { field: 'startAddress', title: '发车地址' },
+    { field: 'endPark', title: '收车网点' },
+    { field: 'endProvince', title: '收车省' },
+    { field: 'endCity', title: '收车城市' },
+    { field: 'endAddress', title: '收车地址' },
+    { field: 'transportMode', title: '运输方式' },
+    { field: 'transportAssignTime', title: '运输商指派时间' },
+    { field: 'income', title: '收入金额' },
+    { field: 'dispatchTime', title: '调度时间' },
+    { field: 'openOperator', title: '开单员' },
+    { field: 'deliveryOperator', title: '发运经理' },
+    { field: 'dispatchOperator', title: '调度员' },
+    { field: 'dispatchMode', title: '调度方式' },
+    { field: 'driverName', title: '司机姓名' },
+    { field: 'driverPhone', title: '司机手机' },
+    { field: 'driverIdCard', title: '司机身份证' },
+    { field: 'prePayAmount', title: '预付款金额' },
+    { field: 'prePayAmount', title: '油升数' },
+    { field: 'arrivePayAmount', title: '到付款金额' },
+    { field: 'tailPayAmount', title: '尾款金额' },
+  ]
+  var robListTableHeaderList = [
+    { field: 'grabStartTime', title: '抢单开始时间' },
+    { field: 'grabEndTime', title: '抢单结束时间' },
+    { field: 'grabOrderPoolCount', title: '订单池总数' },
+    { field: 'grabOrderDriverCount', title: '参与抢单司机数' },
+    { field: 'winningOrderCount', title: '中签订单数' },
+    { field: 'loginDriverCount', title: '登录APP司机数' },
+    { field: 'winningRate', title: '中签率' }
+  ]
+  var joinRobDriverTableHeaderList = [
+    { field: 'name', title: '司机姓名' },
+    { field: 'phone', title: '司机手机' },
+    { field: 'idNum', title: '司机身份证' },
+    { field: 'depositStatus', title: '押金状态' },
+    { field: 'grabOrderCount', title: '抢单数' },
+    { field: 'winningOrderNo', title: '中签订单' }
+  ]
+  var robDriverTableHeaderList = [
+    { field: 'grabTime', title: '抢单时间' },
+    { field: 'name', title: '司机姓名' },
+    { field: 'phone', title: '司机手机' },
+    { field: 'idNum', title: '司机身份证' },
+    { field: 'depositStatus', title: '押金状态' }
+  ]
+  //司机
+  headers["order-join-rob-driver-list-table"] = robDriverTableHeaderList;
+  headers["join-rob-driver-list-table"] = joinRobDriverTableHeaderList;
+  headers["login-rob-driver-list-table"] = joinRobDriverTableHeaderList;
+  //订单
+  headers["all-rob-order-list-table"] = robOrderListTableHeaderList;
+  headers["win-rob-order-list-table"] = robOrderListTableHeaderList;
+  headers["driver-rob-order-list-table"] = driverRobOrderListTableHeaderList;
+  //司机签到
+  headers["driver-sign-list-table"] = driverSignTableHeaderList;
+  //抢单
+  headers["rob-list-table"] = robListTableHeaderList;
+  var tableHeaderList = headers[tableKey];
+  laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
+      document.getElementById('itemList').innerHTML = html;
+      form.render();
+  });
+  edipao.request({
+      type: 'GET',
+      url: '/admin/table/show-field/get',
+      data: {
+          tableName: tableKey
+      }
+  }).done(function(res) {
+      if (res.code == 0) {
+          if(!res.data){
+              $('#itemList').find('input').prop("checked", true);
+          }else{
+              var showList = [];
+              try{
+                  showList = JSON.parse(res.data);
+              }catch(e){}
+              layui.each(showList, function(index, item){
+                  $('input[name='+ item +']').prop("checked", true);
+              })
+          }
+          form.render();
+      }
+  })
+
+  form.on('checkbox(father)', function(data,e){
+      if(data.elem.checked){
+          $(data.elem).closest('.layui-form').find('input').prop("checked", true);
+          form.render();
+      }else{
+          $(data.elem).closest('.layui-form').find('input').prop("checked", false);
+          form.render();
+      }
+  });
+
+  form.on('submit(update)', function(data) {
+      let list = [];
+      $('#itemList').find('input').each(function(index, el) {
+          if($(this).prop('checked')) list.push($(this).val())
+
+      });
+
+      edipao.request({
+          url: '/admin/table/show-field/save',
+          data: {
+              tableName: tableKey,
+              showFieldJson: JSON.stringify(list)
+          }
+      }).then(function(res){
+          if(res.code == 0){
+              layer.alert("修改表格成功", { icon: 6 }, function() {
+                  xadmin.close();
+                  xadmin.father_reload();
+              });
+          }
+      })
+      return false
+  });
+
+});
+</script>
+</body>
+
+</html>

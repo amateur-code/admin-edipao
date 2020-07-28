@@ -57,29 +57,41 @@
         </div>
         <div id="car_form_container" class="car_car_form_container"></div>
         <script id="base_info_tpl" type="text/html">
-            <div class="layui-row">
-                <div class="layui-col-md6">
-                    <span class="content_name">业务单号：</span>
-                    <span id="" class="content_name blue">{{d.orderNo}}</span>
+            <form class="layui-form" lay-filter="base_info_form">
+                <div class="layui-row">
+                    <div class="layui-col-md4">
+                        <span class="content_name">业务单号：</span>
+                        <span id="" class="content_name blue">{{d.orderNo}}</span>
+                    </div>
+                    <div class="layui-col-md4">
+                        <span class="content_name">订单类型：</span>
+                        <span class="content_name blue">
+                            {{#  
+                                var fn = function(type){
+                                    if(type == 1){
+                                        return '单车单';
+                                    }else if(type == 2){
+                                        return '背车单';
+                                    }else{
+                                        return '非法类型';
+                                    }
+                                }; 
+                            }}
+                              {{fn(d.orderType)}}
+                        </span>
+                    </div>
+                    <div class="layui-col-md4">
+                        <label class="layui-form-label text_left form_label">运输方式：</label>
+                        <div class="layui-input-inline">
+                            <select name="transportMode" lay-search>
+                                <option value="国道">国道</option>
+                                <option value="高速">高速</option>
+                                <option value="部分高速">部分高速</option>
+                            </select>  
+                        </div>
+                    </div>
                 </div>
-                <div class="layui-col-md6">
-                    <span class="content_name">订单类型：</span>
-                    <span class="content_name blue">
-                        {{#  
-                            var fn = function(type){
-                                if(type == 1){
-                                    return '单车单';
-                                }else if(type == 2){
-                                    return '背车单';
-                                }else{
-                                    return '非法类型';
-                                }
-                            }; 
-                        }}
-                          {{fn(d.orderType)}}
-                    </span>
-                </div>
-            </div>
+            </form>
         </script>
         <script id="income_info_tpl" type="text/html">
             <div class="layui-row">
@@ -184,7 +196,7 @@
                     </div>
                     <div class="layui-form-item layui-row">
                         <div class="layui-inline layui-col-md3">
-                            <label class="layui-form-label text_left form_label"><span class="red">*</span>发车停车场</label><br>
+                            <label class="layui-form-label text_left form_label">发车停车场</label><br>
                             <div class="layui-input-inline">
                                 <select name="startPark" lay-verify="required" class="startParkList" lay-filter="startPark" lay-search>
                                 </select>

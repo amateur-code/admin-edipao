@@ -20,7 +20,9 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "endProvince", title: "收车省" },
       { field: "endCity", title: "收车城市" },
       { field: "endAddress", title: "收车地址" },
+      { field: "transportMode", title: "运输方式" },
       { field: "transportAssignTime", title: "运输商指派时间" },
+      { field: "cksj", title: "出库时间" },
       { field: "dispatchTime", title: "调度时间" },
       { field: "openOperator", title: "开单员" },
       { field: "deliveryOperator", title: "发运经理" },
@@ -52,15 +54,15 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "dealerRemark", title: "经销商备注" },
     ];
     routeTableHeaderList = [
-      {field: 'startWarehouse', title: '出发仓库/网点名称'},
-      {field: 'startAddress', title: '出发地'},
-      {field: 'endPark', title: '目的仓库/网点名称'},
-      {field: 'endAddress', title: '目的地'},
-      {field: 'transportOrderNum', title: '发运趟数'},
-      {field: 'orderType', title: '适用类型'},
-      {field: 'reportToAudit', title: '上报待审'},
-      {field: 'lineSource', title: '线路规划'},
-      {field: 'updateTime', title: '更新时间'}
+        {field: 'startWarehouse', title: '出发仓库/网点名称'},
+        {field: 'startAddress', title: '出发地'},
+        {field: 'endPark', title: '目的仓库/网点名称'},
+        {field: 'endAddress', title: '目的地'},
+        {field: 'transportOrderNum', title: '发运趟数'},
+        {field: 'orderType', title: '适用类型'},
+        {field: 'reportToAudit', title: '上报待审'},
+        {field: 'lineSource', title: '线路规划'},
+        {field: 'updateTime', title: '更新时间'}
     ]
     var tableHeaderList = orderTableHeaderList;
     switch(tableKey){
