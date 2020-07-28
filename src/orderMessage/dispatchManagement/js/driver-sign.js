@@ -297,6 +297,10 @@ layui
           layui.each(item, function (key, value) {
             if (key && showList.indexOf(key) != -1) {
               switch (key) {
+                case "combCityNumber":
+                case "globalCityNumber":
+                  exportObj[key] = (value * 1) || "- -";
+                  break;
                 case "depositStatus":
                   var result = "- -";
                   depositStatusData.some(function (item2) {

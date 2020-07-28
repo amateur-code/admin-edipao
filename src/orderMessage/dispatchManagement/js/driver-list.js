@@ -110,7 +110,7 @@ layui
           url: "/admin/grab/statistics/grab-activity/order/driver-list",
           dataKey: "grabActivityOrderDriverList",
           logKey: 21,
-          logRemark: "导出参与抢单司机",
+          logRemark: "导出订单"+this.orderNo+"参与抢单司机",
         }
       }
       tableCols = driverConfig[this.action].tableCols;
@@ -369,6 +369,16 @@ layui
           layui.each(v, function (index, item) {
             if (index && showList.indexOf(index) != -1) {
               switch (index) {
+                case "depositStatus":
+                  var status = "- -";
+                  statusData.some(function(item){
+                    if(item.key== v[index]) {
+                      status = item.value;
+                      return true;
+                    }
+                  })
+                  exportObj[index] = status;
+                  break;
                 default:
                   exportObj[index] = DataNull(item);
               }

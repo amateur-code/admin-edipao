@@ -236,6 +236,7 @@ layui.config({
           logRemark: "导出司机签单列表",
         }
       }
+      this.perssionId = qs.perssionId;
       this.action = qs.action;
       this.robKey = qs.robKey;
       this.url = config[this.action].url;
@@ -361,7 +362,7 @@ layui.config({
       });
       $(".href_rob_driver").unbind().on("click", function (e) {
         var orderNo = e.target.dataset.orderno;
-        xadmin.open('抢单司机', './driver-list.html?action=orderJoin&robKey=' + _this.robKey + "&orderNo=" + orderNo);
+        xadmin.open('抢单司机', './driver-list.html?action=orderJoin&robKey=' + _this.robKey + "&orderNo=" + orderNo + "&perssionId=" + _this.perssionId);
       });
     }
     List.prototype.bindTableEvents = function () {
