@@ -72,29 +72,53 @@ layui.config({
       edipao = layui.edipao,
       tableCols = [ //表头
         { checkbox: true },
-        { field: 'tradeNo', title: '交易流水号', width: 200 },
         {
-          field: 'upVinCode', title: 'vin码', width: 200, templet: function (d) {
-            return '<p style="line-height: 14px">' + d.upVinCode + '</p><p style="line-height: 14px">' + d.downVinCode + '</p>'
+          field: 'tradeNo', title: '交易流水号', width: 200, templet: function (d) {
+            return d.tradeNo || '- -'
           }
         },
-        { field: 'orderNo', title: '关联业务单号', width: 200 },
-        { field: 'downTempLicense', title: '临牌', width: 200 },
-        { field: 'downLoadTime', title: '背车时间', width: 200 },
+        {
+          field: 'upVinCode', title: 'vin码', width: 200, templet: function (d) {
+            return '<p style="line-height: 14px">' + d.upVinCode + '</p><p style="line-height: 14px">' + d.downVinCode + '</p>' || '- -'
+          }
+        },
+        {
+          field: 'orderNo', title: '关联业务单号', width: 200, templet: function (d) {
+            return d.orderNo || '- -'
+          }
+        },
+        {
+          field: 'downTempLicense', title: '临牌', width: 200, templet: function (d) {
+            return d.downTempLicense || '- -'
+          }
+        },
+        {
+          field: 'downLoadTime', title: '背车时间', width: 200, templet: function (d) {
+            return d.downLoadTime || '- -'
+          }
+        },
         {
           field: 'unitPrice', title: '价格', minWidth: 100, templet: function (d) {
             var unit = "元/次";
-            return d.unitPrice + unit;
+            return d.unitPrice + unit || '- -';
           }
         },
         {
           field: 'totalPrice', title: '总费用', minWidth: 100, templet: function (d) {
             var unit = "元";
-            return d.unitPrice + unit;
+            return d.unitPrice + unit || '- -';
           }
         },
-        { field: 'productName', title: '产品/网点', width: 200 },
-        { field: 'detailAddress', title: '地址', width: 200 },
+        {
+          field: 'productName', title: '产品/网点', width: 200, templet: function (d) {
+            return d.productName || '- -'
+          }
+        },
+        {
+          field: 'detailAddress', title: '地址', width: 200, templet: function (d) {
+            return d.detailAddress || '- -'
+          }
+        },
       ],
       tableIns,
       tableFilterIns,
@@ -147,9 +171,9 @@ layui.config({
       },
       where: tableWhere,
       parseData: function (res) { //res 即为原始返回的数据
-        layui.each(res.data.supplierRespList, function (index, el) {
-          el.supplierTypeName = SupplierTypeConfig[el.supplierType]
-        });
+        // layui.each(res.data.supplierRespList, function (index, el) {
+        //   el.supplierTypeName = SupplierTypeConfig[el.supplierType]
+        // });
         return {
           code: res.code, //解析接口状态
           msg: res.message, //解析提示文本

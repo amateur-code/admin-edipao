@@ -707,11 +707,6 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
       }
     })
   });
-
-  // laydate.render({
-  //     elem: '#effectiveTime',
-  //     type: 'datetime'
-  // });
   //核心方法
   function timeAdd () {
     lay('.date-format').each(function () {
@@ -915,18 +910,8 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
     sumData.forEach(item => {
       if (item.modelName === '通用车型') {
         item.commonFlag = 'Y'
-        // item.singlePriceUnit = ''
-        // item.singlePrice = '0'
-        // item.singleUpLimitPrice = '0'
-        // item.multiPriceUnit = '元'
-        // item.multiUpLimitPrice = '0'
       } else {
         item.commonFlag = 'N'
-        // item.singlePriceUnit = ''
-        // item.singlePrice = '0'
-        // item.singleUpLimitPrice = '0'
-        // item.multiPriceUnit = '元'
-        // item.multiUpLimitPrice = '0'
       }
       if (item.singlePriceUnit && item.singlePriceUnit != '') {
 
@@ -1193,7 +1178,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
   // 删除
 
   $(document).on('click', '#removeWishJourney', function () {
-    layer.msg('hello');
+    layer.msg('删除车型成功');
     $(this).parent().remove();
     console.log($(this).html())
   });

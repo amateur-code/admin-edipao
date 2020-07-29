@@ -87,35 +87,59 @@ layui.config({
       edipao = layui.edipao,
       tableCols = [ //表头
         { checkbox: true },
-        { field: 'tradeNo', title: '交易流水号', width: 200 },
         {
-          field: 'upVinCode', title: 'vin码', width: 200, templet: function (d) {
-            return '<p style="line-height: 14px">' + d.upVinCode + '</p><p style="line-height: 14px">' + d.downVinCode + '</p>'
+          field: 'tradeNo', title: '交易流水号', width: 200, templet: function (d) {
+            return d.tradeNo || '- -'
           }
         },
-        { field: 'downTempLicense', title: '临牌', width: 200 },
-        { field: 'entryTime', title: '入场时间', width: 200 },
-        { field: 'leaveTime', title: '出场时间', width: 200 },
+        {
+          field: 'upVinCode', title: 'vin码', width: 200, templet: function (d) {
+            return '<p style="line-height: 14px">' + d.upVinCode + '</p><p style="line-height: 14px">' + d.downVinCode + '</p>' || '- -'
+          }
+        },
+        {
+          field: 'downTempLicense', title: '临牌', width: 200, templet: function (d) {
+            return d.downTempLicense || '- -'
+          }
+        },
+        {
+          field: 'entryTime', title: '入场时间', width: 200, templet: function (d) {
+            return d.entryTime || '- -'
+          }
+        },
+        {
+          field: 'leaveTime', title: '出场时间', width: 200, templet: function (d) {
+            return d.leaveTime || '- -'
+          }
+        },
         {
           field: 'duration', title: '停车时长', width: 200, templet: function (d) {
             var unit = "小时";
-            return d.duration + unit;
+            return d.duration + unit || '- -';
           }
         },
         {
           field: 'unitPrice', title: '价格', minWidth: 100, templet: function (d) {
             var unit = "元/小时";
-            return d.unitPrice + unit;
+            return d.unitPrice + unit || '- -';
           }
         },
         {
           field: 'totalPrice', title: '总费用', minWidth: 100, templet: function (d) {
             var unit = "元";
-            return d.unitPrice + unit;
+            return d.totalPrice + unit || '- -';
           }
         },
-        { field: 'productName', title: '产品/网点', width: 200 },
-        { field: 'detailAddress', title: '停车地址', width: 200 },
+        {
+          field: 'productName', title: '产品/网点', width: 200, templet: function (d) {
+            return d.productName || '- -';
+          }
+        },
+        {
+          field: 'detailAddress', title: '停车地址', width: 200, templet: function (d) {
+            return d.detailAddress || '- -';
+          }
+        },
         { title: '操作', field: "operation", toolbar: '#rowBtns', fixed: 'right', width: 400, }
       ],
       tableIns,
@@ -169,14 +193,15 @@ layui.config({
       },
       where: tableWhere,
       parseData: function (res) { //res 即为原始返回的数据
-        layui.each(res.data.supplierRespList, function (index, el) {
-          el.supplierTypeName = SupplierTypeConfig[el.supplierType]
-        });
+        console.log(res)
+        // layui.each(res.data.supplierRespList, function (index, el) {
+        //   el.supplierTypeName = SupplierTypeConfig[el.supplierType]
+        // });
         return {
           code: res.code, //解析接口状态
           msg: res.message, //解析提示文本
           count: res.data.totalSize, //解析数据长度
-          data: res.data.tradeRecordRespList //解析数据列表
+          data: res.data.stopCarTradeRecordEntityList //解析数据列表
         };
       },
       page: true,
@@ -273,9 +298,9 @@ layui.config({
       data: tableWhere
     }).then(function (res) {
       if (res.code == 0) {
-        exportXlsx(res.data.tradeRecordRespList);
+        exportXlsx(res.data.stopCarTradeRecordEntityList);
         return;
-        var data = [], list = res.data.tradeRecordRespList;
+        var data = [], list = res.data.stopCarTradeRecordEntityList;
         list = [{}].concat(list);
         layui.each(list, function (index2, item2) {
           var dataItem = {};
