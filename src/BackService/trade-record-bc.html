@@ -61,7 +61,9 @@
   <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
 </div>
 </script>
-
+<script type="text/html" id="stffList">
+<a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.unitPrice}}元/次</a>
+</script>
 <script type="text/javascript">
 layui.config({
   base: '../lib/'
@@ -99,10 +101,7 @@ layui.config({
           }
         },
         {
-          field: 'unitPrice', title: '价格', minWidth: 100, templet: function (d) {
-            var unit = "元/次";
-            return d.unitPrice ? (d.unitPrice + unit) : '- -';
-          }
+          field: 'unitPrice', title: '价格', minWidth: 100, templet: '#stffList'
         },
         {
           field: 'totalPrice', title: '总费用', minWidth: 100, templet: function (d) {
@@ -253,6 +252,9 @@ layui.config({
       case 'tableSet':
         xadmin.open('表格设置', './table-set-bc.html?tableKey=' + tableKey, 600)
         break;
+      case 'staffList':
+        xadmin.open('价格', './unitPrice-tc.html?id=' + obj.data.productNo);
+        break;
       case "reset_search":
         location.reload();
         break;
@@ -325,6 +327,7 @@ layui.config({
   }
 
   table.on('toolbar(list)', handleEvent);
+  table.on('tool(list)', handleEvent);
   table.on('checkbox(staffList)', handleEvent);
 
 })

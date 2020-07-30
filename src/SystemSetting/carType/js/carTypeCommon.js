@@ -169,10 +169,18 @@ layui.use(['jquery', 'form'], function () {
 function modelCodeLook () {
     xadmin.open('车型代码', './modelCode.html', 600);
 }
+// 查看车型代码对照表
+function modelCodeLookU () {
+    xadmin.open('车型代码', './ProductManager/modelCode.html', 600);
+}
 
 // 查看驱动形式代码对照表
 function driveWayCodeLook () {
     xadmin.open('驱动形式代码', './driveWayCode.html', 600);
+}
+// 查看驱动形式代码对照表
+function driveWayCodeLookU () {
+    xadmin.open('驱动形式代码', './ProductManager/driveWayCode.html', 600);
 }
 
 // 查看功率代码对照表

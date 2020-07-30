@@ -6,16 +6,17 @@
   <title>E地跑运营平台</title>
   <meta name="renderer" content="webkit|ie-comp|ie-stand">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+  <meta name="viewport"
+        content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
   <meta http-equiv="Expires" CONTENT="-1">
   <meta http-equiv="Cache-Control" CONTENT="no-cache">
   <meta http-equiv="Pragma" CONTENT="no-cache">
-  <link rel="stylesheet" href="../../css/font.css">
-  <link rel="stylesheet" href="../../css/xadmin.css">
+  <link rel="stylesheet" href="../css/font.css">
+  <link rel="stylesheet" href="../css/xadmin.css">
   <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
-  <script type="text/javascript" src="../../js/jquery.min.js"></script>
-  <script type="text/javascript" src="../../lib/layui/layui.js"></script>
-  <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+  <script type="text/javascript" src="../js/jquery.min.js"></script>
+  <script type="text/javascript" src="../lib/layui/layui.js"></script>
+  <script type="text/javascript" src="../js/common.js?VERSION"></script>
   <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
   <!--[if lt IE 9]>
   <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -26,16 +27,18 @@
   // var is_remember = false;
   </script>
   <style type="text/css">
-    .layui-form-item{
+    .layui-form-item {
 
     }
-    .layui-form-label{
+
+    .layui-form-label {
       text-align: left;
       padding-left: 0;
       display: block;
       float: none;
     }
-    .layui-input-block{
+
+    .layui-input-block {
       display: block;
       margin-left: 0;
       padding-right: 30px;
@@ -48,40 +51,42 @@
   <div class="layui-row">
     <form class="layui-form" lay-filter="edit">
       <div class="layui-card">
-<!--        <div class="layui-card-header">基础信息</div>-->
+        <!--        <div class="layui-card-header">基础信息</div>-->
         <div class="layui-card-body">
           <div class="layui-fluid">
             <div class="layui-row">
-<!--              <div class="layui-col-xs4">-->
-                <div class="layui-form-item">
-                  <label for="entryTime" class="layui-form-label">
-                    <span class="x-red">*</span>入场时间
-                  </label>
-                  <div class="layui-input-block">
-                    <input type="text" id="entryTime" name="entryTime" lay-verify="required" autocomplete="off" class="layui-input date-format">
-                  </div>
+              <!--              <div class="layui-col-xs4">-->
+              <div class="layui-form-item">
+                <label for="entryTime" class="layui-form-label">
+                  <span class="x-red">*</span>入场时间
+                </label>
+                <div class="layui-input-block">
+                  <input type="text" id="entryTime" name="entryTime" lay-verify="required" autocomplete="off"
+                         class="layui-input date-format">
                 </div>
-<!--              </div>-->
-<!--              <div class="layui-col-xs4">-->
-                <div class="layui-form-item">
-                  <label for="leaveTime" class="layui-form-label">
-                    <span class="x-red">*</span>出场时间
-                  </label>
-                  <div class="layui-input-block">
-                    <input type="text" id="leaveTime" name="leaveTime" lay-verify="required" autocomplete="off" class="layui-input date-format">
-                  </div>
+              </div>
+              <!--              </div>-->
+              <!--              <div class="layui-col-xs4">-->
+              <div class="layui-form-item">
+                <label for="leaveTime" class="layui-form-label">
+                  <span class="x-red">*</span>出场时间
+                </label>
+                <div class="layui-input-block">
+                  <input type="text" id="leaveTime" name="leaveTime" lay-verify="required" autocomplete="off"
+                         class="layui-input date-format">
                 </div>
-<!--              </div>-->
-<!--              <div class="layui-col-xs4">-->
-                <div class="layui-form-item">
-                  <label for="duration" class="layui-form-label">
-                    <span class="x-red">*</span>停车时长
-                  </label>
-                  <div class="layui-input-block">
-                    <input type="text" id="duration" name="duration" autocomplete="off" class="layui-input">
-                  </div>
+              </div>
+              <!--              </div>-->
+              <!--              <div class="layui-col-xs4">-->
+              <div class="layui-form-item">
+                <label for="duration" class="layui-form-label">
+                  <span class="x-red">*</span>停车时长
+                </label>
+                <div class="layui-input-block">
+                  <input type="text" id="duration" name="duration" autocomplete="off" class="layui-input">
                 </div>
-<!--              </div>-->
+              </div>
+              <!--              </div>-->
             </div>
           </div>
           <div class="layui-form-item">
@@ -100,60 +105,88 @@
 <!--{{# }) }}-->
 <!--</script>-->
 <script type="text/javascript">
-layui.use(['form', 'layer', 'element','laytpl'], function(form, layer, element, laytpl) {
-    var xadmin = layui.xadmin,
-        edipao = layui.edipao;
+layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, layer, element, laytpl, laydate) {
+  var xadmin = layui.xadmin,
+      edipao = layui.edipao;
+  var params = edipao.urlGet();
+  // edipao.request({
+  //   type: 'get',
+  //   url: '/admin/supplier/getSupplierType'
+  // }).then(function (res) {
+  //   console.log(res)
+  //   if (res.code == 0) {
+  //     laytpl(selectDom.innerHTML).render({ list: res.data }, function (html) {
+  //       document.getElementById('supplierType').innerHTML = html;
+  //     })
+  //     form.render();
+  //   }
+  // })
 
-    // edipao.request({
-    //     type: 'get',
-    //     url:'/admin/supplier/getSupplierType'
-    // }).then(function(res){
-    //     console.log(res)
-    //     if(res.code == 0){
-    //         laytpl(selectDom.innerHTML).render({list: res.data},function(html){
-    //             document.getElementById('supplierType').innerHTML = html;
-    //         })
-    //         form.render();
-    //     }
-    // })
   //核心方法
-  function timeAdd () {
-    lay('.date-format').each(function () {
-      laydate.render({
-        elem: this,
-        trigger: 'click',
-        type: 'datetime'
-      });
-    });
-  }
+  // function timeAdd () {
+  //   lay('.date-format').each(function () {
+  //     laydate.render({
+  //       elem: this,
+  //       trigger: 'click',
+  //       type: 'datetime'
+  //     });
+  //   });
+  // }
 
   //初始化时先调用一次，确保静态的那一行可点
-  timeAdd();
-    //自定义验证规则
-    form.verify({
+  // timeAdd();
 
-    });
+  var startTime = laydate.render({
+    elem: '#entryTime',
+    type: 'datetime', //时间格式：yyyy/MM/dd HH:mm:ss
+    done: function (value, date, endDate) {
+      endTime.config.min = {
+        year: date.year,
+        month: date.month - 1,//重点！！！
+        date: date.date,
+        hours: date.hours,
+        minutes: date.minutes,
+        seconds: date.seconds
+      }
 
-    form.on('submit(edit)', function(data) {
-      data.field.entryTime.replace(/\-| |:/g, "")
-      data.field.leaveTime.replace(/\-| |:/g, "")
-        edipao.request({
-            url: '/admin/stopCar-record/update',
-            data: data.field,
-        }).done(function(res) {
-            if (res.code == 0) {
-                layer.alert("修改修改停车交易成功", { icon: 6 ,
-                    end: function(){
-                        xadmin.close();
-                        xadmin.father_reload();
-                    }
-                });
-            } else {
-                layer.msg(res.message)
-            }
-        })
-        return false;
-    });
+      var stime = new Date(Date.parse(value.replace("-", "/")));
+      var etime = new Date(Date.parse($("#leaveTime").val().replace("-", "/")));
+      if (stime > etime) { //开始时间若大于结束时间，则把开始时间的日期回填到结束时间
+        $("#leaveTime").val(value);
+      }
+    }
+  });
+  var endTime = laydate.render({
+    elem: '#leaveTime',
+    type: 'datetime',
+    min: $("#entryTime").val() //可选择的最小日期为开始日期
+  });
+  //自定义验证规则
+  form.verify({});
+
+  form.on('submit(edit)', function (data) {
+    console.log(data)
+    data.field.entryTime.replace(/\-| |:/g, "")
+    data.field.leaveTime.replace(/\-| |:/g, "")
+    data.field.id = params.id
+    edipao.request({
+      url: '/admin/stopCar-record/update',
+      data: data.field,
+    }).done(function (res) {
+      if (res.code == 0) {
+        layer.alert("修改修改停车交易成功", {
+          icon: 6,
+          end: function () {
+            xadmin.close();
+            xadmin.father_reload();
+          }
+        });
+      } else {
+        layer.msg(res.message)
+      }
+    })
+    return false;
+  });
 })
 </script>
 </body>

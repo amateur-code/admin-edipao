@@ -1002,7 +1002,6 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
   //初始化时先调用一次，确保静态的那一行可点
   timeAdd();
   var params = edipao.urlGet();
-
   edipao.request({
     type: 'get',
     url: '/admin/supplier/all'

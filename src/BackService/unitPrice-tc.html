@@ -1,0 +1,211 @@
+<!doctype html>
+<html class="x-admin-sm">
+
+<head>
+  <meta charset="UTF-8">
+  <title>E地跑运营平台</title>
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+  <meta http-equiv="Expires" CONTENT="-1">
+  <meta http-equiv="Cache-Control" CONTENT="no-cache">
+  <meta http-equiv="Pragma" CONTENT="no-cache">
+  <link rel="stylesheet" href="../css/font.css">
+  <link rel="stylesheet" href="../css/xadmin.css">
+  <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
+  <script type="text/javascript" src="../js/jquery.min.js"></script>
+  <script type="text/javascript" src="../lib/layui/layui.js"></script>
+  <script type="text/javascript" src="../js/common.js?VERSION"></script>
+  <script src="../SystemSetting/carType/js/carTypeCommon.js?VERSION"></script>
+  <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+  <!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  <script>
+  // 是否开启刷新记忆tab功能
+  // var is_remember = false;
+  </script>
+  <style type="text/css">
+    .layui-col-xs4 {
+      padding: 20px;
+    }
+
+    .layui-col-xs4 > span {
+      color: #1E9FFF;
+    }
+    .look-up {
+      color: #3490e9;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-right: 35px;
+      float: right;
+    }
+  </style>
+</head>
+
+<body>
+<div class="layui-fluid">
+  <div class="layui-row" id="info">
+
+  </div>
+</div>
+<script id="preview" type="text/html">
+<div class="layui-card">
+  {{# if(d.detail.supplierType == 'loadCar'||d.detail.supplierType == 'unloadCar') { }}
+  {{# layui.each(d.detail.priceExtJson, function(index, item){ }}
+  <div class="layui-card-body">
+    <div class="layui-fluid">
+      <div class="layui-row">
+        <div class="layui-col-xs4">
+          车型名称：<span>{{item.modelName}}</span>
+        </div>
+        <div class="layui-col-xs4">
+          车型代码：<span>{{item.modelCode}}</span>
+          <span class="look-up" onclick="modelCodeLookU()">查看对照表</span>
+        </div>
+        <div class="layui-col-xs4">
+          驱动形式代码：<span>{{item.driveWayCode}}</span>
+          <span class="look-up" onclick="driveWayCodeLookU()">查看对照表</span>
+        </div>
+        <div class="layui-col-xs4">
+          价格：<span>{{item.multiPrice}}元/次</span>
+        </div>
+<!--        <div class="layui-col-xs4">-->
+<!--          生效时间：<span>{{item.effectiveStartTime}}</span>-->
+<!--        </div>-->
+      </div>
+    </div>
+  </div>
+  {{# }) }}
+  {{# } else if(d.detail.supplierType == 'stopSupply') { }}
+  {{# layui.each(d.detail.priceExtJson, function(index, item){ }}
+  <div class="layui-card-body">
+    <div class="layui-fluid">
+      <div class="layui-row">
+        <div class="layui-col-xs4">
+          车型名称：<span>{{item.modelName}}</span>
+        </div>
+        <div class="layui-col-xs4">
+          车型代码：<span>{{item.modelCode}}</span>
+          <span class="look-up" onclick="modelCodeLookU()">查看对照表</span>
+        </div>
+        <div class="layui-col-xs4">
+          驱动形式代码：<span>{{item.driveWayCode}}</span>
+          <span class="look-up" onclick="driveWayCodeLookU()">查看对照表</span>
+        </div>
+        <div class="layui-col-xs4">
+          单车价格：<span>{{item.singlePrice}}{{item.singlePriceUnit}}</span>
+        </div>
+        <div class="layui-col-xs4">
+          背车价格：<span>{{item.multiPrice}}{{item.multiPriceUnit}}</span>
+        </div>
+<!--        <div class="layui-col-xs4">-->
+<!--          生效时间：<span>{{item.effectiveStartTime}}</span>-->
+<!--        </div>-->
+        {{# if(item.singlePriceUnit == '元/小时'){ }}
+        <div class="layui-col-xs4">
+          单车单日上限：<span>{{item.singleUpLimitPrice}}元</span>
+        </div>
+        {{# } }}
+        {{# if(item.multiPriceUnit == '元/小时'){ }}
+        <div class="layui-col-xs4">
+          背车单日上限：<span>{{item.multiUpLimitPrice}}元</span>
+        </div>
+        {{# } }}
+      </div>
+    </div>
+  </div>
+  {{# }) }}
+  {{# } }}
+</div>
+
+</script>
+<script type="text/javascript">
+layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element, laytpl) {
+  var xadmin = layui.xadmin,
+      edipao = layui.edipao,
+      SupplierTypeConfig = {},
+      detail = {},
+      check = {},
+      StatusDescConfig = { "1": "有效", "2": "失效" };
+
+  var params = edipao.urlGet();
+
+  edipao.request({
+    type: 'get',
+    url: '/admin/product/detail',
+    data: {
+      productNo: params.id
+    }
+  }).then(function (res) {
+    if (res.code == 0) {
+      if(res.data.priceExtJson){
+        res.data.priceExtJson = JSON.parse(res.data.priceExtJson)
+        res.data.priceExtJson.forEach(item => {
+          item.effectiveStartTime = item.effectiveStartTime.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6")
+          // 背车单位
+          if (item.multiPriceUnit == '0') {
+            item.multiPriceUnit = '元/自然日'
+          } else if(item.multiPriceUnit =='1'){
+            item.multiPriceUnit ='元/小时'
+          } else if(item.multiPriceUnit =='3'){
+            item.multiPriceUnit ='元/辆车'
+          }
+          // 单车价格单位
+          if (item.singlePriceUnit =='0') {
+            item.singlePriceUnit ='元/自然日'
+          } else if(item.singlePriceUnit =='1'){
+            item.singlePriceUnit ='元/小时'
+          } else if(item.singlePriceUnit =='3'){
+            item.singlePriceUnit ='元/辆车'
+          }
+        })
+      }
+      detail = res.data;
+      if (detail.needApproval) {
+        waitCheck();
+      } else {
+        render()
+      }
+    }
+  })
+
+  function waitCheck (detail) {
+    edipao.request({
+      type: 'GET',
+      url: "/admin/log/last-modify/get",
+      data: {
+        operationModule: 2,
+        dataPk: params.id
+      }
+    }).then(function (res) {
+      if (res.code == 0) {
+        if (res.data) {
+          var editData = JSON.parse(res.data.modifyAfterJson)
+          check = editData.newMap
+          layui.each(check, function (key, value) {
+            if (key == 'status') {
+              check.statusDesc = StatusDescConfig[check.status]
+            }
+            check[key] = value || '- -'
+          });
+        }
+        render()
+      }
+    })
+  }
+
+  function render () {
+    laytpl(preview.innerHTML).render({ detail: detail, check: check }, function (html) {
+      document.getElementById('info').innerHTML = html;
+    })
+  }
+
+
+})
+</script>
+</body>
+
+</html>

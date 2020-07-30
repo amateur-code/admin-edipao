@@ -53,7 +53,8 @@
 </div>
 <script type="text/html" id="headerBtns">
 <div class="layui-btn-container">
-  <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
+  <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索
+  </button>
   {{# if(permissionList.indexOf('交易记录导出') != -1){ }}
   <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
   {{# } }}
@@ -63,9 +64,12 @@
 </script>
 <script type="text/html" id="rowBtns">
 {{# if(permissionList.indexOf('修改') != -1){ }}
-<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>
+<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit_tc">修改</a>
 {{# } }}
 <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="log">日志</a>
+</script>
+<script type="text/html" id="stffList">
+<a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.unitPrice}}元/小时</a>
 </script>
 <script type="text/javascript">
 layui.config({
@@ -86,6 +90,11 @@ layui.config({
         {
           field: 'upVinCode', title: 'vin码', width: 200, templet: function (d) {
             return '<p style="line-height: 14px">' + d.upVinCode + '</p><p style="line-height: 14px">' + d.downVinCode + '</p>' || '- -'
+          }
+        },
+        {
+          field: '', title: '关联业务单号', width: 200, templet: function (d) {
+            return d.orderNo || '- -'
           }
         },
         {
@@ -110,10 +119,7 @@ layui.config({
           }
         },
         {
-          field: 'unitPrice', title: '价格', minWidth: 100, templet: function (d) {
-            var unit = "元/小时";
-            return d.unitPrice + unit || '- -';
-          }
+          field: 'unitPrice', title: '价格', minWidth: 100, templet: '#stffList'
         },
         {
           field: 'totalPrice', title: '总费用', minWidth: 100, templet: function (d) {
@@ -184,7 +190,6 @@ layui.config({
       },
       where: tableWhere,
       parseData: function (res) { //res 即为原始返回的数据
-        console.log(res)
         // layui.each(res.data.supplierRespList, function (index, el) {
         //   el.supplierTypeName = SupplierTypeConfig[el.supplierType]
         // });
@@ -226,7 +231,6 @@ layui.config({
       'mode': 'self',//过滤模式
       'filters': filtersHeader,//过滤项配置
       'done': function (filters) {
-        console.log(filters)
         var index = 0,
             where = {
               [params.key]: params.id,
@@ -254,7 +258,7 @@ layui.config({
 
   function handleEvent (obj) {
     obj.event == 'export' && permissionList.indexOf('交易记录导出') == -1 && (obj.event = 'reject');
-    obj.event == 'edit' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
+    obj.event == 'edit_tc' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
     switch (obj.event) {
       case 'reject':
         layer.alert('你没有访问权限', { icon: 2 });
@@ -268,8 +272,14 @@ layui.config({
       case 'tableSet':
         xadmin.open('表格设置', './table-set-tc.html?tableKey=' + tableKey, 600)
         break;
-      case 'edit':
-        xadmin.open('修改停车记录', './edit-record-tc.html?tableKey=' + tableKey, 600)
+      case 'edit_tc':
+        xadmin.open('修改停车记录', './edit-record-tc.html?id=' + obj.data.id, 600)
+        break;
+      case 'staffList':
+        xadmin.open('价格', './unitPrice-tc.html?id=' + obj.data.productNo);
+        break;
+      case 'log':
+        xadmin.open('操作日志', '../OperateLog/log.html?id=' + obj.data.productNo + '&type=2');
         break;
       case "reset_search":
         location.reload();
@@ -342,6 +352,7 @@ layui.config({
   }
 
   table.on('toolbar(list)', handleEvent);
+  table.on('tool(list)', handleEvent);
   table.on('checkbox(staffList)', handleEvent);
 
 })

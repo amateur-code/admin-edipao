@@ -341,7 +341,6 @@ layui.config({
   }
 
   function handleEvent (obj) {
-    console.log(obj)
     var data = obj.data
     // console.log(obj,permissionList)
     obj.event == 'trade-record' && permissionList.indexOf('交易记录') == -1 && (obj.event = 'reject');
