@@ -130,57 +130,61 @@
         <div class="layui-col-xs4">
           临牌：<span>{{d.detail.tempLicensePrice}}元</span>
           {{# if(d.check.tempLicensePrice){ }}
-          <div><span class="x-red">临牌：</span>{{d.check.tempLicensePrice}}元</div>
+          <div><span class="x-red">待审：</span>{{d.check.tempLicensePrice}}元</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
           三超：<span>{{d.detail.threeExceedingPrice}}元</span>
           {{# if(d.check.threeExceedingPrice){ }}
-          <div><span class="x-red">三超：</span>{{d.check.threeExceedingPrice}}元</div>
+          <div><span class="x-red">待审：</span>{{d.check.threeExceedingPrice}}元</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
           强险：<span>{{d.detail.compulsoryInsurancePrice}}元</span>
           {{# if(d.check.compulsoryInsurancePrice){ }}
-          <div><span class="x-red">强险：</span>{{d.check.compulsoryInsurancePrice}}元</div>
+          <div><span class="x-red">待审：</span>{{d.check.compulsoryInsurancePrice}}元</div>
           {{# } }}
         </div>
       </div>
     </div>
   </div>
   {{# } else if(d.detail.supplierType == 'loadCar'||d.detail.supplierType == 'unloadCar') { }}
-  {{# layui.each(d.detail.priceExtJson, function(index, item){ }}
+  {{# layui.each(d.check.priceExtJson, function(index, item){ }}
+  {{# console.log(item) }}
   <div class="layui-card-body">
     <div class="layui-fluid">
+      {{# if(item.checkIsDeleted || item.checkIsNew){ }}
+      <div class="x-red">{{item.checkIsDeleted ? item.checkIsDeleted : item.checkIsNew}}</div>
+      {{# } }}
       <div class="layui-row">
         <div class="layui-col-xs4">
-          车型名称：<span>{{item.modelName}}</span>
-          {{# if(d.check.modelName){ }}
-          <div><span class="x-red">车型名称：</span>{{d.check.modelName}}</div>
+          车型名称：<span>{{item.modelName.beforeValue}}</span>
+          {{# if(item.modelName.checkDiff){ }}
+          <div><span class="x-red">待审：</span>{{item.modelName.afterValue}}</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
-          车型代码：<span>{{item.modelCode}}</span>
-          {{# if(d.check.modelCode){ }}
-          <div><span class="x-red">车型代码：</span>{{d.check.modelCode}}</div>
+          车型代码：<span>{{item.modelCode.beforeValue}}</span>
+          {{# if(item.modelCode.checkDiff){ }}
+          <div><span class="x-red">待审：</span>{{item.modelCode.afterValue}}</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
-          驱动形式代码：<span>{{item.driveWayCode}}</span>
-          {{# if(d.check.driveWayCode){ }}
-          <div><span class="x-red">驱动形式代码：</span>{{d.check.driveWayCode}}</div>
+          驱动形式代码：<span>{{item.driveWayCode.beforeValue}}</span>
+          {{# if(item.driveWayCode.checkDiff){ }}
+          <div><span class="x-red">待审：</span>{{item.driveWayCode.afterValue}}</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
-          价格：<span>{{item.multiPrice}}元/次</span>
-          {{# if(d.check.multiPrice){ }}
-          <div><span class="x-red">价格：</span>{{d.check.multiPrice}}元/次</div>
+          价格：<span>{{item.multiPrice.beforeValue}}元/次</span>
+          {{# if(item.multiPrice.checkDiff){ }}
+          <div><span class="x-red">待审：</span>{{item.multiPrice.afterValue}}元/次</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
-          生效时间：<span>{{item.effectiveStartTime}}</span>
-          {{# if(d.check.effectiveStartTime){ }}
-          <div><span class="x-red">生效时间：</span>{{d.check.effectiveStartTime}}</div>
+          生效时间：<span>{{item.effectiveStartTime.beforeValue}}</span>
+          {{# if(item.effectiveStartTime.checkDiff){ }}
+          <div><span class="x-red">待审：</span>{{item.effectiveStartTime.afterValue}}</div>
           {{# } }}
         </div>
       </div>
@@ -188,50 +192,72 @@
   </div>
   {{# }) }}
   {{# } else if(d.detail.supplierType == 'stopSupply') { }}
-  {{# layui.each(d.detail.priceExtJson, function(index, item){ }}
-  <div class="layui-card-body">
-    <div class="layui-fluid">
-      <div class="layui-row">
-        <div class="layui-col-xs4">
-          车型名称：<span>{{item.modelName}}</span>
-          {{# if(d.check.modelName){ }}
-          <div><span class="x-red">车型名称：</span>{{d.check.modelName}}</div>
+    {{# layui.each(d.check.priceExtJson, function(index, item){ }}
+    <div class="layui-card-body">
+      <div class="layui-fluid">
+        {{# if(item.checkIsDeleted || item.checkIsNew){ }}
+        <div class="x-red">{{item.checkIsDeleted ? item.checkIsDeleted : item.checkIsNew}}</div>
+        {{# } }}
+        <div class="layui-row">
+          <div class="layui-col-xs4">
+            车型名称：<span>{{item.modelName.beforeValue}}</span>
+            {{# if(item.modelName.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.modelName.afterValue}}</div>
+            {{# } }}
+          </div>
+          <div class="layui-col-xs4">
+            车型代码：<span>{{item.modelCode.beforeValue}}</span>
+            {{# if(item.modelCode.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.modelCode.afterValue}}</div>
+            {{# } }}
+          </div>
+          <div class="layui-col-xs4">
+            驱动形式代码：<span>{{item.driveWayCode.beforeValue}}</span>
+            {{# if(item.driveWayCode.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.driveWayCode.afterValue}}</div>
+            {{# } }}
+          </div>
+          <div class="layui-col-xs4">
+            单车价格：<span>{{item.singlePrice.beforeValue}}{{item.singlePriceUnit.beforeValue}}</span>
+            {{# if(item.singlePrice.checkDiff || item.singlePriceUnit.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.singlePrice.afterValue}}{{item.singlePriceUnit.afterValue}}</div>
+            {{# } }}
+          </div>
+          <div class="layui-col-xs4">
+            背车价格：<span>{{item.multiPrice.beforeValue}}{{item.multiPriceUnit.beforeValue}}</span>
+            {{# if(item.multiPrice.checkDiff || item.multiPriceUnit.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.multiPrice.afterValue}}{{item.multiPriceUnit.afterValue}}</div>
+            {{# } }}
+          </div>
+          <div class="layui-col-xs4">
+            生效时间：<span>{{item.effectiveStartTime.beforeValue}}</span>
+            {{# if(item.effectiveStartTime.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.effectiveStartTime.afterValue}}</div>
+            {{# }else{ }}
+            <div style="visibility: hidden;"><span class="x-red">待审</div>
+            {{# } }}
+          </div>
+          {{# console.log(item) }}
+          {{# if(item.singlePriceUnit.afterValue == "元/小时" || item.singleUpLimitPrice.checkDiff){ }}
+          <div class="layui-col-xs4">
+            单车单日上限：<span>{{item.singleUpLimitPrice.beforeValue}}元</span>
+            {{# if(item.singleUpLimitPrice.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.singleUpLimitPrice.afterValue}}元</div>
+            {{# } }}
+          </div>
           {{# } }}
-        </div>
-        <div class="layui-col-xs4">
-          车型代码：<span>{{item.modelCode}}</span>
-          {{# if(d.check.modelCode){ }}
-          <div><span class="x-red">车型代码：</span>{{d.check.modelCode}}</div>
-          {{# } }}
-        </div>
-        <div class="layui-col-xs4">
-          驱动形式代码：<span>{{item.driveWayCode}}</span>
-          {{# if(d.check.driveWayCode){ }}
-          <div><span class="x-red">驱动形式代码：</span>{{d.check.driveWayCode}}</div>
-          {{# } }}
-        </div>
-        <div class="layui-col-xs4">
-          单车价格：<span>{{item.singlePrice}}{{item.singlePriceUnit}}</span>
-          {{# if(d.check.singlePrice){ }}
-          <div><span class="x-red">单车价格：</span>{{d.check.singlePrice}}{{item.singlePriceUnit}}</div>
-          {{# } }}
-        </div>
-        <div class="layui-col-xs4">
-          背车价格：<span>{{item.multiPrice}}{{item.multiPriceUnit}}</span>
-          {{# if(d.check.multiPrice){ }}
-          <div><span class="x-red">背车价格：</span>{{d.check.multiPrice}}{{item.multiPriceUnit}}</div>
-          {{# } }}
-        </div>
-        <div class="layui-col-xs4">
-          生效时间：<span>{{item.effectiveStartTime}}</span>
-          {{# if(d.check.effectiveStartTime){ }}
-          <div><span class="x-red">生效时间：</span>{{d.check.effectiveStartTime}}</div>
+          {{# if(item.multiPriceUnit.afterValue == "元/小时" || item.multiUpLimitPrice.checkDiff){ }}
+          <div class="layui-col-xs4">
+            背车单日上限：<span>{{item.multiUpLimitPrice.beforeValue}}元</span>
+            {{# if(item.multiUpLimitPrice.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.multiUpLimitPrice.afterValue}}元</div>
+            {{# } }}
+          </div>
           {{# } }}
         </div>
       </div>
     </div>
-  </div>
-  {{# }) }}
+    {{# }) }}
   {{# } }}
 </div>
 <div class="layui-card">
@@ -312,7 +338,7 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
     }
   })
 
-  function waitCheck (detail) {
+  function waitCheck () {
     edipao.request({
       type: 'GET',
       url: "/admin/log/last-modify/get",
@@ -331,6 +357,8 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
             }
             check[key] = value || '- -'
           });
+          if(detail.supplierType == 'stopSupply') check.priceExtJson = getStopCheckData(check.priceExtJson, detail.priceExtJson);
+          if(detail.supplierType == "loadCar" || detail.supplierType == "unloadCar") check.priceExtJson = getStopCheckData(check.priceExtJson, detail.priceExtJson);
         }
         render()
       }
@@ -378,9 +406,120 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
     })
     return false;
   });
-
-
 })
+function getStopCheckData(after, before){
+  var res = [], nameList = [], afterNameList = [];
+
+  if(!after){
+    before.forEach(function(beforeItem){
+      var obj = {};
+      Object.keys(beforeItem).forEach(function(key){
+        var beforeValue = beforeItem[key];
+        obj[key] = {
+          beforeValue: beforeValue,
+          afterValue: beforeValue,
+        }
+      });
+      res.push(obj);
+    });
+    return res;
+  }
+  before.forEach(function(beforeItem){
+    nameList.push(beforeItem.modelName);
+  });
+  try{
+    after = JSON.parse(after);
+  }catch(e){after = []};
+  after = after.map(function(afterItem){
+    afterItem.effectiveStartTime = afterItem.effectiveStartTime.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6")
+    if (afterItem.multiPriceUnit == '0') {
+      afterItem.multiPriceUnit = '元/自然日'
+    } else if(afterItem.multiPriceUnit =='1'){
+      afterItem.multiPriceUnit ='元/小时'
+    } else if(afterItem.multiPriceUnit =='3'){
+      afterItem.multiPriceUnit ='元/辆车'
+    }
+    // 单车价格单位
+    if (afterItem.singlePriceUnit =='0') {
+      afterItem.singlePriceUnit ='元/自然日'
+    } else if(afterItem.singlePriceUnit =='1'){
+      afterItem.singlePriceUnit ='元/小时'
+    } else if(afterItem.singlePriceUnit =='3'){
+      afterItem.singlePriceUnit ='元/辆车'
+    }
+    afterNameList.push(afterItem.modelName);
+    return afterItem;
+  });
+  after.forEach(function(afterItem){
+    var beforeItem, obj = {};
+    if(nameList.indexOf(afterItem.modelName) < 0){
+      obj.checkIsNew = "待审：新增";
+      Object.keys(afterItem).forEach(function(key){
+        var afterValue = afterItem[key];
+        if(key != "checkIsNew" && key != "checkIsDeleted"){
+          obj[key] = {
+            beforeValue: afterValue,
+            afterValue: afterValue,
+          }
+        }else{
+          obj[key] = afterValue;
+        }
+      });
+    }else{
+      beforeItem = getBeforeByName(afterItem.modelName);
+      Object.keys(beforeItem).forEach(function(key){
+        var beforeValue = beforeItem[key];
+        var afterValue = afterItem[key];
+        if(beforeValue == afterValue){
+          if(key != "checkIsNew" && key != "checkIsDeleted"){
+            obj[key] = {
+              beforeValue: beforeValue,
+              afterValue: afterValue,
+            }
+          }else{
+            obj[key] = beforeValue;
+          }
+        }else{
+          obj[key] = {
+            checkDiff: true,
+            beforeValue: beforeValue,
+            afterValue: afterValue,
+          }
+        }
+      });
+    }
+    res.push(obj);
+  });
+  before.forEach(function(beforeItem){
+    var obj = {};
+    if(afterNameList.indexOf(beforeItem.modelName) < 0){
+      beforeItem.checkIsDeleted = "待审：删除";
+      Object.keys(beforeItem).forEach(function(key){
+        var beforeValue = beforeItem[key];
+        if(key != "checkIsNew" && key != "checkIsDeleted"){
+          obj[key] = {
+            beforeValue: beforeValue,
+            afterValue: beforeValue,
+          }
+        }else{
+          obj[key] = beforeValue;
+        }
+      });
+      res.push(obj);
+    }
+  });
+  return res;
+  function getBeforeByName(name){
+    var res;
+    before.some(function(beforeItem){
+      if(beforeItem.modelName == name){
+        res = beforeItem;
+        return true;
+      }
+    });
+    return res;
+  }
+}
 </script>
 </body>
 

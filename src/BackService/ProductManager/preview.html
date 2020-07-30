@@ -194,39 +194,55 @@
         <div class="layui-col-xs4">
           车型名称：<span>{{item.modelName}}</span>
           {{# if(d.check.modelName){ }}
-          <div><span class="x-red">车型名称：</span>{{d.check.modelName}}</div>
+          <div><span class="x-red">待审：</span>{{d.check.modelName}}</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
           车型代码：<span>{{item.modelCode}}</span>
           {{# if(d.check.modelCode){ }}
-          <div><span class="x-red">车型代码：</span>{{d.check.modelCode}}</div>
+          <div><span class="x-red">待审：</span>{{d.check.modelCode}}</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
           驱动形式代码：<span>{{item.driveWayCode}}</span>
           {{# if(d.check.driveWayCode){ }}
-          <div><span class="x-red">驱动形式代码：</span>{{d.check.driveWayCode}}</div>
+          <div><span class="x-red">待审：</span>{{d.check.driveWayCode}}</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
           单车价格：<span>{{item.singlePrice}}{{item.singlePriceUnit}}</span>
           {{# if(d.check.singlePrice){ }}
-          <div><span class="x-red">单车价格：</span>{{d.check.singlePrice}}{{item.singlePriceUnit}}</div>
+          <div><span class="x-red">待审：</span>{{d.check.singlePrice}}{{item.singlePriceUnit}}</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
           背车价格：<span>{{item.multiPrice}}{{item.multiPriceUnit}}</span>
           {{# if(d.check.multiPrice){ }}
-          <div><span class="x-red">背车价格：</span>{{d.check.multiPrice}}{{item.multiPriceUnit}}</div>
+          <div><span class="x-red">待审：</span>{{d.check.multiPrice}}{{item.multiPriceUnit}}</div>
           {{# } }}
         </div>
         <div class="layui-col-xs4">
           生效时间：<span>{{item.effectiveStartTime}}</span>
           {{# if(d.check.effectiveStartTime){ }}
-          <div><span class="x-red">生效时间：</span>{{d.check.effectiveStartTime}}</div>
+          <div><span class="x-red">待审：</span>{{d.check.effectiveStartTime}}</div>
           {{# } }}
         </div>
+        {{# if(item.singlePriceUnit == '元/小时'){ }}
+        <div class="layui-col-xs4">
+          单车单日上限：<span>{{item.singleUpLimitPrice}}元</span>
+          {{# if(d.check.singleUpLimitPrice){ }}
+          <div><span class="x-red">待审：</span>{{d.check.singleUpLimitPrice}}元</div>
+          {{# } }}
+        </div>
+        {{# } }}
+        {{# if(item.multiPriceUnit == '元/小时'){ }}
+        <div class="layui-col-xs4">
+          背车单日上限：<span>{{item.multiUpLimitPrice}}元</span>
+          {{# if(d.check.multiUpLimitPrice){ }}
+          <div><span class="x-red">待审：</span>{{d.check.multiUpLimitPrice}}元</div>
+          {{# } }}
+        </div>
+        {{# } }}
       </div>
     </div>
   </div>

@@ -100,13 +100,13 @@ layui.config({
         {
           field: 'unitPrice', title: '价格', minWidth: 100, templet: function (d) {
             var unit = "元/次";
-            return d.unitPrice + unit || '- -';
+            return d.unitPrice ? (d.unitPrice + unit) : '- -';
           }
         },
         {
           field: 'totalPrice', title: '总费用', minWidth: 100, templet: function (d) {
             var unit = "元";
-            return d.unitPrice + unit || '- -';
+            return d.totalPrice ? (d.totalPrice + unit) : '- -';
           }
         },
         {

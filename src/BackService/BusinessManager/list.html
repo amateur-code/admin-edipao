@@ -380,13 +380,13 @@ layui.config({
         break;
       case 'trade-record':
         if (data.supplierType == 'oilSupply') {
-          xadmin.open('交易记录', '../trade-record.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
+          xadmin.open('交易记录', '../trade-record.html?key=supplierNo&id=' + data.supplierNo + '&perssionId=' + params.perssionId)
         } else if (data.supplierType == 'tempLicenseSupply') {
-          xadmin.open('交易记录', '../trade-record-lp.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
+          xadmin.open('交易记录', '../trade-record-lp.html?key=supplierNo&id=' + data.supplierNo + '&perssionId=' + params.perssionId)
         } else if (data.supplierType == 'loadCar' || data.supplierType == 'unloadCar') {
-          xadmin.open('交易记录', '../trade-record-bc.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
+          xadmin.open('交易记录', '../trade-record-bc.html?key=supplierNo&id=' + data.supplierNo + '&perssionId=' + params.perssionId)
         } else if (data.supplierType == 'stopSupply') {
-          xadmin.open('交易记录', '../trade-record-tc.html?key=productNo&id=' + data.productNo + '&perssionId=' + params.perssionId)
+          xadmin.open('交易记录', '../trade-record-tc.html?key=supplierNo&id=' + data.supplierNo + '&perssionId=' + params.perssionId)
         }
         break;
       case 'add':
