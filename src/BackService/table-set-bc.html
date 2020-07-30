@@ -89,8 +89,7 @@ layui.use(['table', 'layer', 'laytpl', 'form'], function (table, layer, laytpl, 
             { field: 'detailAddress', title: '地址', width: 200 },
         ];
     var params = edipao.urlGet();
-    // var tableKey = params.tableKey;
-    var tableKey = 'loadCar-record-list';
+    var tableKey = params.tableKey;
     laytpl(itemListTpl.innerHTML).render({ list: tableHeaderList }, function (html) {
         document.getElementById('itemList').innerHTML = html;
         form.render();

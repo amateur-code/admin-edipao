@@ -53,6 +53,7 @@
 </div>
 <script type="text/html" id="headerBtns">
 <div class="layui-btn-container">
+  <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
   {{# if(permissionList.indexOf('交易记录导出') != -1){ }}
   <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
   {{# } }}
@@ -63,16 +64,6 @@
 <script type="text/html" id="rowBtns">
 {{# if(permissionList.indexOf('修改') != -1){ }}
 <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>
-{{# } }}
-{{# if(d.needApproval){ }}
-<a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="check">审核</a>
-{{# } }}
-<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="preview">查看</a>
-{{# if(permissionList.indexOf('删除') != -1){ }}
-<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
-{{# } }}
-{{# if(permissionList.indexOf('交易记录') != -1){ }}
-<a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="trade-record">交易记录</a>
 {{# } }}
 <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="log">日志</a>
 </script>
@@ -85,7 +76,7 @@ layui.config({
 }).use(['table', 'layer', 'excel', 'tableFilter'], function (table, layer, excel, tableFilter) {
   var xadmin = layui.xadmin,
       edipao = layui.edipao,
-      tableCols = [ //表头
+      tableCols = [  //表头
         { checkbox: true },
         {
           field: 'tradeNo', title: '交易流水号', width: 200, templet: function (d) {
@@ -140,7 +131,7 @@ layui.config({
             return d.detailAddress || '- -';
           }
         },
-        { title: '操作', field: "operation", toolbar: '#rowBtns', fixed: 'right', width: 400, }
+        { title: '操作', toolbar: '#rowBtns', fixed: 'right', width: 150, }
       ],
       tableIns,
       tableFilterIns,
@@ -279,6 +270,9 @@ layui.config({
         break;
       case 'edit':
         xadmin.open('修改停车记录', './edit-record-tc.html?tableKey=' + tableKey, 600)
+        break;
+      case "reset_search":
+        location.reload();
         break;
     }
   }

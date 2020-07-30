@@ -58,6 +58,7 @@
 </div>
 <script type="text/html" id="headerBtns">
 <div class="layui-btn-container">
+  <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
   {{# if(permissionList.indexOf('交易记录导出') != -1){ }}
   <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
   {{# } }}
@@ -80,7 +81,9 @@ layui.config({
     tableCols = [ //表头
       { checkbox: true },
       { field: 'tradeNo', title: '交易流水号', width: 200 },
-      { field: 'handlingTime', title: '交易时间', width: 200 },
+      { field: 'handlingTime', title: '交易时间', width: 200, templet: function(d){
+        return d.handlingTime || "- -";
+      }},
       {
         field: 'productName', title: '供应商', width: 200
       },
@@ -90,7 +93,9 @@ layui.config({
           return d.orderType == '1' ? '单车' : '背车'
         }
       },
-      { field: 'tempLicense', title: '临牌号码', width: 200 },
+      { field: 'tempLicense', title: '临牌号码', width: 200, templet: function(d){
+        return d.tempLicense || "- -";
+      }},
       { field: 'drivingLicenseImg', title: '行驶证', width: 200, templet: '#stffList' },
       {
         field: 'tempLicensePrice', title: '临牌费', width: 200, templet: function (d) {
@@ -270,6 +275,9 @@ layui.config({
           title: '查看行驶证',
           content: obj.data.drivingLicenseImg ? '<div class="drivingLicenseImg_container"><img style="max-width:100%;max-height:100%;" src="'+ obj.data.drivingLicenseImg+'"></div>':'<div class="drivingLicenseImg_container"><span style="color:#999;">暂无数据</span></div>'
         });
+        break;
+      case "reset_search":
+        location.reload();
         break;
     }
   }

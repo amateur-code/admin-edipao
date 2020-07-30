@@ -53,6 +53,7 @@
 </div>
 <script type="text/html" id="headerBtns">
 <div class="layui-btn-container">
+  <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
   {{# if(permissionList.indexOf('交易记录导出') != -1){ }}
   <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
   {{# } }}
@@ -251,6 +252,9 @@ layui.config({
         break;
       case 'tableSet':
         xadmin.open('表格设置', './table-set-bc.html?tableKey=' + tableKey, 600)
+        break;
+      case "reset_search":
+        location.reload();
         break;
     }
   }
