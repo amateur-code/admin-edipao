@@ -150,7 +150,6 @@
   </div>
   {{# } else if(d.detail.supplierType == 'loadCar'||d.detail.supplierType == 'unloadCar') { }}
   {{# layui.each(d.check.priceExtJson, function(index, item){ }}
-  {{# console.log(item) }}
   <div class="layui-card-body">
     <div class="layui-fluid">
       {{# if(item.checkIsDeleted || item.checkIsNew){ }}
@@ -348,6 +347,9 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
       }
     }).then(function (res) {
       if (res.code == 0) {
+        if(detail.supplierType == 'stopSupply' || detail.supplierType == "loadCar" || detail.supplierType == "unloadCar"){
+          res.data = res.data || {modifyAfterJson: JSON.stringify({newMap: {}})};
+        }
         if (res.data) {
           var editData = JSON.parse(res.data.modifyAfterJson)
           check = editData.newMap
