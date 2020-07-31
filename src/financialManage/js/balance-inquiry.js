@@ -138,6 +138,9 @@ layui
         return d.thirdFlowNo ? d.thirdFlowNo : "- -";
       }},
       { field: "bankReceipt", title: "银行回单", width: 120, templet: "#view_pic", },
+      { field: "payCompany", title: "付款主体", width: 120, templet: function (d) {
+        return d.payCompany || "- -";
+      } },
     ]
     var toolField = {title: '操作', field: "operation", toolbar: '#rowBtns', align: 'left', fixed: 'right', width: 300};
 
@@ -155,8 +158,15 @@ layui
           url: "/admin/finance/balance/get",
           data: {},
         }).done(function (res) {
-          if (res.code == 0) {
-            $("#balanceNo").text(res.data);
+          if (res.code == 0 && res.data) {
+            Object.keys(res.data[0]).forEach(function (key) {
+              $("#c1").text(key + "余额：");
+              $("#balanceNo1").text(res.data[0][key] || "- -");
+            });
+            Object.keys(res.data[1]).forEach(function (key) {
+              $("#c2").text(key + "余额：");
+              $("#balanceNo2").text(res.data[1][key] || "- -");
+            });
           }
         });
       }
@@ -497,6 +507,7 @@ layui
         { field: 'remark', type: 'input' },
         { field: 'toAccountTime', type: 'timeslot' },
         { field: 'thirdFlowNo', type: 'input' },
+        { field: 'payCompany', type: 'input' },
         // { field: "银行回单", type: "input" },
       ]
       tableFilterIns = tableFilter.render({
