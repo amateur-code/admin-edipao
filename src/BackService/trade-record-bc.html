@@ -253,7 +253,7 @@ layui.config({
         xadmin.open('表格设置', './table-set-bc.html?tableKey=' + tableKey, 600)
         break;
       case 'staffList':
-        xadmin.open('价格', './unitPrice-tc.html?id=' + obj.data.productNo);
+        xadmin.open('价格', './unitPrice-tc.html?id=' + obj.data.productNo + "&model=" + obj.data.carModelName);
         break;
       case "reset_search":
         location.reload();

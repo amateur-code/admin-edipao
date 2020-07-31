@@ -257,6 +257,7 @@ layui.config({
   }
 
   function handleEvent (obj) {
+    console.log(obj)
     obj.event == 'export' && permissionList.indexOf('交易记录导出') == -1 && (obj.event = 'reject');
     obj.event == 'edit_tc' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
     switch (obj.event) {
@@ -276,7 +277,7 @@ layui.config({
         xadmin.open('修改停车记录', './edit-record-tc.html?id=' + obj.data.id, 600)
         break;
       case 'staffList':
-        xadmin.open('价格', './unitPrice-tc.html?id=' + obj.data.productNo);
+        xadmin.open('价格', './unitPrice-tc.html?id=' + obj.data.productNo + "&model=" + obj.data.carModelName);
         break;
       case 'log':
         xadmin.open('操作日志', '../OperateLog/log.html?id=' + obj.data.productNo + '&type=2');

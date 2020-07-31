@@ -142,7 +142,11 @@ layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element
   }).then(function (res) {
     if (res.code == 0) {
       if(res.data.priceExtJson){
-        res.data.priceExtJson = JSON.parse(res.data.priceExtJson)
+        res.data.priceExtJson = JSON.parse(res.data.priceExtJson) || [];
+        res.data.priceExtJson = res.data.priceExtJson.filter(function(item){
+          return item.modelName == params.model;
+        });
+        
         res.data.priceExtJson.forEach(item => {
           item.effectiveStartTime = item.effectiveStartTime.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6")
           // 背车单位
