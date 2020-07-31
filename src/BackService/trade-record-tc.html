@@ -339,6 +339,8 @@ layui.config({
         if (item.field && item.hide != true) {
           if (index2 == 0) {
             dataItem[item.field] = item.title;
+          } else if(item.field == "upVinCode"){
+            dataItem[item.field] = item2["downVinCode"] + "，" + item2["upVinCode"];
           } else if (item.field == "tradeStatus") {
             dataItem[item.field] = item2["tradeStatusDesc"];
           } else {
