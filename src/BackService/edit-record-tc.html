@@ -69,10 +69,10 @@
               <!--              <div class="layui-col-xs4">-->
               <div class="layui-form-item">
                 <label for="leaveTime" class="layui-form-label">
-                  <span class="x-red">*</span>出场时间
+                  出场时间
                 </label>
                 <div class="layui-input-block">
-                  <input type="text" id="leaveTime" name="leaveTime" lay-verify="required" autocomplete="off"
+                  <input type="text" id="leaveTime" name="leaveTime" lay-verify="" autocomplete="off"
                          class="layui-input date-format">
                 </div>
               </div>
@@ -138,6 +138,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
 
   var startTime = laydate.render({
     elem: '#entryTime',
+    trigger: "click",
     type: 'datetime', //时间格式：yyyy/MM/dd HH:mm:ss
     done: function (value, date, endDate) {
       endTime.config.min = {
@@ -159,16 +160,17 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
   var endTime = laydate.render({
     elem: '#leaveTime',
     type: 'datetime',
+    trigger: "click",
     min: $("#entryTime").val() //可选择的最小日期为开始日期
   });
   //自定义验证规则
   form.verify({});
 
   form.on('submit(edit)', function (data) {
-    console.log(data)
     data.field.entryTime.replace(/\-| |:/g, "")
     data.field.leaveTime.replace(/\-| |:/g, "")
     data.field.id = params.id
+    console.log(data)
     edipao.request({
       url: '/admin/stopCar-record/update',
       data: data.field,
