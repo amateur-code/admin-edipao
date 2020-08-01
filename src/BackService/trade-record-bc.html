@@ -64,7 +64,13 @@
 </script>
 <script type="text/html" id="stffList">
 <a lay-event="staffList" class="layui-table-link"
-   style="text-decoration:underline; cursor: pointer;">{{d.unitPrice}}元/次</a>
+   style="text-decoration:underline; cursor: pointer;">
+  {{# if(d.unitPrice){ }}
+  <span>{{d.unitPrice}}元/次</span>
+  {{# } else { }}
+  <span>- -</span>
+  {{# } }}
+</a>
 </script>
 <script type="text/javascript">
 layui.config({
@@ -83,8 +89,12 @@ layui.config({
           }
         },
         {
-          field: 'upVinCode', title: 'vin码', width: 200, templet: function (d) {
-            return '<p style="line-height: 14px">' + d.upVinCode + '</p><p style="line-height: 14px">' + d.downVinCode + '</p>' || '- -'
+          field: 'upVinCode', title: '上车vin码', width: 200, templet: function (d) {
+            return d.upVinCode || '- -'
+          }
+        }, {
+          field: 'downVinCode', title: '下车vin码', width: 200, templet: function (d) {
+            return d.downVinCode || '- -'
           }
         },
         {
@@ -289,8 +299,6 @@ layui.config({
             if (item.field && item.hide != true) {
               if (index2 == 0) {
                 dataItem[item.field] = item.title;
-              } else if (item.field == "upVinCode") {
-                dataItem[item.field] = item2["downVinCode"] + "，" + item2["upVinCode"];
               } else if (item.field == "tradeStatus") {
                 dataItem[item.field] = item2["tradeStatusDesc"];
               } else {
@@ -313,10 +321,14 @@ layui.config({
         if (item.field && item.hide != true) {
           if (index2 == 0) {
             dataItem[item.field] = item.title;
-          } else if (item.field == "upVinCode") {
-            dataItem[item.field] = item2["downVinCode"] + "，" + item2["upVinCode"];
           } else if (item.field == "tradeStatus") {
             dataItem[item.field] = item2["tradeStatusDesc"];
+          } else if (item.field == "unitPrice") {
+            if (item2["unitPrice"]) {
+              dataItem[item.field] = item2["unitPrice"] + '（元/次）';
+            } else {
+              dataItem[item.field] = '- -'
+            }
           } else if (item.field == "totalPrice") {
             dataItem[item.field] = item2["totalPrice"] + '（元）';
           } else {

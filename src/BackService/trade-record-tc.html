@@ -69,13 +69,24 @@
 <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="log">日志</a>
 </script>
 <script type="text/html" id="stffList">
-<a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.unitPrice}}元/小时</a>
+<a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">
+  {{# if(d.priceUnit =='0'){ }}
+  <span>{{d.unitPrice}}元/自然日</span>
+  {{# } else if(d.priceUnit =='1'){ }}
+  <span>{{d.unitPrice}}元/小时</span>
+  {{# } else if(d.priceUnit =='2'){ }}
+  <span>{{d.unitPrice}}元/辆车</span>
+  {{# } else { }}
+  <span>- -</span>
+  {{# } }}
+</a>
 </script>
 <script type="text/javascript">
-  function format(str){
-    str = str + "";
-    return str.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6");
-  }
+function format (str) {
+  str = str + "";
+  return str.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6");
+}
+
 layui.config({
   base: '../lib/'
 }).extend({
@@ -92,8 +103,12 @@ layui.config({
           }
         },
         {
-          field: 'upVinCode', title: 'vin码', width: 200, templet: function (d) {
-            return '<p style="line-height: 14px">' + d.upVinCode + '</p><p style="line-height: 14px">' + d.downVinCode + '</p>' || '- -'
+          field: 'upVinCode', title: '上车vin码', width: 200, templet: function (d) {
+            return d.upVinCode || '- -'
+          }
+        }, {
+          field: 'downVinCode', title: '下车vin码', width: 200, templet: function (d) {
+            return d.downVinCode || '- -'
           }
         },
         {
@@ -119,7 +134,11 @@ layui.config({
         {
           field: 'duration', title: '停车时长', width: 200, templet: function (d) {
             var unit = "小时";
-            return d.duration + unit || '- -';
+            if (d.duration) {
+              return d.duration + unit
+            } else {
+              return '- -'
+            }
           }
         },
         {
@@ -285,7 +304,7 @@ layui.config({
         xadmin.open('价格', './unitPrice-tc.html?id=' + obj.data.productNo + "&model=" + obj.data.carModelName);
         break;
       case 'log':
-        xadmin.open('操作日志', '../OperateLog/log.html?id=' + obj.data.productNo + '&type=2');
+        xadmin.open('操作日志', '../OperateLog/log.html?id=' + obj.data.productNo + '&type=25');
         break;
       case "reset_search":
         location.reload();
@@ -335,18 +354,27 @@ layui.config({
   function exportXlsx (list) {
     var data = [], list = [{}].concat(list);
     layui.each(list, function (index2, item2) {
+      console.log(item2)
       var dataItem = {};
       layui.each(tableCols, function (index, item) {
         console.log(item.field)
         if (item.field && item.hide != true) {
           if (index2 == 0) {
             dataItem[item.field] = item.title;
-          } else if(item.field == "upVinCode"){
-            dataItem[item.field] = item2["downVinCode"] + "，" + item2["upVinCode"];
           } else if (item.field == "tradeStatus") {
             dataItem[item.field] = item2["tradeStatusDesc"];
           } else if (item.field == "totalPrice") {
             dataItem[item.field] = item2["totalPrice"] + '（元）';
+          } else if (item.field == "unitPrice") {
+            if (item2["priceUnit"] == '0') {
+              dataItem[item.field] = item2["unitPrice"] + '（元/自然日）';
+            } else if (item2["priceUnit"] == '0') {
+              dataItem[item.field] = item2["unitPrice"] + '（元/小时）';
+            } else if (item2["priceUnit"] == '0') {
+              dataItem[item.field] = item2["unitPrice"] + '（元/辆车）';
+            } else {
+              dataItem[item.field] = '- -'
+            }
           } else {
             dataItem[item.field] = item2[item.field] || '- -'
           }
