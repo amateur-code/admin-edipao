@@ -53,7 +53,8 @@
 </div>
 <script type="text/html" id="headerBtns">
 <div class="layui-btn-container">
-  <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
+  <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索
+  </button>
   {{# if(permissionList.indexOf('交易记录导出') != -1){ }}
   <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
   {{# } }}
@@ -62,7 +63,8 @@
 </div>
 </script>
 <script type="text/html" id="stffList">
-<a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">{{d.unitPrice}}元/次</a>
+<a lay-event="staffList" class="layui-table-link"
+   style="text-decoration:underline; cursor: pointer;">{{d.unitPrice}}元/次</a>
 </script>
 <script type="text/javascript">
 layui.config({
@@ -287,7 +289,7 @@ layui.config({
             if (item.field && item.hide != true) {
               if (index2 == 0) {
                 dataItem[item.field] = item.title;
-              } else if(item.field == "upVinCode"){
+              } else if (item.field == "upVinCode") {
                 dataItem[item.field] = item2["downVinCode"] + "，" + item2["upVinCode"];
               } else if (item.field == "tradeStatus") {
                 dataItem[item.field] = item2["tradeStatusDesc"];
@@ -311,8 +313,12 @@ layui.config({
         if (item.field && item.hide != true) {
           if (index2 == 0) {
             dataItem[item.field] = item.title;
+          } else if (item.field == "upVinCode") {
+            dataItem[item.field] = item2["downVinCode"] + "，" + item2["upVinCode"];
           } else if (item.field == "tradeStatus") {
             dataItem[item.field] = item2["tradeStatusDesc"];
+          } else if (item.field == "totalPrice") {
+            dataItem[item.field] = item2["totalPrice"] + '（元）';
           } else {
             dataItem[item.field] = item2[item.field] || '- -'
           }

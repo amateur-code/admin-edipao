@@ -148,11 +148,13 @@ layui.config({
       permissionList = edipao.getMyPermission();
   window.permissionList = permissionList;
   var params = edipao.urlGet();
+  console.log(params)
   var key = params.key;
   var logKey = key == "productNo" ? 17 : 16;
   var tableKey = 'BackService-' + params.key + '-trade-record';
   var tableWhere = {
     [params.key]: params.id,
+    supplierNo: params.sup,
     loginStaffId: edipao.getLoginStaffId()
   }
   getTableHeader();
@@ -261,7 +263,6 @@ layui.config({
   }
 
   function handleEvent (obj) {
-    console.log(obj)
     obj.event == 'export' && permissionList.indexOf('交易记录导出') == -1 && (obj.event = 'reject');
     obj.event == 'edit_tc' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
     switch (obj.event) {
@@ -336,6 +337,7 @@ layui.config({
     layui.each(list, function (index2, item2) {
       var dataItem = {};
       layui.each(tableCols, function (index, item) {
+        console.log(item.field)
         if (item.field && item.hide != true) {
           if (index2 == 0) {
             dataItem[item.field] = item.title;
@@ -343,6 +345,8 @@ layui.config({
             dataItem[item.field] = item2["downVinCode"] + "，" + item2["upVinCode"];
           } else if (item.field == "tradeStatus") {
             dataItem[item.field] = item2["tradeStatusDesc"];
+          } else if (item.field == "totalPrice") {
+            dataItem[item.field] = item2["totalPrice"] + '（元）';
           } else {
             dataItem[item.field] = item2[item.field] || '- -'
           }
