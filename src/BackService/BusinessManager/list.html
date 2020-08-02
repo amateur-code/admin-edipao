@@ -335,7 +335,6 @@ layui.config({
 
   function handleEvent (obj) {
     var data = obj.data
-    console.log(obj, permissionList)
     obj.event == 'trade-record' && permissionList.indexOf('交易记录') == -1 && (obj.event = 'reject');
     obj.event == 'edit' && permissionList.indexOf('修改') == -1 && (obj.event = 'reject');
     obj.event == 'delete' && permissionList.indexOf('删除') == -1 && (obj.event = 'reject');

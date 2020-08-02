@@ -171,7 +171,6 @@ layui.config({
       permissionList = edipao.getMyPermission();
   window.permissionList = permissionList;
   var params = edipao.urlGet();
-  console.log(params)
   var key = params.key;
   var logKey = key == "productNo" ? 17 : 16;
   var tableKey = 'BackService-' + params.key + '-trade-record';
@@ -358,10 +357,8 @@ layui.config({
   function exportXlsx (list) {
     var data = [], list = [{}].concat(list);
     layui.each(list, function (index2, item2) {
-      console.log(item2)
       var dataItem = {};
       layui.each(tableCols, function (index, item) {
-        console.log(item.field)
         if (item.field && item.hide != true) {
           if (index2 == 0) {
             dataItem[item.field] = item.title;

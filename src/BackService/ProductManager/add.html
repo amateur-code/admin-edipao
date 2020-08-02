@@ -141,21 +141,25 @@
     .w70 {
       width: 70%;
     }
-    .look-up{
+
+    .look-up {
       color: #3490e9;
       cursor: pointer;
       text-decoration: underline;
       margin-right: 35px;
       float: right;
     }
+
     .layui-form-label {
       width: 100%;
     }
-    .hide{
+
+    .hide {
       display: none;
       pointer-events: none;
     }
-    .unit_span_stop{
+
+    .unit_span_stop {
       position: absolute;
       top: 50%;
       right: 40px;
@@ -376,7 +380,7 @@
                    name="modelCode"
                    value="不限"
                    disabled
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|modelCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -392,7 +396,7 @@
                    name="driveWayCode"
                    value="不限"
                    disabled
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|driveWayCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -459,7 +463,7 @@
                    name="modelCode"
                    value="不限"
                    disabled
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|modelCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -475,7 +479,7 @@
                    name="driveWayCode"
                    value="不限"
                    disabled
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|driveWayCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -605,7 +609,26 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
       edipao = layui.edipao,
       detailAddress,
       resData;
-
+  var cxdm = [];
+  var qdxsdm = [];
+  edipao.request({
+    type: 'get',
+    url: '/admin/sys/dict/getDictItemList',
+    data: { dictType: 'sys.truckType.refenceTable' }
+  }).then(function (res) {
+    if (res.code == 0) {
+      cxdm = res.data.dictItemRespList
+    }
+  })
+  edipao.request({
+    type: 'get',
+    url: '/admin/sys/dict/getDictItemList',
+    data: { dictType: 'sys.driveWayCode.refenceTable' }
+  }).then(function (res) {
+    if (res.code == 0) {
+      qdxsdm = res.data.dictItemRespList
+    }
+  })
   // 凯立德地图API功能
   var point = new Careland.Point(411067452, 81446126); //创建坐标点
   var map = new Careland.Map('map', point, 12); //实例化地图对象
@@ -746,6 +769,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
       }
     })
   });
+
   //核心方法
   function timeAdd () {
     lay('.date-format').each(function () {
@@ -802,7 +826,6 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
 
   form.on("select(supplierNo)", function (obj) {
     var type = obj.elem.selectedOptions[0].dataset.type;
-    // console.dir(obj.elem.selectedOptions[0])
     if (type == "tempLicenseSupply") {
       laytpl(jgDom.innerHTML).render({ list: resData, check: "1" }, function (html) {
         document.getElementById('jgBody').innerHTML = html;
@@ -879,24 +902,44 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
         }
       }
     },
+    // 驱动形式代码
+    driveWayCode: function (value) {
+      let arr = []
+      qdxsdm.forEach(item => {
+        arr.push(item.dictValue)
+      })
+      if (!arr.includes(value) && value !== '不限') {
+        return '车型代码不存在'
+      }
+    },
+    // 车型代码校验
+    modelCode: function (value) {
+      let arr = []
+      cxdm.forEach(item => {
+        arr.push(item.dictValue)
+      })
+      if (!arr.includes(value) && value !== '不限') {
+        return '车型代码不存在'
+      }
+    }
   });
 
 
-  form.on("select(singleUpLimitPrice)", function(obj){
+  form.on("select(singleUpLimitPrice)", function (obj) {
     var $el = $(obj.elem);
     var $row = $el.parents(".model_row");
-    if(obj.value == 1){
+    if (obj.value == 1) {
       $row.find(".singleUpLimitPrice").removeClass("hide");
-    }else{
+    } else {
       $row.find(".singleUpLimitPrice").addClass("hide");
     }
   });
-  form.on("select(multiUpLimitPrice)", function(obj){
+  form.on("select(multiUpLimitPrice)", function (obj) {
     var $el = $(obj.elem);
     var $row = $el.parents(".model_row");
-    if(obj.value == 1){
+    if (obj.value == 1) {
       $row.find(".multiUpLimitPrice").removeClass("hide");
-    }else{
+    } else {
       $row.find(".multiUpLimitPrice").addClass("hide");
     }
   });
@@ -1069,7 +1112,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
                   <div class="layui-input-block">
                     <input type="text" id="modelCode${inx}"
                           name="modelCode"
-                          lay-verify="required" autocomplete="off"
+                          lay-verify="required|modelCode" autocomplete="off"
                           class="layui-input">
                   </div>
                 </div>
@@ -1083,7 +1126,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
                   <div class="layui-input-block">
                     <input type="text" id="driveWayCode${inx}"
                           name="driveWayCode"
-                          lay-verify="required" autocomplete="off"
+                          lay-verify="required|driveWayCode" autocomplete="off"
                           class="layui-input">
                   </div>
                 </div>
@@ -1156,7 +1199,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
           <div class="layui-input-block">
             <input type="text" id="modelCode"
                    name="modelCode"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|modelCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -1170,7 +1213,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
           <div class="layui-input-block">
             <input type="text" id="driveWayCode"
                    name="driveWayCode"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|driveWayCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -1284,13 +1327,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
   $(document).on('click', '#removeWishJourney', function () {
     layer.msg('删除车型成功');
     $(this).parent().remove();
-    console.log($(this).html())
   });
-  // function removeWishJourney (_this) {
-  //     debugger
-  //
-  //     var len = $('.wishJourney').length;
-  // }
 })
 </script>
 </body>

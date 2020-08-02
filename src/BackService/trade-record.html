@@ -52,14 +52,14 @@
     <script type="text/html" id="headerBtns">
         <div class="layui-btn-container">
             <button id="reset_search" data-event="reset_search" lay-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
-            {{# if(permissionList.indexOf('交易记录导出') != -1){ }}    
+            {{# if(permissionList.indexOf('交易记录导出') != -1){ }}
             <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
             {{# } }}
             <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
             <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
         </div>
     </script>
-    
+
     <script type="text/javascript">
    	layui.config({
         base: '../lib/'
@@ -114,8 +114,8 @@
             ],
             tableIns,
             tableFilterIns,
-            permissionList = edipao.getMyPermission(); 
-        window.permissionList = permissionList;    
+            permissionList = edipao.getMyPermission();
+        window.permissionList = permissionList;
         var params = edipao.urlGet();
         var key = params.key;
         var logKey = key == "productNo" ? 17 : 16;
@@ -147,7 +147,7 @@
                         })
                     }
                     renderTable();
-                } 
+                }
             })
         }
 
@@ -210,8 +210,7 @@
                 'mode' : 'self',//过滤模式
                 'filters' : filtersHeader,//过滤项配置
                 'done': function(filters){
-                    console.log(filters)
-                    var index = 0,  
+                    var index = 0,
                         where = {
                         	[params.key]: params.id,
                             loginStaffId: edipao.getLoginStaffId()
@@ -282,13 +281,13 @@
                         layui.each(tableCols, function(index, item) {
                             if(item.field && item.hide != true){
                                 if(index2 == 0){
-                                    dataItem[item.field] = item.title; 
+                                    dataItem[item.field] = item.title;
                                 }else if(item.field == "tradeStatus"){
                                     dataItem[item.field] = item2["tradeStatusDesc"];
                                 }else{
                                     dataItem[item.field] = item2[item.field] || '- -';
                                 }
-                            } 
+                            }
                         })
                         data.push(dataItem)
                     })
@@ -304,13 +303,13 @@
                 layui.each(tableCols, function(index, item) {
                     if(item.field && item.hide != true){
                         if(index2 == 0){
-                            dataItem[item.field] = item.title; 
+                            dataItem[item.field] = item.title;
                         }else if(item.field == "tradeStatus"){
                             dataItem[item.field] = item2["tradeStatusDesc"];
                         }else{
                             dataItem[item.field] = item2[item.field] || '- -'
                         }
-                    } 
+                    }
                 })
                 data.push(dataItem)
             })

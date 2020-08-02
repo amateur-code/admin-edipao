@@ -392,7 +392,7 @@
                    name="modelCode"
                    disabled
                    value="{{item.modelCode}}"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|modelCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -408,7 +408,7 @@
                    name="driveWayCode"
                    disabled
                    value="{{item.driveWayCode}}"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|driveWayCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -468,7 +468,7 @@
             <input type="text" id="modelCode"
                    name="modelCode"
                    value="{{item.modelCode}}"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|modelCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -483,7 +483,7 @@
             <input type="text" id="driveWayCode"
                    name="driveWayCode"
                    value="{{item.driveWayCode}}"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|driveWayCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -557,7 +557,7 @@
                    name="modelCode"
                    disabled
                    value="{{item.modelCode}}"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|modelCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -573,7 +573,7 @@
                    name="driveWayCode"
                    disabled
                    value="{{item.driveWayCode}}"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|driveWayCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -693,7 +693,7 @@
             <input type="text" id="modelCode"
                    name="modelCode"
                    value="{{item.modelCode}}"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|modelCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -708,7 +708,7 @@
             <input type="text" id="driveWayCode"
                    name="driveWayCode"
                    value="{{item.driveWayCode}}"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|driveWayCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -843,6 +843,26 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
       edipao = layui.edipao,
       resData,
       detailAddress;
+  var cxdm = [];
+  var qdxsdm = [];
+  edipao.request({
+    type: 'get',
+    url: '/admin/sys/dict/getDictItemList',
+    data: { dictType: 'sys.truckType.refenceTable' }
+  }).then(function (res) {
+    if (res.code == 0) {
+      cxdm = res.data.dictItemRespList
+    }
+  })
+  edipao.request({
+    type: 'get',
+    url: '/admin/sys/dict/getDictItemList',
+    data: { dictType: 'sys.driveWayCode.refenceTable' }
+  }).then(function (res) {
+    if (res.code == 0) {
+      qdxsdm = res.data.dictItemRespList
+    }
+  })
   //凯立德地图API功能
   var point = new Careland.Point(411067452, 81446126); //创建坐标点
   var map = new Careland.Map('map', point, 12); //实例化地图对象
@@ -1036,7 +1056,6 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
 
   form.on("select(supplierNo)", function (obj) {
     var type = obj.elem.selectedOptions[0].dataset.type;
-    console.log(type)
     if (type == "tempLicenseSupply") {
       laytpl(jgDom.innerHTML).render({ list: resData, check: "1" }, function (html) {
         document.getElementById('jgBody').innerHTML = html;
@@ -1082,7 +1101,6 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
         })
       }
       resData = res.data
-      console.log(res.data)
       if (res.code == 0) {
         detailAddress = {
           address: res.data.detailAddress,
@@ -1168,6 +1186,26 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
         }
       }
     },
+    // 驱动形式代码
+    driveWayCode: function (value) {
+      let arr = []
+      qdxsdm.forEach(item => {
+        arr.push(item.dictValue)
+      })
+      if (!arr.includes(value) && value !== '不限') {
+        return '车型代码不存在'
+      }
+    },
+    // 车型代码校验
+    modelCode: function (value) {
+      let arr = []
+      cxdm.forEach(item => {
+        arr.push(item.dictValue)
+      })
+      if (!arr.includes(value) && value !== '不限') {
+        return '车型代码不存在'
+      }
+    }
   });
 
   form.on('submit(edit)', function (data) {
@@ -1341,7 +1379,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
                   <div class="layui-input-block">
                     <input type="text" id="modelCode${inx}"
                           name="modelCode"
-                          lay-verify="required" autocomplete="off"
+                          lay-verify="required|modelCode" autocomplete="off"
                           class="layui-input">
                   </div>
                 </div>
@@ -1355,7 +1393,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
                   <div class="layui-input-block">
                     <input type="text" id="driveWayCode${inx}"
                           name="driveWayCode"
-                          lay-verify="required" autocomplete="off"
+                          lay-verify="required|driveWayCode" autocomplete="off"
                           class="layui-input">
                   </div>
                 </div>
@@ -1428,7 +1466,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
           <div class="layui-input-block">
             <input type="text" id="modelCode"
                    name="modelCode"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|modelCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -1442,7 +1480,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
           <div class="layui-input-block">
             <input type="text" id="driveWayCode"
                    name="driveWayCode"
-                   lay-verify="required" autocomplete="off"
+                   lay-verify="required|driveWayCode" autocomplete="off"
                    class="layui-input">
           </div>
         </div>
@@ -1556,7 +1594,6 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
   $(document).on('click', '#removeWishJourney', function () {
     layer.msg('删除车型成功');
     $(this).parent().remove();
-    console.log($(this).html())
   });
 })
 </script>

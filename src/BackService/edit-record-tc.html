@@ -109,32 +109,6 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
   var xadmin = layui.xadmin,
       edipao = layui.edipao;
   var params = edipao.urlGet();
-  // edipao.request({
-  //   type: 'get',
-  //   url: '/admin/supplier/getSupplierType'
-  // }).then(function (res) {
-  //   console.log(res)
-  //   if (res.code == 0) {
-  //     laytpl(selectDom.innerHTML).render({ list: res.data }, function (html) {
-  //       document.getElementById('supplierType').innerHTML = html;
-  //     })
-  //     form.render();
-  //   }
-  // })
-
-  //核心方法
-  // function timeAdd () {
-  //   lay('.date-format').each(function () {
-  //     laydate.render({
-  //       elem: this,
-  //       trigger: 'click',
-  //       type: 'datetime'
-  //     });
-  //   });
-  // }
-
-  //初始化时先调用一次，确保静态的那一行可点
-  // timeAdd();
 
   var startTime = laydate.render({
     elem: '#entryTime',
@@ -170,7 +144,6 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
     data.field.entryTime.replace(/\-| |:/g, "")
     data.field.leaveTime.replace(/\-| |:/g, "")
     data.field.id = params.id
-    console.log(data)
     edipao.request({
       url: '/admin/stopCar-record/update',
       data: data.field,

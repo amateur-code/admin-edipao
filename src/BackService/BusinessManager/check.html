@@ -166,7 +166,7 @@
 	        	}
 	        })
         }
-        
+
         function getDetail() {
             edipao.request({
                 type: 'get',
@@ -183,7 +183,7 @@
                 	}else{
                 		render()
                 	}
-                	
+
                 }
             })
 
@@ -199,7 +199,6 @@
         form.verify({
             checkRemark: function(value){
                 var result = $("input[name=checkResult]:checked").val();
-                console.log(result,value)
                 if(result == 'reject' && value == ''){
                     return '审核结果为驳回时，审核备注必填';
                 }

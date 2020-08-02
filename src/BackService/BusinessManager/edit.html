@@ -152,19 +152,18 @@
             edipao = layui.edipao;
 
         var params = edipao.urlGet();
-        
+
 
         edipao.request({
             type: 'get',
             url: '/admin/supplier/getSupplierType'
         }).then(function(res) {
-            console.log(res)
             if (res.code == 0) {
                 laytpl(selectDom.innerHTML).render({ list: res.data }, function(html) {
                     document.getElementById('supplierType').innerHTML = html;
                 })
                 form.render();
-                
+
                 edipao.request({
                     type: 'get',
                     url: '/admin/supplier/detail',
@@ -172,7 +171,6 @@
                         supplierNo: params.id
                     }
                 }).then(function(res) {
-                    console.log(res)
                     if (res.code == 0) {
                         form.val("edit", res.data);
                     }
@@ -186,7 +184,7 @@
             supplierName: function(value){
               if (value.length > 50) {
                     return '供应商名称不能超出50个字符';
-                }  
+                }
             },
             loginPhone: function(value) {
                 if (!/^1\d{10}$/.test(value)) {
@@ -217,7 +215,7 @@
                 data: data.field,
             }).done(function(res) {
                 if (res.code == 0) {
-                    layer.alert("服务商修改成功", { icon: 6, 
+                    layer.alert("服务商修改成功", { icon: 6,
                         end: function(){
                             xadmin.close();
                             xadmin.father_reload();
