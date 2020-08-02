@@ -146,8 +146,12 @@ layui.config({
         },
         {
           field: 'totalPrice', title: '总费用', minWidth: 100, templet: function (d) {
-            var unit = "元";
-            return d.totalPrice + unit || '- -';
+            var unit = "元"
+            if (d.leaveTime) {
+              return d.totalPrice + unit
+            } else {
+              return '- -'
+            }
           }
         },
         {
@@ -364,7 +368,12 @@ layui.config({
           } else if (item.field == "tradeStatus") {
             dataItem[item.field] = item2["tradeStatusDesc"];
           } else if (item.field == "totalPrice") {
-            dataItem[item.field] = item2["totalPrice"] + '（元）';
+            if (item2["totalPrice"]) {
+              dataItem[item.field] = item2["totalPrice"] + '（元）';
+            } else {
+              dataItem[item.field] = '- -';
+            }
+
           } else if (item.field == "entryTime") {
             dataItem[item.field] = item2["entryTime"] ? format(item2["entryTime"]) : '- -';
           } else if (item.field == "leaveTime") {
