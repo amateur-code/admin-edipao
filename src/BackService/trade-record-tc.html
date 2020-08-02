@@ -365,6 +365,10 @@ layui.config({
             dataItem[item.field] = item2["tradeStatusDesc"];
           } else if (item.field == "totalPrice") {
             dataItem[item.field] = item2["totalPrice"] + '（元）';
+          } else if (item.field == "entryTime") {
+            dataItem[item.field] = item2["entryTime"] ? format(item2["entryTime"]) : '- -';
+          } else if (item.field == "leaveTime") {
+            dataItem[item.field] = item2["leaveTime"] ? format(item2["leaveTime"]) : '- -';
           } else if (item.field == "unitPrice") {
             if (item2["priceUnit"] == '0') {
               dataItem[item.field] = item2["unitPrice"] + '（元/自然日）';
