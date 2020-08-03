@@ -70,15 +70,7 @@
 </script>
 <script type="text/html" id="stffList">
 <a lay-event="staffList" class="layui-table-link" style="text-decoration:underline; cursor: pointer;">
-  {{# if(d.priceUnit =='0'){ }}
-  <span>{{d.unitPrice}}元/自然日</span>
-  {{# } else if(d.priceUnit =='1'){ }}
-  <span>{{d.unitPrice}}元/小时</span>
-  {{# } else if(d.priceUnit =='2'){ }}
-  <span>{{d.unitPrice}}元/辆车</span>
-  {{# } else { }}
-  <span>- -</span>
-  {{# } }}
+  <span>{{d.unitPrice}}{{d.priceUnit}}</span>
 </a>
 </script>
 <script type="text/javascript">

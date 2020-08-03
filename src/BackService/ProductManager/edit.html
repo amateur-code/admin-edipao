@@ -594,9 +594,9 @@
             </div>
             <div>
               <select name="singlePriceUnit" value="{{item.singlePriceUnit}}" id="" lay-filter="singleUpLimitPrice">
-                <option value="0" {{item.singlePriceUnit == 0 ? 'selected' : ''}}>元/自然日</option>
-                <option value="1" {{item.singlePriceUnit == 1 ? 'selected' : ''}}>元/小时</option>
-                <option value="2" {{item.singlePriceUnit == 2 ? 'selected' : ''}}>元/辆车</option>
+                <option value="元/自然日" {{item.multiPriceUnit == '元/自然日' ? 'selected' : ''}}>元/自然日</option>
+                <option value="元/小时" {{item.multiPriceUnit == '元/小时' ? 'selected' : ''}}>元/小时</option>
+                <option value="元/辆车" {{item.multiPriceUnit == '元/辆车' ? 'selected' : ''}}>元/辆车</option>
               </select>
             </div>
           </div>
@@ -618,9 +618,9 @@
             </div>
             <div>
               <select name="multiPriceUnit" value="{{item.multiPriceUnit}}" id="" lay-filter="multiUpLimitPrice">
-                <option value="0" {{item.multiPriceUnit == 0 ? 'selected' : ''}}>元/自然日</option>
-                <option value="1" {{item.multiPriceUnit == 1 ? 'selected' : ''}}>元/小时</option>
-                <option value="2" {{item.multiPriceUnit == 2 ? 'selected' : ''}}>元/辆车</option>
+                <option value="元/自然日" {{item.multiPriceUnit == '元/自然日' ? 'selected' : ''}}>元/自然日</option>
+                <option value="元/小时" {{item.multiPriceUnit == '元/小时' ? 'selected' : ''}}>元/小时</option>
+                <option value="元/辆车" {{item.multiPriceUnit == '元/辆车' ? 'selected' : ''}}>元/辆车</option>
               </select>
             </div>
             <!--<span class="unit_span"></span>-->
@@ -640,7 +640,7 @@
         </div>
       </div>
       <div class="layui-col-xs4">
-        <div class="layui-form-item {{item.singlePriceUnit == 1 ? '' : 'hide'}} singleUpLimitPrice">
+        <div class="layui-form-item {{item.singlePriceUnit == '元/小时' ? '' : 'hide'}} singleUpLimitPrice">
           <label for="singleUpLimitPrice" class="layui-form-label">
             <span class="x-red">*</span>单车单日上限
           </label>
@@ -654,7 +654,7 @@
         </div>
       </div>
       <div class="layui-col-xs4">
-        <div class="layui-form-item {{item.multiPriceUnit == 1 ? '' : 'hide'}} multiUpLimitPrice">
+        <div class="layui-form-item {{item.multiPriceUnit == '元/小时' ? '' : 'hide'}} multiUpLimitPrice">
           <label for="multiUpLimitPrice" class="layui-form-label">
             <span class="x-red">*</span>背车单日上限
           </label>
@@ -729,9 +729,9 @@
             </div>
             <div>
               <select name="singlePriceUnit" value="{{item.singlePriceUnit}}" id="" lay-filter="singleUpLimitPrice">
-                <option value="0" {{item.singlePriceUnit == 0 ? 'selected' : ''}}>元/自然日</option>
-                <option value="1" {{item.singlePriceUnit == 1 ? 'selected' : ''}}>元/小时</option>
-                <option value="2" {{item.singlePriceUnit == 2 ? 'selected' : ''}}>元/辆车</option>
+                <option value="元/自然日" {{item.multiPriceUnit == '元/自然日' ? 'selected' : ''}}>元/自然日</option>
+                <option value="元/小时" {{item.multiPriceUnit == '元/小时' ? 'selected' : ''}}>元/小时</option>
+                <option value="元/辆车" {{item.multiPriceUnit == '元/辆车' ? 'selected' : ''}}>元/辆车</option>
               </select>
             </div>
           </div>
@@ -753,9 +753,9 @@
             </div>
             <div>
               <select name="multiPriceUnit" value="{{item.multiPriceUnit}}" id="" lay-filter="multiUpLimitPrice">
-                <option value="0" {{item.multiPriceUnit == 0 ? 'selected' : ''}}>元/自然日</option>
-                <option value="1" {{item.multiPriceUnit == 1 ? 'selected' : ''}}>元/小时</option>
-                <option value="2" {{item.multiPriceUnit == 2 ? 'selected' : ''}}>元/辆车</option>
+                <option value="元/自然日" {{item.multiPriceUnit == '元/自然日' ? 'selected' : ''}}>元/自然日</option>
+                <option value="元/小时" {{item.multiPriceUnit == '元/小时' ? 'selected' : ''}}>元/小时</option>
+                <option value="元/辆车" {{item.multiPriceUnit == '元/辆车' ? 'selected' : ''}}>元/辆车</option>
               </select>
             </div>
             <!--            <span class="unit_span"></span>-->
@@ -775,7 +775,7 @@
         </div>
       </div>
       <div class="layui-col-xs4">
-        <div class="layui-form-item {{item.singlePriceUnit == 1 ? '' : 'hide'}} singleUpLimitPrice">
+        <div class="layui-form-item {{item.singlePriceUnit == '元/小时' ? '' : 'hide'}} singleUpLimitPrice">
           <label for="singleUpLimitPrice" class="layui-form-label">
             <span class="x-red">*</span>单车单日上限
           </label>
@@ -789,7 +789,7 @@
         </div>
       </div>
       <div class="layui-col-xs4">
-        <div class="layui-form-item {{item.multiPriceUnit == 1 ? '' : 'hide'}} multiUpLimitPrice">
+        <div class="layui-form-item {{item.multiPriceUnit == '元/小时' ? '' : 'hide'}} multiUpLimitPrice">
           <label for="multiUpLimitPrice" class="layui-form-label">
             <span class="x-red">*</span>背车单日上限
           </label>
@@ -842,6 +842,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
   var xadmin = layui.xadmin,
       edipao = layui.edipao,
       resData,
+      sType,
       detailAddress;
   var cxdm = [];
   var qdxsdm = [];
@@ -1038,7 +1039,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
   form.on("select(singleUpLimitPrice)", function(obj){
     var $el = $(obj.elem);
     var $row = $el.parents(".model_row");
-    if(obj.value == 1){
+    if(obj.value == "元/小时"){
       $row.find(".singleUpLimitPrice").removeClass("hide");
     }else{
       $row.find(".singleUpLimitPrice").addClass("hide");
@@ -1047,7 +1048,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
   form.on("select(multiUpLimitPrice)", function(obj){
     var $el = $(obj.elem);
     var $row = $el.parents(".model_row");
-    if(obj.value == 1){
+    if(obj.value == "元/小时"){
       $row.find(".multiUpLimitPrice").removeClass("hide");
     }else{
       $row.find(".multiUpLimitPrice").addClass("hide");
@@ -1056,6 +1057,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
 
   form.on("select(supplierNo)", function (obj) {
     var type = obj.elem.selectedOptions[0].dataset.type;
+    sType = type;
     if (type == "tempLicenseSupply") {
       laytpl(jgDom.innerHTML).render({ list: resData, check: "1" }, function (html) {
         document.getElementById('jgBody').innerHTML = html;
@@ -1107,6 +1109,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
           lng: res.data.lng,
           lat: res.data.lat
         }
+        sType = resData.supplierType;
         if (resData.supplierType == "tempLicenseSupply") {
           laytpl(jgDom.innerHTML).render({ list: resData, check: '1' }, function (html) {
             document.getElementById('jgBody').innerHTML = html;
@@ -1192,7 +1195,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
       qdxsdm.forEach(item => {
         arr.push(item.dictValue)
       })
-      if (!arr.includes(value) && value !== '不限') {
+      if (!arr.includes(value) && value !== '不限' && value.indexOf(",") < 0) {
         return '车型代码不存在'
       }
     },
@@ -1202,7 +1205,7 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
       cxdm.forEach(item => {
         arr.push(item.dictValue)
       })
-      if (!arr.includes(value) && value !== '不限') {
+      if (!arr.includes(value) && value !== '不限' && value.indexOf(",") < 0) {
         return '车型代码不存在'
       }
     }
@@ -1322,6 +1325,12 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
         item.multiUpLimitPrice = '0'
       }
     })
+    if(sType == "unloadCar" || sType == "loadCar"){
+      sumData = sumData.map(function(item){
+        item.multiPriceUnit = item.singlePriceUnit = "元/次";
+        return item;
+      });
+    }
     data.field.lng = detailAddress.lng;
     data.field.lat = detailAddress.lat;
     data.field.priceExtJson = JSON.stringify(sumData);
@@ -1500,9 +1509,9 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
             </div>
             <div>
               <select name="singlePriceUnit" id="" lay-filter="singleUpLimitPrice">
-                <option value="0">元/自然日</option>
-                <option value="1">元/小时</option>
-                <option value="2">元/辆车</option>
+                <option value="元/自然日">元/自然日</option>
+                <option value="元/小时">元/小时</option>
+                <option value="元/辆车">元/辆车</option>
               </select>
             </div>
           </div>
@@ -1523,9 +1532,9 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
             </div>
             <div>
               <select name="multiPriceUnit" id="" lay-filter="multiUpLimitPrice">
-                <option value="0">元/自然日</option>
-                <option value="1">元/小时</option>
-                <option value="2">元/辆车</option>
+                <option value="元/自然日">元/自然日</option>
+                <option value="元/小时">元/小时</option>
+                <option value="元/辆车">元/辆车</option>
               </select>
             </div>
           </div>
