@@ -63,14 +63,14 @@
 </div>
 </script>
 <script type="text/html" id="stffList">
-<a lay-event="staffList" class="layui-table-link"
-   style="text-decoration:underline; cursor: pointer;">
   {{# if(d.unitPrice){ }}
-  <span>{{d.unitPrice}}元/次</span>
+  <a lay-event="staffList" class="layui-table-link"
+    style="text-decoration:underline; cursor: pointer;">
+    <span>{{d.unitPrice}}元/次</span>
+  </a>
   {{# } else { }}
   <span>- -</span>
   {{# } }}
-</a>
 </script>
 <script type="text/javascript">
 function format (str) {
@@ -142,9 +142,10 @@ layui.config({
       permissionList = edipao.getMyPermission();
   window.permissionList = permissionList;
   var params = edipao.urlGet();
+  console.log(params)
   var key = params.key;
   var logKey = key == "productNo" ? 17 : 16;
-  var tableKey = 'BackService-' + params.key + '-trade-record';
+  var tableKey = 'BackService-' + params.key + '-trade-record-bc';
   var tableWhere = {
     [params.key]: params.id,
     loginStaffId: edipao.getLoginStaffId()

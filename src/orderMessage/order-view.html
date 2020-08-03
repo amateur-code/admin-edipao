@@ -113,7 +113,7 @@
                 <span id="" class="content_name blue">{{d.startTruckTime}}</span>
             </div>
         </div>
-        {{# if(d.orderType == 2){ }}
+        {{# if(d.orderType == 2 || d.updateData.orderType == 2){ }}
         <div style="margin-top:20px" class="layui-row">
             <div class="layui-col-md4">
                 <span class="content_name">背车网点：</span>
@@ -585,7 +585,7 @@
                     <div class="layui-inline layui-col-md4">
                         <div class="layui-row">
                             <span class="layui-form-span form_span">物料存放位置：</span>
-                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.materielLoc}}</span>
+                            <span disabled type="text" name="endAddress" autocomplete="off" class="blue">{{d.materielLoc || "- -"}}</span>
                         </div>
                     </div>
                     <div class="layui-inline layui-col-md4">

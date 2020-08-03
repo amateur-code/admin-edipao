@@ -104,7 +104,7 @@ layui.config({
           }
         },
         {
-          field: '', title: '关联业务单号', width: 200, templet: function (d) {
+          field: 'orderNo', title: '关联业务单号', width: 200, templet: function (d) {
             return d.orderNo || '- -'
           }
         },
@@ -165,7 +165,7 @@ layui.config({
   var params = edipao.urlGet();
   var key = params.key;
   var logKey = key == "productNo" ? 17 : 16;
-  var tableKey = 'BackService-' + params.key + '-trade-record';
+  var tableKey = 'BackService-' + params.key + '-trade-record-tc';
   var tableWhere = {
     [params.key]: params.id,
     supplierNo: params.sup,
@@ -241,6 +241,8 @@ layui.config({
           item.type = 'timeslot';
         } else if (['duration', 'totalPrice', 'unitPrice'].indexOf(el.field) !== -1) {
           item.type = 'numberslot'
+        }else{
+          item.type = "input";
         }
         filtersHeader.push(item)
       }
