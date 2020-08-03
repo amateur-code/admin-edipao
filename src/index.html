@@ -133,6 +133,7 @@
         // 打开页面初始
         xadmin.init();
         var user = layui.sessionData('user');
+        user.funcPermissionDTOList.push({resourceId: 300, pid: 20, name: "订单组合", url: "./orderMessage/orderCompose/list.html", icon: "#", type: 1});
         if (user) {
             $('#userName').html(user.name)
             laytpl(navTpl.innerHTML).render({ list: user.funcPermissionDTOList }, function(html) {
