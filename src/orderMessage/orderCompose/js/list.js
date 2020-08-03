@@ -41,19 +41,19 @@ layui
       { field: "createTime", title: "组合名称", width: 200, templet: function (d) {
           return d.createTime ? d.createTime : "- -";
       }},
-      { field: "type", title: "订单数量", width: 200, templet: function (d) {
+      { field: "type", title: "订单数量", width: 150, templet: function (d) {
           return d.type ? d.type : "- -";
       }},
-      { field: "remark", title: "未调度订单", width: 400, templet: function (d) {
+      { field: "remark", title: "未调度订单", width: 150, templet: function (d) {
           return d.remark ? d.remark : "- -";
       }},
-      { field: "createUser", title: "组合方式", width: 300, templet: function (d) {
+      { field: "createUser", title: "组合方式", width: 150, templet: function (d) {
           return d.createUser ? d.createUser : "- -";
       }},
-      { field: "status", title: "驾照要求", width: 200, templet: function (d) {
+      { field: "status", title: "驾照要求", width: 150, templet: function (d) {
           return d.status ? d.status : "- -";
       }},
-      { field: "status", title: "创建时间", width: 200, templet: function (d) {
+      { field: "status", title: "创建时间", width: 150, templet: function (d) {
           return d.status ? d.status : "- -";
       }},
       { title: "操作", field: "operation", width: 320, fixed: "right", toolbar: "#rowBtns" },
@@ -67,10 +67,8 @@ layui
     }
     function List() {
       var qs = edipao.urlGet();
-      this.tableKey = "order-vehicle-damage-list-table";
+      this.tableKey = "order-compose-list-table";
       this.orderNo = qs.orderNo || "OR00002764";
-      this.orderStatus = qs.orderStatus;
-      window.orderStatus = this.orderStatus;
       where["searchFieldDTOList[0].fieldName"] = "orderNo";
       where["searchFieldDTOList[0].fieldValue"] = this.orderNo;
     }
@@ -122,8 +120,8 @@ layui
     List.prototype.renderTable = function () {
       var _this = this;
       tableIns = table.render({
-        elem: "#damageList",
-        id: "damageList",
+        elem: "#" + _this.tableKey,
+        id: _this.tableKey,
         url: edipao.API_HOST + "/admin/order/damage/list",
         method: "post",
         page: true,
@@ -214,9 +212,9 @@ layui
     };
     List.prototype.bindTableEvents = function () {
       var _this = this;
-      table.on("tool(damageList)", handleEvent);
-      table.on("toolbar(damageList)", handleEvent);
-      table.on("checkbox(damageList)", handleEvent);
+      table.on("tool("+_this.tableKey+")", handleEvent);
+      table.on("toolbar("+_this.tableKey+")", handleEvent);
+      table.on("checkbox("+_this.tableKey+")", handleEvent);
       function handleEvent(obj) {
         var data = obj.data;
         // obj.event == "add" && permissionList.indexOf("新增") == -1 && (obj.event = "reject");
@@ -224,8 +222,37 @@ layui
         obj.event == "export" && permissionList.indexOf("车损报备-导出") == -1 && (obj.event = "reject");
 
         switch (obj.event) {
+          case "one_add":
+            _this.openOneAdd();
+            break;
           case "reject":
             layer.alert("你没有访问权限", { icon: 2 });
+            break;
+          case "remove_order":
+            xadmin.open("添加订单", "./orderAdd.html?action=remove");
+            break;
+          case "add_order":
+            xadmin.open("添加订单", "./orderAdd.html?action=add");
+            break;
+          case "discompose_order":
+            layer.confirm("确定打散该订单组合吗？", { icon: 3, title: "提示" }, function (index) {
+              edipao
+                .request({
+                  url: "/admin/customer/truckNetwork/del",
+                  type: "POST",
+                  data: {
+                    id: data.id,
+                  },
+                })
+                .then(function (res) {
+                  if (res.code == 0) {
+                    layer.msg("打散成功");
+                    tableIns.reload( { where: where, page: { curr: 1 }} );
+                  } else {
+                    layer.msg(res.message);
+                  }
+                });
+            });
             break;
           case "export":
             _this.exportExcel();
@@ -235,12 +262,6 @@ layui
             break;
           case "add":
             xadmin.open("订单组合 / 新增组合", "./addCompose.html");
-            break;
-          case "verify":
-            xadmin.open("审核订单组合", "./view.html?action=verify&id=" + data.id + "&orderNo=" + _this.orderNo);
-            break;
-          case "info":
-            xadmin.open("查看订单组合", "./view.html?action=view&id=" + data.id + "&orderNo=" + _this.orderNo);
             break;
           case "del":
             layer.confirm("确定删除吗？", { icon: 3, title: "提示" }, function (index) {
@@ -266,7 +287,7 @@ layui
             xadmin.open("操作日志", "../../OperateLog/log.html?id=" + data.id + "&type=15");
             break;
           case "reset_search":
-            edipao.resetSearch("damageList", function(){
+            edipao.resetSearch(_this.tableKey, function(){
                 location.reload();
             });
             break;
@@ -276,6 +297,35 @@ layui
         }
       }
     };
+    List.prototype.openOneAdd = function () {
+      var _this = this;
+      var index = layer.open({
+        title: "一键新增",
+        area: "400px",
+        content: $("#one_add_tpl").html(),
+        btn: ["确认", "取消"],
+        yes: function(){
+            edipao.request({
+                url: "/admin/order/cancelOrder",
+                data: {
+                    loginStaffId: user.staffId,
+                    id: data.id
+                }
+            }).done(function (res) {
+                if(res.code == "0"){
+                    layer.msg("创建成功");
+                    layer.close(index);
+                    mainTable.reload( { where: where, page: { curr: 1 }});
+                }else{
+                    layer.msg(res.message, {icon: 5,anim: 6});
+                }
+            });
+        },
+        success: function () {
+          form.render("checkbox");
+        }
+    });
+    }
     List.prototype.initPermission = function () {
       if (permissionList.indexOf("订单录入") < 0) {
         $("#import_order").remove();
@@ -294,7 +344,7 @@ layui
         { field: "status", type: "checkbox", data: statusData },
       ];
       tableFilterIns = tableFilter.render({
-        elem: "#damageList", //table的选择器
+        elem: "#" + _this.tableKey, //table的选择器
         mode: "self", //过滤模式
         filters: filters, //过滤项配置
         done: function (filters, reload) {
@@ -339,7 +389,7 @@ layui
     };
     List.prototype.exportExcel = function () {
       var _this = this;
-      var checkStatus = table.checkStatus("damageList");
+      var checkStatus = table.checkStatus(_this.tableKey);
       if (checkStatus.data.length > 0) {
         exportXlsx(checkStatus.data);
         return;

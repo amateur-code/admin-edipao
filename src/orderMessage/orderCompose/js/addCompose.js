@@ -158,7 +158,7 @@ layui
     List.prototype.bindTableEvents = function () {
       var _this = this;
       $("#add_order_btn").unbind().on("click", function () {
-        xadmin.open("添加订单", "./orderAdd.html?action=add");
+        xadmin.open("添加订单", "./orderAdd.html?action=new");
       });
       $(window).on("message", function (e) {
         var message = e.originalEvent.data;

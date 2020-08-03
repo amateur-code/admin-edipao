@@ -40,11 +40,13 @@
                 <div class="page-header border-bottom">
                     <div class="layui-row">
                         <div class="layui-col-md6">
-                            <div class="title">订单列表</div>
+                            <span class="title">订单列表&nbsp;&nbsp;&nbsp;</span>
+                            <span id="composeTitle" class="hide">组合名称：<span id="composeName" class="x-red"></span></span>
                         </div>
                         <div class="layui-col-md6 tr" style="text-align: right;">
                             <button id="reset_search" data-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
-                            <button id="add" data-event="add" class="top_tool_bar layui-btn">添加</button>
+                            <button id="add_btn" data-event="add" class="top_tool_bar layui-btn">添加</button>
+                            <button id="remove_btn" data-event="remove" class="top_tool_bar layui-btn-disabled layui-btn hide">移除</button>
                         </div>
                     </div>
                 </div>

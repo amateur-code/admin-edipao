@@ -419,9 +419,21 @@ layui.config({
       showList.push(item.field);
     });
     
-  function List(){}
+  function List(){
+    var qs = edipao.urlGet();
+    this.action = qs.action || "new";
+    this.composeName = qs.composeName || "";
+    this.composeId = qs.composeId || "";
+  }
   List.prototype.init = function () {
     var _this = this;
+    if(_this.action == "remove"){
+      $("#add_btn").addClass("hide");
+      $("#remove_btn").removeClass("hide");
+    }
+    if(_this.action == "add" || _this.action == "remove"){
+      $("#composeTitle").removeClass("hide").find("#composeName").text(_this.composeName);
+    }
     edipao.request({
       type: 'GET',
       url: '/admin/table/show-field/get',
