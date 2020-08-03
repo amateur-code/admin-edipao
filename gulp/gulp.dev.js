@@ -31,7 +31,7 @@ gulp.task('start',function() {
     open: 'external', // 决定Browsersync启动时自动打开的网址 external 表示 可外部打开 url, 可以在同一 wifi 下不同终端测试
     port: 3500,
     socket: {
-        domain: 'localhost:3500'
+        domain: 'localhost:3501'
     }
   });
   // browserSync.io('http://172.16.138.37:3500/browser-sync')

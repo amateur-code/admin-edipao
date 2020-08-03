@@ -213,11 +213,6 @@ layui
       }
     };
     List.prototype.bindTableEvents = function () {
-      // if(location.href.indexOf("test") > -1){
-      //   $("#nav_cite").on("click", function (e) {
-      //     top.xadmin.add_tab("demo", "customerManager/dotArchives/demo.html");
-      //   });
-      // }
       var _this = this;
       table.on("tool(damageList)", handleEvent);
       table.on("toolbar(damageList)", handleEvent);
@@ -242,10 +237,10 @@ layui
             xadmin.open("订单组合 / 新增组合", "./addCompose.html");
             break;
           case "verify":
-            xadmin.open("审核车损/报备", "./view.html?action=verify&id=" + data.id + "&orderNo=" + _this.orderNo);
+            xadmin.open("审核订单组合", "./view.html?action=verify&id=" + data.id + "&orderNo=" + _this.orderNo);
             break;
           case "info":
-            xadmin.open("查看车损/报备", "./view.html?action=view&id=" + data.id + "&orderNo=" + _this.orderNo);
+            xadmin.open("查看订单组合", "./view.html?action=view&id=" + data.id + "&orderNo=" + _this.orderNo);
             break;
           case "del":
             layer.confirm("确定删除吗？", { icon: 3, title: "提示" }, function (index) {
@@ -392,7 +387,7 @@ layui
           {
             sheet1: exportData,
           },
-          "车损/报备数据.xlsx",
+          "订单组合数据.xlsx",
           "xlsx"
         );
         exportLog();
@@ -402,7 +397,7 @@ layui
         var params = {
           operationModule: 15,
           dataPk: _this.orderNo,
-          operationRemark: "导出车损/报备数据",
+          operationRemark: "导出订单组合数据",
         };
         edipao.exportLog(params);
       }

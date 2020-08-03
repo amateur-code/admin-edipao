@@ -12,11 +12,10 @@
     <link rel="stylesheet" href="../../css/font.css">
     <link rel="stylesheet" href="../../css/xadmin.css?VERSION">
     <link rel="stylesheet" href="./css/common.css">
-    <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="../../js/common.js?VERSION"></script>
-    <script type="text/javascript" src="js/list.js?VERSION"></script>
+    <script type="text/javascript" src="./js/addCompose.js?VERSION"></script>
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
@@ -40,7 +39,7 @@
 <body>
 <div class="x-nav">
     <h3 style="display: inline;">订单</h3>
-    <span class="blue pointer">+添加</span>
+    <span id="add_order_btn" class="blue pointer">+添加</span>
     <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
         <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
     </a>
@@ -50,7 +49,7 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-body" id="doc-content">
-                    <table id="damageList" lay-filter="damageList"></table>
+                    <table id="orderList" lay-filter="orderList"></table>
                 </div>
             </div>
         </div>
@@ -64,5 +63,15 @@
       </button>
   </div>
 </div>
+<script type="text/html" id="orderNoTpl">
+    {{# if(d.masterFlag == "是"){ }}
+    <a data-id="{{d.id}}" data-orderno="{{d.orderNo}}" class="blue pointer href_order_no" href="javascript:;">{{d.orderNo}}</a>
+    {{# } }}
+</script>
+<script type="text/html" id="rowBtns">
+    {{# if(d.masterFlag == "是"){ }}
+    <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="remove">移除</a>
+    {{# } }}
+</script>
 </body>
 </html>
