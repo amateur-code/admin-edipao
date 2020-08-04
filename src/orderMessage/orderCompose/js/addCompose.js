@@ -98,14 +98,14 @@ layui
       }},
       {field: 'dispatchMode', title: '调度方式', sort: false, minWidth: 145, templet: function(d){
         if(d.masterFlag != "是") return "";
-          var result = "";
-          dispatchModeData.some(function(item){
-              if(item.key == d.dispatchMode){
-                  result = item.value;
-                  return true;
-              }
-          });
-          return result || "- -";
+        var result = "";
+        dispatchModeData.some(function(item){
+            if(item.key == d.dispatchMode){
+                result = item.value;
+                return true;
+            }
+        });
+        return result || "- -";
       }},
       {field: 'prePayAmount', title: '预付款金额', sort: false,width: 200, hide: false, templet: function (d) {
         if(d.masterFlag != "是") return "";
@@ -160,6 +160,8 @@ layui
       $("#add_order_btn").unbind().on("click", function () {
         xadmin.open("添加订单", "./orderAdd.html?action=new");
       });
+      $("#addConfirm").unbind().on("click", _this.submitOrder.bind(_this));
+      $("#addCancel").unbind().on("click", xadmin.close);
       $(window).on("message", function (e) {
         var message = e.originalEvent.data;
         var origin = e.originalEvent.origin;
@@ -182,6 +184,28 @@ layui
         }
       }
     };
+    List.prototype.submitOrder = function () {
+      var orderNoList = [], _this = this;
+      if(_this.orderList.length == 0) return layer.msg("请添加订单！", {icon: 2});
+      _this.orderList.forEach(function (item) {
+        if(orderNoList.indexOf(item.orderNo) < 0){
+          orderNoList.push(item.orderNo);
+        }
+      });
+      edipao.request({
+        url: "/admin/grab/combination-order/add",
+        data: {
+          orderNoList: orderNoList.join(","),
+        }
+      }).done(function (res) {
+        if(res.code == 0){
+          layer.alert("添加成功", {icon: 1}, function () {
+            xadmin.close();
+            xadmin.father_reload();
+          });
+        }
+      });
+    }
     List.prototype.bindEvents = function () {
       $(".href_order_no").unbind().on("click", function (e) {
         var orderNo = e.target.dataset.orderno;

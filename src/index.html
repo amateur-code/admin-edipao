@@ -133,7 +133,9 @@
         // 打开页面初始
         xadmin.init();
         var user = layui.sessionData('user');
-        user.funcPermissionDTOList.push({resourceId: 300, pid: 20, name: "订单组合", url: "./orderMessage/orderCompose/list.html", icon: "#", type: 1});
+        user.funcPermissionDTOList.push({resourceId: 1, pid: 0, name: "运营配置", url: "#", icon: "#", type: 0})
+        user.funcPermissionDTOList.push({resourceId: 10, pid: 1, name: "抢单配置", url: "./operateSetting/robSetting/rob-setting.html", icon: "#", type: 1});
+        user.funcPermissionDTOList.push({resourceId: 11, pid: 1, name: "消息推送", url: "./operateSetting/pushSetting/push-setting.html", icon: "#", type: 1});
         if (user) {
             $('#userName').html(user.name)
             laytpl(navTpl.innerHTML).render({ list: user.funcPermissionDTOList }, function(html) {

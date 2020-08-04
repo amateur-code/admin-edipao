@@ -77,28 +77,25 @@ layui.config({
 }).extend({
     excel: 'layui_exts/excel.min',
     tableFilter: 'TableFilter/tableFiltercopy',
-}).use(['form', 'jquery','layer', 'upload', 'table','laytpl', 'excel', 'tableFilter'], function () {
+}).use(['form', 'jquery', 'layer', 'upload', 'table','laytpl', 'tableFilter', 'excel'], function () {
     var tableName = "orderCompose-order-add-list";
-    var mainTable;
-    var table = layui.table;
-    var $ = layui.jquery;
-    var form = layui.form;
-    window.form = form;
-    var layer = layui.layer;
-    var edipao = layui.edipao;
-    var tableFilter = layui.tableFilter;
-    var user = JSON.parse(sessionStorage.user);
+    var mainTable,
+      table = layui.table,
+      $ = layui.jquery,
+      excel = layui.excel,
+      form = layui.form;
+    var layer = layui.layer,edipao = layui.edipao,tableFilter = layui.tableFilter;
     var orderDTOList = [];
+    window.form = form;
     var dataPermission = edipao.getDataPermission();
     window.dataPermission = dataPermission;
-    var permissionList = edipao.getMyPermission();
+    var permissionList = edipao.getPermissionIdList();
     window.permissionList = permissionList;
     var loadLayer = layer.load(1);
     var exportHead = {};
-    var where = {
-        loginStaffId: user.staffId,
+    var initWhere = where = {
+        loginStaffId: edipao.getLoginStaffId(),
     };
-    var tableKey = "orderCompose-add-order-list";
     var filters = [
         { field: 'orderNo', type: 'input' },
         { field: 'warehouseNo', type: 'input' },
@@ -106,7 +103,6 @@ layui.config({
         { field: 'tempLicense', type: 'input' },
         { field: 'orderStatus', type: 'checkbox', data: orderStatusData },
         { field: 'orderType', type: 'checkbox', data:orderTypeData },
-        // { field: "masterFlag", type: "checkbox", data: masterFlagData},
         { field: 'customerFullName', type: 'input' },
         { field: 'startWarehouse', type: 'input' },
         { field: 'startPark', type: 'input' },
@@ -119,15 +115,10 @@ layui.config({
         { field: 'endAddress', type: 'input' },
         { field: 'transportMode', type: 'checkbox', data: transportModeData },
         { field: 'transportAssignTime', type: 'timeslot' },
-        { field: 'cksj', type: 'timeslot' },
-        { field: 'dispatchTime', type: 'timeslot' },
         { field: 'openOperator', type: 'contract' },
         { field: 'deliveryOperator', type: 'contract' },
         { field: 'dispatchOperator', type: 'contract' },
         { field: 'dispatchMode', type: 'checkbox', data: dispatchModeData },
-        { field: 'driverName', type: 'input' },
-        { field: 'driverPhone', type: 'input' },
-        { field: 'driverIdCard', type: 'input' },
         { field: 'customerMileage', type: 'numberslot' },
         { field: 'pricePerMeliage', type: 'numberslot' },
         { field: 'income', type: 'numberslot' },
@@ -138,17 +129,6 @@ layui.config({
         { field: 'prePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'arrivePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'tailPayAmount', type: 'checkbox-numberslot', data: feeData },
-        { field: 'tailPayStatus', type: 'checkbox', data: tailPayStatusData },
-        { field: 'feeName', type: 'input' },
-        { field: 'carModel', type: 'input' },
-        { field: 'fetchTruckTime', type: 'timeslot' },
-        { field: 'startTruckTime', type: 'timeslot' },
-        { field: 'returnAuditStatus', type: 'checkbox', data: picData },
-        { field: 'dealerSignTime', type: 'timeslot' },
-        { field: 'dealerEval', type: 'input' },
-        { field: 'certificateSignTime', type: 'timeslot' },
-        { field: 'dealerRemark', type: 'input' },
-        { field: 'carDamageCount', type: 'numberslot' },
     ]
     // 自定义验证规则
     form.verify({
@@ -175,7 +155,7 @@ layui.config({
         }else{
             layer.msg(res.message)
         }
-    })
+    });
     function toTree(data) {
         var val = [
             {
@@ -216,27 +196,225 @@ layui.config({
         });
         return val;
     }
+
+
+    var tableCols = [
+        {type: 'checkbox', fixed: 'left'},
+        {field: 'orderNo', title: '业务单号', sort: false,minWidth:105, templet: "#orderNoTpl"},
+        {field: 'warehouseNo', title: '仓库单号', sort: false,minWidth:140, templet: function(d){
+            return d.warehouseNo ? d.warehouseNo : '- -';
+        }},
+        {field: 'vinCode', title: 'VIN码', sort: false,width: 200,minWidth:100, templet: function(d){
+            return d.vinCode ? d.vinCode : '- -';
+        }},
+        {field: 'tempLicense', title: '临牌号', sort: false,minWidth:100,minWidth:100, templet: function(d){
+            return d.tempLicense ? d.tempLicense : '- -';
+        }},
+        {field: 'orderType', title: '订单类型', sort: false,minWidth:100, templet: function (d) {
+            var value = '- -';
+            orderTypeData.some(function (status) {
+                if(status.key == d.orderType){
+                    value = status.value;
+                    return true;
+                }
+            });
+            return value;
+        }},
+        {field: 'customerFullName', title: '客户全称', sort: false, width: 120, templet: function(d){
+            return d.customerFullName ? d.customerFullName : '- -';
+        }},
+        {field: 'startWarehouse', title: '发车仓库', sort: false, width: 400, templet: function(d){
+            return d.startWarehouse ? d.startWarehouse : '- -';
+        }},
+        {field: 'startPark', title: '发车停车场', sort: false, width: 400, templet: function(d){
+            return d.startPark ? d.startPark : '- -';
+        }},
+        {field: 'startProvince', title: '发车省', sort: false,minWidth:100, templet: function(d){
+            return d.startProvince ? d.startProvince : '- -';
+        }},
+        {field: 'startCity', title: '发车城市', sort: false,minWidth:100, templet: function(d){
+            return d.startCity ? d.startCity : '- -';
+        }},
+        {field: 'startAddress', title: '发车地址', sort: false, width: 400, templet: function(d){
+            return d.startAddress ? d.startAddress : '- -';
+        }},
+        {field: 'endPark', title: '收车网点', sort: false, width: 400, templet: function(d){
+            return d.endPark ? d.endPark : '- -';
+        }},
+        {field: 'endProvince', title: '收车省', sort: false,minWidth:100, templet: function(d){
+            return d.endProvince ? d.endProvince : '- -';
+        }},
+        {field: 'endCity', title: '收车城市', sort: false,minWidth:100, templet: function(d){
+            return d.endCity ? d.endCity : '- -';
+        }},
+        {field: 'endAddress', title: '收车地址', sort: false, width: 300, templet: function(d){
+            return d.endAddress ? d.endAddress : '- -';
+        }},
+        {field: 'transportMode', title: '运输方式', sort: false, width: 100, templet: function(d){
+            if(d.masterFlag != "是") return "";
+            return d.transportMode ? d.transportMode : '- -';
+        }},
+        {field: 'transportAssignTime', title: '运输商指派时间', sort: false,width: 200, templet: function(d){
+            if(d.masterFlag != "是") return "";
+            return d.transportAssignTime ? d.transportAssignTime : '- -';
+        }},
+        {field: 'income', title: '收入金额', sort: false,width: 150, templet: function(d){
+            if(d.masterFlag != "是") return "";
+            if(dataPermission.canViewOrderCost != "Y") return "****";
+            return d.income ? (d.income + "元") : '- -';
+        }},
+        {field: 'deliveryOperator', title: '发运经理', sort: false, minWidth:180, templet: function(d){
+            if(d.masterFlag != "是") return "";
+            d.deliveryOperator = d.deliveryOperator || "";
+            d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
+            return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
+        }},
+        {field: 'dispatchMode', title: '调度方式', sort: false, minWidth: 145, templet: function(d){
+            if(d.masterFlag != "是") return "";
+            var result = "";
+            dispatchModeData.some(function(item){
+                if(item.key == d.dispatchMode){
+                    result = item.value;
+                    return true;
+                }
+            });
+            return result || "- -";
+        }},
+        {field: 'prePayAmount', title: '预付款金额', sort: false,width: 200, hide: false, templet: function (d) {
+            if(d.masterFlag != "是") return "";
+          return d.prePayAmount + "元";
+        }},
+        {field: 'prePayOil', title: '油升数', sort: false,width: 200, hide: false, templet: function (d) {
+            if(d.masterFlag != "是") return "";
+          return d.prePayOil + "升";
+        }},
+        {field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 200, hide: false, templet: function (d) {
+            if(d.masterFlag != "是") return "";
+          return d.arrivePayAmount + "元";
+        }},
+        {field: 'tailPayAmount', title: '尾款金额', sort: false,width: 200, hide: false, templet: function (d) {
+            if(d.masterFlag != "是") return "";
+          return d.tailPayAmount + "元";
+        }},
+    ];
+    var showList = [], exportHead = {};
+    tableCols.forEach(function (item) {
+      showList.push(item.field);
+    });
+		
+  function List(){
+    var qs = edipao.urlGet();
+    this.action = qs.action || "new";
+    this.combinationOrderName = qs.combinationOrderName || "- -";
+    this.combinationOrderNo = qs.combinationOrderNo || "";
+  }
+  List.prototype.init = function () {
+    var _this = this;
+    var config = {
+        tableKey: {
+            new: "orderCompose-add-order-list",
+            all: "orderCompose-all-order-list",
+            add: "orderCompose-add-order-list",
+            remove: "orderCompose-add-order-list",
+            noDispatch: "orderCompose-noDispatch-order-list",
+        },
+        url: {
+            noDispatch: "/admin/grab/combination-order/combination-order-no/no-dispatch/order-list",
+            remove: "/admin/grab/combination-order/combination-order-no/order-list",
+            all: "/admin/grab/combination-order/combination-order-no/order-list",
+            add: "/admin/grab/combination-order/no-combination/order-list",
+            new: "/admin/grab/combination-order/no-combination/order-list",
+        },
+        dataKey: {
+            new: "orderList",
+            remove: "orderList",
+            add: "orderList",
+            all: "orderList",
+            noDispatch: "orderList",
+        },
+        title: {
+            new: "添加订单",
+            remove: "减少订单",
+            add: "添加订单",
+            all: "查看订单",
+            noDispatch: "查看订单",
+        }
+    }
+    if(_this.action == "remove"){
+      $("#remove_btn").removeClass("hide");
+    }
+    if(_this.action == "add" || _this.action == "remove" || _this.action == "noDispatch" || _this.action == "all"){
+      $("#composeTitle").removeClass("hide").find("#composeName").text(_this.combinationOrderName);
+    }
+    if(_this.action == "new" || _this.action == "add"){
+        $("#add_btn").removeClass("hide");
+    }
+    if(_this.action == "all" || _this.action == "noDispatch"){
+        $("#table_set_btn").removeClass("hide");
+        $("#export_data_btn").removeClass("hide");
+    }
+    if(_this.action == "remove" || _this.action == "all" || _this.action == "noDispatch"){
+        initWhere["searchFieldDTOList[0].fieldName"] = "combinationOrderNo";
+        initWhere["searchFieldDTOList[0].fieldValue"] = _this.combinationOrderNo;
+		}
+		_this.logRemark = "导出组合订单";
+		_this.logKey = "";
+    _this.url = config.url[_this.action];
+    _this.dataKey = config.dataKey[_this.action];
+		_this.tableKey = config.tableKey[_this.action];
+    $("#doc-content").html(`<table id="${_this.tableKey}" lay-filter="${_this.tableKey}"></table>`);
+    $("#head_title").text(config.title[_this.action]);
+    _this.initTableFilter();
+    edipao.request({
+      type: 'GET',
+      url: '/admin/table/show-field/get',
+      data: {
+          tableName: tableName
+      }
+    }).done(function(res) {
+      if (res.code == 0) {
+          if(res.data){
+              showList = [];
+              try{
+                  showList = JSON.parse(res.data);
+              }catch(e){}
+              layui.each(tableCols, function(index, item){
+                  if(item.field && showList.indexOf(item.field) == -1){
+                      item.hide = true;
+                  }else{
+                      if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
+                          exportHead[item.field] = item.title;
+                      }
+                  }
+              })
+          }else{
+              layui.each(tableCols, function(index, item){
+                  if(item.field && showList.indexOf(item.field) != -1){
+                      if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
+                          exportHead[item.field] = item.title;
+                      }
+                  }
+              })
+					}
+          _this.renderTable();
+          _this.bindTableEvents();
+      }
+    });
+  }
+  List.prototype.initTableFilter = function () {
+    var _this = this;
     tableFilterIns = tableFilter.render({
-        'elem' : '#' + tableKey,//table的选择器
+        'elem' : '#' + _this.tableKey,//table的选择器
         'mode' : 'self',//过滤模式
         'filters' : filters,//过滤项配置
         'done': function(filters, reload){
-            filters = $.extend({},filters);
-            var index = 0;
-            where = {
-                loginStaffId: edipao.getLoginStaffId()
-            };
-            if(filters.openOperator){
-                filters.openOperatorPhone =  filters.openOperator[1];
-                filters.openOperator =  filters.openOperator[0];
-            }
+						filters = $.extend({},filters);
+						where = JSON.parse(JSON.stringify(initWhere));
+						var index = 0;
+						if(_this.action == "remove" || _this.action == "all" || _this.action == "noDispatch") index = 1;
             if(filters.deliveryOperator){
                 filters.deliveryOperatorPhone =  filters.deliveryOperator[1];
                 filters.deliveryOperator =  filters.deliveryOperator[0];
-            }
-            if(filters.dispatchOperator){
-                filters.dispatchOperatorPhone =  filters.dispatchOperator[1];
-                filters.dispatchOperator =  filters.dispatchOperator[0];
             }
             delete filters.operation;
             layui.each(filters,function(key, value){
@@ -323,158 +501,12 @@ layui.config({
             }
         }
     });
-
-    var tableCols = [
-        {type: 'checkbox', fixed: 'left'},
-        {field: 'orderNo', title: '业务单号', sort: false,minWidth:105, templet: "#orderNoTpl"},
-        {field: 'warehouseNo', title: '仓库单号', sort: false,minWidth:140, templet: function(d){
-            return d.warehouseNo ? d.warehouseNo : '- -';
-        }},
-        {field: 'vinCode', title: 'VIN码', sort: false,width: 200,minWidth:100, templet: function(d){
-            return d.vinCode ? d.vinCode : '- -';
-        }},
-        {field: 'tempLicense', title: '临牌号', sort: false,minWidth:100,minWidth:100, templet: function(d){
-            return d.tempLicense ? d.tempLicense : '- -';
-        }},
-        {field: 'orderType', title: '订单类型', sort: false,minWidth:100, templet: function (d) {
-            var value = '- -';
-            orderTypeData.some(function (status) {
-                if(status.key == d.orderType){
-                    value = status.value;
-                    return true;
-                }
-            });
-            return value;
-        }},
-        {field: 'customerFullName', title: '客户全称', sort: false, width: 120, templet: function(d){
-            return d.customerFullName ? d.customerFullName : '- -';
-        }},
-        {field: 'startWarehouse', title: '发车仓库', sort: false, width: 400, templet: function(d){
-            return d.startWarehouse ? d.startWarehouse : '- -';
-        }},
-        {field: 'startPark', title: '发车停车场', sort: false, width: 400, templet: function(d){
-            return d.startPark ? d.startPark : '- -';
-        }},
-        {field: 'startProvince', title: '发车省', sort: false,minWidth:100, templet: function(d){
-            return d.startProvince ? d.startProvince : '- -';
-        }},
-        {field: 'startCity', title: '发车城市', sort: false,minWidth:100, templet: function(d){
-            return d.startCity ? d.startCity : '- -';
-        }},
-        {field: 'startAddress', title: '发车地址', sort: false, width: 400, templet: function(d){
-            return d.startAddress ? d.startAddress : '- -';
-        }},
-        {field: 'endPark', title: '收车网点', sort: false, width: 400, templet: function(d){
-            return d.endPark ? d.endPark : '- -';
-        }},
-        {field: 'endProvince', title: '收车省', sort: false,minWidth:100, templet: function(d){
-            return d.endProvince ? d.endProvince : '- -';
-        }},
-        {field: 'endCity', title: '收车城市', sort: false,minWidth:100, templet: function(d){
-            return d.endCity ? d.endCity : '- -';
-        }},
-        {field: 'endAddress', title: '收车地址', sort: false, width: 300, templet: function(d){
-            return d.endAddress ? d.endAddress : '- -';
-        }},
-        {field: 'transportMode', title: '运输方式', sort: false, width: 100, templet: function(d){
-            return d.transportMode ? d.transportMode : '- -';
-        }},
-        {field: 'transportAssignTime', title: '运输商指派时间', sort: false,width: 200, templet: function(d){
-            return d.transportAssignTime ? d.transportAssignTime : '- -';
-        }},
-        {field: 'income', title: '收入金额', sort: false,width: 150, templet: function(d){
-            if(dataPermission.canViewOrderCost != "Y") return "****";
-            return d.income ? (d.income + "元") : '- -';
-        }},
-        {field: 'deliveryOperator', title: '发运经理', sort: false, minWidth:180, templet: function(d){
-            d.deliveryOperator = d.deliveryOperator || "";
-            d.deliveryOperatorPhone = d.deliveryOperatorPhone || "";
-            return (d.deliveryOperator || d.deliveryOperatorPhone) ? d.deliveryOperator + d.deliveryOperatorPhone : '- -';
-        }},
-        {field: 'dispatchMode', title: '调度方式', sort: false, minWidth: 145, templet: function(d){
-            var result = "";
-            dispatchModeData.some(function(item){
-                if(item.key == d.dispatchMode){
-                    result = item.value;
-                    return true;
-                }
-            });
-            return result || "- -";
-        }},
-        {field: 'prePayAmount', title: '预付款金额', sort: false,width: 200, hide: false, templet: function (d) {
-          return d.prePayAmount + "元";
-        }},
-        {field: 'prePayOil', title: '油升数', sort: false,width: 200, hide: false, templet: function (d) {
-          return d.prePayOil + "升";
-        }},
-        {field: 'arrivePayAmount', title: '到付款金额', sort: false,width: 200, hide: false, templet: function (d) {
-          return d.arrivePayAmount + "元";
-        }},
-        {field: 'tailPayAmount', title: '尾款金额', sort: false,width: 200, hide: false, templet: function (d) {
-          return d.tailPayAmount + "元";
-        }},
-    ];
-    var showList = [], exportHead = {};
-    tableCols.forEach(function (item) {
-      showList.push(item.field);
-    });
-    
-  function List(){
-    var qs = edipao.urlGet();
-    this.action = qs.action || "new";
-    this.composeName = qs.composeName || "";
-    this.composeId = qs.composeId || "";
-  }
-  List.prototype.init = function () {
-    var _this = this;
-    if(_this.action == "remove"){
-      $("#add_btn").addClass("hide");
-      $("#remove_btn").removeClass("hide");
-    }
-    if(_this.action == "add" || _this.action == "remove"){
-      $("#composeTitle").removeClass("hide").find("#composeName").text(_this.composeName);
-    }
-    edipao.request({
-      type: 'GET',
-      url: '/admin/table/show-field/get',
-      data: {
-          tableName: tableName
-      }
-    }).done(function(res) {
-      if (res.code == 0) {
-          if(res.data){
-              showList = [];
-              try{
-                  showList = JSON.parse(res.data);
-              }catch(e){}
-              layui.each(tableCols, function(index, item){
-                  if(item.field && showList.indexOf(item.field) == -1){
-                      item.hide = true;
-                  }else{
-                      if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
-                          exportHead[item.field] = item.title;
-                      }
-                  }
-              })
-          }else{
-              layui.each(tableCols, function(index, item){
-                  if(item.field && showList.indexOf(item.field) != -1){
-                      if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
-                          exportHead[item.field] = item.title;
-                      }
-                  }
-              })
-          }
-          _this.renderTable();
-          _this.bindTableEvents();
-      }
-    });
   }
   List.prototype.renderTable =  function(){
-    var _this = this;
+		var _this = this;
     mainTable = table.render({
-        elem: '#' + tableKey
-        , url: layui.edipao.API_HOST+'/admin/order/list'
+        elem: '#' + _this.tableKey
+        , url: layui.edipao.API_HOST + _this.url
         , title: '订单列表'
         , method: "get" // 请求方式  默认get
         , page: true //开启分页
@@ -484,21 +516,21 @@ layui.config({
             pageName: 'pageNo' //页码的参数名称，默认：page
             , limitName: 'pageSize' //每页数据量的参数名，默认：limit
         }
-        , where: { loginStaffId: user.staffId }
+        , where: where
         , height: 'full'
         , autoSort: true
-        , id: tableKey
+        , id: _this.tableKey
         , parseData: function (res) {
           if(res.code != 0){
             layer.close(loadLayer);
           }
           res.data = res.data || {};
-          orderDTOList = JSON.parse(JSON.stringify(res.data.orderDTOList || []));
+          orderDTOList = JSON.parse(JSON.stringify(res.data[_this.dataKey] || "[]"));
           return {
               "code": res.code, //解析接口状态
               "msg": res.message, //解析提示文本
               "count": res.data.totalSize, //解析数据长度
-              "data": res.data.orderDTOList || [], //解析数据列表
+              "data": res.data[_this.dataKey] || [], //解析数据列表
           }
         }
         , done: function (res) {
@@ -531,17 +563,27 @@ layui.config({
     $(".top_tool_bar").unbind().on("click", function (e) {
       var event = e.target.dataset.event;
       switch(event){
+        case "export_data":
+					_this.exportData();
+					break;
         case "add":
           _this.addOrder();
-          break;
+					break;
+				case "remove":
+					_this.removeOrder();
+					break;
+				case "":
+					break;
+				case "":
+					break;
         case "reset_search":
-          edipao.resetSearch(tableKey, function(){
+          edipao.resetSearch(_this.tableKey, function(){
             location.reload();
           });
           break;
       }
     });
-    table.on('checkbox(' + tableKey + ')', function(obj){
+    table.on('checkbox(' + _this.tableKey + ')', function(obj){
       if(obj.data.orderType == 1) return;
       var orderNo = obj.data.orderNo, flag = obj.checked;
       var $tr = obj.tr, $prev = $tr.prev(), $next = $tr.next();
@@ -564,20 +606,150 @@ layui.config({
         }
       }
     });
-  }
+	}
+	List.prototype.removeOrder = function () {
+		var _this = this;
+    var checkStatus = table.checkStatus(_this.tableKey), removeOrderNoList = [];
+		if(!checkStatus.data.length) return layer.msg("请选择订单", {icon: 2});
+		checkStatus.data.forEach(function (item) {
+      if(removeOrderNoList.indexOf(item.orderNo) < 0){
+				removeOrderNoList.push(item.orderNo);
+			}
+		});
+		layer.confirm("确认移除这些订单？", {icon: 3}, function (index) {
+			edipao.request({
+				url: "/admin/grab/combination-order/del-order",
+				data: {
+					combinationOrderNo: _this.combinationOrderNo,
+					orderNoList: removeOrderNoList.join(","),
+				}
+			}).done(function (res) {
+				layer.close(index);
+				if(res.code == 0){
+					layer.msg("移除成功！", {icon: 1});
+					mainTable.reload( { where: where, page: { curr: 1 }});
+				}
+			});
+		});
+	}
   List.prototype.addOrder = function () {
-    var checkStatus = table.checkStatus(tableKey), orderNoList = [], orderList = [];
+		var _this = this;
+    var checkStatus = table.checkStatus(_this.tableKey), orderNoList = [], orderList = [], addOrderNoList = [];
     if(!checkStatus.data.length) return layer.msg("请选择订单", {icon: 2});
     checkStatus.data.forEach(function (item) {
       orderNoList.push(item.orderNo);
     });
     orderDTOList.forEach(function (item) {
       if(orderNoList.indexOf(item.orderNo) > -1) orderList.push(item);
-    });
-    window.parent.postMessage({
-      type: "addOrder",
-      data: orderList,
-    });
+		});
+		layer.confirm("确认添加这些订单？", {icon: 3}, function (index) {
+			if(_this.action == "add"){
+				orderList.forEach(function (item) {
+					if(addOrderNoList.indexOf(item.orderNo) < 0){
+						addOrderNoList.push(item.orderNo);
+					}
+				});
+				_this.addExist(addOrderNoList, index);
+				return;
+			}
+			layer.close(index);
+			window.parent.postMessage({
+				type: "addOrder",
+				data: orderList,
+			});
+		});
+		
+	}
+	List.prototype.addExist = function (orderNoList, index) {
+		var _this = this;
+		edipao.request({
+			url: "/admin/grab/combination-order/add-order",
+			data: {
+				combinationOrderNo: _this.combinationOrderNo,
+				orderNoList: orderNoList.join(","),
+			}
+		}).done(function (res) {
+			layer.close(index);
+			if(res.code == 0){
+				layer.msg("添加成功！", {icon: 1});
+				mainTable.reload( { where: where, page: { curr: 1 }});
+			}
+		});
+	}
+	var exportLoading = false;
+	List.prototype.getExportData = function (cb) {
+		var _this = this;
+		var checkStatus = table.checkStatus(_this.tableKey);
+		if(checkStatus.data.length < 1){
+				if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
+				layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
+				exportLoading = true;
+				edipao.exportData({
+						params: where,
+						url: _this.url,
+						method: "GET",
+						pageSize: "pageSize",
+						limit: 99999,
+						checkFunction: function(res){
+								return !(!res.data || !res.data[_this.dataKey] || res.data[_this.dataKey].length == 0);
+						}
+				}).done(function (res) {
+						var data = [];
+						exportLoading = false;
+						if(res.length > 0){
+								res.forEach(function (item) {
+										data = data.concat(item[_this.dataKey]);
+								});
+								cb(data);
+						}else{
+								exportLoading = false;
+						}
+				});
+		}else{
+				cb(checkStatus.data);
+		}
+	}
+  List.prototype.exportData = function () {
+		var _this = this;
+		_this.getExportData(function (data) {
+			exportXlsx(data);
+		});
+		function exportXlsx(data) {
+			var exportData = [];
+			// 添加头部
+			exportData.push(exportHead);
+			// 过滤处理数据
+			layui.each(data, function (k, v) {
+				var exportObj = {};
+				layui.each(v, function (index, item) {
+					if (index && showList.indexOf(index) != -1) {
+						switch (index) {
+							default:
+								exportObj[index] = DataNull(item);
+						}
+					}
+				});
+				exportData.push(exportObj);
+			});
+			// 导出
+			excel.exportExcel(
+				{
+					sheet1: exportData,
+				},
+				_this.logRemark + ".xlsx",
+				"xlsx"
+			);
+			exportLog();
+		}
+		// 导出日志
+		function exportLog() {
+			var params = {
+				operationModule: _this.logKey,
+				dataPk: _this.combinationOrderNo,
+				operationRemark: _this.logRemark,
+			};
+			edipao.exportLog(params);
+		}
   }
   new List().init();
 });

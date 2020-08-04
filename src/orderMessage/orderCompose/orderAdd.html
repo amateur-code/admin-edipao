@@ -26,7 +26,7 @@
         <span class="layui-breadcrumb">
             <a>订单组合</a>
             <a>
-                <cite id="test_title_btn">添加订单</cite>
+                <cite id="head_title"></cite>
             </a>
         </span>
         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
@@ -45,12 +45,21 @@
                         </div>
                         <div class="layui-col-md6 tr" style="text-align: right;">
                             <button id="reset_search" data-event="reset_search" class="top_tool_bar layui-btn">重置搜索</button>
-                            <button id="add_btn" data-event="add" class="top_tool_bar layui-btn">添加</button>
-                            <button id="remove_btn" data-event="remove" class="top_tool_bar layui-btn-disabled layui-btn hide">移除</button>
+                            <button id="export_data_btn" data-event="export_data" class="top_tool_bar layui-btn hide">导出</button>
+                            <button id="table_set_btn" data-event="table_set" class="top_tool_bar layui-btn hide">表格设置</button>
+                            <button id="add_btn" data-event="add" class="top_tool_bar layui-btn layui-btn-normal hide">添加</button>
+                            <button id="remove_btn" data-event="remove" class="top_tool_bar layui-btn hide layui-btn-normal">移除</button>
                         </div>
                     </div>
                 </div>
-                <table id="orderCompose-add-order-list" lay-filter="orderCompose-add-order-list"></table>
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-body" id="doc-content">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
