@@ -37,9 +37,7 @@ layui.define(['table', 'jquery', 'form', 'laydate'], function (exports) {
 			initData = {};
 		}
 		tableFilter.cache[elemId] = initData[elemId] || {};
-		if(tableFilter.cache[elemId] && Object.keys(tableFilter.cache[elemId]).length > 0){
-			opt.done(JSON.parse(JSON.stringify(tableFilter.cache[elemId])), true);
-		}
+		opt.done(JSON.parse(JSON.stringify(tableFilter.cache[elemId])), true);
 		//主运行
 		var main = function (){
 

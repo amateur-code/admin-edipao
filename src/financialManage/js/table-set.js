@@ -24,8 +24,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: 'withdrawStatus', title: '银行支付状态' },
     { field: 'remark', title: '银行备注' },
     { field: 'toAccountTime', title: '提现到账时间' },
-    { field: 'bankReceipt', title: '银行回单' },
-    { field: 'payCompany', title: '付款主体' },
+    { field: 'bankReceipt', title: '银行回单' }
   ];
   var tableHeaderList = dotTableHeaderList;
   laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){
