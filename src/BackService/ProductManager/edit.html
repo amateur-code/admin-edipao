@@ -18,6 +18,7 @@
   <script src="https://mapapi.careland.com.cn/api/?key=6012dcd6278a2d4db3840604&v=1.3"></script>
   <script type="text/javascript" src="../../lib/layui/layui.js"></script>
   <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+  <script src="../../SystemSetting/carType/js/carTypeCommon.js?VERSION"></script>
   <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
   <!--[if lt IE 9]>
   <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -107,6 +108,62 @@
       right: 40px;
       color: #666666;
     }
+
+    #jgBody .wishJourney-btn-add {
+      color: #3490e9;
+      margin-left: 20px;
+      -moz-user-select: none; /*火狐*/
+      -webkit-user-select: none; /*webkit浏览器*/
+      -ms-user-select: none; /*IE10*/
+      -khtml-user-select: none; /*早期浏览器*/
+      user-select: none;
+      cursor: pointer;
+    }
+
+    #jgBody .remove-btn {
+      color: #ee5b22;
+      text-decoration: underline;
+      margin-right: 35px;
+      margin-top: 40px;
+      -moz-user-select: none; /*火狐*/
+      -webkit-user-select: none; /*webkit浏览器*/
+      -ms-user-select: none; /*IE10*/
+      -khtml-user-select: none; /*早期浏览器*/
+      user-select: none;
+      cursor: pointer;
+      float: right;
+    }
+
+    .disf {
+      display: flex;
+    }
+
+    .w70 {
+      width: 70%;
+    }
+
+    .look-up {
+      color: #3490e9;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-right: 35px;
+      float: right;
+    }
+
+    .layui-form-label {
+      width: 100%;
+    }
+    .unit_span_stop{
+      position: absolute;
+      top: 50%;
+      right: 40px;
+      transform: translateY(-50%);
+      color: #999;
+    }
+    .hide{
+      display: none;
+      pointer-events: none;
+    }
   </style>
 </head>
 
@@ -195,9 +252,7 @@
           </div>
         </div>
       </div>
-      <div class="layui-card" id="jgBody">
-
-      </div>
+      <div class="layui-card" id="jgBody"></div>
       <div class="layui-card">
         <div class="layui-card-header">其他信息</div>
         <div class="layui-card-body">
@@ -212,16 +267,14 @@
               <button class="layui-btn layui-btn-lg" lay-filter="edit" lay-submit>修改</button>
             </div>
           </div>
-
         </div>
       </div>
     </form>
   </div>
 </div>
 <script id="jgDom" type="text/html">
-
+{{# if(d.check =='0'){ }}
 <div class="layui-card-header">价格信息</div>
-{{# if(d.check !='1'){ }}
 <div class="layui-card-body">
   <div class="layui-fluid">
     <div class="layui-row">
@@ -244,20 +297,21 @@
           </label>
           <div class="layui-input-block">
             <input type="text" id="effectiveTime" name="effectiveTime" lay-verify="required" autocomplete="off"
-                   class="layui-input">
+                   class="layui-input date-format">
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-{{# } else { }}
+{{# } else if(d.check =='1'){ }}
+<div class="layui-card-header">价格信息</div>
 <div class="layui-card-body">
   <div class="layui-fluid">
     <div class="layui-row">
       <div class="layui-col-xs4">
         <div class="layui-form-item">
-          <label for="unitPrice" class="layui-form-label">
+          <label for="tempLicensePrice" class="layui-form-label">
             <span class="x-red">*</span>临牌：
           </label>
           <div style="position: relative;" class="layui-input-block">
@@ -273,7 +327,7 @@
       </div>
       <div class="layui-col-xs4">
         <div class="layui-form-item">
-          <label for="effectiveTime" class="layui-form-label">
+          <label for="threeExceedingPrice" class="layui-form-label">
             <span class="x-red">*</span>三超证
           </label>
           <div class="layui-input-block">
@@ -288,7 +342,7 @@
       </div>
       <div class="layui-col-xs4">
         <div class="layui-form-item">
-          <label for="effectiveTime" class="layui-form-label">
+          <label for="compulsoryInsurancePrice" class="layui-form-label">
             <span class="x-red">*</span>强险
           </label>
           <div class="layui-input-block">
@@ -304,6 +358,456 @@
     </div>
   </div>
 </div>
+{{# } else if(d.check =='2'){ }}
+<div class="layui-card-header">价格信息 <span class="wishJourney-btn-add" id="addWishJourney">+添加车型</span></div>
+{{# layui.each(d.list.priceExtJson, function(index, item){ }}
+<div class="layui-card-body" id="wishJourney">
+  <div class="layui-fluid">
+    <div class="layui-row">
+      {{# if(index =='0'){ }}
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="modelName" class="layui-form-label">
+            <span class="x-red">*</span>车型名称：
+          </label>
+          <div style="position: relative;" class="layui-input-block">
+            <input type="text" id="modelName"
+                   name="modelName"
+                   disabled
+                   value="{{item.modelName}}"
+                   lay-verify="required"
+                   autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="modelCode" class="layui-form-label">
+            <span class="x-red">*</span>车型代码
+            <span class="look-up" onclick="modelCodeLook()">查看对照表</span>
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="modelCode"
+                   name="modelCode"
+                   disabled
+                   value="{{item.modelCode}}"
+                   lay-verify="required|modelCode" autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="driveWayCode" class="layui-form-label">
+            <span class="x-red">*</span>驱动形式代码
+            <span class="look-up" onclick="driveWayCodeLook()">查看对照表</span>
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="driveWayCode"
+                   name="driveWayCode"
+                   disabled
+                   value="{{item.driveWayCode}}"
+                   lay-verify="required|driveWayCode" autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="multiPrice" class="layui-form-label">
+            <span class="x-red">*</span>价格
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="multiPrice"
+                   name="multiPrice"
+                   value="{{item.multiPrice}}"
+                   onkeyup="clearNoNum(this)"
+                   lay-verify="required|numberOne" autocomplete="off"
+                   class="layui-input">
+            <span class="unit_span"></span>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="effectiveStartTime" class="layui-form-label">
+            <span class="x-red">*</span>生效时间
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="effectiveStartTime" name="effectiveStartTime" lay-verify="required"
+                   autocomplete="off"
+                   value="{{item.effectiveStartTime}}"
+                   class="layui-input date-format">
+          </div>
+        </div>
+      </div>
+      {{# } else { }}
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="modelName" class="layui-form-label">
+            <span class="x-red">*</span>车型名称：
+          </label>
+          <div style="position: relative;" class="layui-input-block">
+            <input type="text" id="modelName"
+                   name="modelName"
+                   value="{{item.modelName}}"
+                   lay-verify="required"
+                   autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="modelCode" class="layui-form-label">
+            <span class="x-red">*</span>车型代码
+            <span class="look-up" onclick="modelCodeLook()">查看对照表</span>
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="modelCode"
+                   name="modelCode"
+                   value="{{item.modelCode}}"
+                   lay-verify="required|modelCode" autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="driveWayCode" class="layui-form-label">
+            <span class="x-red">*</span>驱动形式代码
+            <span class="look-up" onclick="driveWayCodeLook()">查看对照表</span>
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="driveWayCode"
+                   name="driveWayCode"
+                   value="{{item.driveWayCode}}"
+                   lay-verify="required|driveWayCode" autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="multiPrice" class="layui-form-label">
+            <span class="x-red">*</span>价格
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="multiPrice"
+                   name="multiPrice"
+                   value="{{item.multiPrice}}"
+                   onkeyup="clearNoNum(this)"
+                   lay-verify="required|numberOne" autocomplete="off"
+                   class="layui-input">
+            <span class="unit_span"></span>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="effectiveStartTime" class="layui-form-label">
+            <span class="x-red">*</span>生效时间
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="effectiveStartTime" name="effectiveStartTime" lay-verify="required"
+                   autocomplete="off"
+                   value="{{item.effectiveStartTime}}"
+                   class="layui-input date-format">
+          </div>
+        </div>
+      </div>
+      <div class="remove-btn" id="removeWishJourney">删除</div>
+      {{# } }}
+    </div>
+  </div>
+</div>
+{{# }) }}
+{{# } else if(d.check =='3'){ }}
+<div class="layui-card-header">价格信息 <span class="wishJourney-btn-add" id="addWishJourneyTc">+添加车型</span></div>
+{{# layui.each(d.list.priceExtJson, function(index, item){ }}
+<div class="layui-card-body" id="wishJourneyTc">
+  <div class="layui-fluid">
+    <div class="layui-row model_row">
+      {{# if(index =='0'){ }}
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="modelName" class="layui-form-label">
+            <span class="x-red">*</span>车型名称：
+          </label>
+          <div style="position: relative;" class="layui-input-block">
+            <input type="text" id="modelName"
+                   name="modelName"
+                   disabled
+                   value="{{item.modelName}}"
+                   lay-verify="required"
+                   autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="modelCode" class="layui-form-label">
+            <span class="x-red">*</span>车型代码
+            <span class="look-up" onclick="modelCodeLook()">查看对照表</span>
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="modelCode"
+                   name="modelCode"
+                   disabled
+                   value="{{item.modelCode}}"
+                   lay-verify="required|modelCode" autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="driveWayCode" class="layui-form-label">
+            <span class="x-red">*</span>驱动形式代码
+            <span class="look-up" onclick="driveWayCodeLook()">查看对照表</span>
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="driveWayCode"
+                   name="driveWayCode"
+                   disabled
+                   value="{{item.driveWayCode}}"
+                   lay-verify="required|driveWayCode" autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="multiPrice" class="layui-form-label">
+            <span class="x-red">*</span>单车价格
+          </label>
+          <div class="layui-input-block disf">
+            <div class="w70">
+              <input type="text" id="singlePrice"
+                     name="singlePrice"
+                     value="{{item.singlePrice}}"
+                     onkeyup="clearNoNum(this)"
+                     lay-verify="required|numberOne" autocomplete="off"
+                     class="layui-input">
+            </div>
+            <div>
+              <select name="singlePriceUnit" value="{{item.singlePriceUnit}}" id="" lay-filter="singleUpLimitPrice">
+                <option value="元/自然日" {{item.multiPriceUnit == '元/自然日' ? 'selected' : ''}}>元/自然日</option>
+                <option value="元/小时" {{item.multiPriceUnit == '元/小时' ? 'selected' : ''}}>元/小时</option>
+                <option value="元/辆车" {{item.multiPriceUnit == '元/辆车' ? 'selected' : ''}}>元/辆车</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="multiPrice" class="layui-form-label">
+            <span class="x-red">*</span>背车价格
+          </label>
+          <div class="layui-input-block disf">
+            <div class="w70">
+              <input type="text" id="multiPrice"
+                     name="multiPrice"
+                     value="{{item.multiPrice}}"
+                     onkeyup="clearNoNum(this)"
+                     lay-verify="required|numberOne" autocomplete="off"
+                     class="layui-input">
+            </div>
+            <div>
+              <select name="multiPriceUnit" value="{{item.multiPriceUnit}}" id="" lay-filter="multiUpLimitPrice">
+                <option value="元/自然日" {{item.multiPriceUnit == '元/自然日' ? 'selected' : ''}}>元/自然日</option>
+                <option value="元/小时" {{item.multiPriceUnit == '元/小时' ? 'selected' : ''}}>元/小时</option>
+                <option value="元/辆车" {{item.multiPriceUnit == '元/辆车' ? 'selected' : ''}}>元/辆车</option>
+              </select>
+            </div>
+            <!--<span class="unit_span"></span>-->
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="effectiveStartTime" class="layui-form-label">
+            <span class="x-red">*</span>生效时间
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="effectiveStartTime0" name="effectiveStartTime" lay-verify="required"
+                   autocomplete="off" value="{{item.effectiveStartTime}}"
+                   class="layui-input date-format">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item {{item.singlePriceUnit == '元/小时' ? '' : 'hide'}} singleUpLimitPrice">
+          <label for="singleUpLimitPrice" class="layui-form-label">
+            <span class="x-red">*</span>单车单日上限
+          </label>
+          <div class="layui-input-block">
+            <input type="text" value="{{item.singleUpLimitPrice}}" id="singleUpLimitPrice0" name="singleUpLimitPrice" lay-verify=""
+                   autocomplete="off"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
+            <span class="unit_span_stop">元</span>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item {{item.multiPriceUnit == '元/小时' ? '' : 'hide'}} multiUpLimitPrice">
+          <label for="multiUpLimitPrice" class="layui-form-label">
+            <span class="x-red">*</span>背车单日上限
+          </label>
+          <div class="layui-input-block">
+            <input type="text" value="{{item.multiUpLimitPrice}}" id="multiUpLimitPrice0" name="multiUpLimitPrice" lay-verify=""
+                   autocomplete="off"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
+            <span class="unit_span_stop">元</span>
+          </div>
+        </div>
+      </div>
+      {{# } else { }}
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="modelName" class="layui-form-label">
+            <span class="x-red">*</span>车型名称：
+          </label>
+          <div style="position: relative;" class="layui-input-block">
+            <input type="text" id="modelName"
+                   name="modelName"
+                   value="{{item.modelName}}"
+                   lay-verify="required"
+                   autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="modelCode" class="layui-form-label">
+            <span class="x-red">*</span>车型代码
+            <span class="look-up" onclick="modelCodeLook()">查看对照表</span>
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="modelCode"
+                   name="modelCode"
+                   value="{{item.modelCode}}"
+                   lay-verify="required|modelCode" autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="driveWayCode" class="layui-form-label">
+            <span class="x-red">*</span>驱动形式代码
+            <span class="look-up" onclick="driveWayCodeLook()">查看对照表</span>
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="driveWayCode"
+                   name="driveWayCode"
+                   value="{{item.driveWayCode}}"
+                   lay-verify="required|driveWayCode" autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="singlePrice" class="layui-form-label">
+            <span class="x-red">*</span>单车价格
+          </label>
+          <div class="layui-input-block disf">
+            <div class="w70">
+              <input type="text" id="singlePrice"
+                     name="singlePrice"
+                     value="{{item.singlePrice}}"
+                     onkeyup="clearNoNum(this)"
+                     lay-verify="required|numberOne" autocomplete="off"
+                     class="layui-input">
+            </div>
+            <div>
+              <select name="singlePriceUnit" value="{{item.singlePriceUnit}}" id="" lay-filter="singleUpLimitPrice">
+                <option value="元/自然日" {{item.multiPriceUnit == '元/自然日' ? 'selected' : ''}}>元/自然日</option>
+                <option value="元/小时" {{item.multiPriceUnit == '元/小时' ? 'selected' : ''}}>元/小时</option>
+                <option value="元/辆车" {{item.multiPriceUnit == '元/辆车' ? 'selected' : ''}}>元/辆车</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="multiPrice" class="layui-form-label">
+            <span class="x-red">*</span>背车价格
+          </label>
+          <div class="layui-input-block disf">
+            <div class="w70">
+              <input type="text" id="multiPrice"
+                     name="multiPrice"
+                     value="{{item.multiPrice}}"
+                     onkeyup="clearNoNum(this)"
+                     lay-verify="required|numberOne" autocomplete="off"
+                     class="layui-input">
+            </div>
+            <div>
+              <select name="multiPriceUnit" value="{{item.multiPriceUnit}}" id="" lay-filter="multiUpLimitPrice">
+                <option value="元/自然日" {{item.multiPriceUnit == '元/自然日' ? 'selected' : ''}}>元/自然日</option>
+                <option value="元/小时" {{item.multiPriceUnit == '元/小时' ? 'selected' : ''}}>元/小时</option>
+                <option value="元/辆车" {{item.multiPriceUnit == '元/辆车' ? 'selected' : ''}}>元/辆车</option>
+              </select>
+            </div>
+            <!--            <span class="unit_span"></span>-->
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="effectiveStartTime" class="layui-form-label">
+            <span class="x-red">*</span>生效时间
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="effectiveStartTime0" name="effectiveStartTime" lay-verify="required"
+                   autocomplete="off" value="{{item.effectiveStartTime}}"
+                   class="layui-input date-format">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item {{item.singlePriceUnit == '元/小时' ? '' : 'hide'}} singleUpLimitPrice">
+          <label for="singleUpLimitPrice" class="layui-form-label">
+            <span class="x-red">*</span>单车单日上限
+          </label>
+          <div class="layui-input-block">
+            <input type="text" value="{{item.singleUpLimitPrice}}" id="singleUpLimitPrice0" name="singleUpLimitPrice" lay-verify=""
+                   autocomplete="off"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
+            <span class="unit_span_stop">元</span>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item {{item.multiPriceUnit == '元/小时' ? '' : 'hide'}} multiUpLimitPrice">
+          <label for="multiUpLimitPrice" class="layui-form-label">
+            <span class="x-red">*</span>背车单日上限
+          </label>
+          <div class="layui-input-block">
+            <input value="{{item.multiUpLimitPrice}}" type="text" id="multiUpLimitPrice0" name="multiUpLimitPrice" lay-verify=""
+                   autocomplete="off"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
+            <span class="unit_span_stop">元</span>
+          </div>
+        </div>
+      </div>
+      <div class="remove-btn" id="removeWishJourney">删除</div>
+      {{# } }}
+    </div>
+  </div>
+</div>
+{{# }) }}
 {{# } }}
 </script>
 <script id="selectDom" type="text/html">
@@ -336,9 +840,30 @@ function clearNoNum (obj) {
 
 layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, layer, element, laytpl, laydate) {
   var xadmin = layui.xadmin,
-    edipao = layui.edipao,
-    resData,
-    detailAddress;
+      edipao = layui.edipao,
+      resData,
+      sType,
+      detailAddress;
+  var cxdm = [];
+  var qdxsdm = [];
+  edipao.request({
+    type: 'get',
+    url: '/admin/sys/dict/getDictItemList',
+    data: { dictType: 'sys.truckType.refenceTable' }
+  }).then(function (res) {
+    if (res.code == 0) {
+      cxdm = res.data.dictItemRespList
+    }
+  })
+  edipao.request({
+    type: 'get',
+    url: '/admin/sys/dict/getDictItemList',
+    data: { dictType: 'sys.driveWayCode.refenceTable' }
+  }).then(function (res) {
+    if (res.code == 0) {
+      qdxsdm = res.data.dictItemRespList
+    }
+  })
   //凯立德地图API功能
   var point = new Careland.Point(411067452, 81446126); //创建坐标点
   var map = new Careland.Map('map', point, 12); //实例化地图对象
@@ -483,13 +1008,21 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
       }
     })
   })
-  laydate.render({
-    elem: '#effectiveTime',
-    type: 'datetime'
-  });
 
+//核心方法
+  function timeAdd () {
+    lay('.date-format').each(function () {
+      laydate.render({
+        elem: this,
+        trigger: 'click',
+        type: 'datetime'
+      });
+    });
+  }
+
+  //初始化时先调用一次，确保静态的那一行可点
+  timeAdd();
   var params = edipao.urlGet();
-
   edipao.request({
     type: 'get',
     url: '/admin/supplier/all'
@@ -502,23 +1035,56 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
     }
 
   })
+
+  form.on("select(singleUpLimitPrice)", function(obj){
+    var $el = $(obj.elem);
+    var $row = $el.parents(".model_row");
+    if(obj.value == "元/小时"){
+      $row.find(".singleUpLimitPrice").removeClass("hide");
+    }else{
+      $row.find(".singleUpLimitPrice").addClass("hide");
+    }
+  });
+  form.on("select(multiUpLimitPrice)", function(obj){
+    var $el = $(obj.elem);
+    var $row = $el.parents(".model_row");
+    if(obj.value == "元/小时"){
+      $row.find(".multiUpLimitPrice").removeClass("hide");
+    }else{
+      $row.find(".multiUpLimitPrice").addClass("hide");
+    }
+  });
+
   form.on("select(supplierNo)", function (obj) {
     var type = obj.elem.selectedOptions[0].dataset.type;
+    sType = type;
     if (type == "tempLicenseSupply") {
       laytpl(jgDom.innerHTML).render({ list: resData, check: "1" }, function (html) {
         document.getElementById('jgBody').innerHTML = html;
       })
       form.render();
-    } else {
+      timeAdd();
+    } else if (type == "oilSupply") {
       laytpl(jgDom.innerHTML).render({ list: resData, check: "0" }, function (html) {
         document.getElementById('jgBody').innerHTML = html;
       })
-      if (type == "unloadCar") {
-        $(".unit_span").text("元 / 次");
-      } else if (type == "oilSupply") {
-        $(".unit_span").text("元 / 升");
-      }
+      $(".unit_span").text("元 / 升");
       form.render();
+      timeAdd();
+    } else if (type == "unloadCar" || type == "loadCar") {
+      laytpl(jgDom.innerHTML).render({ list: resData, check: '2' }, function (html) {
+        document.getElementById('jgBody').innerHTML = html;
+      })
+      $(".unit_span").text("元 / 次");
+      form.render();
+      timeAdd();
+    } else if (type == "stopSupply") {
+      laytpl(jgDom.innerHTML).render({ list: resData, check: '3' }, function (html) {
+        document.getElementById('jgBody').innerHTML = html;
+      })
+      $(".unit_span").text("元 / 次");
+      form.render();
+      timeAdd();
     }
   });
 
@@ -530,6 +1096,12 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
         productNo: params.id
       }
     }).then(function (res) {
+      if (res.data.priceExtJson) {
+        res.data.priceExtJson = JSON.parse(res.data.priceExtJson)
+        res.data.priceExtJson.forEach(item => {
+          item.effectiveStartTime = item.effectiveStartTime.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6")
+        })
+      }
       resData = res.data
       if (res.code == 0) {
         detailAddress = {
@@ -537,27 +1109,35 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
           lng: res.data.lng,
           lat: res.data.lat
         }
+        sType = resData.supplierType;
         if (resData.supplierType == "tempLicenseSupply") {
           laytpl(jgDom.innerHTML).render({ list: resData, check: '1' }, function (html) {
             document.getElementById('jgBody').innerHTML = html;
           })
           form.render();
-        } else {
+          timeAdd();
+        } else if (resData.supplierType == "oilSupply") {
           laytpl(jgDom.innerHTML).render({ list: resData, check: '0' }, function (html) {
             document.getElementById('jgBody').innerHTML = html;
           })
-          if (resData.supplierType == "unloadCar") {
-            $(".unit_span").text("元 / 次");
-          } else if (resData.supplierType == "oilSupply") {
-            $(".unit_span").text("元 / 升");
-          }
+          $(".unit_span").text("元 / 升");
           form.render();
+          timeAdd();
+        } else if (resData.supplierType == "unloadCar" || resData.supplierType == "loadCar") {
+          laytpl(jgDom.innerHTML).render({ list: resData, check: '2' }, function (html) {
+            document.getElementById('jgBody').innerHTML = html;
+          })
+          $(".unit_span").text("元 / 次");
+          form.render();
+          timeAdd();
+        } else if (resData.supplierType == "stopSupply") {
+          laytpl(jgDom.innerHTML).render({ list: resData, check: '3' }, function (html) {
+            document.getElementById('jgBody').innerHTML = html;
+          })
+          $(".unit_span").text("元 / 次");
+          form.render();
+          timeAdd();
         }
-        // if (res.data.supplierType == "unloadCar") {
-        //   $(".unit_span").text("元 / 次");
-        // } else if (res.data.supplierType == "oilSupply") {
-        //   $(".unit_span").text("元 / 升");
-        // }
         form.val("edit", res.data);
       }
     })
@@ -609,12 +1189,154 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
         }
       }
     },
+    // 驱动形式代码
+    driveWayCode: function (value) {
+      let arr = []
+      qdxsdm.forEach(item => {
+        arr.push(item.dictValue)
+      })
+      if (!arr.includes(value) && value !== '不限' && value.indexOf(",") < 0) {
+        return '车型代码不存在'
+      }
+    },
+    // 车型代码校验
+    modelCode: function (value) {
+      let arr = []
+      cxdm.forEach(item => {
+        arr.push(item.dictValue)
+      })
+      if (!arr.includes(value) && value !== '不限' && value.indexOf(",") < 0) {
+        return '车型代码不存在'
+      }
+    }
   });
 
   form.on('submit(edit)', function (data) {
-    data.field.productNo = params.id;
+    let modelNameArr = []
+    let sumData = []
+    var modelName = document.getElementsByName('modelName')
+    modelName.forEach((item, index) => {
+      let obj = {}
+      obj.modelName = item.value
+      modelNameArr.push(obj)
+    })
+    sumData = sumData.concat(modelNameArr)
+    var modelCode = document.getElementsByName('modelCode')
+    modelCode.forEach((item, index) => {
+      sumData.forEach((val, ind) => {
+        if (index === ind) {
+          val.modelCode = item.value
+        }
+      })
+    })
+    var driveWayCode = document.getElementsByName('driveWayCode')
+    driveWayCode.forEach((item, index) => {
+      sumData.forEach((val, ind) => {
+        if (index === ind) {
+          val.driveWayCode = item.value
+        }
+      })
+    })
+    var effectiveStartTime = document.getElementsByName('effectiveStartTime')
+    effectiveStartTime.forEach((item, index) => {
+      sumData.forEach((val, ind) => {
+        if (index === ind) {
+          val.effectiveStartTime = item.value.replace(/\-| |:/g, "")
+        }
+      })
+    })
+    var multiPrice = document.getElementsByName('multiPrice')
+    multiPrice.forEach((item, index) => {
+      sumData.forEach((val, ind) => {
+        if (index === ind) {
+          val.multiPrice = item.value
+        }
+      })
+    })
+    var multiPriceUnit = document.getElementsByName('multiPriceUnit') || []
+    multiPriceUnit.forEach((item, index) => {
+      sumData.forEach((val, ind) => {
+        if (index === ind) {
+          val.multiPriceUnit = item.value
+        }
+      })
+    })
+    var singlePrice = document.getElementsByName('singlePrice') || []
+    singlePrice.forEach((item, index) => {
+      sumData.forEach((val, ind) => {
+        if (index === ind) {
+          val.singlePrice = item.value
+        }
+      })
+    })
+    var singlePriceUnit = document.getElementsByName('singlePriceUnit') || []
+    singlePriceUnit.forEach((item, index) => {
+      sumData.forEach((val, ind) => {
+        if (index === ind) {
+          val.singlePriceUnit = item.value.toString()
+        }
+      })
+    })
+    var singleUpLimitPrice = document.getElementsByName('singleUpLimitPrice') || []
+    singleUpLimitPrice.forEach((item, index) => {
+      sumData.forEach((val, ind) => {
+        if (index === ind) {
+          val.singleUpLimitPrice = item.value
+        }
+      })
+    })
+    var multiUpLimitPrice = document.getElementsByName('multiUpLimitPrice') || []
+    multiUpLimitPrice.forEach((item, index) => {
+      sumData.forEach((val, ind) => {
+        if (index === ind) {
+          val.multiUpLimitPrice = item.value
+        }
+      })
+    })
+    sumData.forEach(item => {
+      if (item.modelName === '通用车型') {
+        item.commonFlag = 'Y'
+      } else {
+        item.commonFlag = 'N'
+      }
+      if (item.singlePriceUnit && item.singlePriceUnit != '') {
+
+      } else {
+        item.singlePriceUnit = ''
+      }
+      if (item.singlePrice && item.singlePrice != '') {
+
+      } else {
+        item.singlePrice = '0'
+      }
+      if (item.singleUpLimitPrice && item.singleUpLimitPrice != '') {
+
+      } else {
+        item.singleUpLimitPrice = '0'
+      }
+      if (item.multiPriceUnit && item.multiPriceUnit != '') {
+
+      } else {
+        item.multiPriceUnit = '元'
+      }
+      if (item.multiUpLimitPrice && item.multiUpLimitPrice != '') {
+
+      } else {
+        item.multiUpLimitPrice = '0'
+      }
+    })
+    if(sType == "unloadCar" || sType == "loadCar"){
+      sumData = sumData.map(function(item){
+        item.multiPriceUnit = item.singlePriceUnit = "元/次";
+        return item;
+      });
+    }
     data.field.lng = detailAddress.lng;
     data.field.lat = detailAddress.lat;
+    data.field.priceExtJson = JSON.stringify(sumData);
+    data.field.productNo = params.id;
+    // data.field.lng = detailAddress.lng;
+    // data.field.lat = detailAddress.lat;
     edipao.request({
       url: '/admin/product/update',
       data: data.field,
@@ -632,6 +1354,255 @@ layui.use(['form', 'layer', 'element', 'laytpl', 'laydate'], function (form, lay
       }
     })
     return false;
+  });
+  // 背车/拆车添加车型
+  var inx = 0
+  $(document).on('click', '#addWishJourney', function () {
+    // $('.no-data').hide()
+    var startId = guid();
+    var endId = guid();
+    inx++;
+    var wishJourneyHtml = ` <div class="layui-form wishJourney layui-clear">
+          <div class="layui-fluid">
+            <div class="layui-row">
+              <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                  <label for="unitPrice" class="layui-form-label">
+                    <span class="x-red">*</span>车型名称：
+                  </label>
+                  <div style="position: relative;" class="layui-input-block">
+                    <input type="text" id="modelName${inx}"
+                          name="modelName"
+                          lay-verify="required"
+                          autocomplete="off"
+                          class="layui-input">
+                  </div>
+                </div>
+              </div>
+              <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                  <label for="modelCode" class="layui-form-label">
+                    <span class="x-red">*</span>车型代码
+                    <span class="look-up" onclick="modelCodeLook()">查看对照表</span>
+                  </label>
+                  <div class="layui-input-block">
+                    <input type="text" id="modelCode${inx}"
+                          name="modelCode"
+                          lay-verify="required|modelCode" autocomplete="off"
+                          class="layui-input">
+                  </div>
+                </div>
+              </div>
+              <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                  <label for="driveWayCode" class="layui-form-label">
+                    <span class="x-red">*</span>驱动形式代码
+                    <span class="look-up" onclick="driveWayCodeLook()">查看对照表</span>
+                  </label>
+                  <div class="layui-input-block">
+                    <input type="text" id="driveWayCode${inx}"
+                          name="driveWayCode"
+                          lay-verify="required|driveWayCode" autocomplete="off"
+                          class="layui-input">
+                  </div>
+                </div>
+              </div>
+              <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                  <label for="multiPrice" class="layui-form-label">
+                    <span class="x-red">*</span>价格
+                  </label>
+                  <div class="layui-input-block">
+                    <input type="text" id="multiPrice${inx}"
+                          name="multiPrice"
+                          onkeyup="clearNoNum(this)"
+                          lay-verify="required|numberOne" autocomplete="off"
+                          class="layui-input">
+                    <span class="unit_span">元/次</span>
+                   </div>
+                </div>
+              </div>
+              <div class="layui-col-xs4">
+                <div class="layui-form-item">
+                  <label for="effectiveStartTime" class="layui-form-label">
+                    <span class="x-red">*</span>生效时间
+                  </label>
+                  <div class="layui-input-block">
+                    <input type="text" id="effectiveStartTime${inx}"
+                           name="effectiveStartTime"
+                           lay-verify="required" autocomplete="off"
+                          class="layui-input date-format">
+                  </div>
+                 </div>
+              </div>
+              <div class="remove-btn" id="removeWishJourney">删除</div>
+            </div>
+          </div>
+         </div>`
+    $('#wishJourney').append(wishJourneyHtml);
+    timeAdd();
+    // $('#' + startId).xcity();
+    // $('#' + endId).xcity();
+  });
+// 停车添加车型
+  $(document).on('click', '#addWishJourneyTc', function () {
+    // $('.no-data').hide()
+    var startId = guid();
+    var endId = guid();
+    inx++;
+    var wishJourneyHtml = ` <div class="layui-fluid">
+    <div class="layui-row model_row">
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="modelName" class="layui-form-label">
+            <span class="x-red">*</span>车型名称：
+          </label>
+          <div style="position: relative;" class="layui-input-block">
+            <input type="text" id="modelName"
+                   name="modelName"
+                   lay-verify="required"
+                   autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="modelCode" class="layui-form-label">
+            <span class="x-red">*</span>车型代码
+            <span class="look-up" onclick="modelCodeLook()">查看对照表</span>
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="modelCode"
+                   name="modelCode"
+                   lay-verify="required|modelCode" autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="driveWayCode" class="layui-form-label">
+            <span class="x-red">*</span>驱动形式代码
+            <span class="look-up" onclick="driveWayCodeLook()">查看对照表</span>
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="driveWayCode"
+                   name="driveWayCode"
+                   lay-verify="required|driveWayCode" autocomplete="off"
+                   class="layui-input">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="multiPrice" class="layui-form-label">
+            <span class="x-red">*</span>单车价格
+          </label>
+          <div class="layui-input-block disf">
+            <div class="w70">
+              <input type="text" id="singlePrice"
+                     name="singlePrice"
+                     onkeyup="clearNoNum(this)"
+                     lay-verify="required|numberOne" autocomplete="off"
+                     class="layui-input">
+            </div>
+            <div>
+              <select name="singlePriceUnit" id="" lay-filter="singleUpLimitPrice">
+                <option value="元/自然日">元/自然日</option>
+                <option value="元/小时">元/小时</option>
+                <option value="元/辆车">元/辆车</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="multiPrice" class="layui-form-label">
+            <span class="x-red">*</span>背车价格
+          </label>
+          <div class="layui-input-block disf">
+            <div class="w70">
+              <input type="text" id="multiPrice"
+                     name="multiPrice"
+                     onkeyup="clearNoNum(this)"
+                     lay-verify="required|numberOne" autocomplete="off"
+                     class="layui-input">
+            </div>
+            <div>
+              <select name="multiPriceUnit" id="" lay-filter="multiUpLimitPrice">
+                <option value="元/自然日">元/自然日</option>
+                <option value="元/小时">元/小时</option>
+                <option value="元/辆车">元/辆车</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item">
+          <label for="effectiveStartTime" class="layui-form-label">
+            <span class="x-red">*</span>生效时间
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="effectiveStartTime0" name="effectiveStartTime" lay-verify="required"
+                   autocomplete="off"
+                   class="layui-input date-format">
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item hide singleUpLimitPrice">
+          <label for="singleUpLimitPrice" class="layui-form-label">
+            <span class="x-red">*</span>单车单日上限
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="singleUpLimitPrice0" name="singleUpLimitPrice" lay-verify=""
+                   autocomplete="off"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
+            <span class="unit_span_stop">元</span>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs4">
+        <div class="layui-form-item hide multiUpLimitPrice">
+          <label for="multiUpLimitPrice" class="layui-form-label">
+            <span class="x-red">*</span>背车单日上限
+          </label>
+          <div class="layui-input-block">
+            <input type="text" id="multiUpLimitPrice0" name="multiUpLimitPrice" lay-verify=""
+                   autocomplete="off"
+                   onkeyup="clearNoNum(this)"
+                   class="layui-input">
+            <span class="unit_span_stop">元</span>
+          </div>
+        </div>
+      </div>
+      <div class="remove-btn" id="removeWishJourney">删除</div>
+    </div>
+  </div>`
+    $('#wishJourneyTc').append(wishJourneyHtml);
+    timeAdd();
+    form.render();
+    // $('#' + startId).xcity();
+    // $('#' + endId).xcity();
+  });
+
+  // 获取随机id
+  function guid () {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  // 删除
+
+  $(document).on('click', '#removeWishJourney', function () {
+    layer.msg('删除车型成功');
+    $(this).parent().remove();
   });
 })
 </script>

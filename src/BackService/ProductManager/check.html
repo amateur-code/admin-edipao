@@ -2,276 +2,526 @@
 <html class="x-admin-sm">
 
 <head>
-    <meta charset="UTF-8">
-    <title>E地跑运营平台</title>
-    <meta name="renderer" content="webkit|ie-comp|ie-stand">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
-    <meta http-equiv="Expires" CONTENT="-1">
-    <meta http-equiv="Cache-Control" CONTENT="no-cache">
-    <meta http-equiv="Pragma" CONTENT="no-cache">
-    <link rel="stylesheet" href="../../css/font.css">
-    <link rel="stylesheet" href="../../css/xadmin.css">
-    <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
-    <script type="text/javascript" src="../../js/jquery.min.js"></script>
-    <script type="text/javascript" src="../../lib/layui/layui.js"></script>
-    <script type="text/javascript" src="../../js/common.js?VERSION"></script>
-    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
-    <!--[if lt IE 9]>
-          <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
-          <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
-    <script>
-        // 是否开启刷新记忆tab功能
-    // var is_remember = false;
-    </script>
-    <style type="text/css">
+  <meta charset="UTF-8">
+  <title>E地跑运营平台</title>
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+  <meta http-equiv="Expires" CONTENT="-1">
+  <meta http-equiv="Cache-Control" CONTENT="no-cache">
+  <meta http-equiv="Pragma" CONTENT="no-cache">
+  <link rel="stylesheet" href="../../css/font.css">
+  <link rel="stylesheet" href="../../css/xadmin.css">
+  <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
+  <script type="text/javascript" src="../../js/jquery.min.js"></script>
+  <script type="text/javascript" src="../../lib/layui/layui.js"></script>
+  <script type="text/javascript" src="../../js/common.js?VERSION"></script>
+  <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+  <!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  <script>
+  // 是否开启刷新记忆tab功能
+  // var is_remember = false;
+  </script>
+  <style type="text/css">
     .layui-col-xs4 {
-        padding: 20px;
+      padding: 20px;
     }
 
-    .layui-col-xs4>span {
-        color: #1E9FFF;
+    .layui-col-xs4 > span {
+      color: #1E9FFF;
     }
-    </style>
+  </style>
 </head>
 
 <body>
+<div class="layui-fluid">
+  <div class="layui-row" id="info">
+
+  </div>
+</div>
+<script id="preview" type="text/html">
+<div class="layui-card">
+  <div class="layui-card-header">产品信息</div>
+  <div class="layui-card-body">
     <div class="layui-fluid">
-        <div class="layui-row" id="info">
-            
+      <div class="layui-row">
+        <div class="layui-col-xs4">
+          网点名称: <span>{{d.detail.productName}}</span>
+          {{# if(d.check.productName){ }}
+          <div><span class="x-red">待审：</span>{{d.check.productName}}</div>
+          {{# } }}
         </div>
+        <div class="layui-col-xs4">
+          详细地址： <span>{{d.detail.detailAddress}}</span>
+          {{# if(d.check.detailAddress){ }}
+          <div><span class="x-red">待审：</span>{{d.check.detailAddress}}</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          归属供应商： <span>{{d.detail.supplierName}}</span>
+          {{# if(d.check.supplierName){ }}
+          <div><span class="x-red">待审：</span>{{d.check.supplierName}}</div>
+          {{# } }}
+        </div>
+      </div>
+      <div class="layui-row">
+        <div class="layui-col-xs4">
+          供应商类型： <span>{{d.detail.supplierTypeDesc}}</span>
+          {{# if(d.check.supplierTypeDesc){ }}
+          <div><span class="x-red">待审：</span>{{d.check.supplierTypeDesc}}</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          联系人： <span>{{d.detail.contractName || d.detail.contractPhone ? (d.detail.contractName + '('+d.detail.contractPhone+')'): '- -'}}</span>
+          {{# if(d.check.contractName || d.check.contractPhone){ }}
+          <div><span class="x-red">待审：</span>{{d.check.contractName||
+            d.detail.contractName}}({{d.check.contractPhone||d.detail.contractPhone}})
+          </div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          状态： <span>{{d.detail.statusDesc}}</span>
+          {{# if(d.check.statusDesc){ }}
+          <div><span class="x-red">待审：</span>{{d.check.statusDesc}}</div>
+          {{# } }}
+        </div>
+      </div>
+      <div class="layui-row">
+        <div class="layui-col-xs4">
+          备注： <span>{{d.detail.remark || '- -'}}</span>
+          {{# if(d.check.remark){ }}
+          <div><span class="x-red">待审：</span>{{d.check.remark}}</div>
+          {{# } }}
+        </div>
+      </div>
     </div>
-    <script id="preview" type="text/html">
-        <div class="layui-card">
-            <div class="layui-card-header">产品信息</div>
-            <div class="layui-card-body">
-                <div class="layui-fluid">
-                    <div class="layui-row">
-                        <div class="layui-col-xs4">
-                            网点名称:  <span>{{d.detail.productName}}</span>
-                            {{# if(d.check.productName){ }}
-                            <div><span class="x-red">待审：</span>{{d.check.productName}}</div>
-                            {{# } }}
-                        </div>
-                        <div class="layui-col-xs4">
-                            详细地址： <span>{{d.detail.detailAddress}}</span>
-                            {{# if(d.check.detailAddress){ }}
-                            <div><span class="x-red">待审：</span>{{d.check.detailAddress}}</div>
-                            {{# } }}
-                        </div>
-                        <div class="layui-col-xs4">
-                            归属供应商： <span>{{d.detail.supplierName}}</span>
-                            {{# if(d.check.supplierName){ }}
-                            <div><span class="x-red">待审：</span>{{d.check.supplierName}}</div>
-                            {{# } }}
-                        </div>
-                    </div>
-                    <div class="layui-row">
-                        <div class="layui-col-xs4">
-                            供应商类型： <span>{{d.detail.supplierTypeDesc}}</span>
-                            {{# if(d.check.supplierTypeDesc){ }}
-                            <div><span class="x-red">待审：</span>{{d.check.supplierTypeDesc}}</div>
-                            {{# } }}
-                        </div>
-                        <div class="layui-col-xs4">
-                            联系人： <span>{{d.detail.contractName || d.detail.contractPhone ? (d.detail.contractName + '('+d.detail.contractPhone+')'): '- -'}}</span>
-                            {{# if(d.check.contractName || d.check.contractPhone){ }}
-                            <div><span class="x-red">待审：</span>{{d.check.contractName|| d.detail.contractName}}({{d.check.contractPhone||d.detail.contractPhone}}) </div>
-                            {{# } }}
-                        </div>
-                        <div class="layui-col-xs4">
-                            状态： <span>{{d.detail.statusDesc}}</span>
-                            {{# if(d.check.statusDesc){ }}
-                            <div><span class="x-red">待审：</span>{{d.check.statusDesc}} </div>
-                            {{# } }}
-                        </div>
-                    </div>
-                    <div class="layui-row">
-                        <div class="layui-col-xs4">
-                            备注： <span>{{d.detail.remark || '- -'}}</span>
-                            {{# if(d.check.remark){ }}
-                            <div><span class="x-red">待审：</span>{{d.check.remark}} </div>
-                            {{# } }}
-                        </div>
-                    </div>
-                </div>
-            </div>
+  </div>
+</div>
+<div class="layui-card">
+  <div class="layui-card-header">价格信息</div>
+  {{# if(d.detail.supplierType == "oilSupply"){ }}
+  <div class="layui-card-body">
+    <div class="layui-fluid">
+      <div class="layui-row">
+        <div class="layui-col-xs4">
+          单价: <span>{{d.detail.unitPrice}}{{d.detail.supplierType == "unloadCar"?'元/次':'元/升'}}</span>
+          {{# if(d.check.unitPrice){ }}
+          <div><span class="x-red">待审:  </span>{{d.check.unitPrice}}{{d.detail.supplierType == "unloadCar"?'元/次':'元/升'}}
+          </div>
+          {{# } }}
         </div>
-        <div class="layui-card">
-            <div class="layui-card-header">价格信息</div>
-            {{# if(d.detail.supplierType != "tempLicenseSupply"){ }}
-            <div class="layui-card-body">
-                <div class="layui-fluid">
-                    <div class="layui-row">
-                        <div class="layui-col-xs4">
-                            单价:  <span>{{d.detail.unitPrice}}{{d.detail.supplierType == "unloadCar"?'元/次':'元/升'}}</span>
-                            {{# if(d.check.unitPrice){ }}
-                            <div><span class="x-red">待审:  </span>{{d.check.unitPrice}}{{d.detail.supplierType == "unloadCar"?'元/次':'元/升'}}</div>
-                            {{# } }}
-                        </div>
-                        <div class="layui-col-xs4">
-                            生效时间:  <span>{{d.detail.effectiveTime}}</span>
-                            {{# if(d.check.effectiveTime){ }}
-                            <div><span class="x-red">待审:  </span>{{d.check.effectiveTime}}</div>
-                            {{# } }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {{# } else { }}
-            <div class="layui-card-body">
-                <div class="layui-fluid">
-                    <div class="layui-row">
-                        <div class="layui-col-xs4">
-                            临牌：<span>{{d.detail.tempLicensePrice}}元</span>
-                            {{# if(d.check.tempLicensePrice){ }}
-                            <div><span class="x-red">临牌：</span>{{d.check.tempLicensePrice}}元</div>
-                            {{# } }}
-                        </div>
-                        <div class="layui-col-xs4">
-                            三超：<span>{{d.detail.threeExceedingPrice}}元</span>
-                            {{# if(d.check.threeExceedingPrice){ }}
-                            <div><span class="x-red">三超：</span>{{d.check.threeExceedingPrice}}元</div>
-                            {{# } }}
-                        </div>
-                        <div class="layui-col-xs4">
-                            强险：<span>{{d.detail.compulsoryInsurancePrice}}元</span>
-                            {{# if(d.check.compulsoryInsurancePrice){ }}
-                            <div><span class="x-red">强险：</span>{{d.check.compulsoryInsurancePrice}}元</div>
-                            {{# } }}
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="layui-col-xs4">
+          生效时间: <span>{{d.detail.effectiveTime}}</span>
+          {{# if(d.check.effectiveTime){ }}
+          <div><span class="x-red">待审:  </span>{{d.check.effectiveTime}}</div>
+          {{# } }}
+        </div>
+      </div>
+    </div>
+  </div>
+  {{# } else if(d.detail.supplierType == 'tempLicenseSupply') { }}
+  <div class="layui-card-body">
+    <div class="layui-fluid">
+      <div class="layui-row">
+        <div class="layui-col-xs4">
+          临牌：<span>{{d.detail.tempLicensePrice}}元</span>
+          {{# if(d.check.tempLicensePrice){ }}
+          <div><span class="x-red">待审：</span>{{d.check.tempLicensePrice}}元</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          三超：<span>{{d.detail.threeExceedingPrice}}元</span>
+          {{# if(d.check.threeExceedingPrice){ }}
+          <div><span class="x-red">待审：</span>{{d.check.threeExceedingPrice}}元</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          强险：<span>{{d.detail.compulsoryInsurancePrice}}元</span>
+          {{# if(d.check.compulsoryInsurancePrice){ }}
+          <div><span class="x-red">待审：</span>{{d.check.compulsoryInsurancePrice}}元</div>
+          {{# } }}
+        </div>
+      </div>
+    </div>
+  </div>
+  {{# } else if(d.detail.supplierType == 'loadCar'||d.detail.supplierType == 'unloadCar') { }}
+  {{# layui.each(d.check.priceExtJson, function(index, item){ }}
+  <div class="layui-card-body">
+    <div class="layui-fluid">
+      {{# if(item.checkIsDeleted || item.checkIsNew){ }}
+      <div class="x-red">{{item.checkIsDeleted ? item.checkIsDeleted : item.checkIsNew}}</div>
+      {{# } }}
+      <div class="layui-row">
+        <div class="layui-col-xs4">
+          车型名称：<span>{{item.modelName.beforeValue}}</span>
+          {{# if(item.modelName.checkDiff){ }}
+          <div><span class="x-red">待审：</span>{{item.modelName.afterValue}}</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          车型代码：<span>{{item.modelCode.beforeValue}}</span>
+          {{# if(item.modelCode.checkDiff){ }}
+          <div><span class="x-red">待审：</span>{{item.modelCode.afterValue}}</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          驱动形式代码：<span>{{item.driveWayCode.beforeValue}}</span>
+          {{# if(item.driveWayCode.checkDiff){ }}
+          <div><span class="x-red">待审：</span>{{item.driveWayCode.afterValue}}</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          价格：<span>{{item.multiPrice.beforeValue}}元/次</span>
+          {{# if(item.multiPrice.checkDiff){ }}
+          <div><span class="x-red">待审：</span>{{item.multiPrice.afterValue}}元/次</div>
+          {{# } }}
+        </div>
+        <div class="layui-col-xs4">
+          生效时间：<span>{{item.effectiveStartTime.beforeValue}}</span>
+          {{# if(item.effectiveStartTime.checkDiff){ }}
+          <div><span class="x-red">待审：</span>{{item.effectiveStartTime.afterValue}}</div>
+          {{# } }}
+        </div>
+      </div>
+    </div>
+  </div>
+  {{# }) }}
+  {{# } else if(d.detail.supplierType == 'stopSupply') { }}
+    {{# layui.each(d.check.priceExtJson, function(index, item){ }}
+    <div class="layui-card-body">
+      <div class="layui-fluid">
+        {{# if(item.checkIsDeleted || item.checkIsNew){ }}
+        <div class="x-red">{{item.checkIsDeleted ? item.checkIsDeleted : item.checkIsNew}}</div>
+        {{# } }}
+        <div class="layui-row">
+          <div class="layui-col-xs4">
+            车型名称：<span>{{item.modelName.beforeValue}}</span>
+            {{# if(item.modelName.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.modelName.afterValue}}</div>
             {{# } }}
+          </div>
+          <div class="layui-col-xs4">
+            车型代码：<span>{{item.modelCode.beforeValue}}</span>
+            {{# if(item.modelCode.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.modelCode.afterValue}}</div>
+            {{# } }}
+          </div>
+          <div class="layui-col-xs4">
+            驱动形式代码：<span>{{item.driveWayCode.beforeValue}}</span>
+            {{# if(item.driveWayCode.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.driveWayCode.afterValue}}</div>
+            {{# } }}
+          </div>
+          <div class="layui-col-xs4">
+            单车价格：<span>{{item.singlePrice.beforeValue}}{{item.singlePriceUnit.beforeValue}}</span>
+            {{# if(item.singlePrice.checkDiff || item.singlePriceUnit.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.singlePrice.afterValue}}{{item.singlePriceUnit.afterValue}}</div>
+            {{# } }}
+          </div>
+          <div class="layui-col-xs4">
+            背车价格：<span>{{item.multiPrice.beforeValue}}{{item.multiPriceUnit.beforeValue}}</span>
+            {{# if(item.multiPrice.checkDiff || item.multiPriceUnit.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.multiPrice.afterValue}}{{item.multiPriceUnit.afterValue}}</div>
+            {{# } }}
+          </div>
+          <div class="layui-col-xs4">
+            生效时间：<span>{{item.effectiveStartTime.beforeValue}}</span>
+            {{# if(item.effectiveStartTime.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.effectiveStartTime.afterValue}}</div>
+            {{# }else{ }}
+            <div style="visibility: hidden;"><span class="x-red">待审</div>
+            {{# } }}
+          </div>
+          {{# if(item.singlePriceUnit.afterValue == "元/小时" || item.singleUpLimitPrice.checkDiff){ }}
+          <div class="layui-col-xs4">
+            单车单日上限：<span>{{item.singleUpLimitPrice.beforeValue}}元</span>
+            {{# if(item.singleUpLimitPrice.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.singleUpLimitPrice.afterValue}}元</div>
+            {{# } }}
+          </div>
+          {{# } }}
+          {{# if(item.multiPriceUnit.afterValue == "元/小时" || item.multiUpLimitPrice.checkDiff){ }}
+          <div class="layui-col-xs4">
+            背车单日上限：<span>{{item.multiUpLimitPrice.beforeValue}}元</span>
+            {{# if(item.multiUpLimitPrice.checkDiff){ }}
+            <div><span class="x-red">待审：</span>{{item.multiUpLimitPrice.afterValue}}元</div>
+            {{# } }}
+          </div>
+          {{# } }}
         </div>
-        <div class="layui-card">
-            <div class="layui-card-header">审核</div>
-            <div class="layui-card-body">
-                <form class="layui-form" lay-filter="check">
-                    <div class="layui-form-item">
-                        <label for="checkResult" class="layui-form-label">
-                            <span class="x-red">*</span>审核结果
-                        </label>
-                        <div class="layui-input-block">
-                            <input type="radio" name="checkResult" value="pass" title="通过" checked>
-                            <input type="radio" name="checkResult" value="reject" title="驳回">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">审核备注</label>
-                        <div class="layui-input-block">
-                            <textarea name="checkRemark" placeholder="请输入审核备注" lay-verify="checkRemark" class="layui-textarea"></textarea>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <div class="layui-input-block" style="text-align:center;">
-                            <button class="layui-btn layui-btn-lg" lay-filter="check" lay-submit>确认</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+      </div>
+    </div>
+    {{# }) }}
+  {{# } }}
+</div>
+<div class="layui-card">
+  <div class="layui-card-header">审核</div>
+  <div class="layui-card-body">
+    <form class="layui-form" lay-filter="check">
+      <div class="layui-form-item">
+        <label for="checkResult" class="layui-form-label">
+          <span class="x-red">*</span>审核结果
+        </label>
+        <div class="layui-input-block">
+          <input type="radio" name="checkResult" value="pass" title="通过" checked>
+          <input type="radio" name="checkResult" value="reject" title="驳回">
         </div>
-    </script>
-    <script type="text/javascript">
-    layui.use(['form', 'layer', 'element', 'laytpl'], function(form, layer, element, laytpl) {
-        var xadmin = layui.xadmin,
-            edipao = layui.edipao,
-            SupplierTypeConfig = {},
-            detail = {},
-            check = {},
-            StatusDescConfig = {"1":"有效","2":"失效"};
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">审核备注</label>
+        <div class="layui-input-block">
+          <textarea name="checkRemark" placeholder="请输入审核备注" lay-verify="checkRemark" class="layui-textarea"></textarea>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-input-block" style="text-align:center;">
+          <button class="layui-btn layui-btn-lg" lay-filter="check" lay-submit>确认</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+</script>
+<script type="text/javascript">
+layui.use(['form', 'layer', 'element', 'laytpl'], function (form, layer, element, laytpl) {
+  var xadmin = layui.xadmin,
+      edipao = layui.edipao,
+      SupplierTypeConfig = {},
+      detail = {},
+      check = {},
+      StatusDescConfig = { "1": "有效", "2": "失效" };
 
-        var params = edipao.urlGet();
+  var params = edipao.urlGet();
 
-        edipao.request({
-            type: 'get',
-            url: '/admin/product/detail',
-            data: {
-                productNo: params.id
-            }
-        }).then(function(res) {
-            if (res.code == 0) {
-                detail = res.data;
-                if (detail.needApproval) {
-                    waitCheck();
-                } else {
-                    render()
-                }
-            }
+  edipao.request({
+    type: 'get',
+    url: '/admin/product/detail',
+    data: {
+      productNo: params.id
+    }
+  }).then(function (res) {
+    if (res.code == 0) {
+      if(res.data.priceExtJson){
+        res.data.priceExtJson = JSON.parse(res.data.priceExtJson)
+        res.data.priceExtJson.forEach(item => {
+          item.effectiveStartTime = item.effectiveStartTime.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6")
+          // 背车单位
+          if (item.multiPriceUnit == '0') {
+            item.multiPriceUnit = '元/自然日'
+          } else if(item.multiPriceUnit =='1'){
+            item.multiPriceUnit ='元/小时'
+          } else if(item.multiPriceUnit =='3'){
+            item.multiPriceUnit ='元/辆车'
+          }
+          // 单车价格单位
+          if (item.singlePriceUnit =='0') {
+            item.singlePriceUnit ='元/自然日'
+          } else if(item.singlePriceUnit =='1'){
+            item.singlePriceUnit ='元/小时'
+          } else if(item.singlePriceUnit =='3'){
+            item.singlePriceUnit ='元/辆车'
+          }
         })
+      }
+      detail = res.data;
+      if (detail.needApproval) {
+        waitCheck();
+      } else {
+        render()
+      }
+    }
+  })
 
-        function waitCheck(detail) {
-            edipao.request({
-                type: 'GET',
-                url: "/admin/log/last-modify/get",
-                data: {
-                    operationModule: 2,
-                    dataPk: params.id
-                }
-            }).then(function(res) {
-                if (res.code == 0) {
-                    if (res.data) {
-                        var editData = JSON.parse(res.data.modifyAfterJson)
-                        check = editData.newMap
-                        layui.each(check,function(key, value) {
-                            if(key == 'status'){
-                                check.statusDesc = StatusDescConfig[check.status]
-                            }
-                            check[key] = value || '- -'
-                        });
-                    }
-                    render()
-                }
-            })
+  function waitCheck () {
+    edipao.request({
+      type: 'GET',
+      url: "/admin/log/last-modify/get",
+      data: {
+        operationModule: 2,
+        dataPk: params.id
+      }
+    }).then(function (res) {
+      if (res.code == 0) {
+        if(detail.supplierType == 'stopSupply' || detail.supplierType == "loadCar" || detail.supplierType == "unloadCar"){
+          res.data = res.data || {modifyAfterJson: JSON.stringify({newMap: {}})};
         }
-
-        function render() {
-            laytpl(preview.innerHTML).render({ detail: detail, check: check }, function(html) {
-                document.getElementById('info').innerHTML = html;
-                form.render()
-            })
-        }
-
-        //自定义验证规则
-        form.verify({
-            checkRemark: function(value){
-                var result = $("input[name=checkResult]:checked").val();
-                if(result == 'reject' && value == ''){
-                    return '审核结果为驳回时，审核备注必填';
-                }
-                if(value.length > 300){
-                    return '审核备注不能超过300个字符'
-                }
+        if (res.data) {
+          var editData = JSON.parse(res.data.modifyAfterJson)
+          check = editData.newMap
+          layui.each(check, function (key, value) {
+            if (key == 'status') {
+              check.statusDesc = StatusDescConfig[check.status]
             }
-        });
-
-        form.on('submit(check)', function(data) {
-            data.field.productNo = params.id;
-            edipao.request({
-                url: '/admin/product/approval/result/save',
-                data: data.field,
-            }).done(function(res) {
-                if (res.code == 0) {
-                    var str = data.field.checkResult == 'pass' ? '后服产品已审核通过' : '后服产品已被驳回'
-                    layer.alert(str, { icon: 6 ,
-                        end: function(){
-                            xadmin.close();
-                            xadmin.father_reload();
-                        }
-                    });
-                } else {
-                    layer.msg(res.message)
-                }
-            })
-            return false;
-        });
-
-
-
+            check[key] = value || '- -'
+          });
+          if(detail.supplierType == 'stopSupply') check.priceExtJson = getStopCheckData(check.priceExtJson, detail.priceExtJson);
+          if(detail.supplierType == "loadCar" || detail.supplierType == "unloadCar") check.priceExtJson = getStopCheckData(check.priceExtJson, detail.priceExtJson);
+        }
+        render()
+      }
     })
-    </script>
+  }
+
+  function render () {
+    laytpl(preview.innerHTML).render({ detail: detail, check: check }, function (html) {
+      document.getElementById('info').innerHTML = html;
+      form.render()
+    })
+  }
+
+  //自定义验证规则
+  form.verify({
+    checkRemark: function (value) {
+      var result = $("input[name=checkResult]:checked").val();
+      if (result == 'reject' && value == '') {
+        return '审核结果为驳回时，审核备注必填';
+      }
+      if (value.length > 300) {
+        return '审核备注不能超过300个字符'
+      }
+    }
+  });
+
+  form.on('submit(check)', function (data) {
+    data.field.productNo = params.id;
+    edipao.request({
+      url: '/admin/product/approval/result/save',
+      data: data.field,
+    }).done(function (res) {
+      if (res.code == 0) {
+        var str = data.field.checkResult == 'pass' ? '后服产品已审核通过' : '后服产品已被驳回'
+        layer.alert(str, {
+          icon: 6,
+          end: function () {
+            xadmin.close();
+            xadmin.father_reload();
+          }
+        });
+      } else {
+        layer.msg(res.message)
+      }
+    })
+    return false;
+  });
+})
+function getStopCheckData(after, before){
+  var res = [], nameList = [], afterNameList = [];
+
+  if(!after){
+    before.forEach(function(beforeItem){
+      var obj = {};
+      Object.keys(beforeItem).forEach(function(key){
+        var beforeValue = beforeItem[key];
+        obj[key] = {
+          beforeValue: beforeValue,
+          afterValue: beforeValue,
+        }
+      });
+      res.push(obj);
+    });
+    return res;
+  }
+  before.forEach(function(beforeItem){
+    nameList.push(beforeItem.modelName);
+  });
+  try{
+    after = JSON.parse(after);
+  }catch(e){after = []};
+  after = after.map(function(afterItem){
+    afterItem.effectiveStartTime = afterItem.effectiveStartTime.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/, "$1-$2-$3 $4:$5:$6")
+    if (afterItem.multiPriceUnit == '0') {
+      afterItem.multiPriceUnit = '元/自然日'
+    } else if(afterItem.multiPriceUnit =='1'){
+      afterItem.multiPriceUnit ='元/小时'
+    } else if(afterItem.multiPriceUnit =='3'){
+      afterItem.multiPriceUnit ='元/辆车'
+    }
+    // 单车价格单位
+    if (afterItem.singlePriceUnit =='0') {
+      afterItem.singlePriceUnit ='元/自然日'
+    } else if(afterItem.singlePriceUnit =='1'){
+      afterItem.singlePriceUnit ='元/小时'
+    } else if(afterItem.singlePriceUnit =='3'){
+      afterItem.singlePriceUnit ='元/辆车'
+    }
+    afterNameList.push(afterItem.modelName);
+    return afterItem;
+  });
+  after.forEach(function(afterItem){
+    var beforeItem, obj = {};
+    if(nameList.indexOf(afterItem.modelName) < 0){
+      obj.checkIsNew = "待审：新增";
+      Object.keys(afterItem).forEach(function(key){
+        var afterValue = afterItem[key];
+        if(key != "checkIsNew" && key != "checkIsDeleted"){
+          obj[key] = {
+            beforeValue: afterValue,
+            afterValue: afterValue,
+          }
+        }else{
+          obj[key] = afterValue;
+        }
+      });
+    }else{
+      beforeItem = getBeforeByName(afterItem.modelName);
+      Object.keys(beforeItem).forEach(function(key){
+        var beforeValue = beforeItem[key];
+        var afterValue = afterItem[key];
+        if(beforeValue == afterValue){
+          if(key != "checkIsNew" && key != "checkIsDeleted"){
+            obj[key] = {
+              beforeValue: beforeValue,
+              afterValue: afterValue,
+            }
+          }else{
+            obj[key] = beforeValue;
+          }
+        }else{
+          obj[key] = {
+            checkDiff: true,
+            beforeValue: beforeValue,
+            afterValue: afterValue,
+          }
+        }
+      });
+    }
+    res.push(obj);
+  });
+  before.forEach(function(beforeItem){
+    var obj = {};
+    if(afterNameList.indexOf(beforeItem.modelName) < 0){
+      beforeItem.checkIsDeleted = "待审：删除";
+      Object.keys(beforeItem).forEach(function(key){
+        var beforeValue = beforeItem[key];
+        if(key != "checkIsNew" && key != "checkIsDeleted"){
+          obj[key] = {
+            beforeValue: beforeValue,
+            afterValue: beforeValue,
+          }
+        }else{
+          obj[key] = beforeValue;
+        }
+      });
+      res.push(obj);
+    }
+  });
+  return res;
+  function getBeforeByName(name){
+    var res;
+    before.some(function(beforeItem){
+      if(beforeItem.modelName == name){
+        res = beforeItem;
+        return true;
+      }
+    });
+    return res;
+  }
+}
+</script>
 </body>
 
 </html>

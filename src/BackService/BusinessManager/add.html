@@ -143,7 +143,6 @@
             type: 'get',
             url:'/admin/supplier/getSupplierType'
         }).then(function(res){
-            console.log(res)
             if(res.code == 0){
                 laytpl(selectDom.innerHTML).render({list: res.data},function(html){
                     document.getElementById('supplierType').innerHTML = html;
@@ -156,7 +155,7 @@
             supplierName: function(value){
               if (value.length > 50) {
                     return '供应商名称不能超出50个字符';
-                }  
+                }
             },
             loginPhone: function(value) {
                 if (!/^1\d{10}$/.test(value)) {
@@ -181,7 +180,6 @@
         });
 
         form.on('submit(add)', function(data) {
-            console.log(data)
             edipao.request({
                 url: '/admin/supplier/add',
                 data: data.field,

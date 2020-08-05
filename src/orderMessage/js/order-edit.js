@@ -69,6 +69,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     this.endParkTimer = null;
     this.mapAddress = {};
     this.gettingFee = false;
+    this.loadCarNetworkList = [];
   }
   Edit.prototype.getOrderJson = function(){
     return $.ajax({
@@ -79,7 +80,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.init = function(){
     var _this = this;
     _this.loadingIndex = layer.load(1);
-    $.when(this.getOrder(), this.getStaffList()).done(function (res1) {
+    $.when(this.getOrder(), this.getStaffList(), this.getLoadCarNetwork()).done(function (res1) {
       res = res1[0];
       if(res.code == "0"){
         _this.orderDataBackUp = JSON.parse(JSON.stringify(res.data));
@@ -108,7 +109,7 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
   Edit.prototype.setConfigData = function(cb, options){
     var _this = this;
     if(!_this.selectData){
-      $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList()).done(function (res1, res2, res3, res4, res5) {
+      $.when(getCustomerList(), getEndAddressList(), getStartParkList(), getStartWarehouseList()).done(function (res1, res2, res3, res4) {
         res3[0].data = res3[0].data || [];
         $('.' + options.filter).find('.customerList').html(returnOptions(res1[0].data));
         // if(options.flag&&options.city&&options.province) $(options.selector).removeAttr("disabled").append(returnOptions2(res2[0].data));
@@ -294,6 +295,22 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       _this.driverList = res.data.driverInfoListDtoList;
     });
   }
+  Edit.prototype.getLoadCarNetwork = function () {
+    var _this = this;
+    return edipao.request({
+      url: "/admin/dictionary/getLoadCarNetworkList",
+      method: "GET",
+      data: {
+        loginStaffId: _this.user.staffId,
+        pageNo: 1,
+        pageSize: 9999
+      }
+    }).done(function (res) {
+      if(res.code == "0"){
+        _this.loadCarNetworkList = res.data;
+      }
+    });
+  }
   Edit.prototype.getStaffList = function(){
     var _this = this;
     return edipao.request({
@@ -327,11 +344,12 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       data.totalIncome = "****";
       data.totalManageFee = "****";
     }
-
+    data.loadCarNetworkList = _this.loadCarNetworkList || [];
     laytpl($("#base_info_tpl").html()).render(data, function(html){
       $("#base_info").html(html);
       form.val("base_info_form", {
-        transportMode: data.transportMode || "国道"
+        transportMode: data.transportMode || "国道",
+        loadCarNetwork: data.loadCarNetwork || "",
       });
       form.render("select");
     });
@@ -1109,102 +1127,33 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     });
   }
   Edit.prototype.handleDeleteCar = function (e) {
-    var _this = this;
+    var _this = this, carFormListIndex;
     var filter = e.target.dataset.filter;
     if(_this.carFormList.length <= 1){
       layer.alert("不能删除唯一车辆信息", {icon: 2})
       return;
     }
-    var carFormListIndex, id;
-    var carData = form.val(filter);
-    _this.cars.forEach(function (item) {
-      if(item.filter == filter) id = item.id;
-    });
-    if(carData.id){
-      id = carData.id;
-      var carDataBackup = {};
-      _this.orderDataBackUp.truckDTOList.some(function (item) {
-        if(item.id == id){
-          carDataBackup = item;
-          return true;
-        }
-      });
-      if(carData.income){
-        if(_this.dataPermission.canViewOrderCost == "Y"){
-          _this.orderData.totalIncome = "****";
-        }else{
-          _this.orderDataBackUp.totalIncome = _this.orderDataBackUp.totalIncome * 1 - carDataBackup.income * 1;
-        }
-      }
-      if(carData.manageFee){
-        if(_this.dataPermission.canViewOrderCost == "Y"){
-          _this.orderData.totalManageFee = "****";
-        }else{
-          _this.orderDataBackUp.totalManageFee = _this.orderDataBackUp.totalManageFee * 1 - carDataBackup.manageFee * 1;
-        }
-      }
-      laytpl($("#income_info_tpl").html()).render(_this.orderData, function(html){
-        $("#income_info").html(html);
+    if(_this.carFormList.length == 2){
+      var baseInfoData = form.val("base_info_form");
+      var baseInfoTpl = $("#base_info_tpl").html();
+      baseInfoData.orderType = 1;
+      baseInfoData.loadCarNetworkList = _this.loadCarNetworkList;
+      laytpl(baseInfoTpl).render(Object.assign({}, _this.orderDataBackUp, baseInfoData), function(html){
+        $("#base_info").html(html);
+        form.val("base_info_form", baseInfoData);
+        form.render("select");
       });
     }
     _this.carFormList.forEach(function (item, index) {
       if(item.filter == filter) carFormListIndex = index;
     });
+    _this.carFormList.splice(carFormListIndex, 1);
+    _this.tempLicenseBackImage = _this.tempLicenseBackImage.filter(function (item) {
+      return item.filter != filter;
+    });
     $("." + filter).remove();
+    _this.setIncomeAndManageFee();
     _this.setDriverMileage();
-    if(id != undefined){
-      if(_this.carFormList.length == 1){
-        layer.alert("订单中已没有车辆，订单将会被取消", { icon: 6 }, function() {
-          edipao.request({
-            url: "/admin/order/cancelOrder",
-            method: "post",
-            data: {loginStaffId: _this.user.staffId, id: _this.orderId}
-          }).done(function(res){
-            _this.carFormList.splice(carFormListIndex, 1);
-            _this.tempLicenseBackImage = _this.tempLicenseBackImage.filter(function (item) {
-              return item.filter != filter;
-            });
-            if(res.code == 0){
-                layer.msg("订单已取消");
-                xadmin.father_reload();
-                xadmin.close();
-            }
-          });
-        });
-      }else{
-        _this.carFormList.splice(carFormListIndex, 1);
-        _this.tempLicenseBackImage = _this.tempLicenseBackImage.filter(function (item) {
-          return item.filter != filter;
-        });
-      }
-      return;
-    }else{
-      if(_this.carFormList.length == 1){
-        layer.alert("订单中已没有车辆，订单将会被取消", { icon: 6 }, function() {
-          edipao.request({
-            url: "/admin/order/cancelOrder",
-            method: "post",
-            data: {loginStaffId: _this.user.staffId, id: _this.orderId}
-          }).done(function(res){
-            _this.carFormList.splice(carFormListIndex, 1);
-            _this.tempLicenseBackImage = _this.tempLicenseBackImage.filter(function (item) {
-              return item.filter != filter;
-            });
-            if(res.code == 0){
-              $("." + filter).remove();
-              layer.msg("订单已取消");
-              xadmin.father_reload();
-              xadmin.close();
-            }
-          });
-        });
-      }else{
-        _this.carFormList.splice(carFormListIndex, 1);
-        _this.tempLicenseBackImage = _this.tempLicenseBackImage.filter(function (item) {
-          return item.filter != filter;
-        });
-      }
-    }
   }
   Edit.prototype.preSubmit = function () {
     if(this.gettingFee){
@@ -1336,9 +1285,8 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     }
 
     var baseInfoData = form.val("base_info_form");
-
     data.id = _this.orderId;
-    data.transportMode = baseInfoData.transportMode || "国道";
+    
     data.loginStaffId = _this.user.staffId || "";
     data.orderNo = _this.orderNo || "";
     data.orderType = carsLength > 1 ? 2 : 1;
@@ -1400,6 +1348,10 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
 			data.tailPayBillType = feeFormData.tailPayBillType;
 			data.tailPayBillDate = feeFormData.tailPayBillDate;
     }
+
+    data.transportMode = baseInfoData.transportMode || "国道";
+    if(data.orderType == 2) data.loadCarNetwork = baseInfoData.loadCarNetwork;
+
     if(!_this.feeId){
       data.oil = _this.orderDataBackUp.oil;
       data.amount = _this.orderDataBackUp.amount;
@@ -1499,6 +1451,13 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
     //校验必传参数
     var orderType = data.orderType;
     var flag = true;
+    if(orderType == 2){
+      if(!data.loadCarNetwork){
+        layer.msg("请选择背车网点", {icon: 2});
+        flag = false;
+        return;
+      }
+    }
     data.truckUpdateReqList.some(function (item) {
       
       if(!item.endPark){
@@ -1672,16 +1631,36 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       total += item.value * 1;
     });
     $("." + filter).find(".car_manageFee").val((e.target.value * 1 * .058).toFixed(2));
-    _this.handleManageFeeInput({target:{dataset: {filter: filter}}});
+    _this.handleManageFeeInput();
     $("#totalIncome").text(total + "元");
   }
   Edit.prototype.handleManageFeeInput = function (e) {
-    var filter = e.target.dataset.filter, _this = this;
     var total = 0;
     $(".car_manageFee").each(function (index, item) {
       total += item.value * 1;
     });
     $("#totalManageFee").text((total * 1).toFixed(2) + "元");
+  }
+  Edit.prototype.setIncomeAndManageFee = function () {
+    var totalManageFee = 0, totalIncome = 0, _this = this;
+    $(".car_manageFee").each(function (index, item) {
+      totalManageFee += item.value * 1;
+    });
+    if(_this.dataPermission.canViewOrderCost == "Y"){
+      $("#totalManageFee").text((totalManageFee * 1).toFixed(2) + "元");
+    }else{
+      $("#totalManageFee").text("****");
+    }
+    $(".car_income").each(function (index, item) {
+      totalIncome += item.value * 1;
+    });
+    if(_this.dataPermission.canViewOrderCost == "Y"){
+      $("#totalIncome").text(totalIncome + "元");
+    }else{
+      $("#totalIncome").text("****");
+    }
+    _this.orderDataBackUp.totalIncome = totalIncome;
+    _this.orderDataBackUp.totalManageFee = totalManageFee;
   }
   Edit.prototype.setStartSelectCity = function(data){
     var province = $(".startProvince"),
@@ -2271,6 +2250,15 @@ layui.use(['form', 'layer', 'laytpl', 'table', 'laydate', 'upload'], function ()
       _this.handleInputVinCode(e);
     });
     $("#add_car").unbind().on("click", function(e){
+      var baseInfoData = form.val("base_info_form");
+      var baseInfoTpl = $("#base_info_tpl").html();
+      baseInfoData.orderType = 2;
+      baseInfoData.loadCarNetworkList = _this.loadCarNetworkList;
+      laytpl(baseInfoTpl).render(Object.assign({}, _this.orderDataBackUp, baseInfoData), function(html){
+        $("#base_info").html(html);
+        form.val("base_info_form", baseInfoData);
+        form.render("select");
+      });
       var carFormHtml = $("#car_info_tpl").html();
       var filterStr = "form_car_" + _this.carFormListBackUp.length;
       _this.carFormList.push({
