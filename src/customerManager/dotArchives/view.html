@@ -375,6 +375,20 @@
 					{{# } }}
 				</div>
 			</div>
+			<div class="layui-card-body layui-row layui-col-space10">
+				<div class="layui-col-md4">
+					<div class="layui-row">
+						<span class="layui-form-span form_span">归属线路：</span>
+						<span class="blue">{{d.detail.route}}</span>
+					</div>
+					{{# if(d.check.route){ }}
+					<div class="layui-row">
+						<span class="layui-form-span form_span red">待审：</span>
+						<span>{{d.check.route}}</span>
+					</div>
+					{{# } }}
+				</div>
+			</div>
 		</div>
 		<div id="fee_container" class="layui-card layui-form">
 			<div class="layui-card-header">费用结构</div>

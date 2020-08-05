@@ -66,6 +66,7 @@ layui
       this.tableKey = "order-compose-list-table";
       this.logKey = 26;
       this.dataKey = "grabCombinationOrderList";
+      this.url = "/admin/grab/combination-order/list";
     }
     List.prototype.init = function () {
       var _this = this;
@@ -234,7 +235,8 @@ layui
             xadmin.open("添加订单", "./orderAdd.html?action=add&combinationOrderNo=" + data.combinationOrderNo + "&combinationOrderName=" + data.combinationOrderName);
             break;
           case "discompose_order":
-            layer.confirm("确定打散该订单组合吗？", { icon: 3, title: "提示" }, function (index) {
+            layer.confirm("确认打散该订单组合？</br>打散后订单将以独立的个体出现在抢单大厅。", { icon: 3, title: "提示" }, function (index) {
+              var loadIndex = layer.load(1);
               edipao.request({
                 url: "/admin/grab/combination-order/breakup",
                 type: "POST",
@@ -248,7 +250,7 @@ layui
                 } else {
                   layer.msg(res.message);
                 }
-              });
+              }).always(function () { layer.close(loadIndex); });
             });
             break;
           case "export":
@@ -282,21 +284,22 @@ layui
         content: $("#one_add_tpl").html(),
         btn: ["确认", "取消"],
         yes: function(){
-            edipao.request({
-                url: "/admin/order/cancelOrder",
-                data: {
-                    loginStaffId: user.staffId,
-                    id: data.id
-                }
-            }).done(function (res) {
-                if(res.code == "0"){
-                    layer.msg("创建成功");
-                    layer.close(index);
-                    mainTable.reload( { where: where, page: { curr: 1 }});
-                }else{
-                    layer.msg(res.message, {icon: 5,anim: 6});
-                }
-            });
+          var loadIndex = layer.load(1);
+          edipao.request({
+              url: "",
+              data: {
+                  loginStaffId: user.staffId,
+                  id: data.id
+              }
+          }).done(function (res) {
+              if(res.code == "0"){
+                  layer.msg("创建成功");
+                  layer.close(index);
+                  mainTable.reload( { where: where, page: { curr: 1 }});
+              }else{
+                  layer.msg(res.message, {icon: 5,anim: 6});
+              }
+          }).always(function () { layer.close(loadIndex); });
         },
         success: function () {
           form.render("checkbox");
@@ -409,7 +412,7 @@ layui
                 case "combinationWay":
                   var res = "- -";
                   combinationWayData.some(function (item) {
-                    if(item.key == v[value]){
+                    if(item.key == v[item]){
                       res = item.value;
                       return true;
                     }

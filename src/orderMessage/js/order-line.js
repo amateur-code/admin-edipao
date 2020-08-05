@@ -186,11 +186,11 @@ layui.use(['jquery','layer'], function () {
                         }else if(report.type == 2){
                             text= '限行：'+report.startTime+' - '+report.endTime;
                         }else if(report.type == 3){
-                            text= '收费：'+ report.price + '元';
+                            text= '收费：'+ (report.price * 1).toFixed(2) + '元';
                         }else if(report.type == 4){
-                            text= '拆车：'+report.price+ '元';
+                            text= '拆车：'+(report.price * 1).toFixed(2)+ '元';
                         }else if(report.type == 5){
-                            text= '加油站：'+report.price+ '元';
+                            text= '加油站：'+(report.price * 1).toFixed(2)+ '元';
                         }
                         _t.layer.add(marker);
                         (function(marker, text, report, point){

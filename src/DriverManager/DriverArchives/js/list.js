@@ -8,6 +8,11 @@ var depositStatusData = {
     '0':'未支付',
     '1':'已支付'
 };
+var signStatusData = [
+    {key: 1, value: "已签到"},
+    {key: 2, value: "未签到"},
+    {key: 3, value: "不满足条件"},
+]
 // 预警状态
 var warnData = {
     'idLicenceWarn':'身份证',
@@ -276,6 +281,13 @@ layui.config({
                 return  val || '- -'
             }
         },
+        {
+            field: 'signStatus', title: '签到状态',width: 150,
+            templet: function (data) {
+                var val = data.signStatus;
+                return  val || '- -'
+            }
+        },
        /* {
             field: 'approvalFlag', title: '审核状态',
             templet: function (data) {
@@ -452,6 +464,7 @@ layui.config({
             { field: 'accountCity', type: 'input' },
             { field: 'accountBankAddress', type: 'input' },
             { field: 'status', type: 'radio',data:driverStatusFilter },
+            { field: 'signStatus', type: 'checkbox',data:signStatusData },
             { field: 'approvalFlag', type: 'radio',data:approvalFlagFilter },
         ]
 
@@ -482,6 +495,9 @@ layui.config({
                         value = value.split(" 至 ");
                         where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
                         where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+                    }else if(key=='signStatus'){
+                        where['searchFieldDTOList['+ index +'].fieldName'] = key;
+                        where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
                     }else if(key=='wishJourney'||key=='oftenJourney'){
                         // 意向线路、常跑线路
                         where['searchFieldDTOList['+ index +'].fieldName'] = key;

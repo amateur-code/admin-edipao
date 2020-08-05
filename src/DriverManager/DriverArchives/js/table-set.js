@@ -26,7 +26,8 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
         { field: 'accountBank', title: '开户银行' },
         { field: 'accountCity', title: '开户省市' },
         { field: 'accountBankAddress', title: '开户支行' },
-        { field: 'status', title: '司机状态' }
+        { field: 'status', title: '司机状态' },
+        { field: 'signStatus', title: '签到状态' },
         // { field: 'approvalFlag', title: '审核状态' }
     ];
     laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){

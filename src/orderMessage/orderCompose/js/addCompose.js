@@ -192,6 +192,7 @@ layui
           orderNoList.push(item.orderNo);
         }
       });
+      var loadIndex = layer.load(1, {time: 10000});
       edipao.request({
         url: "/admin/grab/combination-order/add",
         data: {
@@ -204,7 +205,7 @@ layui
             xadmin.father_reload();
           });
         }
-      });
+      }).always(function () { layer.close(loadIndex); });
     }
     List.prototype.bindEvents = function () {
       $(".href_order_no").unbind().on("click", function (e) {

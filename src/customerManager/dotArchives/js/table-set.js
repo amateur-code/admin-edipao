@@ -13,6 +13,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
     { field: 'feeJson', title: '费用模板'},
     { field: 'grabOrderHot', title: '抢单热度'},
     { field: 'transportOrderNum', title: '发运趟数'},
+    { field: 'route', title: '归属线路'},
     { field: 'status', title: '状态'},
   ];
   var tableHeaderList = dotTableHeaderList;
