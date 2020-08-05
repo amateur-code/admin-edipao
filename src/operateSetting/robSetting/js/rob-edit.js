@@ -106,6 +106,24 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
       xadmin.close();
       return false;
     });
+    form.on("checkbox(driver_single_limit)", function (data) {
+      if(data.elem.checked){
+        $("#driver_single_compose_no").val("").attr("readonly", "readonly").attr("lay-verify", "");
+        $("#driver_single_order_no").val("").attr("readonly", "readonly").attr("lay-verify", "");
+      }else{
+        $("#driver_single_compose_no").removeAttr("readonly", "readonly").attr("lay-verify", "required");
+        $("#driver_single_order_no").removeAttr("readonly", "readonly").attr("lay-verify", "required");
+      }
+    });
+    form.on("checkbox(driver_multi_limit)", function (data) {
+      if(data.elem.checked){
+        $("#driver_multi_compose_no").val("").attr("readonly", "readonly").attr("lay-verify", "");
+        $("#driver_multi_order_no").val("").attr("readonly", "readonly").attr("lay-verify", "");
+      }else{
+        $("#driver_multi_compose_no").removeAttr("readonly", "readonly").attr("lay-verify", "required");
+        $("#driver_multi_order_no").removeAttr("readonly", "readonly").attr("lay-verify", "required");
+      }
+    });
     form.on("submit(submit)", function (data) {
       data = data.field;
       var grabOrderTimeDuration = data.grabOrderTimeDuration;

@@ -95,13 +95,13 @@
           <div class="layui-input-block">
             <div class="layui-row">
               <div class="layui-col-md4">
-                <input type="text" name="" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
+                <input id="driver_single_compose_no" type="text" name="" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4">
-                <input type="text" name="" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
+                <input id="driver_single_order_no" type="text" name="" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4" style="padding-left: 5px;">
-                <input type="checkbox" name="" title="不限" lay-skin="primary">
+                <input type="checkbox" name="" title="不限" lay-skin="primary" lay-filter="driver_single_limit">
               </div>
             </div>
           </div>
@@ -113,13 +113,13 @@
           <div class="layui-input-block">
             <div class="layui-row">
               <div class="layui-col-md4">
-                <input type="text" name="" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
+                <input id="driver_multi_compose_no" type="text" name="" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4">
-                <input type="text" name="" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
+                <input id="driver_multi_order_no" type="text" name="" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4" style="padding-left: 5px;">
-                <input type="checkbox" name="" title="不限" lay-skin="primary">
+                <input type="checkbox" name="" title="不限" lay-skin="primary" lay-filter="driver_multi_limit">
               </div>
             </div>
           </div>
