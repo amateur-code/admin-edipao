@@ -1,0 +1,15 @@
+.blue {
+  color: #3490E9;
+}
+.pointer {
+  cursor: pointer;
+}
+.text_center {
+  text-align: center;
+}
+.hide {
+  display: none;
+}
+.disabled {
+  pointer-events: none;
+}
