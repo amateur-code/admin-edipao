@@ -358,6 +358,7 @@ layui
         },
       });
     };
+    var exportLoading = false;
     List.prototype.getExportData = function (cb) {
       var _this = this;
       var checkStatus = table.checkStatus(_this.tableKey);
