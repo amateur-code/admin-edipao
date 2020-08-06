@@ -111,7 +111,16 @@ layui
           dataKey: "grabActivityOrderDriverList",
           logKey: 21,
           logRemark: "导出订单"+this.orderNo+"参与抢单司机",
-        }
+        },
+        sign: {
+          title: "签到司机",  //订单维度
+          tableKey: "sign-rob-driver-list-table",
+          tableCols: tableColsJoin,
+          url: "/admin/grab/statistics/sign-driver/statistics-list",
+          dataKey: "signDriverStatisticsList",
+          logKey: 21,
+          logRemark: "导出签到司机",
+        },
       }
       tableCols = driverConfig[this.action].tableCols;
       this.logKey = driverConfig[this.action].logKey;

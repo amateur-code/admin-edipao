@@ -42,10 +42,35 @@
         <div class="layui-card layui-form">
           <div class="layui-card-header">
             司机端
-            <span id="add_btn" class="blue pointer" style="font-size: 13px;">+添加</span>
           </div>
-          <div class="layui-card-body layui-row layui-col-space10" id="time_container">
-            
+          <div class="layui-card-body layui-row layui-col-space10">
+            <div class="layui-row layui-col-space10">
+              <div class="layui-col-md12">
+                <div class="layui-row">
+                  <div class="layui-col-md1">
+                    推送时间：
+                  </div>
+                  <div class="layui-row layui-col-space10 layui-col-md9">
+                    <div class="layui-col-md4">
+                      <input id="sendStartTime" readonly type="text" value="" name="sendStartTime" lay-verify="required" placeholder="请选择开启时间" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-col-md4">
+                      <input id="sendEndTime" readonly type="text" value="" name="sendEndTime" lay-verify="required" placeholder="请选择关闭时间" autocomplete="off" class="layui-input">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="layui-col-md12">
+                <div class="layui-row">
+                  <div class="layui-col-md1">
+                    消息内容：
+                  </div>
+                  <div class="layui-col-md11">
+                    <textarea max-length=1000 name="content" lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="layui-form-item layui-text-align" style="text-align: center;">
@@ -60,39 +85,5 @@
     </div>
   </div>
 </div>
-<script type="text/html" id="formTpl">
-  {{# layui.each(d.pushList, function(index, item){ }}
-  <div class="layui-row time_row layui-col-space10 time_row_{{index}}">
-    <div class="layui-col-md12">
-      <div class="layui-row">
-        <div class="layui-col-md1">
-          推送时间：
-        </div>
-        <div class="layui-row layui-col-space10 layui-col-md9">
-          <div class="layui-col-md4">
-            <input id="startTime{{index}}" readonly type="text" value="{{item.startTime}}" name="startTime{{index}}" lay-verify="required" placeholder="请选择开启时间" autocomplete="off" class="layui-input">
-          </div>
-          <div class="layui-col-md4">
-            <input id="endTime{{index}}" readonly type="text" value="{{item.endTime}}" name="endTime{{index}}" lay-verify="required" placeholder="请选择关闭时间" autocomplete="off" class="layui-input">
-          </div>
-          <div class="layui-col-md1">
-            <span data-index="{{index}}" class="delete_btn">-删除</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="layui-col-md12">
-      <div class="layui-row">
-        <div class="layui-col-md1">
-          消息内容：
-        </div>
-        <div class="layui-col-md11">
-          <textarea max-length=1000 name="content{{index}}" lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
-        </div>
-      </div>
-    </div>
-  </div>
-  {{# }); }}
-</script>
 </body>
 </html>

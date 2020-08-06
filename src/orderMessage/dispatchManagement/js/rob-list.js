@@ -3,7 +3,7 @@ layui
     base: "../../lib/",
   })
   .extend({
-    excel: "layui_exts/excel.min",
+    excel: "layui_exts/excel",
     tableFilter: "TableFilter/tableFiltercopy",
   })
   .use(["jquery", "table", "layer", "excel", "tableFilter", "form"], function () {
@@ -32,10 +32,21 @@ layui
       { field: "grabEndTime", title: "抢单结束时间", width: 150, templet: function (d) {
         return d.grabEndTime || "- -";
       }},
-      { field: "grabOrderPoolCount", title: "订单池总数",  templet: "#ordersSumTpl"},
-      { field: "grabOrderDriverCount", title: "参与抢单司机数",  templet: "#driverSumTpl"},
-      { field: "winningOrderCount", title: "中签订单数",  templet: "#winnerSumTpl"},
-      { field: "loginDriverCount", title: "登录APP司机数",  templet: "#loginSumTpl"},
+      { field: "grabOrderPoolCount", title: "订单池总数", width: 150, templet: "#ordersSumTpl"},
+      { field: "grabOrderPoolSingleCount", title: "订单池单车数", width: 150, templet: "#ordersSingleSumTpl"},
+      { field: "grabOrderPoolMultiCount", title: "订单池背车数", width: 150, templet: "#ordersMultiSumTpl"},
+      { field: "loginDriverCount", title: "登录APP司机数", width: 150, templet: "#loginDriverSumTpl"},
+      { field: "signDriverCount", title: "签到司机数", width: 150, templet: "#signDriverSumTpl"},
+      { field: "grabOrderDriverCount", title: "参与抢单司机数", width: 150, templet: "#driverSumTpl"},
+      { field: "winningOrderCount", title: "中签订单数", width: 150, templet: "#winnerSumTpl"},
+      { field: "winningOrderSingleCount", title: "中签单车数", width: 150, templet: "#winnerSingleSumTpl"},
+      { field: "winningOrderMultiCount", title: "中签背车数", width: 150, templet: "#winnerMultiSumTpl"},
+      { field: "winningSingleRate", title: "单车中签率", width: 150, templet: function (d) {
+          return d.winningSingleRate;
+      }},
+      { field: "winningMultiRate", title: "背车中签率", width: 150, templet: function (d) {
+          return d.winningMultiRate;
+      }},
       { field: "winningRate", title: "中签率", width: 150, templet: function (d) {
           return d.winningRate;
       }},
@@ -166,17 +177,32 @@ layui
         var key = e.target.dataset.key;
         xadmin.open('中签订单','./rob-order-list.html?action=win&robKey=' + key + '&perssionId=' + _this.perssionId);
       });
-      $(".href_login_sum").unbind().on("click", function (e) {
+      $(".href_driver_login_sum").unbind().on("click", function (e) {
         var key = e.target.dataset.key;
         xadmin.open('登录司机','./driver-list.html?action=login&robKey=' + key + '&perssionId=' + _this.perssionId);
       });
+      $(".href_driver_sign_sum").unbind().on("click", function (e) {
+        var key = e.target.dataset.key;
+        xadmin.open('签到司机','./driver-list.html?action=sign&robKey=' + key + '&perssionId=' + _this.perssionId);
+      });
+      $(".href_order_single_sum").unbind().on("click", function (e) {
+        var key = e.target.dataset.key;
+        xadmin.open('订单池单车数','./rob-order-list.html?action=allSingle&robKey=' + key + '&perssionId=' + _this.perssionId);
+      });
+      $(".href_order_multi_sum").unbind().on("click", function (e) {
+        var key = e.target.dataset.key;
+        xadmin.open('订单池背车数','./rob-order-list.html?action=allMulti&robKey=' + key + '&perssionId=' + _this.perssionId);
+      });
+      $(".href_winner_single_sum").unbind().on("click", function (e) {
+        var key = e.target.dataset.key;
+        xadmin.open('中签单车','./rob-order-list.html?action=winSingle&robKey=' + key + '&perssionId=' + _this.perssionId);
+      });
+      $(".href_winner_multi_sum").unbind().on("click", function (e) {
+        var key = e.target.dataset.key;
+        xadmin.open('中签背车','./rob-order-list.html?action=winMulti&robKey=' + key + '&perssionId=' + _this.perssionId);
+      });
     }
     List.prototype.bindTableEvents = function () {
-      // if(location.href.indexOf("test") > -1){
-      //   $("#nav_cite").on("click", function (e) {
-      //     top.xadmin.add_tab("demo", "customerManager/dotArchives/demo.html");
-      //   });
-      // }
       var _this = this;
       table.on("tool("+_this.tableKey+")", handleEvent);
       table.on("toolbar("+_this.tableKey+")", handleEvent);
@@ -219,6 +245,13 @@ layui
         { field: "winningRate", type: "numberslot" },
         { field: "grabOrderPoolCount", type: "numberslot" },
         { field: "grabOrderDriverCount", type: "numberslot" },
+        { field: "signDriverCount", type: "numberslot" },
+        { field: "winningSingleRate", type: "numberslot" },
+        { field: "winningMultiRate", type: "numberslot" },
+        { field: "winningOrderSingleCount", type: "numberslot" },
+        { field: "winningOrderMultiCount", type: "numberslot" },
+        { field: "grabOrderPoolMultiCount", type: "numberslot" },
+        { field: "grabOrderPoolSingleCount", type: "numberslot" },
       ];
       tableFilterIns = tableFilter.render({
         elem: "#" + _this.tableKey, //table的选择器
@@ -257,7 +290,7 @@ layui
     var exportLoading = false;
     List.prototype.getExportData = function (cb) {
       var _this = this;
-      var checkStatus = table.checkStatus('dotList');
+      var checkStatus = table.checkStatus(_this.tableKey);
       if(checkStatus.data.length < 1){
           if(exportLoading) return layer.msg("数据正在下载，暂不能操作。");
           layer.msg("正在下载数据，请勿退出系统或者关闭浏览器");
@@ -277,7 +310,7 @@ layui
               exportLoading = false;
               if(res.length > 0){
                   res.forEach(function (item) {
-                      data = data.concat(item.grabActivityStatisticsList);
+                    data = data.concat(item.grabActivityStatisticsList);
                   });
                   cb(data);
               }else{

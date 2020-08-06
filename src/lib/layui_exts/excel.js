@@ -103,7 +103,7 @@ LAY_EXCEL = {
                     option.headers = content.unshift();
                     option.skipHeader = true;
                     // 分离并重组样式
-                    var splitRes = this.splitContent(content);
+                    var splitRes = this.splitContent(content, option.headers);
                 }
                 var ws = XLSX.utils.json_to_sheet(content, option);
                 // 特殊属性，支持单独设置某个sheet的属性
@@ -119,7 +119,6 @@ LAY_EXCEL = {
             }
             wb.Sheets[sheet_name] = ws;
         };
-
         // 4. 输出工作表
         var wbout = XLSX.write(wb, {bookType: type, type: 'binary', cellStyles: true, compression: wb.compression});
 
@@ -131,21 +130,23 @@ LAY_EXCEL = {
      * @param  {[type]} content [description]
      * @return {[type]}         [description]
      */
-    splitContent: function(content) {
+    splitContent: function(content, headers) {
+        var keys = Object.keys(headers)
         var styleContent = {};
         // 扫描每个单元格，如果是对象则等表格转换完毕后分离出来重新赋值
         for (var line = 0; line < content.length; line++) {
             var lineData = content[line];
-            var rowIndex = 0;
             for (var row in lineData) {
                 if (!lineData.hasOwnProperty(row)) {
                     continue;
                 }
+                var rowIndex = keys.indexOf(row);
                 var rowData = lineData[row];
+                console.log(rowData)
                 if (typeof rowData === 'object') {
                     // typeof null == object
                     if (rowData !== null) {
-                        styleContent[this.numToTitle(rowIndex+1)+(parseInt(line)+1)] = rowData;
+                        styleContent[encode_col(rowIndex)+(parseInt(line)+1)] = rowData;
                     } else {
                         lineData[row] = '';
                     }
@@ -161,11 +162,11 @@ LAY_EXCEL = {
                             }
                         }
                     }
-                    styleContent[this.numToTitle(rowIndex+1)+(parseInt(line)+1)] = rowData;
+                    styleContent[encode_col(rowIndex)+(parseInt(line)+1)] = rowData;
                 }
-                rowIndex++;
             }
         }
+        function encode_col(col) { var s=""; for(++col; col; col=Math.floor((col-1)/26)) s = String.fromCharCode(((col-1)%26) + 65) + s; return s; }
         return {
             content: content,
             style: styleContent
@@ -30952,6 +30953,7 @@ function write_cc(data, name:string, opts) {
     }
 
     function sheet_add_json(_ws, js, opts) {
+        console.log(js)
         var o = opts || {};
         var offset = +!o.skipHeader;
         var ws = _ws || ({});

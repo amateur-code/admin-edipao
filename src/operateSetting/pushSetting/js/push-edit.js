@@ -5,61 +5,63 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
     laydate = layui.laydate,
     layer = layui.layer;
   function Edit() {
-    this.pushList = {
-      "0": {
-        startTime: "",
-        endTime: "",
-        content: "",
-      }
-    };
+    var qs = edipao.urlGet();
     this.detail = null;
+    this.action = qs.action;
+    this.msgClient = 1;
+    this.msgId = qs.msgId;
   }
   Edit.prototype.init = function () {
     var _this = this;
-    _this.render();
     _this.bindEvents();
+    if(_this.action == "edit"){
+      _this.getDetail();
+    }else{
+      _this.renderTime();
+    }
   }
-  Edit.prototype.render = function () {
+  Edit.prototype.getDetail = function () {
     var _this = this;
-    laytpl($("#formTpl").html()).render({pushList: _this.pushList}, function (html) {
-      $("#time_container").html(html);
-      layui.each(_this.pushList, function (key) {
-        _this.renderTime(key);
-      });
+    edipao.request({
+      url: "/admin/msg/get",
+      data: {
+        msgId: _this.msgId,
+      }
+    }).done(function(res){
+      if(res.code == 0){
+        form.val("main_form", res.data);
+        _this.renderTime();
+      }
     });
   }
   Edit.prototype.bindEvents = function () {
     var _this = this;
-    $("#time_container").unbind().on("click", function(e){
-      if(e.target.classList.contains("delete_btn")){
-        var index = e.target.dataset.index;
-        $(".time_row_" + index).remove();
-        delete _this.pushList[index];
-      }
-    });
-    $("#add_btn").unbind().on("click", function () {
-      var index = new Date().getTime();
-      var pushList = {};
-      pushList[index + ""] = {
-        startTime: "",
-        endTime: "",
-        content: "",
-      }
-      laytpl($("#formTpl").html()).render({pushList: pushList}, function (html) {
-        $("#time_container").append(html);
-        _this.renderTime(index);
-      });
-    });
     form.on("submit(submit)", function (data) {
-
+      data = data.field;
+      var params = {
+        msgClient: 1,
+      }
+      Object.assign(params, data);
+      var url = _this.action == "add" ? "/admin/msg/add" : "/admin/msg/update";
+      if(_this.action == "edit") params.msgId = _this.msgId;
+      var loadIndex = layer.load(1, {time: 10000});
+      edipao.request({
+        url: url,
+        data: params,
+      }).done(function (res) {
+        layer.close(loadIndex);
+        if(res.code == 0){
+          layer.alert("提交成功", {icon: 2});
+        }
+      }).always(function () { layer.close(loadIndex); });
       return false;
     });
   }
-  Edit.prototype.renderTime = function (index) {
-    var idList = ["startTime", "endTime"];
+  Edit.prototype.renderTime = function () {
+    var idList = ["sendStartTime", "sendEndTime"];
     idList.forEach(function (item) {
       laydate.render({ 
-        elem: "#" + item + index,
+        elem: "#" + item,
         type: "datetime",
         trigger: "click"
       });

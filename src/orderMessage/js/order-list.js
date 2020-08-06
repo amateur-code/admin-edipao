@@ -162,6 +162,7 @@ layui.config({
         { field: 'certificateSignTime', type: 'timeslot' },
         { field: 'dealerRemark', type: 'input' },
         { field: 'carDamageCount', type: 'numberslot' },
+        { field: 'kilometreFee', type: 'numberslot' },
         // { field: 'operation', type: 'radio', data: operationData },
     ]
     initPermission();
@@ -272,7 +273,7 @@ layui.config({
                 if(key=='startProvince'||key=='endProvince'){
                     where['searchFieldDTOList['+ index +'].fieldName'] = key;
                     where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
-                }else if(key == "customerMileage" || key == "pricePerMeliage" || key == "income" || key == "driverMileage"||key=="carDamageCount"){
+                }else if(key == "kilometreFee" || key == "customerMileage" || key == "pricePerMeliage" || key == "income" || key == "driverMileage"||key=="carDamageCount"){
                     where["searchFieldDTOList[" + index + "].fieldName"] = key;
                     where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
                     where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
@@ -1820,6 +1821,12 @@ layui.config({
                 }
             });
             return value;
+        }},
+        {field: 'kilometreFee', title: '公里运费', sort: false,minWidth:120, templet: function (d) {
+            if(d.orderType == 2 && d.masterFlag == "否"){
+                return "";
+            }
+            return d.kilometreFee || "- -";
         }},
         {field: 'feeName', title: '费用模板', sort: false,minWidth:200, templet: function (d) {
             return d.feeName || "- -";

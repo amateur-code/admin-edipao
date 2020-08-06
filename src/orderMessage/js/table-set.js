@@ -43,6 +43,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
       { field: "arrivePayAmount", title: "到付款金额" },
       { field: "tailPayAmount", title: "尾款金额" },
       { field: "tailPayStatus", title: "尾款状态", },
+      { field: "kilometreFee", title: "公里运费", },
       { field: "feeName", title: "费用模板", },
       { field: "carModel", title: "费用车型", },
       { field: "fetchTruckTime", title: "提车时间" },

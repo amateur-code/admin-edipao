@@ -35,8 +35,11 @@ layui
         return d.driverName ? d.driverName : "- -";
       }},
       { field: "driverPhone", title: "司机手机", width: 200, templet: "#driverPhoneTpl"},
-      { field: "driverIdNum", title: "司机身份证", width: 250, templet: function (d) {
-        return d.driverIdNum ? d.driverIdNum : "- -";
+      { field: "location", title: "当前位置", width: 250, templet: function (d) {
+        return d.location ? d.location : "- -";
+      }},
+      { field: "combCityCode", title: "签到基地", width: 250, templet: function (d) {
+        return d.combCityCode ? d.combCityCode : "- -";
       }},
       { field: "depositStatus", title: "押金状态", width: 150, templet: function (d) {
         var status = "- -";
@@ -51,7 +54,7 @@ layui
       { field: "driveLicenceType", title: "驾照类型", width: 150, templet: function (d) {
         return d.driveLicenceType ? d.driveLicenceType : "- -";
       }},
-      { field: "combCityNumber", title: "长春基地排名", width: 150, templet: function (d) {
+      { field: "combCityNumber", title: "基地排名", width: 150, templet: function (d) {
         return d.combCityNumber || "- -";
       }},
       { field: "globalCityNumber", title: "总排名", width: 150, templet: function (d) {
@@ -211,7 +214,8 @@ layui
       var filters = [
         { field: "driverName", type: "input" },
         { field: "driverPhone", type: "input" },
-        { field: "driverIdNum", type: "input" },
+        { field: "location", type: "input" },
+        { field: "combCityCode", type: "input" },
         { field: "depositStatus", type: "checkbox", data: depositStatusData },
         { field: "driveLicenceType", type: "input" },
         { field: "combCityNumber", type: "numberslot" },

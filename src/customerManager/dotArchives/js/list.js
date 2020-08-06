@@ -126,11 +126,11 @@ layui
         },
       },
       {
-        field: "route",
+        field: "belongLine",
         title: "归属线路",
         width: 100,
         templet: function (d) {
-          return d.route || "- -";
+          return d.belongLine || "- -";
         },
       },
       {
@@ -395,7 +395,7 @@ layui
         { field: "feeJson", type: "input" },
         { field: "grabOrderHot", type: "numberslot" },
         { field: "transportOrderNum", type: "numberslot" },
-        { field: "route", type: "input" },
+        { field: "belongLine", type: "input" },
         { field: "status", type: "checkbox", data: statusData },
       ];
       tableFilterIns = tableFilter.render({

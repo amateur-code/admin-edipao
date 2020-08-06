@@ -74,45 +74,10 @@
       tableKey = edipao.urlGet().tableKey;
   var headers = {};
   var orderComposeList = [
-    { field: 'combinationOrderName', title: '组合名称' },
-    { field: 'orderCount', title: '订单数量' },
-    { field: 'noDispatchOrderCount', title: '未调度订单' },
-    { field: 'combinationWay', title: '组合方式' },
-    { field: 'certificateCode', title: '驾照要求' },
-    { field: 'createTime', title: '创建时间' },
+    { field: 'sendStartTime', title: '推送时间' },
+    { field: 'content', title: '消息内容' },
   ]
-  var orderList = [
-    { field: 'orderNo', title: '业务单号' },
-    { field: 'warehouseNo', title: '仓库单号' },
-    { field: 'vinCode', title: 'VIN码' },
-    { field: 'tempLicense', title: '临牌号' },
-    { field: 'orderType', title: '订单类型' },
-    { field: 'customerFullName', title: '客户全称' },
-    { field: 'startWarehouse', title: '发车仓库' },
-    { field: 'startPark', title: '发车停车场' },
-    { field: 'startProvince', title: '发车省' },
-    { field: 'startCity', title: '发车城市' },
-    { field: 'startAddress', title: '发车地址' },
-    { field: 'endPark', title: '收车网点' },
-    { field: 'endProvince', title: '收车省' },
-    { field: 'endCity', title: '收车城市' },
-    { field: 'endAddress', title: '收车地址' },
-    { field: 'transportMode', title: '运输方式' },
-    { field: 'transportAssignTime', title: '运输商指派时间' },
-    { field: 'income', title: '收入金额' },
-    { field: 'deliveryOperator', title: '发运经理' },
-    { field: 'dispatchMode', title: '调度方式' },
-    { field: 'prePayAmount', title: '预付款金额' },
-    { field: 'prePayOil', title: '油升数' },
-    { field: 'arrivePayAmount', title: '到付款金额' },
-    { field: 'tailPayAmount', title: '尾款金额' },
-    { field: 'kilometreFee', title: '公里运费' },
-	];
-  
-  headers["order-compose-list-table"] = orderComposeList;
-  headers["orderCompose-add-order-list"] = orderList;
-  headers["orderCompose-all-order-list"] = orderList;
-  headers["orderCompose-noDispatch-order-list"] = orderList;
+  headers["driver-push-list"] = orderComposeList;
 
   var tableHeaderList = headers[tableKey];
   laytpl(itemListTpl.innerHTML).render({list:tableHeaderList}, function(html){

@@ -9,9 +9,9 @@ var depositStatusData = {
     '1':'已支付'
 };
 var signStatusData = [
-    {key: 1, value: "已签到"},
-    {key: 2, value: "未签到"},
-    {key: 3, value: "不满足条件"},
+    {key: "已签到", value: "已签到"},
+    {key: "未签到", value: "未签到"},
+    {key: "不满足条件", value: "不满足条件"},
 ]
 // 预警状态
 var warnData = {
@@ -123,6 +123,13 @@ layui.config({
             templet: function (data) {
                 var val = data.idNum;
                 return DataNull(val)
+            }
+        },
+        {
+            field: 'signStatus', title: '签到状态',width: 150,
+            templet: function (data) {
+                var val = data.signStatus;
+                return  val || '- -'
             }
         },
         { field: 'address', title: '当前住址',width: 300,
@@ -281,13 +288,7 @@ layui.config({
                 return  val || '- -'
             }
         },
-        {
-            field: 'signStatus', title: '签到状态',width: 150,
-            templet: function (data) {
-                var val = data.signStatus;
-                return  val || '- -'
-            }
-        },
+        
        /* {
             field: 'approvalFlag', title: '审核状态',
             templet: function (data) {

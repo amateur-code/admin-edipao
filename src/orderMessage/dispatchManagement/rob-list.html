@@ -63,14 +63,29 @@
 <script type="text/html" id="ordersSumTpl">
     <a data-key="{{d.activityBatchNo}}" class="blue pointer href_order_sum" href="javascript:;">{{d.grabOrderPoolCount}}</a>
 </script>
+<script type="text/html" id="ordersSingleSumTpl">
+    <a data-key="{{d.activityBatchNo}}" class="blue pointer href_order_single_sum" href="javascript:;">{{d.grabOrderPoolSingleCount}}</a>
+</script>
+<script type="text/html" id="ordersMultiSumTpl">
+    <a data-key="{{d.activityBatchNo}}" class="blue pointer href_order_multi_sum" href="javascript:;">{{d.grabOrderPoolMultiCount}}</a>
+</script>
 <script type="text/html" id="driverSumTpl">
     <a data-key="{{d.activityBatchNo}}" class="blue pointer href_driver_sum" href="javascript:;">{{d.grabOrderDriverCount}}</a>
 </script>
 <script type="text/html" id="winnerSumTpl">
     <a data-key="{{d.activityBatchNo}}" class="blue pointer href_winner_sum" href="javascript:;">{{d.winningOrderCount}}</a>
 </script>
-<script type="text/html" id="loginSumTpl">
-    <a data-key="{{d.activityBatchNo}}" class="blue pointer href_login_sum" href="javascript:;">{{d.loginDriverCount}}</a>
+<script type="text/html" id="winnerSingleSumTpl">
+    <a data-key="{{d.activityBatchNo}}" class="blue pointer href_winner_single_sum" href="javascript:;">{{d.winningOrderSingleCount}}</a>
+</script>
+<script type="text/html" id="winnerMultiSumTpl">
+    <a data-key="{{d.activityBatchNo}}" class="blue pointer href_winner_multi_sum" href="javascript:;">{{d.winningOrderMultiCount}}</a>
+</script>
+<script type="text/html" id="loginDriverSumTpl">
+    <a data-key="{{d.activityBatchNo}}" class="blue pointer href_driver_login_sum" href="javascript:;">{{d.loginDriverCount}}</a>
+</script>
+<script type="text/html" id="signDriverSumTpl">
+    <a data-key="{{d.activityBatchNo}}" class="blue pointer href_driver_sign_sum" href="javascript:;">{{d.signDriverCount}}</a>
 </script>
 <script type="text/html" id="headerBtns">
     <div class="layui-btn-container">

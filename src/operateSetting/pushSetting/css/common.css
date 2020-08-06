@@ -4,3 +4,16 @@
 .pointer {
   cursor: pointer;
 }
+.layui-table-tool-temp{
+  padding-right: 0;
+}
+.layui-btn-container{
+  text-align: right;
+}
+.opeartion_icon{
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 45px;
+}

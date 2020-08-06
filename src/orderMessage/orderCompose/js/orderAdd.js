@@ -295,6 +295,10 @@ layui.config({
 				if(d.masterFlag != "是") return "";
 				return d.tailPayAmount + "元";
 			}},
+			{field: 'kilometreFee', title: '公里运费', sort: false,width: 200, hide: false, templet: function (d) {
+				if(d.masterFlag != "是") return "";
+				return d.kilometreFee ? (d.kilometreFee + "元") : "- -";
+			}},
     ];
     var showList = [], exportHead = {};
     tableCols.forEach(function (item) {
@@ -305,7 +309,8 @@ layui.config({
     var qs = edipao.urlGet();
     this.action = qs.action || "new";
     this.combinationOrderName = qs.combinationOrderName || "- -";
-    this.combinationOrderNo = qs.combinationOrderNo || "";
+		this.combinationOrderNo = qs.combinationOrderNo || "";
+		this.orderTotal = 0;
   }
   List.prototype.init = function () {
     var _this = this;
@@ -497,6 +502,7 @@ layui.config({
 				}
 				res.data = res.data || {};
 				orderDTOList = JSON.parse(JSON.stringify(res.data[_this.dataKey] || "[]"));
+				_this.orderTotal = res.data.totalSize;
 				return {
 					"code": res.code, //解析接口状态
 					"msg": res.message, //解析提示文本
@@ -557,22 +563,36 @@ layui.config({
 			if(_this.action == "all" || _this.action == "noDispatch") return;
       if(obj.data.orderType == 1) return;
       var orderNo = obj.data.orderNo, flag = obj.checked;
-      var $tr = obj.tr, $prev = $tr.prev(), $next = $tr.next();
+			var $tr = obj.tr, $prev = $tr.prev(), $next = $tr.next();
+			console.log(table)
+			if(flag){
+				table.cache[_this.tableKey].forEach(function(item){
+					if(item.orderNo == orderNo){
+						item["LAY_CHECKED"] = true;
+					}
+				});
+			}else{
+				table.cache[_this.tableKey].forEach(function(item){
+					if(item.orderNo == orderNo){
+						delete item["LAY_CHECKED"];
+					}
+				});
+			}
       if($prev.length){
         if($prev.find("td[data-field=orderNo]").data("content") == orderNo){
           if(flag){
-            $prev.find('.layui-form-checkbox').addClass('layui-form-checked');
+            $prev.find('.layui-form-checkbox').addClass('layui-form-checked').prev().attr("checked", "checked");
           }else{
-            $prev.find('.layui-form-checkbox').removeClass('layui-form-checked');
+            $prev.find('.layui-form-checkbox').removeClass('layui-form-checked').prev().removeAttr("checked");
           }
         }
       }
       if($next.length){
         if($next.find("td[data-field=orderNo]").data("content") == orderNo){
           if(flag){
-            $next.find('.layui-form-checkbox').addClass('layui-form-checked');
+            $next.find('.layui-form-checkbox').addClass('layui-form-checked').prev().attr("checked", "checked");
           }else{
-            $next.find('.layui-form-checkbox').removeClass('layui-form-checked');
+            $next.find('.layui-form-checkbox').removeClass('layui-form-checked').prev().removeAttr("checked");
           }
         }
       }
@@ -587,6 +607,7 @@ layui.config({
 				removeOrderNoList.push(item.orderNo);
 			}
 		});
+		if(removeOrderNoList.length >= _this.orderTotal) return layer.msg("需要至少保留一个订单！", {icon: 2});
 		layer.confirm("确认移除这些订单？", {icon: 3}, function (index) {
 			edipao.request({
 				url: "/admin/grab/combination-order/del-order",
@@ -613,23 +634,22 @@ layui.config({
     orderDTOList.forEach(function (item) {
       if(orderNoList.indexOf(item.orderNo) > -1) orderList.push(item);
 		});
-		layer.confirm("确认添加这些订单？", {icon: 3}, function (index) {
-			if(_this.action == "add"){
+		if(_this.action == "add"){
+			layer.confirm("确认添加这些订单？", {icon: 3, title:'提示'}, function (index) {
 				orderList.forEach(function (item) {
 					if(addOrderNoList.indexOf(item.orderNo) < 0){
 						addOrderNoList.push(item.orderNo);
 					}
 				});
 				_this.addExist(addOrderNoList, index);
-				return;
-			}
-			layer.close(index);
+				layer.close(index);
+			});
+		}else{
 			window.parent.postMessage({
 				type: "addOrder",
 				data: orderList,
-			});
-		});
-		
+			}, "*");
+		}
 	}
 	List.prototype.addExist = function (orderNoList, index) {
 		var _this = this;

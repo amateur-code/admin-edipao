@@ -218,7 +218,21 @@ layui.config({
           dataKey: "orderPoolStatisticsList",
           tableKey: "all-rob-order-list-table",
           logKey: 22,
-          logRemark: "导出订单池列表",
+          logRemark: "导出订单池订单列表",
+        },
+        allSingle: {
+          url: "/admin/grab/statistics/order-pool/statistics-list",
+          dataKey: "orderPoolStatisticsList",
+          tableKey: "all-rob-single-order-list-table",
+          logKey: 22,
+          logRemark: "导出订单池单车订单列表",
+        },
+        allMulti: {
+          url: "/admin/grab/statistics/order-pool/statistics-list",
+          dataKey: "orderPoolStatisticsList",
+          tableKey: "all-rob-multi-order-list-table",
+          logKey: 22,
+          logRemark: "导出订单池背车订单列表",
         },
         win: {
           url: "/admin/grab/statistics/winning-order/statistics-list",
@@ -226,16 +240,31 @@ layui.config({
           tableKey: "win-rob-order-list-table",
           logKey: 22,
           logRemark: "导出中签订单列表",
-
+        },
+        winSingle: {
+          url: "/admin/grab/statistics/winning-order/statistics-list",
+          dataKey: "winningOrderStatisticsList",
+          tableKey: "win-rob-single-order-list-table",
+          logKey: 22,
+          logRemark: "导出中签单车订单列表",
+        },
+        winMulti: {
+          url: "/admin/grab/statistics/winning-order/statistics-list",
+          dataKey: "winningOrderStatisticsList",
+          tableKey: "win-rob-multi-order-list-table",
+          logKey: 22,
+          logRemark: "导出中签背车订单列表",
         },
         rob: {
           url: "/admin/grab/statistics/grab-activity/driver/order-list",
           dataKey: "grabActivityDriverOrderList",
           tableKey: "driver-rob-order-list-table",
           logKey: 22,
-          logRemark: "导出司机签单列表",
-        }
+          logRemark: "导出司机签到列表",
+        },
       }
+      this.showSingleActions = ["allSingle","winSingle"];
+      this.showMultiActions = ["allMulti","winMulti"];
       this.perssionId = qs.perssionId;
       this.action = qs.action;
       this.robKey = qs.robKey;
@@ -251,6 +280,14 @@ layui.config({
         where["searchFieldDTOList[1].fieldName"] = "driverId";
         where["searchFieldDTOList[1].fieldValue"] = qs.driverId;
       }else{
+        if(this.showMultiActions.indexOf(this.action) > -1){
+          where["searchFieldDTOList[1].fieldName"] = "orderType";
+          where["searchFieldDTOList[1].fieldListValue"] = "2";
+        }
+        if(this.showSingleActions.indexOf(this.action) > -1){
+          where["searchFieldDTOList[1].fieldName"] = "orderType";
+          where["searchFieldDTOList[1].fieldListValue"] = "1";
+        }
         tableCols.push({field: 'grabOrderDriverCount', title: '抢单司机', sort: false,width: 200, hide: false, templet: "#robDriverTpl"});
       }
     }
@@ -405,7 +442,7 @@ layui.config({
         { field: 'warehouseNo', type: 'input' },
         { field: 'vinCode', type: 'input' },
         { field: 'tempLicense', type: 'input' },
-        { field: 'orderType', type: 'checkbox', data:orderTypeData },
+        
         { field: 'customerFullName', type: 'input' },
         { field: 'startWarehouse', type: 'input' },
         { field: 'startPark', type: 'input' },
@@ -432,6 +469,9 @@ layui.config({
         { field: 'tailPayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'grabOrderDriverCount', type: 'numberslot' },
       ]
+      if(_this.showMultiActions.indexOf(_this.action)<0&&_this.showSingleActions.indexOf(_this.action)<0){
+        filters.push({ field: 'orderType', type: 'checkbox', data:orderTypeData });
+      }
       tableFilterIns = tableFilter.render({
         elem: "#" + _this.tableKey, //table的选择器
         mode: "self", //过滤模式
@@ -439,7 +479,7 @@ layui.config({
         'done': function(filters, reload){
           filters = $.extend({}, filters);
           var index = 1;
-          if(_this.action == "rob") index = 2;
+          if(_this.action == "rob" || _this.showMultiActions.indexOf(_this.action) > -1 || _this.showSingleActions.indexOf(_this.action) > -1) index = 2;
           var where2 = Object.assign({loginStaffId: edipao.getLoginStaffId()}, JSON.parse(JSON.stringify(where)));
           if(filters.openOperator){
               filters.openOperatorPhone =  filters.openOperator[1];

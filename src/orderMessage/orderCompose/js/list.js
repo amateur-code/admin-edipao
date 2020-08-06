@@ -30,7 +30,7 @@ layui
     var showList = ["createTime", "type", "remark", "createUser", "status"];
     var exportHead = {}; // 导出头部
     var tableCols = [
-      { checkbox: true },
+      { checkbox: true, fixed: "left" },
       { field: "combinationOrderName", title: "组合名称", width: 200, templet: function (d) {
           return d.combinationOrderName ? d.combinationOrderName : "- -";
       }},
@@ -412,12 +412,13 @@ layui
                 case "combinationWay":
                   var res = "- -";
                   combinationWayData.some(function (item) {
-                    if(item.key == v[item]){
+                    if(item.key == v[index]){
                       res = item.value;
                       return true;
                     }
                   });
                   exportObj[index] = res;
+                  break;
                 default:
                   exportObj[index] = DataNull(item);
               }

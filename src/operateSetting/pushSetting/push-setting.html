@@ -10,8 +10,8 @@
   <meta http-equiv="Cache-Control" CONTENT="no-cache">
   <meta http-equiv="Pragma" CONTENT="no-cache">
   <link rel="stylesheet" href="../../css/font.css">
-  <link rel="stylesheet" href="../../lib/layAutoComplete/layuiAutocomplete.css">
   <link rel="stylesheet" href="../../css/xadmin.css?VERSION">
+  <link rel="stylesheet" href="../../lib/TableFilter/tableFilter.css">
   <link rel="stylesheet" href="./css/common.css">
   <link rel="stylesheet" href="./css/push-setting.css">
   <script src="../../js/jquery.min.js"></script>
@@ -22,6 +22,21 @@
   <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
   <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
+  <style>
+    .layui-table-tool-temp{
+        padding-right: 0;
+    }
+    .layui-btn-container{
+        text-align: right;
+    }
+    .opeartion_icon{
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 45px;
+      }
+</style>
 </head>
 <body>
 <div class="x-nav">
@@ -35,40 +50,29 @@
       <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
   </a>
 </div>
-<div class="layui-fluid dot-add">
+<div class="layui-fluid">
   <div class="layui-row layui-col-space15">
-    <div class="layui-col-md12">
-      <form id="main_container" class="layui-form" lay-filter="main_form">
-        <div class="layui-card layui-form">
-          <div class="layui-card-header">司机端</div>
-          <div class="layui-card-body layui-row layui-col-space10" id="time_container">
-            
+      <div class="layui-col-md12">
+          <div class="layui-card">
+              <div class="layui-card-body" id="doc-content">
+                  <table id="driver-push-list" lay-filter="driver-push-list"></table>
+              </div>
           </div>
-        </div>
-      </form>
-    </div>
+      </div>
   </div>
 </div>
-<div class="layui-form-item layui-text-align" style="text-align: center;">
-<button id="edit_btn" class="layui-btn layui-bg-blue">
-    &emsp;修改&emsp;
-</button>
-</div>
-<script id="infoTpl" type="text/html">
-{{# layui.each(d.pushList, function(index, item){ }}
-<div class="layui-row time_row">
-  <div class="layui-col-md3">
-    <span>推送时间：</span>
-    <span class="blue">{{item.startTime}}</span>
+<script type="text/html" id="headerBtns">
+  <div class="layui-btn-container" style="text-align: right;">
+      <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+      <button class="layui-btn layui-btn-sm" lay-event="export">导出</button>
+      <button class="layui-btn layui-btn-sm" lay-event="exportLog">导出日志</button>
+      <button class="layui-btn layui-btn-sm" lay-event="tableSet">表格设置</button>
   </div>
-  <div class="layui-col-md9">
-    <span>信息内容：</span>
-    <span class="blue">
-      数组是一种使用整数作为键(integer-key-ed)属性和长度(length)属性之间关联的常规对象。此外，数组对象还继承了 Array.prototype 的一些操作数组的便捷方法。例如, indexOf (搜索数组中的一个值) or push (向数组中添加一个元素)，等等。 这使得数组是表示列表或集合的最优选择。
-    </span>
-  </div>
-</div>
-{{# }); }}
+</script>
+<script type="text/html" id="rowBtns">
+  <a class="layui-btn layui-btn-xs layui-bg-blue" lay-event="edit">修改</a>
+  <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
+  <a class="layui-btn layui-bg-blue layui-btn-xs" lay-event="log">日志</a>
 </script>
 </body>
 </html>
