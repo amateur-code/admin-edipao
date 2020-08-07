@@ -26,7 +26,7 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
     layer = layui.layer;
   function Edit() {
     this.timeList = {};
-    this.routeList = {
+    this.belongLineList = {
       "0": {
         name: ""
       }
@@ -72,7 +72,7 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
         }
       });
     }
-    laytpl($("#formTpl").html()).render({timeList: _this.timeList, detail: _this.detail, routeList: _this.routeList}, function (html) {
+    laytpl($("#formTpl").html()).render({timeList: _this.timeList, detail: _this.detail, belongLineList: _this.belongLineList}, function (html) {
       $("#main_form").html(html);
       layui.each(_this.timeList, function (key, value) {
         _this.renderTime(key);
@@ -89,24 +89,24 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
         $(".time_row_" + index).remove();
         delete _this.timeList[index];
       }
-      if(e.target.classList.contains("delete_route_btn")){
+      if(e.target.classList.contains("delete_belongLine_btn")){
         var index = e.target.dataset.index;
-        $(".route_item_" + index).remove();
-        delete _this.routeList[index];
-        _this.toggleRouteTxt();
+        $(".belongLine_item_" + index).remove();
+        delete _this.belongLineList[index];
+        _this.togglebelongLineTxt();
       }
     });
-    $("#add_route_btn").unbind().on("click", function () {
+    $("#add_belongLine_btn").unbind().on("click", function () {
       var index = new Date().getTime();
-      var routeList = {};
-      routeList[index + ""] = {
+      var belongLineList = {};
+      belongLineList[index + ""] = {
         name: ""
       }
-      laytpl($("#route_tpl").html()).render({
-        routeList: routeList,
+      laytpl($("#belongLine_tpl").html()).render({
+        belongLineList: belongLineList,
       }, function (html) {
-        $("#route_container").append(html);
-        _this.toggleRouteTxt();
+        $("#belongLine_container").append(html);
+        _this.togglebelongLineTxt();
       });
     });
     $("#add_btn").unbind().on("click", function (e) {
@@ -179,11 +179,11 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
       return false;
     });
   }
-  Edit.prototype.toggleRouteTxt = function () {
-    if($(".route_item").length == 0){
-      $("#empty_route").removeClass("hide");
+  Edit.prototype.togglebelongLineTxt = function () {
+    if($(".belongLine_item").length == 0){
+      $("#empty_belongLine").removeClass("hide");
     }else{
-      $("#empty_route").addClass("hide");
+      $("#empty_belongLine").addClass("hide");
     }
   }
   Edit.prototype.renderTime = function (index) {

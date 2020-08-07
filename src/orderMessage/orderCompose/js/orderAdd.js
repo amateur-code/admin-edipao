@@ -538,7 +538,7 @@ layui.config({
       top.xadmin.open('查看订单', '/orderMessage/order-view.html?orderNo=' + orderNo + "&action=view&perssionId=" + pid);
     });
   }
-  List.prototype.bindTableEvents = function(){
+  List.prototype.bindTableEvents = function () {
     var _this = this;
     $(".top_tool_bar").unbind().on("click", function (e) {
       var event = e.target.dataset.event;

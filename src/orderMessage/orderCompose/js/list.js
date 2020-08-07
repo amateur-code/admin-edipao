@@ -67,6 +67,8 @@ layui
       this.logKey = 26;
       this.dataKey = "grabCombinationOrderList";
       this.url = "/admin/grab/combination-order/list";
+      this.perssionId = qs.perssionId;
+
     }
     List.prototype.init = function () {
       var _this = this;
@@ -205,11 +207,11 @@ layui
     List.prototype.bindEvents = function () {
       $(".href_order_count").unbind().on("click", function (e) {
         var no = e.target.dataset.no, name = e.target.dataset.name;
-        xadmin.open("查看订单", "./orderAdd.html?action=all&combinationOrderNo=" + no + "&combinationOrderName=" + name);
+        xadmin.open("查看订单", "./orderAdd.html?action=all&combinationOrderNo=" + no + "&combinationOrderName=" + name + "&perssionId=" + _this.perssionId);
       });
       $(".href_order_count_no_dispatch").unbind().on("click", function (e) {
         var no = e.target.dataset.no, name = e.target.dataset.name;
-        xadmin.open("查看订单", "./orderAdd.html?action=noDispatch&combinationOrderNo=" + no + "&combinationOrderName=" + name);
+        xadmin.open("查看订单", "./orderAdd.html?action=noDispatch&combinationOrderNo=" + no + "&combinationOrderName=" + name + "&perssionId=" + _this.perssionId);
       });
     }
     List.prototype.bindTableEvents = function () {
@@ -219,14 +221,18 @@ layui
       table.on("checkbox("+_this.tableKey+")", handleEvent);
       function handleEvent(obj) {
         var data = obj.data;
-        // obj.event == "export" && permissionList.indexOf("车损报备-导出") == -1 && (obj.event = "reject");
+        // obj.event == "export" && permissionList.indexOf("") == -1 && (obj.event = "reject");
+        // obj.event == "remove_order" && permissionList.indexOf("") == -1 && (obj.event = "reject");
+        // obj.event == "add_order" && permissionList.indexOf("") == -1 && (obj.event = "reject");
+        // obj.event == "discompose_order" && permissionList.indexOf("") == -1 && (obj.event = "reject");
+        // obj.event == "add" && permissionList.indexOf("") == -1 && (obj.event = "reject");
 
         switch (obj.event) {
-          case "one_add":
-            _this.openOneAdd();
-            break;
           case "reject":
             layer.alert("你没有访问权限", { icon: 2 });
+            break;
+          case "one_add":
+            _this.openOneAdd();
             break;
           case "remove_order":
             xadmin.open("减少订单", "./orderAdd.html?action=remove&combinationOrderNo=" + data.combinationOrderNo + "&combinationOrderName=" + data.combinationOrderName);
@@ -306,14 +312,6 @@ layui
         }
     });
     }
-    List.prototype.initPermission = function () {
-      if (permissionList.indexOf("订单录入") < 0) {
-        $("#import_order").remove();
-      }
-      if (permissionList.indexOf("导出") < 0) {
-        $("#export_data").remove();
-      }
-    };
     List.prototype.setTableFilter = function () {
       var _this = this;
       var filters = [

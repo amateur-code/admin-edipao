@@ -146,7 +146,7 @@
         <div class="layui-form-item">
           <div><span class="x-red">*</span>高活跃人群订单分配</div>
           <div class="layui-input-block">
-            <input type="text" name="" lay-verify="required" placeholder="高热度:中热度:低热度" autocomplete="off" class="layui-input">
+            <input type="text" name="highActiveOnlineDriverOrderProportion" lay-verify="required" placeholder="高热度:中热度:低热度" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@
         <div class="layui-form-item">
           <div><span class="x-red">*</span>低活跃人群订单分配</div>
           <div class="layui-input-block">
-            <input type="text" name="" lay-verify="required" placeholder="高热度:中热度:低热度" autocomplete="off" class="layui-input">
+            <input type="text" name="lowActiveOnlineDriverOrderProportion" lay-verify="required" placeholder="高热度:中热度:低热度" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>
@@ -179,7 +179,7 @@
         <div class="layui-form-item">
           <div><span class="x-red">*</span>展示单公里成本使用的油价</div>
           <div class="layui-input-block">
-            <input type="text" onchange="num(this)" name="" lay-verify="required" placeholder="请输入油价金额" autocomplete="off" class="layui-input">
+            <input type="text" onchange="num(this)" name="perKilometerUsingOilPrices" lay-verify="required" placeholder="请输入油价金额" autocomplete="off" class="layui-input">
             <span class="input_unit">元/升</span>
           </div>
         </div>
@@ -188,7 +188,7 @@
         <div class="layui-form-item">
           <div><span class="x-red">*</span>订单组合的订单数</div>
           <div class="layui-input-block">
-            <input type="text" onchange="num(this)" name="" lay-verify="required" placeholder="请输入组合的最大订单数" autocomplete="off" class="layui-input">
+            <input type="text" onchange="num(this)" name="combinationOrderNumber" lay-verify="required" placeholder="请输入组合的最大订单数" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>
@@ -248,16 +248,16 @@
     </div>
   </div>
   <div class="layui-card layui-form" >
-    <div class="layui-card-header">线路配置&nbsp;&nbsp;&nbsp;<span id="add_route_btn" class="blue pointer">+添加</span></div>
+    <div class="layui-card-header">线路配置&nbsp;&nbsp;&nbsp;<span id="add_belongLine_btn" class="blue pointer">+添加</span></div>
     <div class="layui-card-body layui-row layui-col-space10">
-      <div id="route_container" class="layui-row time_row" style="border: none;">
-        <p id="empty_route" class="hide" style="color: #ccc;">暂无线路</div>
-        {{# layui.each(d.routeList, function(index, item){ }}
-        <div class="layui-col-md4 route_item route_item_{{index}}">
+      <div id="belongLine_container" class="layui-row time_row" style="border: none;">
+        <p id="empty_belongLine" class="hide" style="color: #ccc;">暂无线路</div>
+        {{# layui.each(d.belongLineList, function(index, item){ }}
+        <div class="layui-col-md4 belongLine_item belongLine_item_{{index}}">
           <div class="layui-form-item">
-            <div><span class="x-red">*</span>线路名称&nbsp;&nbsp;&nbsp;<span data-index="{{index}}" class="delete_route_btn">-移除</span></div>
+            <div><span class="x-red">*</span>线路名称&nbsp;&nbsp;&nbsp;<span data-index="{{index}}" class="delete_belongLine_btn">-移除</span></div>
             <div class="layui-input-block">
-              <input id="route{{index}}" value="" type="text" name="route{{index}}" lay-verify="required" placeholder="请输入线路名称" autocomplete="off" class="layui-input">
+              <input id="belongLine{{index}}" value="" type="text" name="belongLine{{index}}" lay-verify="required" placeholder="请输入线路名称" autocomplete="off" class="layui-input">
             </div>
           </div>
         </div>
@@ -274,13 +274,13 @@
     </button>
   </div>
 </script>
-<script id="route_tpl" type="text/html">
-  {{# layui.each(d.routeList, function(index, item){ }}
-  <div class="layui-col-md4 route_item route_item_{{index}}">
+<script id="belongLine_tpl" type="text/html">
+  {{# layui.each(d.belongLineList, function(index, item){ }}
+  <div class="layui-col-md4 belongLine_item belongLine_item_{{index}}">
     <div class="layui-form-item">
-      <div><span class="x-red">*</span>线路名称&nbsp;&nbsp;&nbsp;<span data-index="{{index}}" class="delete_route_btn">-移除</span></div>
+      <div><span class="x-red">*</span>线路名称&nbsp;&nbsp;&nbsp;<span data-index="{{index}}" class="delete_belongLine_btn">-移除</span></div>
       <div class="layui-input-block">
-        <input id="route{{index}}" value="" type="text" name="route{{index}}" lay-verify="required" placeholder="请输入线路名称" autocomplete="off" class="layui-input">
+        <input id="belongLine{{index}}" value="" type="text" name="belongLine{{index}}" lay-verify="required" placeholder="请输入线路名称" autocomplete="off" class="layui-input">
       </div>
     </div>
   </div>

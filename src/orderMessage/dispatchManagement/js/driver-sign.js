@@ -35,7 +35,7 @@ layui
         return d.driverName ? d.driverName : "- -";
       }},
       { field: "driverPhone", title: "司机手机", width: 200, templet: "#driverPhoneTpl"},
-      { field: "location", title: "当前位置", width: 250, templet: function (d) {
+      { field: "location", title: "当前位置", width: 300, templet: function (d) {
         return d.location ? d.location : "- -";
       }},
       { field: "combCityCode", title: "签到基地", width: 250, templet: function (d) {

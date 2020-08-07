@@ -62,7 +62,8 @@
           <span class="blue">{{item.endTime}}</span>
         </div>
         <div class="layui-col-md4">
-          <span class="blue">订单范围：{{item.deadlineTime}}之前</span>
+          <span>订单范围：</span>
+          <span class="blue">{{item.deadlineTime}}之前</span>
         </div>
       </div>
       {{# }); }}
@@ -74,11 +75,11 @@
       <div class="layui-row time_row">
         <div class="layui-col-md4">
           <span>个体司机：</span>
-          <span class="blue">展示 0 个订单组合，3个订单</span>
+          <span class="blue">展示 {{d.grabOrderDisplayCountProportion.individualDriverDisplay}} 个订单组合，3个订单</span>
         </div>
         <div class="layui-col-md4">
           <span>司机队伍：</span>
-          <span class="blue">展示 0 个订单组合，3个订单</span>
+          <span class="blue">展示 {{d.grabOrderDisplayCountProportion.teamDriverDisplay}} 个订单组合，3个订单</span>
         </div>
         <div class="layui-col-md4">
           <span>高活跃人群：</span>
@@ -88,11 +89,11 @@
       <div class="layui-row time_row">
         <div class="layui-col-md4">
           <span>高活跃人群订单分配：</span>
-          <span class="blue">5:4:3 (高热度:中热度:低热度)</span>
+          <span class="blue">{{d.grabOrderDisplayCountProportion}} (高热度:中热度:低热度)</span>
         </div>
         <div class="layui-col-md4">
           <span>低活跃人群订单分配：</span>
-          <span class="blue">5:4:3 (高热度:中热度:低热度)</span>
+          <span class="blue">{{d.grabOrderDisplayCountProportion}} (高热度:中热度:低热度)</span>
         </div>
         <div class="layui-col-md4">
           <span>抢单热度：</span>
@@ -107,11 +108,11 @@
       <div class="layui-row time_row">
         <div class="layui-col-md4">
           <span>展示单公里成本使用的油价：</span>
-          <span class="blue">3.33 元/升</span>
+          <span class="blue">{{d.grabOrderOtherParam.perKilometerUsingOilPrices}} 元/升</span>
         </div>
         <div class="layui-col-md4">
           <span>订单组合的订单数：</span>
-          <span class="blue">3 个</span>
+          <span class="blue">{{d.grabOrderOtherParam.combinationOrderNumber}} 个</span>
         </div>
       </div>
     </div>
@@ -122,15 +123,15 @@
       <div class="layui-row time_row">
         <div class="layui-col-md4">
           <span>司机队伍人数上限：</span>
-          <span class="blue">3 人</span>
+          <span class="blue">{{d.grabOrderDriverTeam}} 人</span>
         </div>
         <div class="layui-col-md4">
           <span>未支付押金可组队：</span>
-          <span class="blue">是</span>
+          <span class="blue">{{d.grabOrderDriverTeam}}</span>
         </div>
         <div class="layui-col-md4">
           <span>资料未审核可组队：</span>
-          <span class="blue">是</span>
+          <span class="blue">{{d.grabOrderDriverTeam}}</span>
         </div>
       </div>
     </div>
@@ -150,7 +151,7 @@
     <div class="layui-card-header">线路配置</div>
     <div class="layui-card-body layui-row layui-col-space10">
       <div class="layui-row time_row" style="border: none;">
-        <p id="empty_route" class="hide" style="color: #ccc;">暂无线路</p>
+        <p id="empty_belongLine" class="hide" style="color: #ccc;">暂无线路</p>
         <div class="layui-col-md4">
           <span>线路名称：</span>
           <span class="blue">xx线</span>
