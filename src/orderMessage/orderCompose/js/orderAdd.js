@@ -95,7 +95,7 @@ layui.config({
     var exportHead = {};
     var initWhere = where = {
 			loginStaffId: edipao.getLoginStaffId(),
-    };
+		};
     var filters = [
 			{ field: 'orderNo', type: 'input' },
 			{ field: 'warehouseNo', type: 'input' },
@@ -128,6 +128,7 @@ layui.config({
 			{ field: 'prePayAmount', type: 'checkbox-numberslot', data: feeData },
 			{ field: 'arrivePayAmount', type: 'checkbox-numberslot', data: feeData },
 			{ field: 'tailPayAmount', type: 'checkbox-numberslot', data: feeData },
+			{ field: 'kilometreFee', type: 'numberslot' },
     ]
     // 自定义验证规则
     form.verify({
@@ -311,6 +312,7 @@ layui.config({
     this.combinationOrderName = qs.combinationOrderName || "- -";
 		this.combinationOrderNo = qs.combinationOrderNo || "";
 		this.orderTotal = 0;
+		this.chosenOrders = [];
   }
   List.prototype.init = function () {
     var _this = this;
@@ -425,7 +427,7 @@ layui.config({
 					if(key=='startProvince'||key=='endProvince'){
 						where['searchFieldDTOList['+ index +'].fieldName'] = key;
 						where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
-					}else if(key == "customerMileage" || key == "pricePerMeliage" || key == "income" || key == "driverMileage"||key=="carDamageCount"){
+					}else if(key == "kilometreFee" || key == "customerMileage" || key == "pricePerMeliage" || key == "income" || key == "driverMileage"||key=="carDamageCount"){
 						where["searchFieldDTOList[" + index + "].fieldName"] = key;
 						where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
 						where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
@@ -511,7 +513,8 @@ layui.config({
 				}
 			}
 			, done: function (res) {
-				layer.close(loadLayer);
+				if(loadLayer) layer.close(loadLayer);
+				_this.renderCheckbox();
 				_this.bindEvents();
 				if(!res.data || res.data == null || res.data.length < 1){
 					$('.layui-table-header').css('overflow-x','scroll');
@@ -561,10 +564,10 @@ layui.config({
     });
     table.on('checkbox(' + _this.tableKey + ')', function(obj){
 			if(_this.action == "all" || _this.action == "noDispatch") return;
-      if(obj.data.orderType == 1) return;
       var orderNo = obj.data.orderNo, flag = obj.checked;
+			// if(flag && _this.chosenOrders.indexOf(orderNo) < 0) _this.chosenOrders.push(orderNo);
+      if(obj.data.orderType == 1) return;
 			var $tr = obj.tr, $prev = $tr.prev(), $next = $tr.next();
-			console.log(table)
 			if(flag){
 				table.cache[_this.tableKey].forEach(function(item){
 					if(item.orderNo == orderNo){
@@ -572,6 +575,7 @@ layui.config({
 					}
 				});
 			}else{
+				List.deleteByItem(_this.chosenOrders, orderNo);
 				table.cache[_this.tableKey].forEach(function(item){
 					if(item.orderNo == orderNo){
 						delete item["LAY_CHECKED"];
@@ -739,6 +743,28 @@ layui.config({
 			edipao.exportLog(params);
 		}
 	}
+	List.prototype.renderCheckbox = function () {
+		var _this = this;
+		_this.chosenOrders.forEach(function (orderNo) {
+			$("div[lay-id=orderCompose-add-order-list] .layui-table-main tr").each(function (index, item) {
+				var $tr = $(item);
+				var index = $tr.data("index");
+				var trOrderNo = $tr.find("td[data-field=orderNo]").data("content");
+				if (trOrderNo == orderNo) {
+					$(".layui-table-fixed.layui-table-fixed-l")
+						.find("tr[data-index=" + index + "] input[type=checkbox]")
+						.attr("checked", "checked")
+						.next()
+						.addClass("layui-form-checked");
+				}
+			});
+			table.cache[_this.tableKey].forEach(function(item){
+				if(item.orderNo == orderNo){
+					item["LAY_CHECKED"] = true;
+				}
+			});
+		});
+	}
 	List.prototype.getTableColData = function (key, d) {
 		var res = "- -";
 		if(key == "orderNo"){
@@ -758,6 +784,12 @@ layui.config({
 			}
 		});
 		return res;
+	}
+	List.deleteByItem = function(arr, itemToDelete) {
+		var index = arr.indexOf(itemToDelete);
+		if(index < 0) return false;
+		arr.splice(index, 1);
+		return true;
 	}
   new List().init();
 });

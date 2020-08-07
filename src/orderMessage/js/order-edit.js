@@ -1,7 +1,7 @@
 function num(obj) {
   var fa = ''
       if (obj.classList.contains('allowMinus')) { //或者$(this).hasClass('allowMinus')
-      obj.value.substring(0, 1) === '-' && (fa = '-')
+        obj.value.substring(0, 1) === '-' && (fa = '-')
       }
       if (obj.value !== '' && obj.value.substr(0, 1) === '.') {
         obj.value = "";

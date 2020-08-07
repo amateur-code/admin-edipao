@@ -2,3 +2,16 @@
   padding: 20px;
   border-bottom: 1px solid #eee;
 }
+.form_display_item span:first-child {
+  display: inline-block;
+  position: absolute;
+  width: 80px;
+  text-align: right;
+}
+.form_display_item span:last-child {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  display: inline-block;
+  width: 100%;
+  padding-left: 80px;
+}

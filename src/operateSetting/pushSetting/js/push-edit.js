@@ -9,7 +9,7 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
     this.detail = null;
     this.action = qs.action;
     this.msgClient = 1;
-    this.msgId = qs.msgId;
+    this.msgId = qs.id;
   }
   Edit.prototype.init = function () {
     var _this = this;
@@ -38,22 +38,29 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
     var _this = this;
     form.on("submit(submit)", function (data) {
       data = data.field;
-      var params = {
-        msgClient: 1,
+      if(Date.parse(data.sendStartTime.replace(/-/g, "/")) > Date.parse(data.sendEndTime.replace(/-/g, "/"))){
+        layer.msg("推送的开始时间不能晚于结束时间", {icon: 2});
+        return false;
       }
-      Object.assign(params, data);
       var url = _this.action == "add" ? "/admin/msg/add" : "/admin/msg/update";
-      if(_this.action == "edit") params.msgId = _this.msgId;
+      if(_this.action == "edit") data.msgId = _this.msgId;
       var loadIndex = layer.load(1, {time: 10000});
       edipao.request({
         url: url,
-        data: params,
+        data: data,
       }).done(function (res) {
         layer.close(loadIndex);
         if(res.code == 0){
-          layer.alert("提交成功", {icon: 2});
+          layer.alert("提交成功", {icon: 1}, function(){
+            xadmin.father_reload();
+            xadmin.close();
+          });
         }
       }).always(function () { layer.close(loadIndex); });
+      return false;
+    });
+    $("#add_cancel").unbind().on("click", function () {
+      xadmin.close();
       return false;
     });
   }

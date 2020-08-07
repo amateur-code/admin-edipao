@@ -95,10 +95,10 @@
           <div class="layui-input-block">
             <div class="layui-row">
               <div class="layui-col-md4">
-                <input id="driver_single_compose_no" type="text" name="" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
+                <input id="driver_single_compose_no" onchange="num(this)" type="text" name="" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4">
-                <input id="driver_single_order_no" type="text" name="" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
+                <input id="driver_single_order_no" onchange="num(this)" type="text" name="" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4" style="padding-left: 5px;">
                 <input type="checkbox" name="" title="不限" lay-skin="primary" lay-filter="driver_single_limit">
@@ -113,10 +113,10 @@
           <div class="layui-input-block">
             <div class="layui-row">
               <div class="layui-col-md4">
-                <input id="driver_multi_compose_no" type="text" name="" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
+                <input id="driver_multi_compose_no" onchange="num(this)" type="text" name="" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4">
-                <input id="driver_multi_order_no" type="text" name="" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
+                <input id="driver_multi_order_no" onchange="num(this)" type="text" name="" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4" style="padding-left: 5px;">
                 <input type="checkbox" name="" title="不限" lay-skin="primary" lay-filter="driver_multi_limit">
@@ -131,7 +131,7 @@
           <div class="layui-input-block">
             <div class="layui-row">
               <div class="layui-col-md8">
-                <input type="text" name="" lay-verify="required" placeholder="天数" autocomplete="off" class="layui-input">
+                <input type="text" name="" onchange="num(this)" lay-verify="required" placeholder="天数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4">
                 天内参与抢单
@@ -179,7 +179,7 @@
         <div class="layui-form-item">
           <div><span class="x-red">*</span>展示单公里成本使用的油价</div>
           <div class="layui-input-block">
-            <input type="text" name="" lay-verify="required" placeholder="请输入油加金额" autocomplete="off" class="layui-input">
+            <input type="text" onchange="num(this)" name="" lay-verify="required" placeholder="请输入油价金额" autocomplete="off" class="layui-input">
             <span class="input_unit">元/升</span>
           </div>
         </div>
@@ -188,7 +188,7 @@
         <div class="layui-form-item">
           <div><span class="x-red">*</span>订单组合的订单数</div>
           <div class="layui-input-block">
-            <input type="text" name="" lay-verify="required" placeholder="请输入组合的最大订单数" autocomplete="off" class="layui-input">
+            <input type="text" onchange="num(this)" name="" lay-verify="required" placeholder="请输入组合的最大订单数" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>
@@ -201,7 +201,7 @@
         <div class="layui-form-item">
           <div><span class="x-red">*</span>司机队伍人数上限</div>
           <div class="layui-input-block">
-            <input type="text" name="" lay-verify="required" placeholder="请输入司机队伍的人数上限" autocomplete="off" class="layui-input">
+            <input type="text" onchange="num(this)" name="" lay-verify="required" placeholder="请输入司机队伍的人数上限" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>
@@ -239,7 +239,7 @@
           <div class="layui-form-item">
             <div><span class="x-red">*</span>展示时长</div>
             <div class="layui-input-block">
-              <input id="grabOrderTimeDuration" value="{{d.detail.grabOrderTimeDuration}}" type="text" name="grabOrderTimeDuration" lay-verify="required" placeholder="请输入时长" autocomplete="off" class="layui-input">
+              <input id="grabOrderTimeDuration" onchange="num(this)" value="{{d.detail.grabOrderTimeDuration}}" type="text" name="grabOrderTimeDuration" lay-verify="required" placeholder="请输入时长" autocomplete="off" class="layui-input">
               <span class="input_unit">分钟</span>
             </div>
           </div>
@@ -251,12 +251,13 @@
     <div class="layui-card-header">线路配置&nbsp;&nbsp;&nbsp;<span id="add_route_btn" class="blue pointer">+添加</span></div>
     <div class="layui-card-body layui-row layui-col-space10">
       <div id="route_container" class="layui-row time_row" style="border: none;">
+        <p id="empty_route" class="hide" style="color: #ccc;">暂无线路</div>
         {{# layui.each(d.routeList, function(index, item){ }}
-        <div class="layui-col-md4 route_item_{{index}}">
+        <div class="layui-col-md4 route_item route_item_{{index}}">
           <div class="layui-form-item">
             <div><span class="x-red">*</span>线路名称&nbsp;&nbsp;&nbsp;<span data-index="{{index}}" class="delete_route_btn">-移除</span></div>
             <div class="layui-input-block">
-              <input id="" value="" type="text" name="" lay-verify="required" placeholder="请输入线路名称" autocomplete="off" class="layui-input">
+              <input id="route{{index}}" value="" type="text" name="route{{index}}" lay-verify="required" placeholder="请输入线路名称" autocomplete="off" class="layui-input">
             </div>
           </div>
         </div>
@@ -275,11 +276,11 @@
 </script>
 <script id="route_tpl" type="text/html">
   {{# layui.each(d.routeList, function(index, item){ }}
-  <div class="layui-col-md4 route_item_{{index}}">
+  <div class="layui-col-md4 route_item route_item_{{index}}">
     <div class="layui-form-item">
       <div><span class="x-red">*</span>线路名称&nbsp;&nbsp;&nbsp;<span data-index="{{index}}" class="delete_route_btn">-移除</span></div>
       <div class="layui-input-block">
-        <input id="" value="" type="text" name="" lay-verify="required" placeholder="请输入线路名称" autocomplete="off" class="layui-input">
+        <input id="route{{index}}" value="" type="text" name="route{{index}}" lay-verify="required" placeholder="请输入线路名称" autocomplete="off" class="layui-input">
       </div>
     </div>
   </div>

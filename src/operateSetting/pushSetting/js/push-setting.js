@@ -17,25 +17,41 @@ layui
     tableIns,
     tableFilterIns,
     reloadOption = null;
+  var clientData = [
+    {key: 1, value: "司机APP"},
+  ];
   var where = {
     loginStaffId: edipao.getLoginStaffId(),
   };
   var showList = [], exportHead = {};
   var tableCols = [
     { checkbox: true, fixed: "left" },
-    { field: "sendStartTime", title: "推送时间", width: 250, templet: function (d) {
-      return d.sendStartTime + "-" + d.sendEndTime;
+    { field: "sendStartTime", title: "开始时间", width: 150, templet: function (d) {
+      return d.sendStartTime || "- -";
     }},
-    { field: "content", title: "消息内容", templet: function(d){
+    { field: "sendEndTime", title: "结束时间", width: 150, templet: function (d) {
+      return d.sendEndTime || "- -";
+    }},
+    { field: "content", title: "消息内容", width: 400, templet: function(d){
       return d.content || "- -";
     }},
-    { title: "操作", field: "operation", width: 180, fixed: "right", toolbar: "#rowBtns" },
+    { field: "msgClient", title: "推送对象", width: 150, templet: function(d){
+      var res = "- -";
+      clientData.some(function (item) {
+        if(item.key == d.msgClient){
+          res = item.value;
+          return true;
+        }
+      });
+      return res;
+    }},
+    { title: "操作", width: 200, fixed: "right", toolbar: "#rowBtns" },
   ];
   function View() {
     this.detail = null;
     this.tableKey = "driver-push-list";
     this.logKey = 26;
-    this.dataKey = "grabCombinationOrderList";
+    this.dataKey = "msgDtoList";
     this.url = "/admin/msg/list";
   }
   View.prototype.init = function(){
@@ -91,6 +107,7 @@ layui
       url: edipao.API_HOST + _this.url,
       method: "post",
       page: true,
+      loading: true,
       where: where,
       request: {
         pageName: "pageNo", //页码的参数名称
@@ -98,13 +115,14 @@ layui
       },
       parseData: function (res) {
         edipao.codeMiddleware(res);
-        res.data = res.data || [];
+        res.data = res.data || {};
+        res.data[_this.dataKey] = res.data[_this.dataKey] || [];
         if (res.code == 0) {
           return {
             code: res.code,
             msg: res.message,
-            count: res.data.length,
-            data: res.data,
+            count: res.data.totalSize,
+            data: res.data[_this.dataKey],
           };
         }
       },
@@ -131,8 +149,6 @@ layui
     table.on("toolbar("+_this.tableKey+")", handleEvent);
     function handleEvent(obj) {
       var data = obj.data;
-      // obj.event == "export" && permissionList.indexOf("车损报备-导出") == -1 && (obj.event = "reject");
-
       switch (obj.event) {
         case "add":
           xadmin.open("添加消息推送", "./push-edit.html?action=add");
@@ -184,6 +200,8 @@ layui
     var filters = [
       { field: "content", type: "input" },
       { field: "sendStartTime", type: "timeslot" },
+      { field: "sendEndTime", type: "timeslot" },
+      { field: "msgClient", type: "checkbox", data: clientData },
     ];
     tableFilterIns = tableFilter.render({
       elem: "#" + _this.tableKey, //table的选择器
@@ -196,11 +214,14 @@ layui
           loginStaffId: edipao.getLoginStaffId(),
         };
         layui.each(filters, function (key, value) {
-          if (key == "sendStartTime") {
+          if (key == "sendStartTime" || key == "sendEndTime") {
             where['searchFieldDTOList['+ index +'].fieldName'] = key;
             value = value.split(" 至 ");
             where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
             where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
+          }else if(key == "msgClient"){
+            where['searchFieldDTOList['+ index +'].fieldName'] = key;
+            where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
           }else {
             where["searchFieldDTOList[" + index + "].fieldName"] = key;
             where["searchFieldDTOList[" + index + "].fieldValue"] = value;
@@ -230,7 +251,7 @@ layui
         pageSize: "pageSize",
         limit: 99999,
         checkFunction: function(res){
-          return !(!res.data || res.data.length == 0);
+          return !(!res.data || !res.data[_this.dataKey] || res.data[_this.dataKey].length == 0);
         }
       }).done(function (res) {
         var data = [];

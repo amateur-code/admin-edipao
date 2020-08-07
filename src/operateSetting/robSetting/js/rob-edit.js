@@ -1,3 +1,23 @@
+function num(obj) {
+  var fa = ''
+  if (obj.classList.contains('allowMinus')) { //或者$(this).hasClass('allowMinus')
+    obj.value.substring(0, 1) === '-' && (fa = '-')
+  }
+  if (obj.value !== '' && obj.value.substr(0, 1) === '.') {
+    obj.value = "";
+  }
+  obj.value = obj.value.replace(/^0*(0\.|[1-9])/, '$1');//解决 粘贴不生效
+  obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
+  obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
+  obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+  obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数
+  if (obj.value.indexOf(".") < 0 && obj.value !== "") {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+    if (obj.value.substr(0, 1) === '0' && obj.value.length === 2) {
+      obj.value = obj.value.substr(1, obj.value.length);
+    }
+  }
+  obj.value = fa + obj.value
+}
 layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
   var edipao = layui.edipao,
     laytpl = layui.laytpl,
@@ -73,6 +93,7 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
         var index = e.target.dataset.index;
         $(".route_item_" + index).remove();
         delete _this.routeList[index];
+        _this.toggleRouteTxt();
       }
     });
     $("#add_route_btn").unbind().on("click", function () {
@@ -85,6 +106,7 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
         routeList: routeList,
       }, function (html) {
         $("#route_container").append(html);
+        _this.toggleRouteTxt();
       });
     });
     $("#add_btn").unbind().on("click", function (e) {
@@ -156,6 +178,13 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
       });
       return false;
     });
+  }
+  Edit.prototype.toggleRouteTxt = function () {
+    if($(".route_item").length == 0){
+      $("#empty_route").removeClass("hide");
+    }else{
+      $("#empty_route").addClass("hide");
+    }
   }
   Edit.prototype.renderTime = function (index) {
     var idList = ["startTime", "endTime", "deadlineTime"];
