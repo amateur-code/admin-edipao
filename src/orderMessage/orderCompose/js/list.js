@@ -101,11 +101,11 @@ layui
                 }
               });
             } else {
+              showList = [];
               layui.each(tableCols, function (index, item) {
-                if (item.field && showList.indexOf(item.field) != -1) {
-                  if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
-                    exportHead[item.field] = item.title;
-                  }
+                if (item.field && item.field !== "" && item.field != "right" && item.field != "left" && item.field != "operation") {
+                  showList.push(item.field);
+                  exportHead[item.field] = item.title;
                 }
               });
             }
@@ -205,6 +205,7 @@ layui
       }
     };
     List.prototype.bindEvents = function () {
+      var _this = this;
       $(".href_order_count").unbind().on("click", function (e) {
         var no = e.target.dataset.no, name = e.target.dataset.name;
         xadmin.open("查看订单", "./orderAdd.html?action=all&combinationOrderNo=" + no + "&combinationOrderName=" + name + "&perssionId=" + _this.perssionId);

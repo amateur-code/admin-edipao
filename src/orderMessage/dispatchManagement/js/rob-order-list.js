@@ -202,6 +202,10 @@ layui.config({
         if(!d.showBtn) return "";
         return d.tailPayAmount + "元";
       }},
+      {field: 'kilometreFee', title: '公里运费', sort: false,width: 200, hide: false, templet: function (d) {
+				if(d.masterFlag != "是") return "";
+				return d.kilometreFee ? (d.kilometreFee + "元") : "- -";
+			}},
     ];
     function DataNull(data) {
       if (data == null || data == "") {
@@ -260,7 +264,7 @@ layui.config({
           dataKey: "grabActivityDriverOrderList",
           tableKey: "driver-rob-order-list-table",
           logKey: 22,
-          logRemark: "导出司机签到列表",
+          logRemark: "导出司机抢单列表",
         },
       }
       this.showSingleActions = ["allSingle","winSingle"];
@@ -324,11 +328,9 @@ layui.config({
           } else {
             showList = [];
             layui.each(tableCols, function (index, item) {
-              if (item.field) {
+              if (item.field && item.field !== "" && item.field != "right" && item.field != "left" && item.field != "operation") {
                 showList.push(item.field);
-                if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
-                  exportHead[item.field] = item.title;
-                }
+                exportHead[item.field] = item.title;
               }
             });
           }
@@ -468,6 +470,7 @@ layui.config({
         { field: 'arrivePayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'tailPayAmount', type: 'checkbox-numberslot', data: feeData },
         { field: 'grabOrderDriverCount', type: 'numberslot' },
+        { field: 'kilometreFee', type: 'numberslot' },
       ]
       if(_this.showMultiActions.indexOf(_this.action)<0&&_this.showSingleActions.indexOf(_this.action)<0){
         filters.push({ field: 'orderType', type: 'checkbox', data:orderTypeData });

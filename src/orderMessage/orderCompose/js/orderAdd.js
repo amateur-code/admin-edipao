@@ -114,17 +114,9 @@ layui.config({
 			{ field: 'endAddress', type: 'input' },
 			{ field: 'transportMode', type: 'checkbox', data: transportModeData },
 			{ field: 'transportAssignTime', type: 'timeslot' },
-			{ field: 'openOperator', type: 'contract' },
 			{ field: 'deliveryOperator', type: 'contract' },
-			{ field: 'dispatchOperator', type: 'contract' },
 			{ field: 'dispatchMode', type: 'checkbox', data: dispatchModeData },
-			{ field: 'customerMileage', type: 'numberslot' },
-			{ field: 'pricePerMeliage', type: 'numberslot' },
 			{ field: 'income', type: 'numberslot' },
-			{ field: 'driverMileage', type: 'numberslot' },
-			{ field: 'prePayTime', type: 'timeslot' },
-			{ field: 'arrivePayTime', type: 'timeslot' },
-			{ field: 'tailPayTime', type: 'timeslot' },
 			{ field: 'prePayAmount', type: 'checkbox-numberslot', data: feeData },
 			{ field: 'arrivePayAmount', type: 'checkbox-numberslot', data: feeData },
 			{ field: 'tailPayAmount', type: 'checkbox-numberslot', data: feeData },
@@ -313,6 +305,7 @@ layui.config({
 		this.combinationOrderNo = qs.combinationOrderNo || "";
 		this.orderTotal = 0;
 		this.chosenOrders = [];
+		console.log(window.opener)
   }
   List.prototype.init = function () {
     var _this = this;
@@ -394,13 +387,13 @@ layui.config({
 						}
 					})
 				}else{
-					layui.each(tableCols, function(index, item){
-						if(item.field && showList.indexOf(item.field) != -1){
-							if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
-								exportHead[item.field] = item.title;
-							}
+					showList = [];
+					layui.each(tableCols, function (index, item) {
+						if (item.field && item.field !== "" && item.field != "right" && item.field != "left" && item.field != "operation") {
+							showList.push(item.field);
+							exportHead[item.field] = item.title;
 						}
-					})
+					});
 				}
 				_this.renderTable();
 				_this.bindTableEvents();
@@ -427,7 +420,7 @@ layui.config({
 					if(key=='startProvince'||key=='endProvince'){
 						where['searchFieldDTOList['+ index +'].fieldName'] = key;
 						where['searchFieldDTOList['+ index +'].fieldValue'] = value[key];
-					}else if(key == "kilometreFee" || key == "customerMileage" || key == "pricePerMeliage" || key == "income" || key == "driverMileage"||key=="carDamageCount"){
+					}else if(key == "kilometreFee" || key == "income"){
 						where["searchFieldDTOList[" + index + "].fieldName"] = key;
 						where['searchFieldDTOList[' + index + '].fieldMinValue'] = value[0];
 						where['searchFieldDTOList[' + index + '].fieldMaxValue'] = value[1];
@@ -455,15 +448,15 @@ layui.config({
 							where['searchFieldDTOList['+ index +'].fieldName'] = key.replace("Amount", "Status");
 							where['searchFieldDTOList['+ index +'].fieldListValue'] = value.checked.join(',');
 						}
-					}else if(key == "cksj" || key == "dealerSignTime" || key == "certificateSignTime" || key=="arrivePayTime"||key=="prePayTime"||key=="tailPayTime"||key=="transportAssignTime"||key=="fetchTruckTime"||key=="dispatchTime" || key == "startTruckTime"){
+					}else if(key=="transportAssignTime"){
 						where['searchFieldDTOList['+ index +'].fieldName'] = key;
 						value = value.split(" 至 ");
 						where['searchFieldDTOList['+ index +'].fieldMinValue'] = value[0];
 						where['searchFieldDTOList['+ index +'].fieldMaxValue'] = value[1];
-					}else if(key == "orderType" || key == "tailPayStatus" || key == "masterFlag"){
+					}else if(key == "orderType" || key == "masterFlag"){
 						where['searchFieldDTOList['+ index +'].fieldName'] = key;
 						where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
-					}else if(key == "returnAuditStatus" || key == "dispatchMode" || key == "transportMode"){
+					}else if( key == "dispatchMode" || key == "transportMode"){
 						where['searchFieldDTOList['+ index +'].fieldName'] = key;
 						where['searchFieldDTOList['+ index +'].fieldListValue'] = value.join(',');
 					}else{

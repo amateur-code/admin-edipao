@@ -107,11 +107,9 @@ layui
             } else {
               showList = [];
               layui.each(tableCols, function (index, item) {
-                if (item.field) {
+                if (item.field && item.field !== "" && item.field != "right" && item.field != "left" && item.field != "operation") {
                   showList.push(item.field);
-                  if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
-                    exportHead[item.field] = item.title;
-                  }
+                  exportHead[item.field] = item.title;
                 }
               });
             }

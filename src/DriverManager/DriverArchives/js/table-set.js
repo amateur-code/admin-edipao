@@ -6,6 +6,7 @@ layui.use(['table', 'layer','laytpl', 'form'], function(table, layer, laytpl, fo
         { field: 'name', title: '司机姓名' },
         { field: 'phone', title: '司机手机' },
         { field: 'idNum', title: '身份证号' },
+        { field: 'signStatus', title: '签到状态' },
         { field: 'address', title: '当前住址' },
         { field: 'driverType', title: '司机类型' },
         { field: 'driveLicenceType', title: '驾照类型' },

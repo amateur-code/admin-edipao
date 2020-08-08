@@ -17,6 +17,8 @@ layui
     tableIns,
     tableFilterIns,
     reloadOption = null;
+  var permissionList = edipao.getPermissionIdList();
+  window.permissionList = permissionList;
   var clientData = [
     {key: 1, value: "司机APP"},
   ];
@@ -50,7 +52,7 @@ layui
   function View() {
     this.detail = null;
     this.tableKey = "driver-push-list";
-    this.logKey = 26;
+    this.logKey = 27;
     this.dataKey = "msgDtoList";
     this.url = "/admin/msg/list";
   }
@@ -67,36 +69,32 @@ layui
       },
     })
     .done(function (res) {
-      if (res.code == 0) {
-        if (res.data) {
-          showList = [];
-          try {
-            showList = JSON.parse(res.data);
-          } catch (e) {}
-          layui.each(tableCols, function (index, item) {
-            if (item.field == "operation") return;
-            if (item.field && showList.indexOf(item.field) == -1) {
-              item.hide = true;
-            } else {
-              if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
-                exportHead[item.field] = item.title;
-              }
+      if (res.data) {
+        showList = [];
+        try {
+          showList = JSON.parse(res.data);
+        } catch (e) {}
+        layui.each(tableCols, function (index, item) {
+          if (item.field == "operation") return;
+          if (item.field && showList.indexOf(item.field) == -1) {
+            item.hide = true;
+          } else {
+            if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
+              exportHead[item.field] = item.title;
             }
-          });
-        } else {
-          showList = tableCols.map(function (item) { 
-            return item.field == "operation" ? false : item.field; 
-          });
-          layui.each(tableCols, function (index, item) {
-            if (item.field && showList.indexOf(item.field) != -1) {
-              if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
-                exportHead[item.field] = item.title;
-              }
-            }
-          });
-        }
-        _this.renderTable();
+          }
+        });
+      } else {
+        showList = [];
+        layui.each(tableCols, function (index, item) {
+          if (item.field && item.field !== "" && item.field != "right" && item.field != "left" && item.field != "operation") {
+            showList.push(item.field);
+            exportHead[item.field] = item.title;
+          }
+        });
       }
+      console.log(showList)
+      _this.renderTable();
     });
   }
   View.prototype.renderTable = function () {
@@ -257,7 +255,7 @@ layui
         var data = [];
         exportLoading = false;
         res.forEach(function (item) {
-          data = data.concat(item);
+          data = data.concat(item[_this.dataKey]);
         });
         cb(data);
       });
@@ -308,6 +306,13 @@ layui
         operationRemark: "导出消息推送数据",
       };
       edipao.exportLog(params);
+    }
+    function DataNull(data) {
+      if (data == null || data == "") {
+        return "- -";
+      } else {
+        return data;
+      }
     }
   };
   var view = new View();

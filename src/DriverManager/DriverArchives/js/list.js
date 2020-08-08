@@ -302,7 +302,7 @@ layui.config({
     ];
 
 
-    var showList = [ "name", "phone","idNum","address","driverType","driveLicenceType", "drivingAge","wishJourney","oftenJourney","location","deposit","depositStatus","idLicenceValidity","driveLicenceValidity","qualificationsValidity","licenceWarn","emergencyPhone","status"];
+    var showList = [];
     var exportHead={};// 导出头部
     edipao.request({
         type: 'GET',
@@ -328,13 +328,13 @@ layui.config({
                     }
                 })
             }else{
-                layui.each(tableCols, function(index, item){
-                    if(item.field && showList.indexOf(item.field) != -1){
-                        if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
-                            exportHead[item.field] = item.title;
-                        }
-                    }
-                })
+                showList = [];
+                layui.each(tableCols, function (index, item) {
+                  if (item.field && item.field !== "" && item.field != "right" && item.field != "left" && item.field != "operation") {
+                    showList.push(item.field);
+                    exportHead[item.field] = item.title;
+                  }
+                });
             }
             renderTable();
         }
@@ -710,7 +710,7 @@ layui.config({
                 exportRecruit();
                 break;
             case 'tableSet':
-                xadmin.open('表格设置', './table-set.html', 600, 600);
+                xadmin.open('表格设置', './table-set.html', 600, 500);
                 break;
             case 'edit':
                 xadmin.open('修改司机', './edit.html?id=' + data.id)

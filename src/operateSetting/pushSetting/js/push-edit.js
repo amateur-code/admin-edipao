@@ -45,6 +45,7 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
       var url = _this.action == "add" ? "/admin/msg/add" : "/admin/msg/update";
       if(_this.action == "edit") data.msgId = _this.msgId;
       var loadIndex = layer.load(1, {time: 10000});
+      console.log(data.content.length)
       edipao.request({
         url: url,
         data: data,

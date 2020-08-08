@@ -1909,33 +1909,30 @@ layui.config({
             tableName: tableName
         }
     }).done(function(res) {
-        if (res.code == 0) {
-            if(res.data){
-                showList = [];
-                try{
-                    showList = JSON.parse(res.data);
-                }catch(e){}
-                layui.each(tableCols, function(index, item){
-                    if(item.field && showList.indexOf(item.field) == -1){
-                        item.hide = true;
-                    }else{
-                        if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
-                            exportHead[item.field] = item.title;
-                            if(item.field == "prePayAmount") exportHead.prePayOil = "预付款油升数";
-                        }
+        if(res.data){
+            showList = [];
+            try{
+                showList = JSON.parse(res.data);
+            }catch(e){}
+            layui.each(tableCols, function(index, item){
+                if(item.field && showList.indexOf(item.field) == -1){
+                    item.hide = true;
+                }else{
+                    if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
+                        exportHead[item.field] = item.title;
+                        if(item.field == "prePayAmount") exportHead.prePayOil = "预付款油升数";
                     }
-                })
-            }else{
-                layui.each(tableCols, function(index, item){
-                    if(item.field && showList.indexOf(item.field) != -1){
-                        if(item.field&&item.field!==''&&item.field!='right'&&item.field!='left'){
-                            exportHead[item.field] = item.title;
-                            if(item.field == "prePayAmount") exportHead.prePayOil = "预付款油升数";
-                        }
-                    }
-                })
-            }
-            tableCols.push(toolField);
-            method.renderTable();
+                }
+            })
+        }else{
+            showList = [];
+            layui.each(tableCols, function (index, item) {
+              if (item.field && item.field !== "" && item.field != "right" && item.field != "left" && item.field != "operation") {
+                showList.push(item.field);
+                exportHead[item.field] = item.title;
+              }
+            });
         }
+        tableCols.push(toolField);
+        method.renderTable();
     });});

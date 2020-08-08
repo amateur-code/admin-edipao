@@ -28,7 +28,7 @@ layui
     console.log(permissionList)
     window.form = form;
     var where = {};
-    var showList = ["company", "endProvince", "endAddress", "addrCode", "connectorName", "remark","deliveryOperator", "feeJson","grabOrderHot", "transportOrderNum", "status"];
+    var showList = [];
     var exportHead = {}; // 导出头部
     var tableCols = [
       { checkbox: true },
@@ -194,11 +194,11 @@ layui
                 }
               });
             } else {
+              showList = [];
               layui.each(tableCols, function (index, item) {
-                if (item.field && showList.indexOf(item.field) != -1) {
-                  if (item.field && item.field !== "" && item.field != "right" && item.field != "left") {
-                    exportHead[item.field] = item.title;
-                  }
+                if (item.field && item.field !== "" && item.field != "right" && item.field != "left" && item.field != "operation") {
+                  showList.push(item.field);
+                  exportHead[item.field] = item.title;
                 }
               });
             }

@@ -48,6 +48,17 @@ layui.use(["jquery", "layer", "form", "laytpl", "laydate"], function () {
         try {
           _this.detail.grabTimeConfigInfo = JSON.parse(_this.detail.grabTimeConfigInfo);
         } catch (error) {_this.detail.grabTimeConfigInfo = []}
+        try {
+          _this.detail.grabOrderDisplayCountProportion = JSON.parse(_this.detail.grabOrderDisplayCountProportion);
+          _this.detail.grabOrderDisplayCountProportion.individualDriverDisplay = _this.detail.grabOrderDisplayCountProportion.individualDriverDisplay.split(":");
+          _this.detail.grabOrderDisplayCountProportion.teamDriverDisplay = _this.detail.grabOrderDisplayCountProportion.teamDriverDisplay.split(":");
+        } catch (error) {_this.detail.grabOrderDisplayCountProportion = {}}
+        try {
+          _this.detail.grabOrderOtherParam = JSON.parse(_this.detail.grabOrderOtherParam);
+        } catch (error) {_this.detail.grabOrderOtherParam = []}
+        try {
+          _this.detail.grabOrderDriverTeam = JSON.parse(_this.detail.grabOrderDriverTeam);
+        } catch (error) {_this.detail.grabOrderDriverTeam = []}
         _this.initTime();
       }
     });

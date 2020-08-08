@@ -123,6 +123,10 @@ layui
         if(d.masterFlag != "是") return "";
         return d.tailPayAmount + "元";
       }},
+      {field: 'kilometreFee', title: '公里运费', sort: false,width: 200, hide: false, templet: function (d) {
+				if(d.masterFlag != "是") return "";
+				return d.kilometreFee ? (d.kilometreFee + "元") : "- -";
+			}},
       { title: "操作", field: "operation", width: 100, fixed: "right", toolbar: "#rowBtns" },
     ];
     function DataNull(data) {
@@ -226,7 +230,6 @@ layui
     List.prototype.addOrder = function (orderList) {
       var _this = this;
       _this.orderList = _this.orderList.concat(orderList);
-      console.log(_this.orderList)
       tableIns.reload({
         data: _this.orderList,
       });

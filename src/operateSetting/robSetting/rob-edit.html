@@ -95,13 +95,13 @@
           <div class="layui-input-block">
             <div class="layui-row">
               <div class="layui-col-md4">
-                <input id="driver_single_compose_no" onchange="num(this)" type="text" name="" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
+                <input value="{{d.detail.grabOrderDisplayCountProportion.individualDriverDisplay[0]}}" id="driver_single_compose_no" onchange="num(this)" type="text" name="individualDriver0" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4">
-                <input id="driver_single_order_no" onchange="num(this)" type="text" name="" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
+                <input value="{{d.detail.grabOrderDisplayCountProportion.individualDriverDisplay[1]}}" id="driver_single_order_no" onchange="num(this)" type="text" name="individualDriver1" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4" style="padding-left: 5px;">
-                <input type="checkbox" name="" title="不限" lay-skin="primary" lay-filter="driver_single_limit">
+                <input {{d.detail.grabOrderDisplayCountProportion.individualDriverDisplay[2] == 1 ? 'checked' : ''}} type="checkbox" name="individualDriver2" title="不限" lay-skin="primary" lay-filter="driver_single_limit">
               </div>
             </div>
           </div>
@@ -113,13 +113,13 @@
           <div class="layui-input-block">
             <div class="layui-row">
               <div class="layui-col-md4">
-                <input id="driver_multi_compose_no" onchange="num(this)" type="text" name="" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
+                <input value="{{d.detail.grabOrderDisplayCountProportion.teamDriverDisplay[0]}}" id="driver_multi_compose_no" onchange="num(this)" type="text" name="teamDriver0" lay-verify="required" placeholder="组合数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4">
-                <input id="driver_multi_order_no" onchange="num(this)" type="text" name="" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
+                <input value="{{d.detail.grabOrderDisplayCountProportion.teamDriverDisplay[1]}}" id="driver_multi_order_no" onchange="num(this)" type="text" name="teamDriver1" lay-verify="required" placeholder="订单数" autocomplete="off" class="layui-input">
               </div>
               <div class="layui-col-md4" style="padding-left: 5px;">
-                <input type="checkbox" name="" title="不限" lay-skin="primary" lay-filter="driver_multi_limit">
+                <input {{d.detail.grabOrderDisplayCountProportion.teamDriverDisplay[2] == 1 ? 'checked' : ''}} type="checkbox" name="teamDriver2" title="不限" lay-skin="primary" lay-filter="driver_multi_limit">
               </div>
             </div>
           </div>
@@ -146,7 +146,7 @@
         <div class="layui-form-item">
           <div><span class="x-red">*</span>高活跃人群订单分配</div>
           <div class="layui-input-block">
-            <input type="text" name="highActiveOnlineDriverOrderProportion" lay-verify="required" placeholder="高热度:中热度:低热度" autocomplete="off" class="layui-input">
+            <input value="{{d.detail.grabOrderDisplayCountProportion.highActiveOnlineDriverOrderProportion}}" type="text" name="highActiveOnlineDriverOrderProportion" lay-verify="required" placeholder="高热度:中热度:低热度" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@
         <div class="layui-form-item">
           <div><span class="x-red">*</span>低活跃人群订单分配</div>
           <div class="layui-input-block">
-            <input type="text" name="lowActiveOnlineDriverOrderProportion" lay-verify="required" placeholder="高热度:中热度:低热度" autocomplete="off" class="layui-input">
+            <input value="{{d.detail.grabOrderDisplayCountProportion.lowActiveOnlineDriverOrderProportion}}" type="text" name="lowActiveOnlineDriverOrderProportion" lay-verify="required" placeholder="高热度:中热度:低热度" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>
@@ -179,7 +179,7 @@
         <div class="layui-form-item">
           <div><span class="x-red">*</span>展示单公里成本使用的油价</div>
           <div class="layui-input-block">
-            <input type="text" onchange="num(this)" name="perKilometerUsingOilPrices" lay-verify="required" placeholder="请输入油价金额" autocomplete="off" class="layui-input">
+            <input type="text" value="{{d.detail.grabOrderOtherParam.perKilometerUsingOilPrices}}" onchange="num(this)" name="perKilometerUsingOilPrices" lay-verify="required" placeholder="请输入油价金额" autocomplete="off" class="layui-input">
             <span class="input_unit">元/升</span>
           </div>
         </div>
@@ -188,7 +188,7 @@
         <div class="layui-form-item">
           <div><span class="x-red">*</span>订单组合的订单数</div>
           <div class="layui-input-block">
-            <input type="text" onchange="num(this)" name="combinationOrderNumber" lay-verify="required" placeholder="请输入组合的最大订单数" autocomplete="off" class="layui-input">
+            <input type="text" value="{{d.detail.grabOrderOtherParam.combinationOrderNumber}}" onchange="num(this)" name="combinationOrderNumber" lay-verify="required" placeholder="请输入组合的最大订单数" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>

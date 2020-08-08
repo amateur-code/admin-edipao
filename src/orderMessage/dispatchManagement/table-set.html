@@ -114,6 +114,7 @@
     { field: 'prePayAmount', title: '油升数' },
     { field: 'arrivePayAmount', title: '到付款金额' },
     { field: 'tailPayAmount', title: '尾款金额' },
+    { field: 'kilometreFee', title: '公里运费' },
     { field: 'grabOrderDriverCount', title: '抢单司机' },
   ]
   var driverRobOrderListTableHeaderList = [
@@ -147,6 +148,7 @@
     { field: 'prePayAmount', title: '油升数' },
     { field: 'arrivePayAmount', title: '到付款金额' },
     { field: 'tailPayAmount', title: '尾款金额' },
+    { field: 'kilometreFee', title: '公里运费' },
   ]
   var robListTableHeaderList = [
     { field: 'grabStartTime', title: '抢单开始时间' },
@@ -183,10 +185,15 @@
   headers["order-join-rob-driver-list-table"] = robDriverTableHeaderList;
   headers["join-rob-driver-list-table"] = joinRobDriverTableHeaderList;
   headers["login-rob-driver-list-table"] = joinRobDriverTableHeaderList;
+  headers["sign-rob-driver-list-table"] = joinRobDriverTableHeaderList;
   //订单
   headers["all-rob-order-list-table"] = robOrderListTableHeaderList;
   headers["win-rob-order-list-table"] = robOrderListTableHeaderList;
   headers["driver-rob-order-list-table"] = driverRobOrderListTableHeaderList;
+  headers["win-rob-multi-order-list-table"] = driverRobOrderListTableHeaderList;
+  headers["all-rob-multi-order-list-table"] = driverRobOrderListTableHeaderList;
+  headers["win-rob-single-order-list-table"] = driverRobOrderListTableHeaderList;
+  headers["all-rob-single-order-list-table"] = driverRobOrderListTableHeaderList;
   //司机签到
   headers["driver-sign-list-table"] = driverSignTableHeaderList;
   //抢单
