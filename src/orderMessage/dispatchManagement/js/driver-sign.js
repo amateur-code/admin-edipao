@@ -225,7 +225,7 @@ layui
         filters: filters, //过滤项配置
         done: function (filters, reload) {
           filters = $.extend({},filters);
-          var index = 1;
+          var index = 0;
           var where = Object.assign({
             loginStaffId: edipao.getLoginStaffId(),
           }, where);

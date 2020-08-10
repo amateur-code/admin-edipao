@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<title>司机服务协议</title>
+	<style type="text/css">
+    body.dark {
+      background: rgb(40, 40, 40);
+    }
+    body.dark * {
+      color: #fff;
+    }
+		p {
+			font-size: 12px;
+			line-height: 22px;
+		}
+		.ws-bold {
+			font-weight: bold;
+			color: #444;
+		}
+		.ws-sevice>p>span {
+			font-size: 12px !important;
+			display: inline !important;
+			margin-left: 0 !important;
+		}
+		.ws-next-title {
+			margin-top: 35px;
+			font-size: 16px;
+			font-weight: bold;
+			text-align: center;
+		}
+		.inner {
+			font-size: 12px;
+		}
+	</style>
+</head>
+
+<body>
+<div class="ws-service">
+  <h3 class="ws-next-title">司机服务协议</h3>
+  <p class=".ws-bold">1.重要须知</p>
+	<p>
+		1.1 这里是条款第一项
+	</p>
+	<p>
+		1.2 这里是条款第二项
+	</p>
+</div>
+
+<script>
+  function getQueryString(name, arg) {
+    let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+    let r = arg.substr(1).match(reg);
+    if (r != null) {
+      return unescape(r[2]);
+    }
+    return null;
+  }
+  var skin = getQueryString('skin', location.search);
+  if (skin == 'dark') document.querySelector('body').classList.add(skin);
+</script>
+<script>
+	
+</script>
+</body>
+
+</html>

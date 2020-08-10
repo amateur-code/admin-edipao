@@ -12,6 +12,7 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table'], function(){
     this.feeTpls = [];
     this.startParks = [];
     this.staffList = [];
+    this.belongLineList = [];
   }
   Add.prototype.init = function () {
     var _this = this;
@@ -20,7 +21,7 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table'], function(){
   Add.prototype.initData = function () {
     var _this = this;
     var loadIndex = layer.load(2);
-    $.when(_this.getFeeTpl(), _this.getStartPark(), _this.getDetail(), _this.getStaffList()).done(function(res1, res2, res3){
+    $.when(_this.getFeeTpl(), _this.getStartPark(), _this.getDetail(), _this.getStaffList(), _this.getBelongLine()).done(function(res1, res2, res3){
       layer.close(loadIndex);
       res1 = res1[0];
       res2 = res2[0];
@@ -98,6 +99,26 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table'], function(){
       });
     }
   }
+  Add.prototype.getBelongLine = function () {
+    return edipao.request({
+      url: "/admin/grab/config/info",
+      method: "get",
+      data: {
+        pageNo: 1,
+        pageSize: 9999
+      }
+    }).done(function (res) {
+      if(res.code == 0){
+        
+      }
+    });
+
+    function returnOptions(data) {
+      var str = '<option value="" disabled>请选择</option>';
+      data.forEach(function (item) {  });
+      return str;
+    }
+  }
   Add.prototype.getFeeTpl = function () {
     return edipao.request({
       url: "/admin/fee/list",
@@ -157,6 +178,55 @@ layui.use(['jquery','form', 'layer', 'laytpl', 'table'], function(){
     });
     form.on("select(feeId)", function (obj) {
       $(obj.othis).next().val($(obj.elem.selectedOptions).text());
+    });
+    $("#openSelectBelongLine").unbind().on("click", function () {
+      var index = layer.open({
+        type: 1,
+        area: ["600px", "400px"],
+        title: "选择线路",
+        content: '<div style="padding:20px;"><div lay-filter="belongLineListTable" id="belongLineListTable"></div></div>',
+        success: function () {
+          table.render({
+            elem: '#belongLineListTable',
+            data: _this.belongLineList
+            , page: true //开启分页
+            , limit: 10  //每页显示条数
+            , limits: [10, 20] //每页显示条数可选择
+            , id: "belongLineListTable"
+            , request: {
+                pageName: 'pageNo' //页码的参数名称，默认：page
+                , limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            , where: {
+              loginStaffId: edipao.getLoginStaffId(),
+            }
+            , parseData: function (res) {
+              return {
+                  "code": res.code, //解析接口状态
+                  "msg": res.message, //解析提示文本
+                  "count": res.data.totalSize, //解析数据长度
+                  "data": res.data.staffDtoList //解析数据列表
+              }
+            }
+            , done: function () {
+              table.on('row(belongLineListTable)', function(obj){
+                form.val("main_form", {
+                  belongLine: obj.data.name,
+                });
+                layer.close(index);
+              });
+            }
+            , height: 'full'
+            , autoSort: true
+            , text: {
+                none: "暂无数据"
+            }
+            , cols: [[
+                {field: 'name', title: '线路名称', sort: false, width: 100},
+            ]]
+          })
+        }
+      });
     });
     $("#openSelectStaff").unbind().on("click", function () {
       var index = layer.open({

@@ -278,8 +278,18 @@ layui
         layui.each(v, function (index, item) {
           if (index && showList.indexOf(index) != -1) {
             switch (index) {
+              case "msgClient":
+                var res = "- -";
+                clientData.some(function (item) {
+                  if(item.key == v[index]){
+                    res = item.value;
+                    return true;
+                  }
+                });
+                exportObj[index] = res;
+                break;
               case "sendStartTime":
-                exportObj[index] = v[index] + "-" + v["sendEndTime"];
+                exportObj[index] = v[index] || "- -";
                 break;
               default:
                 exportObj[index] = DataNull(item);
